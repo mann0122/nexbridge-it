@@ -10,14 +10,20 @@ import Demo from '../../components/Demo.astro';
 import Founders from '../../components/Founders.astro';
 import Closing from '../../components/Closing.astro';
 import Footer from '../../components/Footer.astro';
+import Marquee from '../../components/Marquee.astro';
+import Grain from '../../components/Grain.astro';
+import Cursor from '../../components/Cursor.astro';
 ---
 
 <Layout lang="en" path="/en/">
+  <Grain />
+  <Cursor />
   <Header lang="en" path="/en/" />
   <main id="main">
     <Hero lang="en" />
     <Problems lang="en" />
     <Services lang="en" />
+    <Marquee lang="en" />
     <Process lang="en" />
     <Demo lang="en" />
     <Founders lang="en" />
@@ -27,7 +33,9 @@ import Footer from '../../components/Footer.astro';
 </Layout>
 
 <script>
-  import { revealGroup } from '../../scripts/motion';
+  import { initSmoothScroll, revealGroup } from '../../scripts/motion';
+
+  initSmoothScroll();
 
   document.querySelectorAll('[data-reveal-scope]').forEach((scope) => {
     revealGroup(scope, Array.from(scope.querySelectorAll('[data-reveal]')));

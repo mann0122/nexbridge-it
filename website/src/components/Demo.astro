@@ -48,6 +48,22 @@ const chart = { before: 45, after: 8, max: 50 };
         }
       </div>
 
+      {/* Live throughput trace — fictional data, but genuinely moving:
+          a dashboard that stands still proves nothing. */}
+      <div class="border-t border-line px-5 py-6">
+        <div class="flex items-baseline justify-between">
+          <p class="type-annot text-steel-deep">{t('demo.live.label')}</p>
+          <p class="type-annot flex items-center gap-2 text-steel-deep">
+            <span class="live-dot inline-block h-1.5 w-1.5 rounded-full bg-signal"></span>
+            {t('demo.live.badge')}
+          </p>
+        </div>
+        <svg id="demo-spark" class="mt-3 h-16 w-full" viewBox="0 0 600 64" preserveAspectRatio="none" aria-hidden="true">
+          <path id="spark-path" fill="none" stroke="var(--color-signal)" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+          <path id="spark-fill" fill="var(--color-signal)" opacity="0.07" />
+        </svg>
+      </div>
+
       <div class="border-t border-line px-5 py-6">
         <p class="type-annot text-steel-deep">{t('demo.chart.label')}</p>
         <div class="mt-4 space-y-3">
@@ -82,7 +98,7 @@ const chart = { before: 45, after: 8, max: 50 };
 </section>
 
 <script>
-  import { gsap, motionOff, countUp } from '../scripts/motion';
+  import { gsap, motionOff, countUp, ScrollTrigger } from '../scripts/motion';
 
   const lang = document.documentElement.lang;
 
@@ -90,8 +106,9 @@ const chart = { before: 45, after: 8, max: 50 };
     countUp(el, Number(el.dataset.target), lang);
   });
 
+  const sheet = document.getElementById('demo-sheet');
+
   if (!motionOff) {
-    const sheet = document.getElementById('demo-sheet');
     document.querySelectorAll<HTMLElement>('.demo-bar').forEach((bar) => {
       gsap.fromTo(
         bar,
@@ -105,4 +122,58 @@ const chart = { before: 45, after: 8, max: 50 };
       );
     });
   }
+
+  /* ---- live throughput trace ------------------------------------------ */
+  const path = document.getElementById('spark-path');
+  const fill = document.getElementById('spark-fill');
+
+  if (path && fill) {
+    const N = 48;
+    const W = 600;
+    const H = 64;
+    const step = W / (N - 1);
+    // Seeded-looking but plausible series: steady with small variance.
+    const data: number[] = Array.from({ length: N }, (_, i) => 34 + Math.sin(i * 0.55) * 9 + Math.random() * 7);
+
+    const build = () => {
+      const pts = data.map((v, i) => `${(i * step).toFixed(1)},${(H - v).toFixed(1)}`);
+      path.setAttribute('d', `M${pts.join(' L')}`);
+      fill.setAttribute('d', `M0,${H} L${pts.join(' L')} L${W},${H} Z`);
+    };
+    build();
+
+    if (!motionOff) {
+      let timer = 0;
+      const tick = () => {
+        data.shift();
+        const last = data[data.length - 1];
+        // Random walk, clamped — never a flat line, never a spike storm.
+        data.push(Math.max(14, Math.min(52, last + (Math.random() - 0.48) * 9)));
+        build();
+      };
+      // Only run while the dashboard is on screen.
+      ScrollTrigger.create({
+        trigger: sheet!,
+        start: 'top bottom',
+        end: 'bottom top',
+        onToggle: (self) => {
+          clearInterval(timer);
+          if (self.isActive) timer = window.setInterval(tick, 900);
+        },
+      });
+    }
+  }
 </script>
+
+<style>
+  .live-dot {
+    animation: live-pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-dot { animation: none; }
+  }
+</style>

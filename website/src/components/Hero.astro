@@ -1,6 +1,7 @@
 ---
 import { type Lang, useTranslations } from '../i18n/ui';
 import { SITE } from '../config/site';
+import FlowField from './FlowField.astro';
 
 interface Props {
   lang: Lang;
@@ -11,8 +12,11 @@ const t = useTranslations(lang);
 const base = lang === 'de' ? '' : '/en';
 ---
 
-<section class="surface-grid relative border-b border-steel-soft">
-  {/* DIN drawing-frame: one grid cell, row A × column 1 — letters on both sides, numbers top and bottom */}
+<section class="surface-grid relative overflow-hidden border-b border-steel-soft">
+  {/* Live vector field: the brand promise as physics, behind everything */}
+  <FlowField />
+
+  {/* DIN drawing-frame: one grid cell, row A × column 1 */}
   <div class="pointer-events-none absolute inset-x-4 top-2 bottom-2 hidden border border-steel-soft/60 lg:block" aria-hidden="true">
     <span class="type-annot absolute left-2 top-1/2 -translate-y-1/2 text-steel-deep">A</span>
     <span class="type-annot absolute right-2 top-1/2 -translate-y-1/2 text-steel-deep">A</span>
@@ -20,12 +24,12 @@ const base = lang === 'de' ? '' : '/en';
     <span class="type-annot absolute bottom-1.5 left-1/2 -translate-x-1/2 text-steel-deep">1</span>
   </div>
 
-  <div class="mx-auto max-w-[1200px] px-6 pb-16 pt-16 md:pt-24">
+  <div class="relative mx-auto max-w-[1200px] px-6 pb-16 pt-16 md:pt-24">
     <p class="hero-stage type-annot text-steel">{t('hero.kicker')}</p>
 
-    <h1 class="type-display text-display mt-6 text-paper">
-      <span class="hero-stage">{t('hero.h1a')}</span><br class="hidden md:block" />
-      <span class="hero-stage">{t('hero.h1b')}</span>
+    <h1 id="hero-h1" class="type-display text-display mt-6 text-paper">
+      {t('hero.h1a')}<br class="hidden md:block" />
+      {t('hero.h1b')}
     </h1>
 
     <p class="hero-stage mt-7 max-w-[52ch] text-lg leading-relaxed text-steel">
@@ -35,6 +39,7 @@ const base = lang === 'de' ? '' : '/en';
     <div class="hero-stage mt-10 flex flex-wrap items-center gap-4">
       <a
         href={`${base}/#kontakt`}
+        data-magnetic="0.3"
         class="group inline-flex items-center gap-3 bg-signal px-6 py-3.5 font-semibold text-graphite"
       >
         {t('hero.ctaPrimary')}
@@ -46,19 +51,11 @@ const base = lang === 'de' ? '' : '/en';
     </div>
 
     {/* ------------------------------------------------------------------ */}
-    {/* The flow-line: a working schematic, not decoration. Three generic  */}
-    {/* pains converge into the klarfluss block; one signal line leaves —  */}
-    {/* and keeps pulsing: the process runs by itself.                     */}
+    {/* The flow-line: a working schematic. Three generic pains converge    */}
+    {/* into the klarfluss block; one signal line leaves and keeps pulsing. */}
     {/* ------------------------------------------------------------------ */}
     <figure class="mt-12 md:mt-14" aria-label={t('a11y.flowDiagram')}>
-      {/* Desktop schematic */}
-      <svg
-        id="flow-desktop"
-        class="hidden w-full md:block"
-        viewBox="0 0 1152 260"
-        fill="none"
-        aria-hidden="true"
-      >
+      <svg id="flow-desktop" class="hidden w-full md:block" viewBox="0 0 1152 260" fill="none" aria-hidden="true">
         <path class="flow-in" d="M0 40 H360 C 440 40, 460 118, 520 126" stroke="var(--color-steel-deep)" stroke-width="1.5" />
         <path class="flow-in" d="M0 130 H520" stroke="var(--color-steel-deep)" stroke-width="1.5" />
         <path class="flow-in" d="M0 220 H360 C 440 220, 460 142, 520 134" stroke="var(--color-steel-deep)" stroke-width="1.5" />
@@ -81,7 +78,6 @@ const base = lang === 'de' ? '' : '/en';
         </g>
       </svg>
 
-      {/* Mobile schematic: same story, compact composition */}
       <svg id="flow-mobile" class="w-full md:hidden" viewBox="0 0 360 320" fill="none" aria-hidden="true">
         <path class="flow-in" d="M0 34 H120 C 160 34, 170 100, 200 106" stroke="var(--color-steel-deep)" stroke-width="1.5" />
         <path class="flow-in" d="M0 112 H200" stroke="var(--color-steel-deep)" stroke-width="1.5" />
@@ -107,7 +103,7 @@ const base = lang === 'de' ? '' : '/en';
 </section>
 
 <script>
-  import { gsap, motionOff, primeDraw, pulseAlong } from '../scripts/motion';
+  import { gsap, motionOff, SplitText, primeDraw, pulseAlong } from '../scripts/motion';
 
   function animateSchematic(svg: SVGSVGElement, master: gsap.core.Timeline) {
     const ins = Array.from(svg.querySelectorAll<SVGPathElement>('.flow-in'));
@@ -123,28 +119,53 @@ const base = lang === 'de' ? '' : '/en';
     gsap.set([...labels, labelOut, arrow], { opacity: 0 });
 
     master
-      .to(ins, { strokeDashoffset: 0, duration: 1.1, stagger: 0.14 }, '-=0.4')
-      .to(labels, { opacity: 1, duration: 0.5, stagger: 0.14 }, '<0.25')
-      .to(block, { strokeDashoffset: 0, duration: 0.7 }, '-=0.55')
-      .to(out, { strokeDashoffset: 0, duration: 0.9 }, '-=0.25')
+      .to(ins, { strokeDashoffset: 0, duration: 1.2, stagger: 0.14 }, '-=0.5')
+      .to(labels, { opacity: 1, duration: 0.5, stagger: 0.12 }, '<0.3')
+      .to(block, { strokeDashoffset: 0, duration: 0.7 }, '-=0.6')
+      .to(out, { strokeDashoffset: 0, duration: 0.9 }, '-=0.3')
       .to(arrow, { opacity: 1, duration: 0.25 }, '-=0.15')
       .to(labelOut, { opacity: 1, duration: 0.5 }, '-=0.2');
 
-    // The living detail: a pulse travels the signal line, forever.
     const main = svg.querySelector<SVGPathElement>('.flow-out-main');
     const dot = svg.querySelector<SVGCircleElement>('.flow-pulse');
-    if (main && dot) master.add(() => pulseAlong(main, dot, 0.6));
+    if (main && dot) master.add(() => pulseAlong(main, dot, 0.4));
   }
 
-  const stages = Array.from(document.querySelectorAll<HTMLElement>('.hero-stage'));
-
   if (!motionOff) {
+    const h1 = document.getElementById('hero-h1');
+    const stages = Array.from(document.querySelectorAll<HTMLElement>('.hero-stage'));
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+
+    // Headline assembles character by character out of blur.
+    if (h1) {
+      const split = new SplitText(h1, { type: 'chars,words', charsClass: 'hero-char' });
+      gsap.set(split.chars, { opacity: 0, yPercent: 110, filter: 'blur(10px)' });
+      tl.to(split.chars, {
+        opacity: 1,
+        yPercent: 0,
+        filter: 'blur(0px)',
+        duration: 1.15,
+        stagger: 0.022,
+      });
+    }
+
     gsap.set(stages, { opacity: 0, y: 26 });
-    tl.to(stages, { opacity: 1, y: 0, duration: 0.9, stagger: 0.1 }, 0.1);
+    tl.to(stages, { opacity: 1, y: 0, duration: 0.95, stagger: 0.1 }, 0.35);
 
     document.querySelectorAll<SVGSVGElement>('#flow-desktop, #flow-mobile').forEach((svg) => {
       if (svg.getBoundingClientRect().width > 0) animateSchematic(svg, tl);
     });
   }
 </script>
+
+<style>
+  /* SplitText needs the chars to clip cleanly while they rise */
+  :global(.hero-char) {
+    display: inline-block;
+    will-change: transform, filter;
+  }
+  #hero-h1 {
+    overflow: hidden;
+    padding-bottom: 0.08em;
+  }
+</style>

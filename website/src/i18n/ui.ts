@@ -46,6 +46,11 @@ export const ui = {
     'tb.rev.label': 'Stand',
     'tb.rev.value': '07/2026',
 
+    'marquee.gdpr': 'DSGVO-konform',
+    'marquee.handover': 'Übergabefertig dokumentiert',
+    'marquee.origin': 'Gebaut in Deutschland',
+    'marquee.fixed': 'Einstieg zum Festpreis',
+
     'problems.kicker': 'Positionsliste · bekannte Störstellen',
     'problems.title': 'Woran es im Alltag hängt.',
     'problems.col.pos': 'Pos.',
@@ -104,6 +109,8 @@ export const ui = {
     'demo.kpi2.value': '214',
     'demo.kpi3.label': 'Übertragungsfehler',
     'demo.kpi3.value': '0',
+    'demo.live.label': 'Vorgänge je Stunde · laufend',
+    'demo.live.badge': 'live',
     'demo.chart.label': 'Durchlaufzeit je Auftrag · Minuten',
     'demo.chart.before': 'vorher',
     'demo.chart.after': 'nachher',
@@ -161,6 +168,11 @@ export const ui = {
     'tb.privacy.value': 'Your data stays in Germany',
     'tb.rev.label': 'Revision',
     'tb.rev.value': '07/2026',
+
+    'marquee.gdpr': 'GDPR-compliant',
+    'marquee.handover': 'Documented for handover',
+    'marquee.origin': 'Built in Germany',
+    'marquee.fixed': 'Fixed-price entry',
 
     'problems.kicker': 'Item list · known friction points',
     'problems.title': 'Where daily work gets stuck.',
@@ -220,6 +232,8 @@ export const ui = {
     'demo.kpi2.value': '214',
     'demo.kpi3.label': 'Transfer errors',
     'demo.kpi3.value': '0',
+    'demo.live.label': 'Operations per hour · running',
+    'demo.live.badge': 'live',
     'demo.chart.label': 'Lead time per order · minutes',
     'demo.chart.before': 'before',
     'demo.chart.after': 'after',

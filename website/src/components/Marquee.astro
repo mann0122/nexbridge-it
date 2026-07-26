@@ -1,0 +1,61 @@
+---
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// A running annotation band — the section divider as a data strip.
+const items = [
+  t('services.1.title'),
+  t('marquee.gdpr'),
+  t('services.2.title'),
+  t('marquee.handover'),
+  t('services.3.title'),
+  t('marquee.origin'),
+  t('services.4.title'),
+  t('marquee.fixed'),
+];
+---
+
+<div class="marquee border-y border-steel-soft bg-graphite py-3.5" aria-hidden="true">
+  <div class="marquee-track flex w-max gap-10">
+    {
+      [0, 1].map(() => (
+        <ul class="flex shrink-0 items-center gap-10">
+          {items.map((item) => (
+            <li class="type-annot flex items-center gap-10 text-steel">
+              <span>{item}</span>
+              <span class="text-signal">+</span>
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+  }
+  .marquee-track {
+    animation: marquee 38s linear infinite;
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+</style>

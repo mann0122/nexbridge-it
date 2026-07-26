@@ -1,19 +1,61 @@
 /**
- * Shared motion system. One import per component <script>; GSAP plugins are
- * registered once. Every effect honors prefers-reduced-motion and the ?snap
- * query (static captures) by rendering final states with no animation.
+ * Shared motion system. One import per component <script>; plugins are
+ * registered once. Every effect gates on `motionOff` (prefers-reduced-motion
+ * or the ?snap capture flag) and renders a sane final state instead.
+ *
+ * GSAP 3.15 ships every former Club plugin free — SplitText, DrawSVG,
+ * ScrambleText, MorphSVG — so the premium layer needs no paid dependency.
  */
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { SplitText } from 'gsap/SplitText';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import Lenis from 'lenis';
 
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, DrawSVGPlugin, SplitText, ScrambleTextPlugin);
 
 export const motionOff =
   window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
   new URLSearchParams(window.location.search).has('snap');
 
-export { gsap, ScrollTrigger };
+export const fine = window.matchMedia('(pointer: fine)').matches;
+
+export { gsap, ScrollTrigger, SplitText };
+
+/* ---------------------------------------------------------------------- */
+/* Smooth scroll — the single biggest difference between a clean site and  */
+/* one that feels engineered. Lenis drives ScrollTrigger off the same RAF. */
+/* ---------------------------------------------------------------------- */
+export function initSmoothScroll(): Lenis | null {
+  if (motionOff) return null;
+
+  const lenis = new Lenis({
+    duration: 1.05,
+    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    touchMultiplier: 1.6,
+  });
+
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  // In-page anchors route through Lenis so the easing stays consistent.
+  document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const url = new URL(a.href, location.href);
+      if (url.pathname !== location.pathname || !url.hash) return;
+      const target = document.querySelector(url.hash);
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target as HTMLElement, { offset: -72 });
+    });
+  });
+
+  return lenis;
+}
 
 /** Prepare an SVG stroke for a draw animation; returns its length. */
 export function primeDraw(el: SVGGeometryElement): number {
@@ -23,24 +65,20 @@ export function primeDraw(el: SVGGeometryElement): number {
 }
 
 /**
- * Reveal a group of elements when `trigger` scrolls into view.
- * Elements stay visible without JS; we hide them here first (.will-reveal
- * pattern) so a broken script never blanks content.
+ * Reveal a group when `trigger` scrolls in. Markup ships visible; we hide
+ * here so a failed script leaves the page readable rather than blank.
  */
-export function revealGroup(
-  trigger: Element,
-  els: Element[],
-  vars: gsap.TweenVars = {},
-): void {
+export function revealGroup(trigger: Element, els: Element[], vars: gsap.TweenVars = {}): void {
   if (motionOff || els.length === 0) return;
-  gsap.set(els, { opacity: 0, y: 28 });
+  gsap.set(els, { opacity: 0, y: 34, filter: 'blur(6px)' });
   gsap.to(els, {
     opacity: 1,
     y: 0,
-    duration: 0.9,
+    filter: 'blur(0px)',
+    duration: 1,
     ease: 'expo.out',
-    stagger: 0.09,
-    scrollTrigger: { trigger, start: 'top 78%' },
+    stagger: 0.085,
+    scrollTrigger: { trigger, start: 'top 80%' },
     ...vars,
   });
 }
@@ -51,8 +89,7 @@ export function drawOnScroll(
   paths: SVGGeometryElement[],
   opts: { scrub?: boolean; stagger?: number } = {},
 ): void {
-  if (paths.length === 0) return;
-  if (motionOff) return;
+  if (paths.length === 0 || motionOff) return;
   paths.forEach(primeDraw);
   gsap.to(paths, {
     strokeDashoffset: 0,
@@ -67,7 +104,7 @@ export function drawOnScroll(
   });
 }
 
-/** Count a number up from 0 when it scrolls into view (de/en formatting). */
+/** Count a number up from 0 when it scrolls into view. */
 export function countUp(el: HTMLElement, target: number, locale: string): void {
   const fmt = new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-GB');
   if (motionOff) {
@@ -77,7 +114,7 @@ export function countUp(el: HTMLElement, target: number, locale: string): void {
   const state = { v: 0 };
   gsap.to(state, {
     v: target,
-    duration: 1.6,
+    duration: 1.8,
     ease: 'expo.out',
     scrollTrigger: { trigger: el, start: 'top 85%' },
     onUpdate: () => {
@@ -86,10 +123,7 @@ export function countUp(el: HTMLElement, target: number, locale: string): void {
   });
 }
 
-/**
- * Send a small pulse traveling along an SVG path repeatedly — the process
- * running by itself. Call after the line has drawn.
- */
+/** Send a pulse traveling along an SVG path, repeating — the process running. */
 export function pulseAlong(path: SVGGeometryElement, dot: SVGElement, delay = 2): void {
   if (motionOff) {
     gsap.set(dot, { opacity: 0 });
@@ -103,7 +137,21 @@ export function pulseAlong(path: SVGGeometryElement, dot: SVGElement, delay = 2)
     repeat: -1,
     repeatDelay: 3.2,
     delay,
-    onRepeat: () => gsap.set(dot, { opacity: 1 }),
     onStart: () => gsap.set(dot, { opacity: 1 }),
+    onRepeat: () => gsap.set(dot, { opacity: 1 }),
   });
+}
+
+/** Parallax: move an element against the scroll for depth. */
+export function parallax(el: Element, distance = 60): void {
+  if (motionOff) return;
+  gsap.fromTo(
+    el,
+    { y: -distance / 2 },
+    {
+      y: distance / 2,
+      ease: 'none',
+      scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.8 },
+    },
+  );
 }

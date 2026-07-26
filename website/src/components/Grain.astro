@@ -1,0 +1,43 @@
+---
+/**
+ * Film grain. The cheapest, most reliable way to stop a dark UI from looking
+ * like flat #14171A plastic — it gives the ground a printed, physical
+ * texture, which is exactly the drawing-office world we committed to.
+ * Pure CSS + an inline SVG turbulence tile: no asset request, ~0 cost.
+ */
+---
+
+<div class="grain" aria-hidden="true"></div>
+
+<style>
+  .grain {
+    position: fixed;
+    inset: -150%;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.32;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    will-change: transform;
+    animation: grain-shift 700ms steps(1) infinite;
+  }
+
+  @keyframes grain-shift {
+    0% { transform: translate(0, 0); }
+    12% { transform: translate(-6%, -3%); }
+    25% { transform: translate(4%, -6%); }
+    37% { transform: translate(-3%, 5%); }
+    50% { transform: translate(6%, 2%); }
+    62% { transform: translate(-5%, -5%); }
+    75% { transform: translate(3%, 6%); }
+    87% { transform: translate(-6%, 3%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Grain stays (it is texture, not motion) but stops moving. */
+  @media (prefers-reduced-motion: reduce) {
+    .grain {
+      animation: none;
+      opacity: 0.24;
+    }
+  }
+</style>

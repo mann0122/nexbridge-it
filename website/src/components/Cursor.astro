@@ -1,0 +1,114 @@
+---
+/**
+ * Custom cursor: a crosshair reticle, because this world is a drawing board.
+ * Follows with inertia, snaps magnetically onto CTAs, widens over links.
+ * Fine-pointer devices only; touch users get the native experience.
+ */
+---
+
+<div id="cursor" class="cursor" aria-hidden="true">
+  <span class="cursor-h"></span>
+  <span class="cursor-v"></span>
+  <span class="cursor-ring"></span>
+</div>
+
+<style>
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: difference;
+  }
+  .cursor-h,
+  .cursor-v {
+    position: absolute;
+    background: var(--color-paper);
+  }
+  .cursor-h {
+    left: -9px;
+    top: -0.5px;
+    width: 18px;
+    height: 1px;
+  }
+  .cursor-v {
+    top: -9px;
+    left: -0.5px;
+    width: 1px;
+    height: 18px;
+  }
+  .cursor-ring {
+    position: absolute;
+    top: -14px;
+    left: -14px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-paper);
+    border-radius: 50%;
+    opacity: 0;
+    transition:
+      opacity 220ms ease,
+      transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cursor.is-active .cursor-ring {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+
+  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
+    .cursor {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, motionOff, fine } from '../scripts/motion';
+
+  const el = document.getElementById('cursor');
+
+  if (el && fine && !motionOff) {
+    const xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'expo.out' });
+    const yTo = gsap.quickTo(el, 'y', { duration: 0.38, ease: 'expo.out' });
+    let shown = false;
+
+    window.addEventListener('mousemove', (e) => {
+      if (!shown) {
+        gsap.to(el, { opacity: 1, duration: 0.3 });
+        shown = true;
+      }
+      xTo(e.clientX);
+      yTo(e.clientY);
+    });
+
+    document.addEventListener('mouseleave', () => {
+      gsap.to(el, { opacity: 0, duration: 0.25 });
+      shown = false;
+    });
+
+    // Reticle opens over anything clickable.
+    document.querySelectorAll('a, button, [role="button"]').forEach((node) => {
+      node.addEventListener('mouseenter', () => el.classList.add('is-active'));
+      node.addEventListener('mouseleave', () => el.classList.remove('is-active'));
+    });
+
+    // Magnetic CTAs: the button leans toward the cursor, then springs back.
+    document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((btn) => {
+      const strength = Number(btn.dataset.magnetic) || 0.32;
+      const qx = gsap.quickTo(btn, 'x', { duration: 0.5, ease: 'expo.out' });
+      const qy = gsap.quickTo(btn, 'y', { duration: 0.5, ease: 'expo.out' });
+
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        qx((e.clientX - (r.left + r.width / 2)) * strength);
+        qy((e.clientY - (r.top + r.height / 2)) * strength);
+      });
+      btn.addEventListener('mouseleave', () => {
+        qx(0);
+        qy(0);
+      });
+    });
+  }
+</script>

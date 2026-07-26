@@ -52,11 +52,25 @@ Display size: clamp(2.5rem, 6.5vw, 5.6rem).
 
 ## Motion
 
-One authored moment per surface. Signature: the flow-line draws itself left→right (SVG
-stroke-dashoffset via GSAP + ScrollTrigger), muted lines first, signal line last, node labels
-fade in after their node is reached. Exponential ease-out, from already-visible layouts (no
-content hidden behind animation). Micro: link underlines draw, CTA arrow extends. Everything
-honors prefers-reduced-motion (final states, no draws).
+Signature: the flow-line draws itself left→right (GSAP + ScrollTrigger), muted lines first,
+signal line last; a pulse then travels the signal line indefinitely. Exponential ease-out, from
+already-visible layouts (no content hidden behind animation). Everything honors
+prefers-reduced-motion, and `?snap` renders final states for static capture.
+
+**Premium layer** (added 2026-07-26 on founder direction):
+- **Lenis smooth scroll** driven off the GSAP ticker — inertia is the single biggest cue that a
+  site was engineered rather than assembled. In-page anchors route through it.
+- **Generative flow field** (`FlowField.astro`): value-noise vector field, particles traced as
+  streams on canvas, ~6% carrying signal. Painted synchronously on init so the artwork exists
+  even where rAF is throttled; live particles animate on top. A directional CSS mask keeps the
+  headline area quiet and lets the field build toward the right — the direction of flow.
+- **SplitText headline**: characters rise out of blur, 0.022s stagger.
+- **Film grain**: inline SVG turbulence, 8-step shift. Texture, not motion — it stays (dimmer)
+  under reduced-motion.
+- **Crosshair cursor** with magnetic CTAs (`data-magnetic`), fine-pointer devices only.
+- **Marquee** annotation band as section divider; pauses on hover.
+- **Live sparkline** in the demo dashboard — a demo that stands still proves nothing.
+Budget: ~176 KB JS across the page, zero external asset requests.
 
 ## Components (as they get built)
 

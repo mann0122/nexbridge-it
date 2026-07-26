@@ -51,6 +51,13 @@ in the header. Supersedes the "EN later" line in 03-website-spec.md. Brand name 
 stays provisional until founders review the demo design — name lives in ONE config constant
 (site.ts) so a rename is a one-line change. Domain registration deferred until name is final.
 
+## D-011 | 2026-07-26 | Premium motion layer on the landing page | DECIDED
+Founder direction: the clean build read as "simple", not masterpiece. Added Lenis smooth scroll,
+a generative canvas flow field behind the hero, SplitText headline assembly, film grain, a
+magnetic crosshair cursor, a marquee annotation band and a live sparkline. Deliberately NO
+downloaded stock assets, Lottie files or 3D blobs — stock motion is what makes sites look
+generic; everything here is generated from the brand's own geometry. See DESIGN.md → Motion.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

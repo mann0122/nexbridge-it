@@ -24,7 +24,7 @@ const t = useTranslations(lang);
     <div class="py-5 sm:px-6">
       <dt class="type-annot text-steel">{t('footer.contact')}</dt>
       <dd class="mt-1 font-mono text-[0.8125rem] text-paper">
-        <a href="mailto:kontakt@klarfluss.eu" class="link-draw">kontakt@klarfluss.eu</a>
+        <a href={`mailto:${SITE.email}`} class="link-draw">{SITE.email}</a>
       </dd>
     </div>
     <div class="py-5 sm:pl-6">

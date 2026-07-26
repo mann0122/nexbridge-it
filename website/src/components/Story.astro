@@ -1,0 +1,73 @@
+---
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const chapters = [1, 2, 3, 4, 5].map((i) => ({
+  marker: t(`story.${i}.marker` as Parameters<typeof t>[0]),
+  title: t(`story.${i}.title` as Parameters<typeof t>[0]),
+  text: t(`story.${i}.text` as Parameters<typeof t>[0]),
+  get: t(`story.${i}.get` as Parameters<typeof t>[0]),
+  // Step 4 states its session count in the marker, so the effort cell only
+  // carries the time — the two columns never repeat each other.
+  effort: t(`story.${i}.${i === 4 ? 'effortShort' : 'effort'}` as Parameters<typeof t>[0]),
+}));
+---
+
+{/* Projektverlauf: the narrative, read AFTER the prices — Process answers what
+    it costs, this answers what it is like. Paper ground: this is the longest
+    reading passage on the site, and long-form belongs on paper (02-brand.md).
+    Numbering is justified — it IS a chronological sequence. Each chapter
+    answers the two questions a buyer never asks aloud: what do I end up
+    holding, and how much of MY time does this cost? */}
+<section id="ablauf" class="surface-paper border-b border-line">
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel-deep" data-reveal>{t('story.kicker')}</p>
+    <h2 class="type-display mt-4 max-w-[22ch] text-[clamp(1.9rem,3.6vw,3rem)]" data-reveal>
+      {t('story.title')}
+    </h2>
+
+    {/* the log's own legend */}
+    <div class="mt-14 hidden border-b border-graphite pb-2.5 md:grid md:grid-cols-12 md:gap-6" data-reveal>
+      <span class="type-annot text-steel-deep md:col-span-5">{t('story.col.step')}</span>
+      <span class="type-annot text-steel-deep md:col-span-4">{t('story.col.get')}</span>
+      <span class="type-annot text-steel-deep md:col-span-3">{t('story.col.effort')}</span>
+    </div>
+
+    <ol>
+      {
+        chapters.map((c) => (
+          <li class="border-b border-line py-8 md:grid md:grid-cols-12 md:gap-6" data-reveal>
+            <div class="md:col-span-5">
+              <p class="type-annot text-steel-deep">{c.marker}</p>
+              <h3 class="type-subhead mt-2 text-xl md:text-2xl">{c.title}</h3>
+              <p class="mt-3 max-w-[46ch] text-[0.95rem] leading-relaxed text-steel-deep">{c.text}</p>
+            </div>
+
+            <div class="mt-5 md:col-span-4 md:mt-0">
+              <p class="type-annot text-steel-deep md:hidden">{t('story.col.get')}</p>
+              <p class="mt-1 flex items-start gap-2.5 font-mono text-[0.8125rem] leading-relaxed md:mt-0">
+                <span class="mt-[0.45em] inline-block h-1.5 w-1.5 shrink-0 bg-graphite" aria-hidden="true" />
+                {c.get}
+              </p>
+            </div>
+
+            <div class="mt-4 md:col-span-3 md:mt-0">
+              <p class="type-annot text-steel-deep md:hidden">{t('story.col.effort')}</p>
+              <p class="mt-1 font-mono text-[0.8125rem] text-steel-deep md:mt-0">{c.effort}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="mt-10 max-w-[68ch] text-[0.875rem] leading-relaxed text-steel-deep" data-reveal>
+      {t('story.note')}
+    </p>
+  </div>
+</section>

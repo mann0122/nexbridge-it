@@ -100,6 +100,47 @@ export const ui = {
     'process.3.price': '1.200 €/Monat',
     'process.priceNote': 'Alle Preise netto zzgl. USt. · Phase 3: Mindestlaufzeit drei Monate',
 
+    // Projektverlauf — the narrative. Answers "what do I get" and the fear
+    // nobody says out loud: "how much of MY time does this cost?"
+    'story.kicker': 'Projektverlauf · vom Erstgespräch bis zum Betrieb',
+    'story.title': 'Was passiert, wenn Sie sich melden.',
+    'story.col.step': 'Schritt',
+    'story.col.get': 'Sie erhalten',
+    'story.col.effort': 'Ihr Aufwand',
+    'story.1.marker': '01 · 30 Minuten',
+    'story.1.title': 'Wir hören zu',
+    'story.1.text':
+      'Sie schildern, wo es klemmt. Wir sagen Ihnen, ob sich Automatisierung lohnt – auch wenn die Antwort nein lautet.',
+    'story.1.get': 'Ehrliche Einschätzung',
+    'story.1.effort': '30 Minuten',
+    'story.2.marker': '02 · 1 Woche',
+    'story.2.title': 'Wir sehen uns Ihre Abläufe an',
+    'story.2.text':
+      'Wir schauen dort hin, wo die Arbeit entsteht, und rechnen nach: Welcher Schritt kostet wie viel Zeit? Am Ende steht kein Konzept, sondern ein Plan mit Zahlen.',
+    'story.2.get': 'Umsetzungsplan mit Zahlen',
+    'story.2.effort': 'rund 3 Stunden',
+    'story.3.marker': '03 · 2–4 Wochen',
+    'story.3.title': 'Wir bauen – Sie sehen jede Woche den Stand',
+    'story.3.text':
+      'Wir bauen um Ihre bestehenden Systeme herum. Kein Systemwechsel, kein Stillstand im Tagesgeschäft. Ihre Daten bleiben dort, wo sie heute liegen.',
+    'story.3.get': 'Lauffähige Zwischenstände',
+    'story.3.effort': 'rund 1 Stunde pro Woche',
+    'story.4.marker': '04 · 1 Tag',
+    'story.4.title': 'Wir übergeben, Sie übernehmen',
+    'story.4.text':
+      'Sie bekommen alle Zugänge, den Quellcode und eine Dokumentation auf Deutsch. Danach können Sie mit uns weiterarbeiten – müssen es aber nicht.',
+    'story.4.get': 'Zugänge, Quellcode, Dokumentation, Einweisung',
+    'story.4.effort': '1 Termin, rund 30 Minuten',
+    'story.4.effortShort': 'rund 30 Minuten',
+    'story.5.marker': '05 · laufend',
+    'story.5.title': 'Es läuft – wir bleiben erreichbar',
+    'story.5.text':
+      'Wir überwachen den Betrieb und erweitern, wenn Sie es brauchen. Wenn nicht, läuft Ihre Lösung auch ohne uns weiter.',
+    'story.5.get': 'Betrieb & Ausbau',
+    'story.5.effort': 'keiner',
+    'story.note':
+      'Ihre Daten bleiben in Ihren Systemen. Was wir selbst verarbeiten, hosten wir standardmäßig in Deutschland – Ausnahmen klären wir vor Projektstart.',
+
     'demo.kicker': 'Demo · Musterfirma GmbH · fiktive Daten',
     'demo.title': 'So sieht das aus, wenn es läuft.',
     'demo.sub': 'Ein Beispiel-Dashboard, wie es bei Ihnen aussehen könnte – die Zahlen aktualisieren sich von selbst.',
@@ -124,8 +165,36 @@ export const ui = {
     'founders.origin': 'Gegründet 2026 in Baden-Württemberg.',
 
     'closing.title': 'Sprechen wir über Ihre Prozesse.',
-    'closing.sub': 'Im Erstgespräch klären wir in 30 Minuten, wo Automatisierung bei Ihnen am meisten bewirkt. Unverbindlich.',
+    'closing.sub':
+      '30 Minuten, kostenlos, kein Verkaufsgespräch. Danach wissen Sie, was sich in Ihrem Fall automatisieren lässt – und was besser so bleibt, wie es ist.',
     'closing.cta': 'Erstgespräch vereinbaren',
+    'form.name': 'Name',
+    'form.company': 'Unternehmen',
+    'form.email': 'E-Mail',
+    'form.message': 'Worum geht es?',
+    'form.messagePlaceholder': 'Welcher Ablauf kostet Sie gerade am meisten Zeit?',
+    'form.consent':
+      'Ich bin damit einverstanden, dass meine Angaben zur Beantwortung meiner Anfrage verarbeitet werden.',
+    'form.consentMore': 'Mehr dazu in der',
+    'form.consentLink': 'Datenschutzerklärung',
+    'form.submit': 'Anfrage senden',
+    'form.sending': 'Wird gesendet …',
+    'form.required': 'Bitte tragen Sie Ihren Namen ein.',
+    'form.invalidEmail': 'Bitte geben Sie eine gültige E-Mail-Adresse an.',
+    'form.consentRequired':
+      'Bitte setzen Sie noch den Haken – ohne Zustimmung dürfen wir Ihre Anfrage nicht bearbeiten.',
+    'form.success': 'Danke – Ihre Anfrage ist unterwegs. Wir melden uns innerhalb eines Werktags.',
+    'form.fallbackNote':
+      'Ihr E-Mail-Programm öffnet sich mit der fertigen Nachricht. Bitte einmal abschicken – dann ist sie bei uns.',
+    'form.orMail': 'Lieber direkt schreiben?',
+    'form.noscript': 'Dieses Formular braucht JavaScript. Schreiben Sie uns gern direkt an',
+    // Used to build the fallback email itself — never shown on the page.
+    'form.mailSubject': 'Anfrage über die Website',
+    'form.mailMessageLabel': 'Nachricht',
+    'form.mailEmpty': '–',
+    'trust.response': 'Antwort innerhalb eines Werktags',
+    'trust.noSales': 'Kein Verkaufsgespräch',
+    'trust.dataStays': 'Ihre Angaben bleiben bei uns',
 
     'footer.project': 'Projekt',
     'footer.contact': 'Kontakt',
@@ -223,6 +292,45 @@ export const ui = {
     'process.3.price': '€1,200/month',
     'process.priceNote': 'All prices net of VAT · Phase 3: three-month minimum term',
 
+    'story.kicker': 'Project log · from first call to steady operation',
+    'story.title': 'What happens when you get in touch.',
+    'story.col.step': 'Step',
+    'story.col.get': 'You receive',
+    'story.col.effort': 'Your time',
+    'story.1.marker': '01 · 30 minutes',
+    'story.1.title': 'We listen',
+    'story.1.text':
+      'You describe where things get stuck. We tell you whether automation is worth it — including when the answer is no.',
+    'story.1.get': 'An honest assessment',
+    'story.1.effort': '30 minutes',
+    'story.2.marker': '02 · 1 week',
+    'story.2.title': 'We look at how you actually work',
+    'story.2.text':
+      'We go where the work happens and do the arithmetic: which step costs how much time? What you get is not a concept, but a plan with numbers.',
+    'story.2.get': 'Implementation plan with numbers',
+    'story.2.effort': 'about 3 hours',
+    'story.3.marker': '03 · 2–4 weeks',
+    'story.3.title': 'We build — you see progress every week',
+    'story.3.text':
+      'We build around your existing systems. No migration, no standstill in daily business. Your data stays exactly where it is today.',
+    'story.3.get': 'Working increments',
+    'story.3.effort': 'about 1 hour per week',
+    'story.4.marker': '04 · 1 day',
+    'story.4.title': 'We hand over, you take ownership',
+    'story.4.text':
+      'You get every access, the source code and documentation in German. After that you can keep working with us — but you do not have to.',
+    'story.4.get': 'Access, source code, documentation, training',
+    'story.4.effort': '1 session, about 30 minutes',
+    'story.4.effortShort': 'about 30 minutes',
+    'story.5.marker': '05 · ongoing',
+    'story.5.title': 'It runs — we stay reachable',
+    'story.5.text':
+      'We monitor operations and extend when you need it. If you do not, your solution keeps running without us.',
+    'story.5.get': 'Operations & growth',
+    'story.5.effort': 'none',
+    'story.note':
+      'Your data stays in your systems. What we process ourselves we host in Germany by default — any exception is agreed with you before the project starts.',
+
     'demo.kicker': 'Demo · Musterfirma GmbH · fictional data',
     'demo.title': 'What it looks like when it runs.',
     'demo.sub': 'A sample dashboard the way yours could look — the numbers update themselves.',
@@ -247,8 +355,35 @@ export const ui = {
     'founders.origin': 'Founded 2026 in Baden-Württemberg.',
 
     'closing.title': 'Let’s talk about your processes.',
-    'closing.sub': 'In a 30-minute intro call we find out where automation moves the needle most for you. No strings attached.',
+    'closing.sub':
+      '30 minutes, free, no sales pitch. Afterwards you will know what can be automated in your case — and what is better left alone.',
     'closing.cta': 'Book an intro call',
+    'form.name': 'Name',
+    'form.company': 'Company',
+    'form.email': 'Email',
+    'form.message': 'What is this about?',
+    'form.messagePlaceholder': 'Which workflow costs you the most time right now?',
+    'form.consent': 'I agree that my details may be processed in order to answer my enquiry.',
+    'form.consentMore': 'More on this in our',
+    'form.consentLink': 'privacy policy',
+    'form.submit': 'Send enquiry',
+    'form.sending': 'Sending …',
+    'form.required': 'Please enter your name.',
+    'form.invalidEmail': 'Please enter a valid email address.',
+    'form.consentRequired':
+      'Please tick the box — without your consent we are not allowed to process your enquiry.',
+    'form.success': 'Thank you — your enquiry is on its way. We reply within one working day.',
+    'form.fallbackNote':
+      'Your email client will open with the message ready to send. Please hit send once — then it reaches us.',
+    'form.orMail': 'Prefer to write directly?',
+    'form.noscript': 'This form needs JavaScript. You are welcome to write to us directly at',
+    // Used to build the fallback email itself — never shown on the page.
+    'form.mailSubject': 'Enquiry via the website',
+    'form.mailMessageLabel': 'Message',
+    'form.mailEmpty': '–',
+    'trust.response': 'Reply within one working day',
+    'trust.noSales': 'No sales pitch',
+    'trust.dataStays': 'Your details stay with us',
 
     'footer.project': 'Project',
     'footer.contact': 'Contact',

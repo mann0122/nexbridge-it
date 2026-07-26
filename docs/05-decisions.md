@@ -58,6 +58,24 @@ magnetic crosshair cursor, a marquee annotation band and a live sparkline. Delib
 downloaded stock assets, Lottie files or 3D blobs — stock motion is what makes sites look
 generic; everything here is generated from the brand's own geometry. See DESIGN.md → Motion.
 
+## D-012 | 2026-07-26 | No FAQ — objections answered inside a narrative | DECIDED
+Founder direction: an FAQ block puts the buyer's doubts in headlines and reads defensive. Instead
+a `Projektverlauf` section tells one project as a 5-chapter log, and each chapter answers a fear
+in passing: data stays in the client's systems (03 + closing note), we build around existing
+systems, no migration (03), all access + source + German docs handed over, no lock-in (04, 05).
+Every chapter also states **what the client receives** and **what it costs them in time** — the
+hidden objection nobody voices. Data claims stay generic on purpose: no infrastructure promises
+we cannot verify per project.
+
+## D-013 | 2026-07-26 | Contact: real form, mailto only as fallback | DECIDED
+The `mailto:` CTA was the biggest conversion leak (opens a blank mail client, unmeasurable).
+Replaced with an accessible form (name/company/email/message, consent checkbox, honeypot,
+client-side validation in German). `src/config/site.ts` holds two empty slots: `formEndpoint`
+(POST target — set when a GDPR-compatible provider or Cloudflare Pages Function exists) and
+`bookingUrl` (e.g. self-hosted Cal.com). Until `formEndpoint` is set — or if it fails — the form
+hands the finished message to the visitor's mail client, so an enquiry is never lost.
+Owner for both: founders. Analytics (Plausible) still NOT installed — do before driving traffic.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

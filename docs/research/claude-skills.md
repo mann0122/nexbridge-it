@@ -18,18 +18,25 @@ Which Claude Code skills give us a top-tier delivery setup without bloating the 
 - dataviz — chart/dashboard design system guidance (relevant for P-demo dashboard + client work).
 - skill-creator — build our own skills later (e.g. a Klarfluss delivery-checklist skill).
 
-## Evaluated, deliberately NOT installed (avoid overlap/bloat)
-- **anthropics/skills `frontend-design`** — good, but overlaps ~80% with Impeccable which is
-  stricter and has enforcement hooks. Two design authorities = conflicting guidance. Skip.
-- **obra/superpowers** (~41k stars) — full TDD/brainstorm/worktree workflow framework. Heavy;
-  our CLAUDE.md + agents already cover the workflow at our scale. Revisit at company phase.
-- **Context7 MCP** — fresh library docs on demand. Useful during client delivery; add per-need,
-  not by default.
+## Full arsenal installed 2026-07-26 (D-009, founder mandate: masterpiece output)
+Vendored from shallow clones into `.claude/skills/` (32 skills total):
+- **taste-skill trio** (`Leonxlnx/taste-skill`, ~68k stars): design-taste-frontend v2 (variance/
+  motion/density dials), brandkit (logo & identity art direction), redesign-skill.
+- **emilkowalski/skills** (Vercel/Linear pedigree), all 7: emil-design-eng, animation-vocabulary,
+  review/improve/find-animation-opportunities, apple-design, pick-ui-library.
+- **greensock/gsap-skills** (OFFICIAL GSAP), 7 of 8: core, timeline, scrolltrigger, plugins,
+  performance, utils, frameworks. Skipped gsap-react (no React in stack — Astro/vanilla).
+- **obra/superpowers** (~41k stars), all 14 workflow skills: brainstorming, writing/executing
+  plans, TDD, systematic-debugging, code review pair, git worktrees, subagent-driven dev, etc.
 
-## Recommendation
-Impeccable as the single design authority + our own agents (design-critic, copywriter-de,
-qa-reviewer) as enforcement. Revisit superpowers + Context7 when delivery volume grows.
-Confidence: high for v1 website; re-evaluate before first client project.
+### Authority order when skills conflict
+docs/02-brand.md (the brief) > impeccable (enforcement layer, has hooks) > taste/emil guidance >
+generic defaults. The brief always wins — skills serve the brand, not the reverse.
+
+## Still not installed
+- **anthropics/skills `frontend-design`** — ~80% overlap with impeccable; two default design
+  authorities would conflict. Impeccable owns that slot.
+- **Context7 MCP** — add per-need during client delivery.
 
 ## Sources
 - https://github.com/pbakaus/impeccable

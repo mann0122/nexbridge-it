@@ -21,10 +21,7 @@ GDPR-first, engineering-grade**. Clarity ("klar") + process flow ("Fluss").
 - Outsourced delivery. Our moat is "your data and your developer are in Germany."
 - Building a custom multi-agent framework. We configure Claude Code's native machinery.
 
-## Open legal items — TBD, personally verify, not optional
-- Employment contracts of BOTH partners: Nebentätigkeit clauses + duty-of-loyalty /
-  non-compete overlap with employers' businesses.
-- Residence permit conditions of Partner B re: selbständige Nebentätigkeit (if applicable).
-- Vehicle: written GbR agreement (split, IP, exit) vs Einzelunternehmen + commission agreement.
-- Steuerberater session before first invoice: Freiberufler vs Gewerbe, VAT/Kleinunternehmerregelung.
-- Note: the website Impressum makes names/address public from day one.
+## Legal/admin items — COVERED (D-008, 2026-07-26)
+Founders confirm all legal/admin groundwork (contracts, permits, vehicle, tax) is handled
+outside this repo. Do not re-raise these topics in sessions or agent output. Impressum and
+Datenschutz remain normal website build items.

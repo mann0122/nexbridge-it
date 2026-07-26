@@ -24,6 +24,27 @@ outsourced delivery explicitly excluded (see docs/00-vision.md non-goals).
 GbR with written agreement vs Einzelunternehmen + commission agreement. Blocked on: employment
 contract checks + Steuerberater input. Owner: Partner A.
 
+## D-006 | 2026-07-26 | Domain: klarfluss.eu | DECIDED
+klarfluss.de is TAKEN (parked/squatted — see docs/research/domain-availability.md). Founders chose
+klarfluss.eu as primary domain. Free as of 2026-07-26; registration action: founders. Optional
+later: klarfluss-software.de as defensive secondary/redirect.
+
+## D-007 | 2026-07-26 | v1 package prices | DECIDED
+Set by Claude on founder instruction ("put according to you"); Partner A may adjust anytime.
+P1 Prozess-Audit: 1.900 € Festpreis. P2 Automation Sprint: 7.500–12.000 € nach Umfang.
+P3 Betrieb & Ausbau: 1.200 €/Monat, Mindestlaufzeit 3 Monate. Netto zzgl. USt.
+
+## D-008 | 2026-07-26 | Legal/admin items: covered by founders | DECIDED
+Founders confirm all legal/admin groundwork (contracts, permits, tax setup) is handled outside
+this repo. Agents and sessions must NOT re-raise these topics. Impressum/Datenschutz pages remain
+part of the website scope as normal build items.
+
+## D-009 | 2026-07-26 | Skill arsenal: maximal | DECIDED
+Mandate: masterpiece output, not "good". Installed at project level: impeccable (+ hooks),
+taste-skill trio (design-taste-frontend, brandkit, redesign-skill), all 7 emilkowalski design/
+animation skills, official GSAP skills (7, minus gsap-react — no React in stack), all 14
+superpowers workflow skills. See docs/research/claude-skills.md.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

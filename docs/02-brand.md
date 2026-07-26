@@ -3,7 +3,8 @@
 ## Name
 **Klarfluss** (double s). Klarheit + Fluss: clear processes that flow by themselves.
 Wordmark lowercase: `klarfluss.` with signal-orange period (#FF4D00).
-TBD: verify klarfluss.de (DENIC), DPMA trademark search, social handles.
+Domain: **klarfluss.eu** (D-006; .de is squatted — see docs/research/domain-availability.md).
+TBD: social handle check before first public post.
 
 ## Voice
 Klar, präzise, ohne Buzzwords. Sie-Form. Short sentences. Outcomes before technology.

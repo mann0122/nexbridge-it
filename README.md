@@ -44,5 +44,6 @@ gets written into `docs/` (usually `05-decisions.md`) and committed. Optionally 
 + `docs/` into your claude.ai Project knowledge so chat-Claude shares the same brain.
 
 ## Open items (blocking or soon)
-- klarfluss.de availability (DENIC) + DPMA trademark search → D-001
-- Legal vehicle: GbR agreement vs Einzelunternehmen + commission → `docs/00-vision.md`
+- Register klarfluss.eu (D-006) — free as of 2026-07-26, founders' action
+- `gh auth login` + push this repo to GitHub
+- Social handle check before first public post

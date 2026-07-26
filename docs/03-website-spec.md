@@ -1,4 +1,4 @@
-# 03 — Website Spec (klarfluss.de)
+# 03 — Website Spec (klarfluss.eu)
 
 ## Goal
 One job: convert a Mittelstand decision-maker (sent by Partner A or via search) into an

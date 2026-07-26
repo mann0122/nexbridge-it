@@ -9,13 +9,14 @@ Four delivery forms, one promise:
 3. **Dashboards** — live KPIs from ERP/CRM/Excel chaos; one screen of truth.
 4. **Individualsoftware** — small custom applications where off-the-shelf fails.
 
-## Productized packages (prices TBD: set with Partner A)
+## Productized packages (v1 prices per D-007; Partner A may adjust)
 - **P1 Prozess-Audit** — fixed price, 1 week. Map 3–5 processes, quantify hours lost, deliver an
-  automation roadmap with ROI estimate. Price anchor: TBD (suggested corridor 1.500–2.500 €).
+  automation roadmap with ROI estimate. **1.900 € Festpreis.**
 - **P2 Automation Sprint** — 2–4 weeks. Implement the top roadmap item end-to-end incl. handover
-  doc. Price: TBD (suggested corridor 6.000–14.000 € by scope).
+  doc. **7.500–12.000 € nach Umfang** (quote per Angebot).
 - **P3 Betrieb & Ausbau** — monthly retainer. Monitoring, fixes, iterative extensions.
-  Price: TBD (suggested corridor 800–2.500 €/month).
+  **1.200 €/Monat, Mindestlaufzeit 3 Monate.**
+All prices netto zzgl. USt.
 
 ## Ideal client profile
 Mittelstand, roughly 10–250 employees, in Partner A's network vertical (define after first

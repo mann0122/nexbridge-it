@@ -23,12 +23,12 @@ Gültig bis: [Datum, i. d. R. +14 Tage]
 [Zugänge, Ansprechpartner, Feedbackzeiten — was der Kunde liefern muss, mit Fristen.]
 
 ## 6. Preis & Zahlungsplan
-[Festpreis oder Aufwand; Netto zzgl. USt. bzw. Hinweis nach § 19 UStG — TBD: mit Steuerberater
-klären. Zahlungsplan z. B. 40 % bei Beauftragung / 60 % bei Abnahme.]
+[Festpreis oder Aufwand; netto zzgl. USt. Preise gem. docs/01-offer.md (D-007).
+Zahlungsplan z. B. 40 % bei Beauftragung / 60 % bei Abnahme.]
 
 ## 7. Abnahme, Gewährleistung, Eigentum
 [Abnahmekriterien = Punkt 3. Nutzungsrechte am Ergebnis nach vollständiger Zahlung.
-TBD: AGB/Vertragsbasis rechtlich prüfen lassen — dieser Abschnitt ist kein Rechtstext.]
+Vertragsbasis der Gründer (D-008).]
 
 ---
 Ort, Datum, Unterschrift Klarfluss · Ort, Datum, Unterschrift Auftraggeber

@@ -1,0 +1,97 @@
+---
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const phases = [1, 2, 3].map((i) => ({
+  phase: t(`process.${i}.phase` as Parameters<typeof t>[0]),
+  title: t(`process.${i}.title` as Parameters<typeof t>[0]),
+  duration: t(`process.${i}.duration` as Parameters<typeof t>[0]),
+  note: t(`process.${i}.note` as Parameters<typeof t>[0]),
+  price: t(`process.${i}.price` as Parameters<typeof t>[0]),
+}));
+---
+
+{/* Vorgehen: the flow-line runs vertically through three phases; scroll draws it */}
+<section id="vorgehen" class="surface-grid border-y border-steel-soft">
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel" data-reveal>{t('process.kicker')}</p>
+    <h2 class="type-display mt-4 max-w-[24ch] text-[clamp(1.9rem,3.6vw,3rem)] text-paper" data-reveal>
+      {t('process.title')}
+    </h2>
+
+    <div id="process-flow" class="relative mt-14 pl-8 md:pl-12" role="list" aria-label={t('a11y.processDiagram')}>
+      {/* base rail + signal line that scroll fills */}
+      <div class="absolute bottom-4 left-[7px] top-1 w-px bg-steel-soft md:left-[11px]" aria-hidden="true"></div>
+      <div
+        id="process-line"
+        class="absolute bottom-4 left-[6.5px] top-1 w-[2px] origin-top bg-signal md:left-[10.5px]"
+        style="transform: scaleY(0)"
+        aria-hidden="true"
+      >
+      </div>
+
+      {
+        phases.map((p, idx) => (
+          <div class={`process-step relative ${idx < phases.length - 1 ? 'pb-14' : ''}`} role="listitem">
+            {/* node square on the rail */}
+            <span
+              class="process-node absolute -left-8 top-1.5 block h-[15px] w-[15px] border-[1.5px] border-steel bg-graphite transition-colors duration-300 md:-left-12"
+              aria-hidden="true"
+            />
+            <div class="grid grid-cols-1 gap-2 md:grid-cols-12 md:gap-6" data-reveal>
+              <div class="md:col-span-3">
+                <p class="type-annot text-steel">{p.phase} · {p.duration}</p>
+                <h3 class="type-subhead mt-1.5 text-2xl text-paper">{p.title}</h3>
+              </div>
+              <p class="text-[0.95rem] leading-relaxed text-steel md:col-span-6">{p.note}</p>
+              <p class="font-mono text-[0.8125rem] text-paper md:col-span-3 md:text-right">{p.price}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="type-annot mt-12 text-steel" data-reveal>{t('process.priceNote')}</p>
+  </div>
+</section>
+
+<script>
+  import { gsap, motionOff, ScrollTrigger } from '../scripts/motion';
+
+  const flow = document.getElementById('process-flow');
+  const line = document.getElementById('process-line');
+  const nodes = Array.from(document.querySelectorAll<HTMLElement>('.process-node'));
+
+  function setActive(node: HTMLElement, on: boolean) {
+    node.style.borderColor = on ? 'var(--color-signal)' : 'var(--color-steel)';
+    node.style.backgroundColor = on ? 'var(--color-signal)' : 'var(--color-graphite)';
+  }
+
+  if (flow && line) {
+    if (motionOff) {
+      line.style.transform = 'scaleY(1)';
+      nodes.forEach((node) => setActive(node, true));
+    } else {
+      gsap.to(line, {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: { trigger: flow, start: 'top 70%', end: 'bottom 62%', scrub: 0.5 },
+      });
+      nodes.forEach((node) => {
+        ScrollTrigger.create({
+          trigger: node,
+          start: 'top 66%',
+          // Deactivate on reverse scroll so lit nodes never outrun the line.
+          onEnter: () => setActive(node, true),
+          onLeaveBack: () => setActive(node, false),
+        });
+      });
+    }
+  }
+</script>

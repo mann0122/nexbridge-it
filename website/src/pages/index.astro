@@ -3,25 +3,48 @@
 DIRECTION CONTRACT
 THESIS: The site is an engineering document that demonstrates the craft it
 sells; it refuses the dark-SaaS hero with floating gradients and stat cards.
-OWN-WORLD: German drawing-office — graphite ground, paper text, ONE signal-
-orange line, steel hairlines, DIN-style frame coordinates, Fragment Mono
-annotations, Archivo-expanded display. Recognizable with all content removed
-as a technical schematic on a dark drawing board.
-STORY: A Geschäftsführer sees their own chaos (Excel, E-Mail, ERP) literally
-converge through klarfluss into one clean flowing line → books an Erstgespräch.
-FIRST VIEWPORT: kicker, two-line display H1, subline, CTA pair; below, the
-full-width working schematic draws itself; hairline annotation row closes.
-FORM: Signal-flow schematic (P&ID tradition), pinned by docs/02-brand.md —
-brief-pinned world, no concept roll.
+OWN-WORLD: German drawing-office — graphite ground with faint graph grid,
+paper reading sections, ONE signal-orange flowing line, steel hairlines,
+DIN frame coordinates, Fragment Mono annotations, Archivo-expanded display.
+STORY: A Geschäftsführer sees generic chaos converge through klarfluss into
+one clean pulsing line → recognizes their pains (Positionsliste) → sees the
+four services (part-numbered) → the three-phase process (scroll-drawn flow)
+→ a labeled demo dashboard → the founders → books an Erstgespräch.
+FIRST VIEWPORT: kicker, two-line display H1, subline, CTA pair; the working
+schematic draws itself and keeps pulsing.
+FORM: Signal-flow schematic (P&ID tradition), pinned by docs/02-brand.md.
 */
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import Problems from '../components/Problems.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import Demo from '../components/Demo.astro';
+import Founders from '../components/Founders.astro';
+import Closing from '../components/Closing.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Layout lang="de" path="/">
   <Header lang="de" path="/" />
   <main id="main">
     <Hero lang="de" />
+    <Problems lang="de" />
+    <Services lang="de" />
+    <Process lang="de" />
+    <Demo lang="de" />
+    <Founders lang="de" />
+    <Closing lang="de" />
   </main>
+  <Footer lang="de" />
 </Layout>
+
+<script>
+  // One global pass wires every section's reveal group exactly once.
+  import { revealGroup } from '../scripts/motion';
+
+  document.querySelectorAll('[data-reveal-scope]').forEach((scope) => {
+    revealGroup(scope, Array.from(scope.querySelectorAll('[data-reveal]')));
+  });
+</script>

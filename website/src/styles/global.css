@@ -50,6 +50,11 @@ body {
   outline-offset: 2px;
 }
 
+/* Anchor targets clear the sticky header */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
 /* Display type: Archivo expanded — the voice of the wordmark ----------- */
 .type-display {
   font-stretch: 125%;
@@ -66,12 +71,91 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Subhead grade: the one step between body (100%) and display (125%) --- */
+.type-subhead {
+  font-stretch: 112%;
+  font-weight: 600;
+}
+
 /* Technical annotation: Fragment Mono, used for data/labels only ------- */
 .type-annot {
   font-family: var(--font-mono);
   font-size: 0.6875rem; /* 11px */
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* Engineering grid: faint graph-paper texture on graphite surfaces ----- */
+.surface-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Paper sections: the site flips to paper for reading passages ---------- */
+.surface-paper {
+  background: var(--color-paper);
+  color: var(--color-graphite);
+}
+.surface-paper ::selection {
+  background: var(--color-graphite);
+  color: var(--color-paper);
+}
+
+/* Scroll reveals: markup ships visible (no-JS safe). motion.ts hides the
+   elements itself right before animating, so a failed script leaves the
+   page readable rather than blank. ------------------------------------- */
+
+/* Dimension-line hover on service rows: CAD-selection annotations ------- */
+.dim-row {
+  position: relative;
+}
+.dim-row::before,
+.dim-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dim-row::before {
+  top: 0;
+}
+.dim-row::after {
+  bottom: -1px;
+  transform-origin: right;
+}
+.dim-row:hover::before,
+.dim-row:hover::after {
+  transform: scaleX(1);
+}
+.dim-row .dim-tick {
+  position: absolute;
+  right: 0;
+  top: -0.55rem;
+  padding: 0.15rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  background: var(--color-graphite);
+  color: var(--color-paper);
+  opacity: 0;
+  transition: opacity 300ms ease 180ms;
+}
+.dim-row:hover .dim-tick {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dim-row::before,
+  .dim-row::after,
+  .dim-row .dim-tick {
+    transition: none;
+  }
 }
 
 /* Link underline that draws in from the left --------------------------- */

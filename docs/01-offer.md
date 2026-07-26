@@ -12,8 +12,9 @@ Four delivery forms, one promise:
 ## Productized packages (v1 prices per D-007; Partner A may adjust)
 - **P1 Prozess-Audit** — fixed price, 1 week. Map 3–5 processes, quantify hours lost, deliver an
   automation roadmap with ROI estimate. **1.900 € Festpreis.**
-- **P2 Automation Sprint** — 2–4 weeks. Implement the top roadmap item end-to-end incl. handover
-  doc. **7.500–12.000 € nach Umfang** (quote per Angebot).
+- **P2 Umsetzungs-Sprint** (formerly "Automation Sprint" — German name per copywriter review
+  2026-07-26; website and Angebote use this name) — 2–4 weeks. Implement the top roadmap item
+  end-to-end incl. handover doc. **7.500–12.000 € nach Umfang** (quote per Angebot).
 - **P3 Betrieb & Ausbau** — monthly retainer. Monitoring, fixes, iterative extensions.
   **1.200 €/Monat, Mindestlaufzeit 3 Monate.**
 All prices netto zzgl. USt.

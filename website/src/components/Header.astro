@@ -5,22 +5,25 @@ import { type Lang, useTranslations, altPath } from '../i18n/ui';
 interface Props {
   lang: Lang;
   path: string;
+  /** False on pages with no translated twin (legal pages) — hides the switch. */
+  hasAlternate?: boolean;
 }
 
-const { lang, path } = Astro.props;
+const { lang, path, hasAlternate = true } = Astro.props;
 const t = useTranslations(lang);
 const base = lang === 'de' ? '' : '/en';
 const switchHref = altPath(lang, path);
 
+// Anchors into the landing page until dedicated subpages exist (D-010 scope).
 const links = [
-  { href: `${base}/leistungen`, label: t('nav.leistungen') },
-  { href: `${base}/vorgehen`, label: t('nav.vorgehen') },
-  { href: `${base}/ueber-uns`, label: t('nav.ueberUns') },
-  { href: `${base}/kontakt`, label: t('nav.kontakt') },
+  { href: `${base}/#leistungen`, label: t('nav.leistungen') },
+  { href: `${base}/#vorgehen`, label: t('nav.vorgehen') },
+  { href: `${base}/#ueber-uns`, label: t('nav.ueberUns') },
+  { href: `${base}/#kontakt`, label: t('nav.kontakt') },
 ];
 ---
 
-<header class="border-b border-steel-soft">
+<header class="sticky top-0 z-40 border-b border-steel-soft bg-graphite">
   <div class="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6">
     <a href={lang === 'de' ? '/' : '/en/'} class="type-wordmark text-[1.35rem]">
       {SITE.name}<span class="text-signal">.</span>
@@ -34,19 +37,27 @@ const links = [
           </a>
         ))
       }
-      <a
-        href={switchHref}
-        class="type-annot ml-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
-        aria-label={t('a11y.langSwitch')}
-      >
-        {lang === 'de' ? 'DE → EN' : 'EN → DE'}
-      </a>
+      {
+        hasAlternate && (
+          <a
+            href={switchHref}
+            class="type-annot ml-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
+            aria-label={t('a11y.langSwitch')}
+          >
+            {lang === 'de' ? 'DE → EN' : 'EN → DE'}
+          </a>
+        )
+      }
     </nav>
 
     <div class="flex items-center gap-4 md:hidden">
-      <a href={switchHref} class="type-annot border border-steel-soft px-2.5 py-1.5 text-steel" aria-label={t('a11y.langSwitch')}>
-        {lang === 'de' ? 'EN' : 'DE'}
-      </a>
+      {
+        hasAlternate && (
+          <a href={switchHref} class="type-annot border border-steel-soft px-2.5 py-1.5 text-steel" aria-label={t('a11y.langSwitch')}>
+            {lang === 'de' ? 'EN' : 'DE'}
+          </a>
+        )
+      }
       <button
         id="menu-toggle"
         class="flex h-10 w-10 flex-col items-center justify-center gap-1.5"
@@ -62,12 +73,17 @@ const links = [
     </div>
   </div>
 
-  <nav id="mobile-menu" class="hidden border-t border-steel-soft md:hidden" aria-label={t('a11y.mainNav')}>
-    <ul class="space-y-1 px-6 py-6">
+  {/* Full-screen graphite overlay per DESIGN.md */}
+  <nav
+    id="mobile-menu"
+    class="surface-grid fixed inset-0 top-16 z-40 hidden bg-graphite md:hidden"
+    aria-label={t('a11y.mainNav')}
+  >
+    <ul class="flex h-full flex-col gap-2 px-6 pt-10">
       {
         links.map((link) => (
-          <li>
-            <a href={link.href} class="type-wordmark block py-3 text-2xl text-paper">
+          <li class="border-b border-steel-soft">
+            <a href={link.href} class="type-display block py-5 text-3xl text-paper">
               {link.label}
             </a>
           </li>
@@ -80,18 +96,35 @@ const links = [
 <script>
   const toggle = document.getElementById('menu-toggle');
   const menu = document.getElementById('mobile-menu');
-  toggle?.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
+
+  function setMenu(open: boolean) {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute(
       'aria-label',
-      (open ? toggle.dataset.labelOpen : toggle.dataset.labelClose) ?? '',
+      (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '',
     );
-    menu?.classList.toggle('hidden', open);
+    menu.classList.toggle('hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
     const spans = toggle.querySelectorAll('span');
-    spans[0]?.classList.toggle('translate-y-[3.5px]', !open);
-    spans[0]?.classList.toggle('rotate-45', !open);
-    spans[1]?.classList.toggle('-translate-y-[3.5px]', !open);
-    spans[1]?.classList.toggle('-rotate-45', !open);
+    spans[0]?.classList.toggle('translate-y-[3.5px]', open);
+    spans[0]?.classList.toggle('rotate-45', open);
+    spans[1]?.classList.toggle('-translate-y-[3.5px]', open);
+    spans[1]?.classList.toggle('-rotate-45', open);
+    if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
+  }
+
+  toggle?.addEventListener('click', () => {
+    setMenu(toggle.getAttribute('aria-expanded') !== 'true');
   });
+
+  // Escape closes and returns focus to the toggle; anchor clicks close too.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      toggle.focus();
+    }
+  });
+
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 </script>

@@ -11,9 +11,11 @@ interface Props {
   path: string;
   title?: string;
   description?: string;
+  /** False for pages that exist in one language only (legal pages). */
+  hasAlternate?: boolean;
 }
 
-const { lang, path, title, description } = Astro.props;
+const { lang, path, title, description, hasAlternate = true } = Astro.props;
 const t = useTranslations(lang);
 const metaTitle = title ?? t('meta.title');
 const metaDescription = description ?? t('meta.description');
@@ -31,9 +33,15 @@ const alternateUrl = new URL(alternate, SITE.url).href;
     <meta name="description" content={metaDescription} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang={lang === 'de' ? 'en' : 'de'} href={alternateUrl} />
-    <link rel="alternate" hreflang={lang} href={canonical} />
-    <link rel="alternate" hreflang="x-default" href={new URL(lang === 'de' ? path : alternate, SITE.url).href} />
+    {
+      hasAlternate && (
+        <>
+          <link rel="alternate" hreflang={lang === 'de' ? 'en' : 'de'} href={alternateUrl} />
+          <link rel="alternate" hreflang={lang} href={canonical} />
+          <link rel="alternate" hreflang="x-default" href={new URL(lang === 'de' ? path : alternate, SITE.url).href} />
+        </>
+      )
+    }
     <meta name="generator" content={Astro.generator} />
     <meta property="og:title" content={metaTitle} />
     <meta property="og:description" content={metaDescription} />

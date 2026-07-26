@@ -1,0 +1,44 @@
+---
+import { SITE } from '../config/site';
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+{/* Zeichnungskopf: the title block closes the document */}
+<footer class="border-t border-steel-soft">
+  <dl class="mx-auto grid max-w-[1200px] grid-cols-1 divide-y divide-steel-soft px-6 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+    <div class="py-5 sm:pr-6">
+      <dt class="type-annot text-steel">{t('footer.project')}</dt>
+      <dd class="mt-1 font-mono text-[0.8125rem] text-paper">{SITE.name}.</dd>
+    </div>
+    <div class="py-5 sm:px-6">
+      <dt class="type-annot text-steel">{t('tb.loc.label')}</dt>
+      <dd class="mt-1 font-mono text-[0.8125rem] text-paper">{t('tb.loc.value')}</dd>
+    </div>
+    <div class="py-5 sm:px-6">
+      <dt class="type-annot text-steel">{t('footer.contact')}</dt>
+      <dd class="mt-1 font-mono text-[0.8125rem] text-paper">
+        <a href="mailto:kontakt@klarfluss.eu" class="link-draw">kontakt@klarfluss.eu</a>
+      </dd>
+    </div>
+    <div class="py-5 sm:pl-6">
+      <dt class="type-annot text-steel">{t('tb.rev.label')}</dt>
+      <dd class="mt-1 font-mono text-[0.8125rem] text-paper">{t('tb.rev.value')}</dd>
+    </div>
+  </dl>
+  <div class="border-t border-steel-soft">
+    <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-6 py-4">
+      <p class="type-annot text-steel">© {SITE.foundedYear} {SITE.name}</p>
+      <nav class="flex gap-6" aria-label={t('a11y.legalNav')}>
+        <a href="/impressum" class="type-annot link-draw text-steel">{t('footer.legal.impressum')}</a>
+        <a href="/datenschutz" class="type-annot link-draw text-steel">{t('footer.legal.datenschutz')}</a>
+      </nav>
+    </div>
+  </div>
+</footer>

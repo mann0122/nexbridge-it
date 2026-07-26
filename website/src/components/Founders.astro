@@ -1,0 +1,38 @@
+---
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const founders = [1, 2].map((i) => ({
+  role: t(`founders.${i}.role` as Parameters<typeof t>[0]),
+  note: t(`founders.${i}.note` as Parameters<typeof t>[0]),
+}));
+---
+
+{/* Über uns: roles over names until real bios/photos land (never invent) */}
+<section id="ueber-uns" class="surface-paper border-t border-line">
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel-deep" data-reveal>{t('founders.kicker')}</p>
+    <h2 class="type-display mt-4 max-w-[26ch] text-[clamp(1.9rem,3.6vw,3rem)]" data-reveal>
+      {t('founders.title')}
+    </h2>
+
+    <div class="mt-12 grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2">
+      {
+        founders.map((f) => (
+          <div class="border-t border-graphite pt-5" data-reveal>
+            <h3 class="type-subhead text-xl">{f.role}</h3>
+            <p class="mt-2 max-w-[48ch] text-[0.95rem] leading-relaxed text-steel-deep">{f.note}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="type-annot mt-12 text-steel-deep" data-reveal>{t('founders.origin')}</p>
+  </div>
+</section>

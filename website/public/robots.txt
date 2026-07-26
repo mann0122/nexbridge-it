@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://klarfluss.eu/sitemap-index.xml

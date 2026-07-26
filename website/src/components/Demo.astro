@@ -1,0 +1,108 @@
+---
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const kpis = [1, 2, 3].map((i) => ({
+  label: t(`demo.kpi${i}.label` as Parameters<typeof t>[0]),
+  value: Number(t(`demo.kpi${i}.value` as Parameters<typeof t>[0])),
+}));
+
+// Fictional Musterfirma demo data (clearly labeled); same in both languages.
+const chart = { before: 45, after: 8, max: 50 };
+---
+
+{/* Proof placeholder until real cases exist: a labeled demo dashboard */}
+<section class="surface-paper">
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel-deep" data-reveal>{t('demo.kicker')}</p>
+    <h2 class="type-display mt-4 max-w-[24ch] text-[clamp(1.9rem,3.6vw,3rem)]" data-reveal>
+      {t('demo.title')}
+    </h2>
+    <p class="mt-5 max-w-[58ch] text-[0.95rem] leading-relaxed text-steel-deep" data-reveal>
+      {t('demo.sub')}
+    </p>
+
+    {/* the sheet: one bordered dashboard document */}
+    <div id="demo-sheet" class="mt-12 border border-line" data-reveal>
+      <div class="flex items-center justify-between border-b border-line px-5 py-3">
+        <span class="type-annot text-steel-deep">Musterfirma GmbH</span>
+        <span class="type-annot bg-graphite px-2 py-1 text-paper">DEMO</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3">
+        {
+          kpis.map((kpi, i) => (
+            <div class={`px-5 py-6 ${i > 0 ? 'border-t border-line sm:border-l sm:border-t-0' : ''}`}>
+              <p class="type-annot text-steel-deep">{kpi.label}</p>
+              <p class="type-display demo-count mt-2 text-4xl tabular-nums" data-target={kpi.value}>
+                {kpi.value.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB')}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="border-t border-line px-5 py-6">
+        <p class="type-annot text-steel-deep">{t('demo.chart.label')}</p>
+        <div class="mt-4 space-y-3">
+          <div class="flex items-center gap-4">
+            <span class="type-annot w-16 shrink-0 text-steel-deep">{t('demo.chart.before')}</span>
+            <div class="h-4 flex-1">
+              <div
+                class="demo-bar h-full bg-steel-deep"
+                style={`width: ${(chart.before / chart.max) * 100}%`}
+                data-width={(chart.before / chart.max) * 100}
+              >
+              </div>
+            </div>
+            <span class="type-annot w-8 shrink-0 text-right text-steel-deep">{chart.before}</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="type-annot w-16 shrink-0 text-steel-deep">{t('demo.chart.after')}</span>
+            <div class="h-4 flex-1">
+              <div
+                class="demo-bar h-full bg-signal"
+                style={`width: ${(chart.after / chart.max) * 100}%`}
+                data-width={(chart.after / chart.max) * 100}
+              >
+              </div>
+            </div>
+            <span class="type-annot w-8 shrink-0 text-right text-steel-deep">{chart.after}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap, motionOff, countUp } from '../scripts/motion';
+
+  const lang = document.documentElement.lang;
+
+  document.querySelectorAll<HTMLElement>('.demo-count').forEach((el) => {
+    countUp(el, Number(el.dataset.target), lang);
+  });
+
+  if (!motionOff) {
+    const sheet = document.getElementById('demo-sheet');
+    document.querySelectorAll<HTMLElement>('.demo-bar').forEach((bar) => {
+      gsap.fromTo(
+        bar,
+        { width: '0%' },
+        {
+          width: `${bar.dataset.width}%`,
+          duration: 1.3,
+          ease: 'expo.out',
+          scrollTrigger: { trigger: sheet, start: 'top 72%' },
+        },
+      );
+    });
+  }
+</script>

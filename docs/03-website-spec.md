@@ -7,8 +7,9 @@ Erstgespräch booking. Everything serves that.
 ## Tech (decided — D-002)
 Astro 5 + Tailwind + MDX. Cloudflare Pages. Plausible (cookieless, EU). Contact form via
 GDPR-compatible provider with explicit consent checkbox + double opt-in for anything recurring.
-Language: DE primary at `/`, EN later at `/en/` (hreflang when live). Fonts self-hosted via
-Fontsource — no Google Fonts CDN (GDPR).
+Language: bilingual from v1 (D-010) — DE default at `/`, EN at `/en/`, language switcher in
+header, hreflang pairs on every page. All copy lives in i18n dictionaries; no hardcoded strings
+in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
 
 ## Sitemap
 - `/` Start

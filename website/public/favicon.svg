@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- K-mark from two flow lines (docs/02-brand.md, logo direction 2) -->
+  <rect width="32" height="32" fill="#14171A"/>
+  <path d="M10 5 V27" stroke="#F7F5F0" stroke-width="3" fill="none"/>
+  <path d="M25 5 C 16 5, 16 16, 10.5 16 M10.5 16 C 16 16, 16 27, 25 27" stroke="#FF4D00" stroke-width="3" fill="none"/>
+</svg>

@@ -1,0 +1,176 @@
+---
+import { type Lang, useTranslations } from '../i18n/ui';
+import { SITE } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="relative">
+  {/* Drawing-frame: quiet engineering-document coordinates, desktop only */}
+  {/* DIN drawing-frame: one grid cell, row A × column 1 — letters on both sides, numbers top and bottom */}
+  <div class="pointer-events-none absolute inset-x-4 top-2 bottom-2 hidden border border-steel-soft/60 lg:block" aria-hidden="true">
+    <span class="type-annot absolute left-2 top-1/2 -translate-y-1/2 text-steel-deep">A</span>
+    <span class="type-annot absolute right-2 top-1/2 -translate-y-1/2 text-steel-deep">A</span>
+    <span class="type-annot absolute left-1/2 top-1.5 -translate-x-1/2 text-steel-deep">1</span>
+    <span class="type-annot absolute bottom-1.5 left-1/2 -translate-x-1/2 text-steel-deep">1</span>
+  </div>
+
+  <div class="mx-auto max-w-[1200px] px-6 pb-6 pt-16 md:pt-24">
+    <p class="type-annot text-steel">{t('hero.kicker')}</p>
+
+    <h1 class="type-display text-display mt-6 text-paper">
+      {t('hero.h1a')}<br class="hidden md:block" />
+      {t('hero.h1b')}
+    </h1>
+
+    <p class="mt-7 max-w-[52ch] text-lg leading-relaxed text-steel">
+      {t('hero.sub')}
+    </p>
+
+    <div class="mt-10 flex flex-wrap items-center gap-4">
+      <a
+        href={lang === 'de' ? '/kontakt' : '/en/kontakt'}
+        class="group inline-flex items-center gap-3 bg-signal px-6 py-3.5 font-semibold text-graphite"
+      >
+        {t('hero.ctaPrimary')}
+        <span class="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5" aria-hidden="true">→</span>
+      </a>
+      <a
+        href={lang === 'de' ? '/leistungen' : '/en/leistungen'}
+        class="link-draw inline-flex items-center px-2 py-3.5 text-paper"
+      >
+        {t('hero.ctaSecondary')}
+      </a>
+    </div>
+
+    {/* ------------------------------------------------------------------ */}
+    {/* The flow-line: a working schematic, not decoration. Three real     */}
+    {/* inputs converge into the klarfluss block; one signal line leaves.  */}
+    {/* ------------------------------------------------------------------ */}
+    <figure class="mt-12 md:mt-14" aria-label={t('a11y.flowDiagram')}>
+      {/* Desktop schematic */}
+      <svg
+        id="flow-desktop"
+        class="hidden w-full md:block"
+        viewBox="0 0 1152 260"
+        fill="none"
+        aria-hidden="true"
+      >
+        {/* input lines */}
+        <path class="flow-in" d="M0 40 H360 C 440 40, 460 118, 520 126" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        <path class="flow-in" d="M0 130 H520" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        <path class="flow-in" d="M0 220 H360 C 440 220, 460 142, 520 134" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        {/* input start ticks */}
+        <path class="flow-in" d="M1 32 V48 M1 122 V138 M1 212 V228" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        {/* input labels */}
+        <g class="flow-label" font-family="Fragment Mono, monospace" font-size="11" letter-spacing="0.08em" fill="var(--color-steel)">
+          <text x="14" y="30">{t('flow.in1').toUpperCase()}</text>
+          <text x="14" y="120">{t('flow.in2').toUpperCase()}</text>
+          <text x="14" y="210">{t('flow.in3').toUpperCase()}</text>
+        </g>
+        {/* processing block */}
+        <rect class="flow-block" x="520" y="104" width="132" height="52" stroke="var(--color-paper)" stroke-width="1.5" />
+        <g class="flow-label" font-family="Fragment Mono, monospace" font-size="12" letter-spacing="0.1em" fill="var(--color-paper)">
+          <text x="586" y="134" text-anchor="middle">{SITE.name.toUpperCase()}</text>
+        </g>
+        {/* signal output */}
+        <path class="flow-out" d="M652 130 H1118" stroke="var(--color-signal)" stroke-width="2.5" />
+        {/* measurement ticks on output */}
+        <path class="flow-out" d="M800 124 V136 M950 124 V136" stroke="var(--color-signal)" stroke-width="1.5" />
+        {/* arrowhead */}
+        <path class="flow-arrow" d="M1118 130 L1102 121 V139 Z" fill="var(--color-signal)" />
+        <g class="flow-label-out" font-family="Fragment Mono, monospace" font-size="11" letter-spacing="0.08em" fill="var(--color-paper)">
+          <text x="1118" y="112" text-anchor="end">{t('flow.out').toUpperCase()}</text>
+        </g>
+      </svg>
+
+      {/* Mobile schematic: same story, compact composition */}
+      <svg id="flow-mobile" class="w-full md:hidden" viewBox="0 0 360 320" fill="none" aria-hidden="true">
+        <path class="flow-in" d="M0 34 H120 C 160 34, 170 100, 200 106" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        <path class="flow-in" d="M0 112 H200" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        <path class="flow-in" d="M0 190 H120 C 160 190, 170 124, 200 118" stroke="var(--color-steel-deep)" stroke-width="1.5" />
+        <g class="flow-label" font-family="Fragment Mono, monospace" font-size="10" letter-spacing="0.06em" fill="var(--color-steel)">
+          <text x="8" y="24">{t('flow.in1').toUpperCase()}</text>
+          <text x="8" y="102">{t('flow.in2').toUpperCase()}</text>
+          <text x="8" y="180">{t('flow.in3').toUpperCase()}</text>
+        </g>
+        <rect class="flow-block" x="200" y="90" width="104" height="44" stroke="var(--color-paper)" stroke-width="1.5" />
+        <g class="flow-label" font-family="Fragment Mono, monospace" font-size="10" letter-spacing="0.08em" fill="var(--color-paper)">
+          <text x="252" y="116" text-anchor="middle">{SITE.name.toUpperCase()}</text>
+        </g>
+        <path class="flow-out" d="M252 134 V240 C 252 262, 264 272, 286 272 H336" stroke="var(--color-signal)" stroke-width="2.5" />
+        <path class="flow-arrow" d="M336 272 L322 264 V280 Z" fill="var(--color-signal)" />
+        <g class="flow-label-out" font-family="Fragment Mono, monospace" font-size="10" letter-spacing="0.06em" fill="var(--color-paper)">
+          <text x="336" y="296" text-anchor="end">{t('flow.out').toUpperCase()}</text>
+        </g>
+      </svg>
+    </figure>
+  </div>
+
+  {/* Zeichnungskopf — the title block, the brand's recurring device (DESIGN.md) */}
+  <div class="border-t border-steel-soft">
+    <dl class="mx-auto grid max-w-[1200px] grid-cols-1 divide-y divide-steel-soft border-steel-soft px-6 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <div class="py-4 sm:pr-6">
+        <dt class="type-annot text-steel">{t('tb.loc.label')}</dt>
+        <dd class="mt-1 font-mono text-[0.8125rem] text-paper">{t('tb.loc.value')}</dd>
+      </div>
+      <div class="py-4 sm:px-6">
+        <dt class="type-annot text-steel">{t('tb.privacy.label')}</dt>
+        <dd class="mt-1 font-mono text-[0.8125rem] text-paper">{t('tb.privacy.value')}</dd>
+      </div>
+      <div class="py-4 sm:pl-6">
+        <dt class="type-annot text-steel">{t('tb.rev.label')}</dt>
+        <dd class="mt-1 font-mono text-[0.8125rem] text-paper">{t('tb.rev.value')}</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+
+  // ?snap renders the final state without animation (reduced motion, CI screenshots)
+  const reduced =
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    new URLSearchParams(window.location.search).has('snap');
+
+  function animate(svg: SVGSVGElement) {
+    const ins = svg.querySelectorAll<SVGPathElement>('.flow-in');
+    const block = svg.querySelector<SVGRectElement>('.flow-block');
+    const out = svg.querySelectorAll<SVGPathElement>('.flow-out');
+    const arrow = svg.querySelector<SVGPathElement>('.flow-arrow');
+    const labels = svg.querySelectorAll<SVGGElement>('.flow-label');
+    const labelOut = svg.querySelector<SVGGElement>('.flow-label-out');
+
+    const draw = (el: SVGGeometryElement) => {
+      const len = el.getTotalLength();
+      gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
+      return len;
+    };
+
+    ins.forEach(draw);
+    out.forEach(draw);
+    if (block) draw(block as unknown as SVGGeometryElement);
+    gsap.set([...labels, labelOut, arrow], { opacity: 0 });
+
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    tl.to(ins, { strokeDashoffset: 0, duration: 1.1, stagger: 0.14 }, 0.15)
+      .to(labels, { opacity: 1, duration: 0.5, stagger: 0.14 }, 0.4)
+      .to(block, { strokeDashoffset: 0, duration: 0.7 }, '-=0.55')
+      .to(out, { strokeDashoffset: 0, duration: 0.9 }, '-=0.25')
+      .to(arrow, { opacity: 1, duration: 0.25 }, '-=0.15')
+      .to(labelOut, { opacity: 1, duration: 0.5 }, '-=0.2');
+  }
+
+  if (!reduced) {
+    document.querySelectorAll<SVGSVGElement>('#flow-desktop, #flow-mobile').forEach((svg) => {
+      // Only animate the visible variant; the other keeps its static final state.
+      if (svg.getBoundingClientRect().width > 0) animate(svg);
+    });
+  }
+</script>

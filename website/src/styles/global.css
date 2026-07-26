@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   klarfluss design tokens — single source (DESIGN.md is the written authority)
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-graphite: #14171a;
+  --color-graphite-2: #1b1f23;
+  --color-paper: #f7f5f0;
+  --color-signal: #ff4d00;
+  --color-steel: #8b959e; /* secondary text on graphite — AA against #14171A */
+  --color-steel-deep: #5b6770; /* brand steel: borders, muted lines, text on paper */
+  --color-steel-soft: #39424a; /* hairlines on graphite */
+  --color-line: #d9d4ca; /* hairlines on paper */
+
+  --font-sans: 'Archivo Variable', system-ui, sans-serif;
+  --font-mono: 'Fragment Mono', ui-monospace, monospace;
+
+  --text-display: clamp(2.5rem, 6.5vw, 5.6rem);
+}
+
+/* Base ---------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  background: var(--color-graphite);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  font-stretch: 100%;
+  color: var(--color-paper);
+  background: var(--color-graphite);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-graphite);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
+
+/* Display type: Archivo expanded — the voice of the wordmark ----------- */
+.type-display {
+  font-stretch: 125%;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+/* Wordmark: between body (100%) and display (125%) — deliberate 112% ---- */
+.type-wordmark {
+  font-stretch: 112%;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Technical annotation: Fragment Mono, used for data/labels only ------- */
+.type-annot {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* 11px */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Link underline that draws in from the left --------------------------- */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: left calc(100% - 0.1em);
+  background-repeat: no-repeat;
+  transition: background-size 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-draw:hover,
+.link-draw[aria-current='page'] {
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-draw {
+    transition: none;
+  }
+}

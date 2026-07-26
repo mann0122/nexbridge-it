@@ -24,12 +24,12 @@ Rules: signal is rationed — one accent element per viewport. Long-form content
 paper background with graphite text so the site is not wall-to-wall dark. CTA = signal bg +
 graphite text (AA for large/bold text).
 
-## Typography (direction — final pick via Impeccable font procedure)
-- Display: a characterful grotesk with personality (evaluate e.g. Archivo, Space Grotesk,
-  Söhne-alikes). Explicitly banned: Inter, DM Sans, generic defaults.
-- Body: highly legible sans, quiet, excellent German umlaut rendering.
-- Data/labels: a monospace for eyebrows, stats, code (e.g. IBM Plex Mono or similar).
-Two weights max in UI. Tight leading on display, generous on body.
+## Typography — FINAL (picked 2026-07-26 via Impeccable procedure, see DESIGN.md)
+- Display + body: **Archivo Variable** (self-hosted). Display at width 125% (expanded),
+  weight 700, tight leading; body at width 100%, weight 400. Two weights max in UI.
+- Data/labels: **Fragment Mono** (regular) — annotations, diagram labels, kicker, numbers.
+  (IBM Plex Mono rejected: saturated AI-default face; Space Grotesk likewise.)
+- Banned stays banned: Inter, DM Sans, generic defaults.
 
 ## Signature element
 The **flow-line**: 2 muted process lines + 1 accent line converging/branching, animated on scroll

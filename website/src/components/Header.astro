@@ -1,0 +1,97 @@
+---
+import { SITE } from '../config/site';
+import { type Lang, useTranslations, altPath } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+
+const { lang, path } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'de' ? '' : '/en';
+const switchHref = altPath(lang, path);
+
+const links = [
+  { href: `${base}/leistungen`, label: t('nav.leistungen') },
+  { href: `${base}/vorgehen`, label: t('nav.vorgehen') },
+  { href: `${base}/ueber-uns`, label: t('nav.ueberUns') },
+  { href: `${base}/kontakt`, label: t('nav.kontakt') },
+];
+---
+
+<header class="border-b border-steel-soft">
+  <div class="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6">
+    <a href={lang === 'de' ? '/' : '/en/'} class="type-wordmark text-[1.35rem]">
+      {SITE.name}<span class="text-signal">.</span>
+    </a>
+
+    <nav class="hidden items-center gap-8 md:flex" aria-label={t('a11y.mainNav')}>
+      {
+        links.map((link) => (
+          <a href={link.href} class="link-draw text-[0.9375rem] text-steel transition-colors hover:text-paper">
+            {link.label}
+          </a>
+        ))
+      }
+      <a
+        href={switchHref}
+        class="type-annot ml-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
+        aria-label={t('a11y.langSwitch')}
+      >
+        {lang === 'de' ? 'DE → EN' : 'EN → DE'}
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-4 md:hidden">
+      <a href={switchHref} class="type-annot border border-steel-soft px-2.5 py-1.5 text-steel" aria-label={t('a11y.langSwitch')}>
+        {lang === 'de' ? 'EN' : 'DE'}
+      </a>
+      <button
+        id="menu-toggle"
+        class="flex h-10 w-10 flex-col items-center justify-center gap-1.5"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t('a11y.menuOpen')}
+        data-label-open={t('a11y.menuOpen')}
+        data-label-close={t('a11y.menuClose')}
+      >
+        <span class="block h-px w-6 bg-paper transition-transform"></span>
+        <span class="block h-px w-6 bg-paper transition-transform"></span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="hidden border-t border-steel-soft md:hidden" aria-label={t('a11y.mainNav')}>
+    <ul class="space-y-1 px-6 py-6">
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href} class="type-wordmark block py-3 text-2xl text-paper">
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute(
+      'aria-label',
+      (open ? toggle.dataset.labelOpen : toggle.dataset.labelClose) ?? '',
+    );
+    menu?.classList.toggle('hidden', open);
+    const spans = toggle.querySelectorAll('span');
+    spans[0]?.classList.toggle('translate-y-[3.5px]', !open);
+    spans[0]?.classList.toggle('rotate-45', !open);
+    spans[1]?.classList.toggle('-translate-y-[3.5px]', !open);
+    spans[1]?.classList.toggle('-rotate-45', !open);
+  });
+</script>

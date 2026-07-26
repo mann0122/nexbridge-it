@@ -45,6 +45,12 @@ taste-skill trio (design-taste-frontend, brandkit, redesign-skill), all 7 emilko
 animation skills, official GSAP skills (7, minus gsap-react — no React in stack), all 14
 superpowers workflow skills. See docs/research/claude-skills.md.
 
+## D-010 | 2026-07-26 | Bilingual DE/EN from v1; name provisional until demo review | DECIDED
+Website ships German (default, `/`) AND English (`/en/`) from day one with a language switcher
+in the header. Supersedes the "EN later" line in 03-website-spec.md. Brand name "klarfluss"
+stays provisional until founders review the demo design — name lives in ONE config constant
+(site.ts) so a rename is a one-line change. Domain registration deferred until name is final.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

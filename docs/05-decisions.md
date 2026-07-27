@@ -99,9 +99,10 @@ Owner: founders. DPMA trademark check still open and must precede any printing.
 We sell KI-Agenten, so being citable when a buyer asks an assistant "who automates processes in
 Baden-Württemberg?" outweighs withholding public marketing copy from model training. The site
 carries no confidential content. robots.txt explicitly allows GPTBot, ClaudeBot, OAI-SearchBot,
-PerplexityBot, Google-Extended et al. **Caveat: Cloudflare's managed robots.txt block is
-injected above our file and still Disallows those agents — the dashboard toggle
-(Overview → "Manage your robots.txt") must be turned off for our rules to bind.**
+PerplexityBot, Google-Extended et al. Cloudflare's managed robots.txt was switched OFF on
+2026-07-27, so our file is authoritative — verified live: 0 Disallow rules, 13 Allow
+directives. If AI crawlers ever look blocked again, check that dashboard toggle first
+(Overview → "Manage your robots.txt"); it injects rules above our file and silently wins.
 
 Also shipped: JSON-LD (Organization/WebSite/ProfessionalService + OfferCatalog, verifiable
 facts only), Twitter/OG cards, sitemap hreflang pairs, Google Search Console verification file

@@ -5,10 +5,10 @@
 # Württemberg?" is worth more to us than withholding public marketing copy
 # from model training. Nothing here is confidential — it is a brochure.
 #
-# NOTE: Cloudflare can inject its own managed block ABOVE this file
-# (Dashboard → Overview → "Manage your robots.txt"). While that setting is
-# on, its Disallow rules for GPTBot/ClaudeBot/Google-Extended override the
-# intent below. Turn the managed block off for these rules to take effect.
+# Cloudflare's managed robots.txt is switched OFF (Dashboard → Overview →
+# "Manage your robots.txt" → do not manage), so this file is authoritative.
+# If AI crawlers ever appear blocked again, check that setting first — it
+# injects its own rules above this file and silently overrides everything.
 
 User-agent: *
 Allow: /

@@ -1,6 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- K-mark from two flow lines (docs/02-brand.md, logo direction 2) -->
+  <!-- NexBridge-IT mark (docs/02-brand.md, logo direction 2): two muted
+       process lines converge into one signal line — the bridge, and a
+       miniature of the hero schematic. Strokes are heavy on purpose so the
+       mark survives at 16px in a browser tab. -->
   <rect width="32" height="32" fill="#14171A"/>
-  <path d="M10 5 V27" stroke="#F7F5F0" stroke-width="3" fill="none"/>
-  <path d="M25 5 C 16 5, 16 16, 10.5 16 M10.5 16 C 16 16, 16 27, 25 27" stroke="#FF4D00" stroke-width="3" fill="none"/>
+  <g fill="none" stroke-linecap="butt">
+    <path d="M0 8 H11 C17 8, 16 16, 21 16" stroke="#F7F5F0" stroke-width="3.2"/>
+    <path d="M0 24 H11 C17 24, 16 16, 21 16" stroke="#F7F5F0" stroke-width="3.2"/>
+    <path d="M19 16 H32" stroke="#FF4D00" stroke-width="4.5"/>
+  </g>
 </svg>

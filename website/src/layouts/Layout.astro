@@ -4,6 +4,7 @@ import '@fontsource/fragment-mono';
 import '../styles/global.css';
 import { SITE } from '../config/site';
 import { type Lang, useTranslations, altPath } from '../i18n/ui';
+import Analytics from '../components/Analytics.astro';
 
 interface Props {
   lang: Lang;
@@ -22,6 +23,63 @@ const metaDescription = description ?? t('meta.description');
 const alternate = altPath(lang, path);
 const canonical = new URL(path, SITE.url).href;
 const alternateUrl = new URL(alternate, SITE.url).href;
+
+/**
+ * Structured data. Only verifiable facts — no address, phone, rating or
+ * founding claims we cannot back up. Google penalises invented markup, and
+ * the Impressum will be the source for address data once it is written.
+ */
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE.url}/#organization`,
+      name: SITE.name,
+      url: SITE.url,
+      logo: new URL('/favicon.svg', SITE.url).href,
+      image: new URL('/og.png', SITE.url).href,
+      description: t('meta.description'),
+      email: SITE.email,
+      areaServed: { '@type': 'Country', name: 'Germany' },
+      knowsLanguage: ['de', 'en'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE.url}/#website`,
+      url: SITE.url,
+      name: SITE.name,
+      inLanguage: lang === 'de' ? 'de-DE' : 'en',
+      publisher: { '@id': `${SITE.url}/#organization` },
+    },
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${SITE.url}/#service`,
+      name: SITE.name,
+      url: SITE.url,
+      parentOrganization: { '@id': `${SITE.url}/#organization` },
+      areaServed: { '@type': 'Country', name: 'Germany' },
+      serviceType: [
+        t('services.1.title'),
+        t('services.2.title'),
+        t('services.3.title'),
+        t('services.4.title'),
+      ],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: t('services.kicker'),
+        itemListElement: [1, 2, 3, 4].map((i) => ({
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: t(`services.${i}.title` as Parameters<typeof t>[0]),
+            description: t(`services.${i}.note` as Parameters<typeof t>[0]),
+          },
+        })),
+      },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -50,7 +108,18 @@ const alternateUrl = new URL(alternate, SITE.url).href;
     <meta property="og:image" content={new URL('/og.png', SITE.url).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={metaTitle} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={lang === 'de' ? 'de_DE' : 'en_GB'} />
+    {hasAlternate && <meta property="og:locale:alternate" content={lang === 'de' ? 'en_GB' : 'de_DE'} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={metaTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={new URL('/og.png', SITE.url).href} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="theme-color" content="#14171A" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
+    <Analytics />
   </head>
   <body>
     <a

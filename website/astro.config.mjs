@@ -18,5 +18,14 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    // Emits xhtml:link alternates so Google understands the DE/EN pairing.
+    sitemap({
+      i18n: {
+        defaultLocale: 'de',
+        locales: { de: 'de-DE', en: 'en' },
+      },
+    }),
+  ],
 });

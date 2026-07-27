@@ -1,0 +1,31 @@
+---
+/**
+ * Cookieless analytics. Nothing is injected unless a provider is configured
+ * in src/config/site.ts, so the site keeps its "no third-party requests"
+ * property by default — and no consent banner is required for either option,
+ * because neither sets cookies or stores personal data.
+ */
+import { SITE } from '../config/site';
+---
+
+{
+  SITE.plausibleDomain && (
+    <script
+      is:inline
+      defer
+      data-domain={SITE.plausibleDomain}
+      src="https://plausible.io/js/script.outbound-links.js"
+    />
+  )
+}
+
+{
+  SITE.cfAnalyticsToken && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token": "${SITE.cfAnalyticsToken}"}`}
+    />
+  )
+}

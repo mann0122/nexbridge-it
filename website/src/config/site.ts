@@ -23,4 +23,17 @@ export const SITE = {
    * Cloudflare Pages Function once the mail provider is configured.
    */
   formEndpoint: '',
+  /**
+   * Plausible: set this to the domain registered in your Plausible account
+   * (e.g. 'nexbridge-it.com') and the cookieless script is injected on every
+   * page. Empty = no analytics, no third-party request at all.
+   * Plausible Cloud is a paid service; self-hosting is free.
+   */
+  plausibleDomain: '',
+  /**
+   * Cloudflare Web Analytics token — the free, cookieless alternative.
+   * Get it in the Cloudflare dashboard under Analytics → Web Analytics.
+   * Only one of the two should be set.
+   */
+  cfAnalyticsToken: '',
 } as const;

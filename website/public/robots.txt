@@ -1,17 +1,10 @@
-# PREVIEW — indexing is switched OFF on purpose.
-# This is a *.pages.dev share link for the founders while the domain is still
-# being registered. Search engines must not index it, or a preview URL and a
-# provisional Impressum get cached publicly.
+# Cloudflare injects its own managed block above this one (Dashboard →
+# Overview → "Manage your robots.txt"). That block already publishes
+# `User-agent: * / Allow: /`, so repeating it here would create a duplicate
+# group. We only add what Cloudflare does not: the sitemap location.
 #
-# >>> BEFORE LAUNCH on the real domain: delete the two lines below, uncomment
-# >>> the launch block, and update the Sitemap host. Otherwise the live site
-# >>> stays invisible to Google.
+# Note: Cloudflare's managed block also blocks AI crawlers (GPTBot, ClaudeBot,
+# Google-Extended, …). That is a deliberate dashboard setting, not something
+# this file controls — change it there if you want to be citable in AI answers.
 
-User-agent: *
-Disallow: /
-
-# --- launch block ---
-# User-agent: *
-# Allow: /
-#
-# Sitemap: https://<domain>/sitemap-index.xml
+Sitemap: https://nexbridge-it.com/sitemap-index.xml

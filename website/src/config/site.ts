@@ -6,7 +6,7 @@ export const SITE = {
   /** Brand name as used in the wordmark. */
   name: 'NexBridge-IT',
   /** Canonical production origin. Preview until the domain is registered. */
-  url: 'https://nexbridge-it-site.silky-plough.workers.dev',
+  url: 'https://nexbridge-it-site.nexbridge-it.workers.dev',
   region: 'Baden-Württemberg',
   foundedYear: 2026,
   /** Where enquiries land. TBD: confirm once the domain is registered. */

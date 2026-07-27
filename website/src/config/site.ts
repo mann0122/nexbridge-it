@@ -6,11 +6,11 @@ export const SITE = {
   /** Brand name as used in the wordmark. */
   name: 'NexBridge-IT',
   /** Canonical production origin. Preview until the domain is registered. */
-  url: 'https://nexbridge-it-site.nexbridge-it.workers.dev',
+  url: 'https://nexbridge-it.com',
   region: 'Baden-Württemberg',
   foundedYear: 2026,
   /** Where enquiries land. TBD: confirm once the domain is registered. */
-  email: 'kontakt@nexbridge-it.io',
+  email: 'kontakt@nexbridge-it.com',
   /**
    * Booking tool link (e.g. a self-hosted Cal.com instance — keeps the
    * GDPR-first positioning). Reserved: nothing reads this yet. Wiring the

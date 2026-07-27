@@ -6,6 +6,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nexbridge-it-site",
   "compatibility_date": "2026-07-01",
+  // Custom domains (nexbridge-it.com + www) are attached in the Cloudflare
+  // DASHBOARD, not here: the wrangler OAuth token has no dns_records:write,
+  // so declaring them as `routes` makes every deploy fail on the DNS step.
+  // Dashboard-attached domains survive `wrangler deploy` — leave this out.
   "assets": {
     "directory": "./dist",
     // Astro emits /impressum/index.html; the footer links to /impressum.

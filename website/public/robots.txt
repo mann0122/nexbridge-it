@@ -1,10 +1,54 @@
-# Cloudflare injects its own managed block above this one (Dashboard →
-# Overview → "Manage your robots.txt"). That block already publishes
-# `User-agent: * / Allow: /`, so repeating it here would create a duplicate
-# group. We only add what Cloudflare does not: the sitemap location.
+# NexBridge-IT — open to search engines and to AI assistants.
 #
-# Note: Cloudflare's managed block also blocks AI crawlers (GPTBot, ClaudeBot,
-# Google-Extended, …). That is a deliberate dashboard setting, not something
-# this file controls — change it there if you want to be citable in AI answers.
+# Founder decision (D-017): we sell AI agents, so being citable when a
+# Geschäftsführer asks an assistant "who automates processes in Baden-
+# Württemberg?" is worth more to us than withholding public marketing copy
+# from model training. Nothing here is confidential — it is a brochure.
+#
+# NOTE: Cloudflare can inject its own managed block ABOVE this file
+# (Dashboard → Overview → "Manage your robots.txt"). While that setting is
+# on, its Disallow rules for GPTBot/ClaudeBot/Google-Extended override the
+# intent below. Turn the managed block off for these rules to take effect.
+
+User-agent: *
+Allow: /
+
+# Search crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI assistants and their crawlers — explicitly welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
 
 Sitemap: https://nexbridge-it.com/sitemap-index.xml

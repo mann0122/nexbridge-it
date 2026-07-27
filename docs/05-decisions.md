@@ -95,6 +95,23 @@ available across all three name rounds. Recommendation: register it. `nexbridge-
 free as a defensive secondary; `.com` is taken and does not matter for a German-market venture.
 Owner: founders. DPMA trademark check still open and must precede any printing.
 
+## D-017 | 2026-07-27 | Open to AI crawlers; SEO baseline shipped | DECIDED
+We sell KI-Agenten, so being citable when a buyer asks an assistant "who automates processes in
+Baden-Württemberg?" outweighs withholding public marketing copy from model training. The site
+carries no confidential content. robots.txt explicitly allows GPTBot, ClaudeBot, OAI-SearchBot,
+PerplexityBot, Google-Extended et al. **Caveat: Cloudflare's managed robots.txt block is
+injected above our file and still Disallows those agents — the dashboard toggle
+(Overview → "Manage your robots.txt") must be turned off for our rules to bind.**
+
+Also shipped: JSON-LD (Organization/WebSite/ProfessionalService + OfferCatalog, verifiable
+facts only), Twitter/OG cards, sitemap hreflang pairs, Google Search Console verification file
+at `website/public/google61dfa7e628fa15c6.html` (must never be deleted — verification breaks).
+
+Honest expectation set with founders: technical SEO makes the site *eligible* to rank, it does
+not rank it. A four-hour-old domain with one page and no backlinks needs content, links and
+time. Next real levers: Search Console sitemap submission, filled Impressum, Google Business
+Profile, substantive articles.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

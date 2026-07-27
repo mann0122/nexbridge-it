@@ -19,7 +19,7 @@ desktop and mobile, daytime [inferred].
 
 ## Product Purpose
 
-NextBridge builds software that runs business processes by itself: Automatisierung, KI-Agenten,
+NexBridge-IT builds software that runs business processes by itself: Automatisierung, KI-Agenten,
 Dashboards, Individualsoftware. The website's one job: convert a visiting decision-maker into
 an Erstgespräch booking.
 
@@ -44,7 +44,7 @@ brand name lives in src/config/site.ts), contact form provider.
 
 ## Brand Commitments
 
-Name (provisional): **NextBridge** — lowercase wordmark with signal-orange period. Palette pinned
+Name (provisional): **NexBridge-IT** — lowercase wordmark with signal-orange period. Palette pinned
 (D-003): graphite #14171A, paper #F7F5F0, signal #FF4D00 (rationed: one accent element per
 viewport), steel #5B6770. Signature element: the **flow-line** — 2 muted process lines + 1 signal
 line converging/branching, scroll-drawn, reduced-motion respected. Voice: klar, präzise, Sie-Form,

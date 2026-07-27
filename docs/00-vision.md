@@ -1,6 +1,6 @@
 # 00 — Vision & Operating Model
 
-## What NextBridge is
+## What NexBridge-IT is
 A German-based venture that builds software which runs business processes for the Mittelstand:
 Automatisierung, KI-Agenten, Dashboards, Individualsoftware. Positioning: **built in Germany,
 GDPR-first, engineering-grade**. The name: the bridge from how a company works today to what

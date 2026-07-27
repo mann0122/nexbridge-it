@@ -4,13 +4,13 @@
  */
 export const SITE = {
   /** Brand name as used in the wordmark. */
-  name: 'NextBridge',
+  name: 'NexBridge-IT',
   /** Canonical production origin. Preview until the domain is registered. */
-  url: 'https://nextbridge-site.pages.dev',
+  url: 'https://nexbridge-it-site.silky-plough.workers.dev',
   region: 'Baden-Württemberg',
   foundedYear: 2026,
   /** Where enquiries land. TBD: confirm once the domain is registered. */
-  email: 'kontakt@nextbridge.io',
+  email: 'kontakt@nexbridge-it.io',
   /**
    * Booking tool link (e.g. a self-hosted Cal.com instance — keeps the
    * GDPR-first positioning). Reserved: nothing reads this yet. Wiring the

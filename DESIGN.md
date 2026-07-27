@@ -1,6 +1,6 @@
 # Design
 
-<!-- Committed visual world for the NextBridge website. Written per impeccable new-work flow.
+<!-- Committed visual world for the NexBridge-IT website. Written per impeccable new-work flow.
      The world was pinned by docs/02-brand.md (D-003); this file renders that commitment
      specific. The brief wins over any skill default. -->
 

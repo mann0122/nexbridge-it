@@ -1,4 +1,4 @@
-# Research: Claude Code skills for NextBridge
+# Research: Claude Code skills for NexBridge-IT
 
 Date: 2026-07-26. Sources checked: GitHub repos (primary), npm, community rankings.
 
@@ -16,7 +16,7 @@ Which Claude Code skills give us a top-tier delivery setup without bloating the 
 ## Available session-wide already (user-level plugins — do not vendor into repo)
 - Document skills (docx, pdf, pptx, xlsx) — Angebote/reports as polished files.
 - dataviz — chart/dashboard design system guidance (relevant for P-demo dashboard + client work).
-- skill-creator — build our own skills later (e.g. a NextBridge delivery-checklist skill).
+- skill-creator — build our own skills later (e.g. a NexBridge-IT delivery-checklist skill).
 
 ## Full arsenal installed 2026-07-26 (D-009, founder mandate: masterpiece output)
 Vendored from shallow clones into `.claude/skills/` (32 skills total):

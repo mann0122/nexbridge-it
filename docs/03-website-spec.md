@@ -1,4 +1,4 @@
-# 03 — Website Spec (nextbridge.io)
+# 03 — Website Spec (nexbridge-it.io)
 
 ## Goal
 One job: convert a Mittelstand decision-maker (sent by Partner A or via search) into an

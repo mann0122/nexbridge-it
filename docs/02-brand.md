@@ -1,12 +1,12 @@
 # 02 — Brand
 
 ## Name
-**NextBridge** (decided 2026-07-26, supersedes the working name Klarfluss).
+**NexBridge-IT** (decided 2026-07-26, supersedes the working name Klarfluss).
 Meaning: the bridge from how a company works today to what runs by itself tomorrow —
 and the bridge between systems that do not talk to each other. Both readings are
 literally what the hero schematic draws.
-Wordmark: `NextBridge` in CamelCase with a signal-orange period (#FF4D00).
-Domain: TBD — nextbridge.de is registered by someone else; .io looks free.
+Wordmark: `NexBridge-IT` in CamelCase with a signal-orange period (#FF4D00).
+Domain: TBD — nexbridge-it.de is registered by someone else; .io looks free.
 See docs/research/domain-availability.md. TBD: DPMA check + social handles before
 first public post. Part numbers use the `NB-` prefix.
 
@@ -41,7 +41,7 @@ The **flow-line**: 2 muted process lines + 1 accent line converging/branching, a
 logo mark. This is the one memorable device — everything else stays quiet.
 
 ## Logo directions
-1. Wordmark `NextBridge` with accent period; flow-line runs under the wordmark.
+1. Wordmark `NexBridge-IT` with accent period; flow-line runs under the wordmark.
 2. Standalone mark: two muted lines converging into one signal line — the bridge,
    and the favicon (currently shipped in website/public/favicon.svg).
 3. Wordmark inside a thin-bordered plate for stamps/invoices.

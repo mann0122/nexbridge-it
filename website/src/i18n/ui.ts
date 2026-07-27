@@ -10,7 +10,7 @@ export const defaultLang: Lang = 'de';
 
 export const ui = {
   de: {
-    'meta.title': 'NextBridge – Prozesse, die von selbst laufen',
+    'meta.title': 'NexBridge-IT – Prozesse, die von selbst laufen',
     'meta.description':
       'Automatisierung, KI-Agenten, Dashboards und Individualsoftware für den Mittelstand. Gebaut in Deutschland, DSGVO-konform, übergabefertig dokumentiert.',
     'a11y.skip': 'Zum Inhalt springen',
@@ -202,7 +202,7 @@ export const ui = {
     'footer.legal.datenschutz': 'Datenschutz',
   },
   en: {
-    'meta.title': 'NextBridge — Processes that run themselves',
+    'meta.title': 'NexBridge-IT — Processes that run themselves',
     'meta.description':
       'Automation, AI agents, dashboards and custom software for Germany’s Mittelstand. Built in Germany, GDPR-first, documented for handover.',
     'a11y.skip': 'Skip to content',

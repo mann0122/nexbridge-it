@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://nextbridge-site.pages.dev',
+  site: 'https://nexbridge-it-site.silky-plough.workers.dev',
   i18n: {
     defaultLocale: 'de',
     locales: ['de', 'en'],

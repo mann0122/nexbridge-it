@@ -1,26 +1,29 @@
 # Research: domain availability
 
 Method: authoritative registry RDAP (DENIC for `.de`, rdap.org for gTLDs) — not a reseller
-lookup. HTTP 200 = registered, 404 = free.
+lookup. HTTP 200/302 = registered, 404 = free.
 
-## NextBridge — checked 2026-07-26 (name decided this day, supersedes Klarfluss)
+## NexBridge-IT — checked 2026-07-27 (current name, D-016)
 | Domain | Status |
 |---|---|
-| nextbridge.de | **TAKEN** — DENIC RDAP returns 200 |
-| nextbridge.dev | **TAKEN** — RDAP redirects (302) |
-| nextbridge.io | free at time of check |
-| nextbridge.eu | inconclusive — rdap.org does not authoritatively serve `.eu`; verify at EURid |
+| **nexbridge-it.de** | **FREE** ✅ — DENIC RDAP 404 |
+| **nexbridge-it.io** | **FREE** — rdap.org 404 |
+| nexbridge-it.com | **TAKEN** — rdap.org 302 |
+| nexbridge.de | TAKEN (the un-hyphenated form; squatted) |
+| nexbridge.com | TAKEN |
+| nexbridge.io | free (un-hyphenated) |
 
-Not yet checked: `.com`, `.net`, `.software`, `.gmbh`, compound German forms
-(`nextbridge-software.de`, `nextbridge-it.de`, …). Compound `.de` domains are completely
-normal in German B2B and are worth checking before settling for a gTLD.
+**Recommendation: register `nexbridge-it.de`.** This is the single best outcome so far — a
+plain `.de` is the credibility standard for Mittelstand buyers, and the hyphenated form
+sidesteps the squatter holding `nexbridge.de`. Hyphenated `.de` domains are completely normal
+in German B2B. Take `nexbridge-it.io` as a cheap defensive secondary if desired.
+`.com` is gone, which matters little for a German-market venture.
 
-**Recommendation:** verify `.eu` and `.com` at EURid/Verisign, and check the compound `.de`
-forms. For a German Mittelstand audience a `.de` (even compound) outranks `.io` on trust;
-`.io` reads as a tech-product domain. Register nothing before the DPMA trademark check
-(register.dpma.de, ~15 min — owner: Partner A). "NextBridge" is a common English compound,
-so a trademark collision is materially more likely than it was for an invented German word.
+Still open before registering: DPMA trademark search (register.dpma.de, ~15 min, owner:
+Partner A). Availability of a domain says nothing about trademark rights.
 
-## Klarfluss — checked 2026-07-26 (working name, RETIRED, kept for the record)
-klarfluss.de was **taken** (parked, redirecting to a reseller product); klarfluss.com taken;
-klarfluss.io/.dev/.eu and all compound `.de` forms free. Superseded by the rename.
+## Superseded names (kept for the record)
+- **NextBridge** (2026-07-26, never adopted — spelling corrected to NexBridge-IT the next day):
+  nextbridge.de TAKEN, .dev TAKEN, .io free.
+- **Klarfluss** (working name until 2026-07-26): klarfluss.de TAKEN (parked/reseller),
+  klarfluss.com TAKEN, klarfluss.io/.dev/.eu and all compound `.de` forms free.

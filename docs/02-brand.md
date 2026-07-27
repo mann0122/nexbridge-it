@@ -1,10 +1,14 @@
 # 02 — Brand
 
 ## Name
-**Klarfluss** (double s). Klarheit + Fluss: clear processes that flow by themselves.
-Wordmark lowercase: `klarfluss.` with signal-orange period (#FF4D00).
-Domain: **klarfluss.eu** (D-006; .de is squatted — see docs/research/domain-availability.md).
-TBD: social handle check before first public post.
+**NextBridge** (decided 2026-07-26, supersedes the working name Klarfluss).
+Meaning: the bridge from how a company works today to what runs by itself tomorrow —
+and the bridge between systems that do not talk to each other. Both readings are
+literally what the hero schematic draws.
+Wordmark: `NextBridge` in CamelCase with a signal-orange period (#FF4D00).
+Domain: TBD — nextbridge.de is registered by someone else; .io looks free.
+See docs/research/domain-availability.md. TBD: DPMA check + social handles before
+first public post. Part numbers use the `NB-` prefix.
 
 ## Voice
 Klar, präzise, ohne Buzzwords. Sie-Form. Short sentences. Outcomes before technology.
@@ -37,9 +41,10 @@ The **flow-line**: 2 muted process lines + 1 accent line converging/branching, a
 logo mark. This is the one memorable device — everything else stays quiet.
 
 ## Logo directions
-1. Wordmark `klarfluss` with accent period; flow-line runs under/through the double-s.
-2. Standalone K-mark constructed from two parallel flow lines (favicon-friendly).
-3. Lowercase wordmark inside a thin-bordered plate for stamps/invoices.
+1. Wordmark `NextBridge` with accent period; flow-line runs under the wordmark.
+2. Standalone mark: two muted lines converging into one signal line — the bridge,
+   and the favicon (currently shipped in website/public/favicon.svg).
+3. Wordmark inside a thin-bordered plate for stamps/invoices.
 
 ## Anti-patterns (design-critic enforces)
 Purple/teal gradients; glassmorphism; 3D blobs; stock photos of handshakes/laptops; Inter as

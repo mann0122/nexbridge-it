@@ -1,10 +1,10 @@
-# Klarfluss — Venture OS
+# NextBridge — Venture OS
 
-This repo is the operating system of the Klarfluss venture: knowledge base (`docs/`),
+This repo is the operating system of the NextBridge venture: knowledge base (`docs/`),
 agent system (`.claude/`), business templates (`ops/`), and the website (`website/`).
 
 ## Quickstart (once)
-1. Unzip this folder, `cd klarfluss`, then `git init && git add -A && git commit -m "chore: bootstrap venture os"`.
+1. Unzip this folder, `cd NextBridge`, then `git init && git add -A && git commit -m "chore: bootstrap venture os"`.
    Push to your GitHub.
 2. Install/update Claude Code: `npm install -g @anthropic-ai/claude-code`
 3. Start it in this folder: `claude`
@@ -44,6 +44,6 @@ gets written into `docs/` (usually `05-decisions.md`) and committed. Optionally 
 + `docs/` into your claude.ai Project knowledge so chat-Claude shares the same brain.
 
 ## Open items (blocking or soon)
-- Register klarfluss.eu (D-006) — free as of 2026-07-26, founders' action
+- Register nextbridge.io (D-006) — free as of 2026-07-26, founders' action
 - `gh auth login` + push this repo to GitHub
 - Social handle check before first public post

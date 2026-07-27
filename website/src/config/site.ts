@@ -1,16 +1,16 @@
 /**
- * Single source of brand identity. The name is provisional (D-010) —
- * a rename must only ever touch this file.
+ * Single source of brand identity. Renaming the venture touches this file
+ * and nothing else in the component tree (D-010).
  */
 export const SITE = {
-  /** Lowercase brand name as used in the wordmark. */
-  name: 'klarfluss',
-  /** Canonical production origin. */
-  url: 'https://klarfluss.eu',
+  /** Brand name as used in the wordmark. */
+  name: 'NextBridge',
+  /** Canonical production origin. Preview until the domain is registered. */
+  url: 'https://nextbridge-site.pages.dev',
   region: 'Baden-Württemberg',
   foundedYear: 2026,
-  /** Where enquiries land. TBD: confirm before launch. */
-  email: 'kontakt@klarfluss.eu',
+  /** Where enquiries land. TBD: confirm once the domain is registered. */
+  email: 'kontakt@nextbridge.io',
   /**
    * Booking tool link (e.g. a self-hosted Cal.com instance — keeps the
    * GDPR-first positioning). Reserved: nothing reads this yet. Wiring the

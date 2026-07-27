@@ -10,7 +10,7 @@ export const defaultLang: Lang = 'de';
 
 export const ui = {
   de: {
-    'meta.title': 'klarfluss – Prozesse, die von selbst laufen',
+    'meta.title': 'NextBridge – Prozesse, die von selbst laufen',
     'meta.description':
       'Automatisierung, KI-Agenten, Dashboards und Individualsoftware für den Mittelstand. Gebaut in Deutschland, DSGVO-konform, übergabefertig dokumentiert.',
     'a11y.skip': 'Zum Inhalt springen',
@@ -66,18 +66,18 @@ export const ui = {
     'problems.3.title': 'Zahlen kommen zu spät',
     'problems.3.note': 'Bis der Bericht fertig ist, ist er veraltet.',
 
-    'services.kicker': 'Leistungen · KF-01–KF-04',
+    'services.kicker': 'Leistungen · NB-01–NB-04',
     'services.title': 'Vier Wege, ein Ergebnis: weniger Handarbeit.',
-    'services.1.id': 'KF-01',
+    'services.1.id': 'NB-01',
     'services.1.title': 'Automatisierung',
     'services.1.note': 'Wiederkehrende Aufgaben laufen ohne Ihr Zutun – zuverlässig, nachvollziehbar, dokumentiert.',
-    'services.2.id': 'KF-02',
+    'services.2.id': 'NB-02',
     'services.2.title': 'KI-Agenten',
     'services.2.note': 'Assistenten, die mit Ihren Daten arbeiten: sortieren, beantworten, vorbereiten.',
-    'services.3.id': 'KF-03',
+    'services.3.id': 'NB-03',
     'services.3.title': 'Dashboards',
     'services.3.note': 'Ihre Kennzahlen live auf einem Bildschirm – statt in zwanzig Dateien.',
-    'services.4.id': 'KF-04',
+    'services.4.id': 'NB-04',
     'services.4.title': 'Individualsoftware',
     'services.4.note': 'Wenn Standardsoftware nicht passt: Werkzeuge, exakt für Ihren Ablauf gebaut.',
 
@@ -202,7 +202,7 @@ export const ui = {
     'footer.legal.datenschutz': 'Datenschutz',
   },
   en: {
-    'meta.title': 'klarfluss — Processes that run themselves',
+    'meta.title': 'NextBridge — Processes that run themselves',
     'meta.description':
       'Automation, AI agents, dashboards and custom software for Germany’s Mittelstand. Built in Germany, GDPR-first, documented for handover.',
     'a11y.skip': 'Skip to content',
@@ -258,18 +258,18 @@ export const ui = {
     'problems.3.title': 'Numbers arrive too late',
     'problems.3.note': 'By the time the report is done, it’s outdated.',
 
-    'services.kicker': 'Services · KF-01–KF-04',
+    'services.kicker': 'Services · NB-01–NB-04',
     'services.title': 'Four routes, one result: less manual work.',
-    'services.1.id': 'KF-01',
+    'services.1.id': 'NB-01',
     'services.1.title': 'Automation',
     'services.1.note': 'Recurring workflows run without intervention — reliable, traceable, documented.',
-    'services.2.id': 'KF-02',
+    'services.2.id': 'NB-02',
     'services.2.title': 'AI agents',
     'services.2.note': 'Assistants that work on your data: sorting, answering, preparing.',
-    'services.3.id': 'KF-03',
+    'services.3.id': 'NB-03',
     'services.3.title': 'Dashboards',
     'services.3.note': 'Your key figures live on one screen — instead of twenty files.',
-    'services.4.id': 'KF-04',
+    'services.4.id': 'NB-04',
     'services.4.title': 'Custom software',
     'services.4.note': 'When off-the-shelf doesn’t fit: tools built exactly for your workflow.',
 

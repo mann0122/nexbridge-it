@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://klarfluss.eu',
+  site: 'https://nextbridge-site.pages.dev',
   i18n: {
     defaultLocale: 'de',
     locales: ['de', 'en'],

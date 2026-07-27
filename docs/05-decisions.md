@@ -2,8 +2,8 @@
 
 Format: `D-### | date | decision | status | rationale`. Append-only; supersede, don't delete.
 
-## D-001 | 2026-07-26 | Name: Klarfluss | DECIDED (verification pending)
-Klarheit + Fluss; German-credible, describes the product. PENDING sub-items: klarfluss.de via
+## D-001 | 2026-07-26 | Name: NextBridge | DECIDED (verification pending)
+Klarheit + Fluss; German-credible, describes the product. PENDING sub-items: NextBridge.de via
 DENIC, DPMA trademark search, handle availability. Do not print/publish before verification.
 
 ## D-002 | 2026-07-26 | Stack: Astro 5 + Tailwind + MDX, Cloudflare Pages, Plausible | DECIDED
@@ -24,10 +24,10 @@ outsourced delivery explicitly excluded (see docs/00-vision.md non-goals).
 GbR with written agreement vs Einzelunternehmen + commission agreement. Blocked on: employment
 contract checks + Steuerberater input. Owner: Partner A.
 
-## D-006 | 2026-07-26 | Domain: klarfluss.eu | DECIDED
-klarfluss.de is TAKEN (parked/squatted — see docs/research/domain-availability.md). Founders chose
-klarfluss.eu as primary domain. Free as of 2026-07-26; registration action: founders. Optional
-later: klarfluss-software.de as defensive secondary/redirect.
+## D-006 | 2026-07-26 | Domain: nextbridge.io | DECIDED
+NextBridge.de is TAKEN (parked/squatted — see docs/research/domain-availability.md). Founders chose
+nextbridge.io as primary domain. Free as of 2026-07-26; registration action: founders. Optional
+later: NextBridge-software.de as defensive secondary/redirect.
 
 ## D-007 | 2026-07-26 | v1 package prices | DECIDED
 Set by Claude on founder instruction ("put according to you"); Partner A may adjust anytime.
@@ -47,7 +47,7 @@ superpowers workflow skills. See docs/research/claude-skills.md.
 
 ## D-010 | 2026-07-26 | Bilingual DE/EN from v1; name provisional until demo review | DECIDED
 Website ships German (default, `/`) AND English (`/en/`) from day one with a language switcher
-in the header. Supersedes the "EN later" line in 03-website-spec.md. Brand name "klarfluss"
+in the header. Supersedes the "EN later" line in 03-website-spec.md. Brand name "NextBridge"
 stays provisional until founders review the demo design — name lives in ONE config constant
 (site.ts) so a rename is a one-line change. Domain registration deferred until name is final.
 
@@ -75,6 +75,21 @@ client-side validation in German). `src/config/site.ts` holds two empty slots: `
 `bookingUrl` (e.g. self-hosted Cal.com). Until `formEndpoint` is set — or if it fails — the form
 hands the finished message to the visitor's mail client, so an enquiry is never lost.
 Owner for both: founders. Analytics (Plausible) still NOT installed — do before driving traffic.
+
+## D-014 | 2026-07-26 | Name: NextBridge | DECIDED — supersedes D-001 (Klarfluss)
+Founders settled on **NextBridge** after reviewing the built site. Meaning: the bridge from how
+a company works today to what runs by itself tomorrow, and the bridge between systems that do
+not talk — both are what the hero schematic already draws. Rename executed across repo, website,
+docs and og.png; part-number prefix KF- → NB-. Consequence: nextbridge.de is REGISTERED by a
+third party (DENIC RDAP 200), so the domain question is reopened — see
+docs/research/domain-availability.md. Nothing registered yet; DPMA check still open and now
+more important, "NextBridge" being a common English compound.
+
+## D-015 | 2026-07-26 | Published preview on Cloudflare Pages | DECIDED
+Site deployed to a *.pages.dev URL so the founders can review it from any laptop. Repo is
+public (founder decision: nothing to hide). robots.txt ships with `Disallow: /` so the
+provisional name and placeholder Impressum are not indexed — MUST be flipped before launch on
+the real domain.
 
 ## Template
 ```

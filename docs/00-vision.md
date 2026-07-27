@@ -1,9 +1,10 @@
 # 00 — Vision & Operating Model
 
-## What Klarfluss is
+## What NextBridge is
 A German-based venture that builds software which runs business processes for the Mittelstand:
 Automatisierung, KI-Agenten, Dashboards, Individualsoftware. Positioning: **built in Germany,
-GDPR-first, engineering-grade**. Clarity ("klar") + process flow ("Fluss").
+GDPR-first, engineering-grade**. The name: the bridge from how a company works today to what
+runs by itself tomorrow.
 
 ## Roles
 - Partner A (German): sales, network, client relationships, German legal/admin coordination.

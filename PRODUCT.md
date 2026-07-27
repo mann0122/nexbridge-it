@@ -19,7 +19,7 @@ desktop and mobile, daytime [inferred].
 
 ## Product Purpose
 
-Klarfluss builds software that runs business processes by itself: Automatisierung, KI-Agenten,
+NextBridge builds software that runs business processes by itself: Automatisierung, KI-Agenten,
 Dashboards, Individualsoftware. The website's one job: convert a visiting decision-maker into
 an Erstgespräch booking.
 
@@ -27,7 +27,7 @@ an Erstgespräch booking.
 
 "Built in Germany, GDPR-first, engineering-grade." The moat a competitor cannot truthfully copy:
 your data and your developer are in Germany — no outsourced delivery, no US-cloud defaults.
-Klarheit + Fluss: clear processes that flow on their own.
+The name: the bridge from how you work today to what runs by itself tomorrow.
 
 ## Operating Context
 
@@ -44,7 +44,7 @@ brand name lives in src/config/site.ts), contact form provider.
 
 ## Brand Commitments
 
-Name (provisional): **klarfluss** — lowercase wordmark with signal-orange period. Palette pinned
+Name (provisional): **NextBridge** — lowercase wordmark with signal-orange period. Palette pinned
 (D-003): graphite #14171A, paper #F7F5F0, signal #FF4D00 (rationed: one accent element per
 viewport), steel #5B6770. Signature element: the **flow-line** — 2 muted process lines + 1 signal
 line converging/branching, scroll-drawn, reduced-motion respected. Voice: klar, präzise, Sie-Form,

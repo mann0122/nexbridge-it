@@ -1,4 +1,17 @@
-User-agent: *
-Allow: /
+# PREVIEW — indexing is switched OFF on purpose.
+# This is a *.pages.dev share link for the founders while the domain is still
+# being registered. Search engines must not index it, or a preview URL and a
+# provisional Impressum get cached publicly.
+#
+# >>> BEFORE LAUNCH on the real domain: delete the two lines below, uncomment
+# >>> the launch block, and update the Sitemap host. Otherwise the live site
+# >>> stays invisible to Google.
 
-Sitemap: https://klarfluss.eu/sitemap-index.xml
+User-agent: *
+Disallow: /
+
+# --- launch block ---
+# User-agent: *
+# Allow: /
+#
+# Sitemap: https://<domain>/sitemap-index.xml

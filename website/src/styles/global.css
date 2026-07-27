@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
-   klarfluss design tokens — single source (DESIGN.md is the written authority)
+   NextBridge design tokens — single source (DESIGN.md is the written authority)
    --------------------------------------------------------------------------- */
 @theme {
   --color-graphite: #14171a;

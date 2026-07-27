@@ -1,6 +1,6 @@
 # Angebot — [Projekttitel]
 
-**Klarfluss** · [Name Partner A] & [Name Partner B] · [Anschrift TBD] · [E-Mail]
+**NextBridge** · [Name Partner A] & [Name Partner B] · [Anschrift TBD] · [E-Mail]
 An: [Firma, Ansprechpartner, Anschrift] · Datum: [TT.MM.JJJJ] · Angebots-Nr.: [JJJJ-NNN]
 Gültig bis: [Datum, i. d. R. +14 Tage]
 
@@ -31,4 +31,4 @@ Zahlungsplan z. B. 40 % bei Beauftragung / 60 % bei Abnahme.]
 Vertragsbasis der Gründer (D-008).]
 
 ---
-Ort, Datum, Unterschrift Klarfluss · Ort, Datum, Unterschrift Auftraggeber
+Ort, Datum, Unterschrift NextBridge · Ort, Datum, Unterschrift Auftraggeber

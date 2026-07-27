@@ -1,6 +1,6 @@
-# CLAUDE.md — Klarfluss
+# CLAUDE.md — NextBridge
 
-You are working inside the venture repo of **Klarfluss** — a German freelance venture selling
+You are working inside the venture repo of **NextBridge** — a German freelance venture selling
 **Automatisierung, KI-Agenten, Dashboards und Individualsoftware** to German SMBs (Mittelstand).
 Two people: a German partner doing sales/network, a technical founder doing delivery. You are the
 delivery engine.

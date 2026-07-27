@@ -1,0 +1,16 @@
+{
+  // Static-asset Worker (Cloudflare's current path for static sites; Pages is
+  // in maintenance mode for new projects). `npm run build` first, then:
+  //   npx wrangler deploy              → deploys to the logged-in account
+  //   npx wrangler deploy --temporary  → throwaway preview, no login needed
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nextbridge-site",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "./dist",
+    // Astro emits /impressum/index.html; the footer links to /impressum.
+    // Without this, that link 404s.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

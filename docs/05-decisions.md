@@ -114,7 +114,7 @@ time. Next real levers: Search Console sitemap submission, filled Impressum, Goo
 Profile, substantive articles.
 
 ## D-018 | 2026-07-27 | Pricing: one public price only | DECIDED — supersedes D-007
-Founder decision. **P1 Prozess-Audit: 395 € Festpreis** (down from 1.900 €) — a low-friction
+Founder decision. **P1 Prozess-Audit: 295 € Festpreis** (down from 1.900 €) — a low-friction
 paid front door rather than a revenue line. **P2 and P3 carry no public price**: "Angebot nach
 Umfang" / "Angebot nach Bedarf", costed from what the audit finds, with a fixed-price Angebot
 before any build starts.
@@ -125,7 +125,7 @@ entry price is easier to say yes to and qualifies the lead by making them pay so
 
 Open: internal floor prices for P2/P3 must be agreed between the founders and kept in
 docs/01-offer.md — not on the website — so both quote consistently. Also review whether P1's
-advertised "1 Woche" duration still fits a 395 € engagement (see note in that D-entry's thread).
+advertised "1 Woche" duration still fits a 295 € engagement (see note in that D-entry's thread).
 
 ## Template
 ```

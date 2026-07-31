@@ -12,7 +12,7 @@ Four delivery forms, one promise:
 ## Productized packages (prices per D-018, supersedes D-007)
 Only ONE price is public. Everything after the audit is quoted per case, because scope is not
 knowable before the audit — and quoting a corridor on the website invited anchoring arguments.
-- **P1 Prozess-Audit** — **395 € Festpreis.** The paid front door: map processes, quantify hours
+- **P1 Prozess-Audit** — **295 € Festpreis.** The paid front door: map processes, quantify hours
   lost, deliver a prioritised roadmap. Deliberately low-friction to convert a conversation into
   a paying engagement; the money is made in P2/P3.
 - **P2 Umsetzungs-Sprint** (formerly "Automation Sprint" — German name per copywriter review

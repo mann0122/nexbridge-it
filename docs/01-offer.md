@@ -9,15 +9,20 @@ Four delivery forms, one promise:
 3. **Dashboards** — live KPIs from ERP/CRM/Excel chaos; one screen of truth.
 4. **Individualsoftware** — small custom applications where off-the-shelf fails.
 
-## Productized packages (v1 prices per D-007; Partner A may adjust)
-- **P1 Prozess-Audit** — fixed price, 1 week. Map 3–5 processes, quantify hours lost, deliver an
-  automation roadmap with ROI estimate. **1.900 € Festpreis.**
+## Productized packages (prices per D-018, supersedes D-007)
+Only ONE price is public. Everything after the audit is quoted per case, because scope is not
+knowable before the audit — and quoting a corridor on the website invited anchoring arguments.
+- **P1 Prozess-Audit** — **395 € Festpreis.** The paid front door: map processes, quantify hours
+  lost, deliver a prioritised roadmap. Deliberately low-friction to convert a conversation into
+  a paying engagement; the money is made in P2/P3.
 - **P2 Umsetzungs-Sprint** (formerly "Automation Sprint" — German name per copywriter review
-  2026-07-26; website and Angebote use this name) — 2–4 weeks. Implement the top roadmap item
-  end-to-end incl. handover doc. **7.500–12.000 € nach Umfang** (quote per Angebot).
-- **P3 Betrieb & Ausbau** — monthly retainer. Monitoring, fixes, iterative extensions.
-  **1.200 €/Monat, Mindestlaufzeit 3 Monate.**
-All prices netto zzgl. USt.
+  2026-07-26; website and Angebote use this name) — implement the top roadmap item end-to-end
+  incl. handover doc. **Angebot nach Umfang**, calculated from the audit result.
+- **P3 Betrieb & Ausbau** — monitoring, fixes, iterative extensions. **Angebot nach Bedarf.**
+All prices netto zzgl. USt. The client always gets a fixed-price Angebot before build starts.
+
+`TBD: internal floor prices for P2/P3 — agree with Partner A and keep them in this repo, not on
+the website, so quotes stay consistent between the two of you.`
 
 ## Ideal client profile
 Mittelstand, roughly 10–250 employees, in Partner A's network vertical (define after first

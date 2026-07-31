@@ -113,6 +113,20 @@ not rank it. A four-hour-old domain with one page and no backlinks needs content
 time. Next real levers: Search Console sitemap submission, filled Impressum, Google Business
 Profile, substantive articles.
 
+## D-018 | 2026-07-27 | Pricing: one public price only | DECIDED — supersedes D-007
+Founder decision. **P1 Prozess-Audit: 395 € Festpreis** (down from 1.900 €) — a low-friction
+paid front door rather than a revenue line. **P2 and P3 carry no public price**: "Angebot nach
+Umfang" / "Angebot nach Bedarf", costed from what the audit finds, with a fixed-price Angebot
+before any build starts.
+
+Rationale: scope is not knowable before the audit, and a published corridor (7.500–12.000 €)
+gave buyers an anchor to argue against and scared off small engagements. One cheap, concrete
+entry price is easier to say yes to and qualifies the lead by making them pay something.
+
+Open: internal floor prices for P2/P3 must be agreed between the founders and kept in
+docs/01-offer.md — not on the website — so both quote consistently. Also review whether P1's
+advertised "1 Woche" duration still fits a 395 € engagement (see note in that D-entry's thread).
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

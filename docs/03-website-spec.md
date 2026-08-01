@@ -1,12 +1,27 @@
-# 03 — Website Spec (nexbridge-it.io)
+---
+id: website-spec
+title: Website spec
+type: spec
+status: active
+owner: partner-b
+updated: 2026-08-01
+depends_on: [offer, brand]
+decisions: [D-002, D-010, D-013, D-015, D-017]
+---
+
+# 03 — Website Spec (nexbridge-it.com)
 
 ## Goal
 One job: convert a Mittelstand decision-maker (sent by Partner A or via search) into an
 Erstgespräch booking. Everything serves that.
 
 ## Tech (decided — D-002)
-Astro 5 + Tailwind + MDX. Cloudflare Pages. Plausible (cookieless, EU). Contact form via
-GDPR-compatible provider with explicit consent checkbox + double opt-in for anything recurring.
+Astro 5 + Tailwind + MDX. Deployed as a **Cloudflare static-asset Worker** (`website/wrangler.jsonc`)
+— D-002 said Pages, D-015 moved it; custom domains are attached in the dashboard, not via
+`routes`. Plausible (cookieless, EU) is specced but **not yet installed** — `plausibleDomain` in
+`src/config/site.ts` is still empty, and D-013 flags this as a do-before-driving-traffic item.
+Contact form via GDPR-compatible provider with explicit consent checkbox + double opt-in for
+anything recurring.
 Language: bilingual from v1 (D-010) — DE default at `/`, EN at `/en/`, language switcher in
 header, hreflang pairs on every page. All copy lives in i18n dictionaries; no hardcoded strings
 in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
@@ -32,7 +47,7 @@ in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
 7. Final CTA + footer (Impressum, Datenschutz, contact).
 
 ## Copy rules
-See docs/02-brand.md voice. Every section: claim → concrete example → number where honest.
+See [[brand]] voice. Every section: claim → concrete example → number where honest.
 No section may ship with lorem ipsum; use `TBD:`-marked realistic drafts via copywriter-de.
 
 ## Quality bar (qa-reviewer enforces)

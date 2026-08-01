@@ -1,3 +1,14 @@
+---
+id: delivery
+title: Delivery playbook
+type: playbook
+status: active
+owner: founders
+updated: 2026-07-26
+depends_on: [offer]
+decisions: []
+---
+
 # 04 — Delivery Playbook
 
 ## Client onboarding (run via /new-client)

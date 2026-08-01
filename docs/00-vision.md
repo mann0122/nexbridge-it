@@ -1,3 +1,14 @@
+---
+id: vision
+title: Vision & operating model
+type: knowledge
+status: active
+owner: founders
+updated: 2026-07-27
+depends_on: []
+decisions: [D-004, D-008]
+---
+
 # 00 — Vision & Operating Model
 
 ## What NexBridge-IT is

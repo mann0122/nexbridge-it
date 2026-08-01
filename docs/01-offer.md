@@ -1,3 +1,15 @@
+---
+id: offer
+title: Offer & packages
+type: knowledge
+status: active
+owner: founders
+updated: 2026-07-31
+depends_on: [vision]
+decisions: [D-018]
+cites_history: [D-007]
+---
+
 # 01 — Offer & Packages
 
 ## One promise

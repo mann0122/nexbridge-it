@@ -1,0 +1,15 @@
+{
+  "name": "nexbridge-it",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NexBridge-IT venture OS — knowledge base, agent system, business templates, website.",
+  "type": "module",
+  "scripts": {
+    "kb": "node ops/scripts/build-kb-graph.mjs",
+    "site": "npm --prefix website run dev",
+    "site:build": "npm --prefix website run build"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

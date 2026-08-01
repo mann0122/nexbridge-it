@@ -1,3 +1,14 @@
+---
+id: decisions
+title: Decision log
+type: decision-log
+status: active
+owner: founders
+updated: 2026-08-01
+depends_on: []
+decisions: []
+---
+
 # 05 — Decision Log
 
 Format: `D-### | date | decision | status | rationale`. Append-only; supersede, don't delete.
@@ -28,7 +39,7 @@ contract checks + Steuerberater input. Owner: Partner A.
 ## D-006 | 2026-07-26 | Domain: klarfluss.eu | SUPERSEDED by D-016
 Chosen because klarfluss.de was squatted. Moot after the rename; nothing was registered.
 
-## D-007 | 2026-07-26 | v1 package prices | DECIDED
+## D-007 | 2026-07-26 | v1 package prices | SUPERSEDED by D-018
 Set by Claude on founder instruction ("put according to you"); Partner A may adjust anytime.
 P1 Prozess-Audit: 1.900 € Festpreis. P2 Automation Sprint: 7.500–12.000 € nach Umfang.
 P3 Betrieb & Ausbau: 1.200 €/Monat, Mindestlaufzeit 3 Monate. Netto zzgl. USt.
@@ -126,6 +137,58 @@ entry price is easier to say yes to and qualifies the lead by making them pay so
 Open: internal floor prices for P2/P3 must be agreed between the founders and kept in
 docs/01-offer.md — not on the website — so both quote consistently. Also review whether P1's
 advertised "1 Woche" duration still fits a 295 € engagement (see note in that D-entry's thread).
+
+## D-019 | 2026-08-01 | Repo lives at C:\Users\manus\Projects\nexbridge-it | DECIDED
+Moved out of `Downloads\klarfluss-kit\klarfluss\` — a folder named after a brand retired twice,
+sitting next to four unrelated projects and 300 MB of installers, in the directory people bulk-
+delete. The four siblings (jd-journey, jd-world, the-manush-run, spec) stay where they are; the
+`klarfluss-website` entry was removed from their shared `.claude/launch.json` because it pointed
+at a path that no longer exists.
+
+Consequence: Claude Code keys session history by absolute path, so the old history is orphaned.
+This costs nothing that matters — the knowledge lives in `docs/`, which moved with the repo. That
+is the whole point of D-020. Git is unaffected; the remote was already `nexbridge-it.git`.
+
+## D-020 | 2026-08-01 | Knowledge base is a generated graph; STATE.md is the bootstrap | DECIDED
+Every doc in `docs/` carries frontmatter declaring `id`, `status`, `owner`, `updated`,
+`depends_on` and the decisions it rests on. `npm run kb` builds `docs/INDEX.md` from those
+declarations and **refuses to write when an edge is broken** — an unknown id, a cited D-number
+that does not exist, or a doc citing a SUPERSEDED decision as if it were live. Deliberate
+historical references use `cites_history:` instead.
+
+Rationale: prose cross-references rot silently and ours already had. Four files disagreed about
+our own domain — `02-brand.md` said nexbridge-it.de belonged to someone else, D-016 said it was
+free, `README.md` said register the `.io`, and the site was live on `.com`. Declared edges cannot
+drift without failing the build.
+
+`DESIGN.md` and `PRODUCT.md` are graph nodes but carry **no frontmatter**: the impeccable skill
+parses them as repo-root artifacts with format-specific parsers, and injecting YAML risks
+breaking the detector. The generator declares them as external nodes instead.
+
+`docs/STATE.md` is new: current state only, no history, read at the start of every session so a
+fresh conversation knows where the venture stands without opening six files.
+
+**Still unresolved, deliberately not papered over:** `docs/research/domain-availability.md`
+recorded `nexbridge-it.com` as TAKEN on 2026-07-27, and the site went live on that exact domain
+the next day. Both cannot be true. Which registration actually holds — and whether
+`nexbridge-it.de` was ever secured — needs founder confirmation and a follow-up entry.
+Owner: founders.
+
+## D-021 | 2026-08-01 | Orchestration: tiered loop, gates, 3-iteration cap | DECIDED
+Founder direction: "do not rush through things — assess the task, give work to different agents,
+then quality-check the output against the goal." Implemented as protocol in `docs/06-agent-system.md`,
+not as a framework, because `00-vision.md` lists building a custom multi-agent framework as a
+non-goal and subagents cannot reliably supervise other subagents. The orchestrator is the main
+session, which already has the context a spawned supervisor would have to re-derive.
+
+Tiered on purpose: trivial and read-only work goes direct; UI, customer-facing German, `docs/`,
+or multi-file work runs intake → lanes → parallel dispatch → integrate → gates → verdict.
+`/ship` forces the loop. Gates are `design-critic` (UI), `copywriter-de` (German), `qa-reviewer`
+(always), `kb-curator` (docs). Failures re-dispatch **only the failing findings**.
+
+Hard cap of 3 iterations, then stop and ask the founder. A loop with no termination condition
+does not converge — it burns budget rediscovering the same disagreement between two agents.
+New agent: `kb-curator`, owning `docs/` consistency and the append-only rule on this log.
 
 ## Template
 ```

@@ -1,3 +1,14 @@
+---
+id: research-skills
+title: Research — Claude Code skills
+type: research
+status: active
+owner: partner-b
+updated: 2026-07-27
+depends_on: []
+decisions: [D-009]
+---
+
 # Research: Claude Code skills for NexBridge-IT
 
 Date: 2026-07-26. Sources checked: GitHub repos (primary), npm, community rankings.

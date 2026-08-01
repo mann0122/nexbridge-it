@@ -32,19 +32,22 @@ The name: the bridge from how you work today to what runs by itself tomorrow.
 ## Operating Context
 
 Sales flow: Partner A brings warm leads → website validates credibility → Erstgespräch →
-P1 Prozess-Audit (1.900 €) → P2 Automation Sprint (7.500–12.000 €) → P3 Betrieb (1.200 €/Mon).
+P1 Prozess-Audit (295 € Festpreis, the only public price) → P2 Umsetzungs-Sprint (Angebot nach
+Umfang) → P3 Betrieb & Ausbau (Angebot nach Bedarf). Prices per D-018; D-007's 1.900 € /
+7.500–12.000 € / 1.200 €-per-month figures are superseded and must not be quoted.
 Site is bilingual: DE default at `/`, EN at `/en/` (D-010).
 
 ## Capabilities and Constraints
 
-Astro static site, Cloudflare Pages, Plausible (cookieless), no tracking cookies, self-hosted
-fonts, no third-party requests beyond form provider. Lighthouse ≥95 all categories, WCAG AA,
-works at 360px. Undecided: final name confirmation (rename must be a one-line change —
-brand name lives in src/config/site.ts), contact form provider.
+Astro static site on a Cloudflare static-asset Worker (D-022), Plausible (cookieless, specced but
+not yet installed), no tracking cookies, self-hosted fonts, no third-party requests beyond form
+provider. Lighthouse ≥95 all categories, WCAG AA, works at 360px. Undecided: contact form
+provider, and whether the domain registration is secured (see docs/STATE.md open item 1).
 
 ## Brand Commitments
 
-Name (provisional): **NexBridge-IT** — lowercase wordmark with signal-orange period. Palette pinned
+Name: **NexBridge-IT** — final per D-016, CamelCase wordmark with a signal-orange period.
+Palette pinned
 (D-003): graphite #14171A, paper #F7F5F0, signal #FF4D00 (rationed: one accent element per
 viewport), steel #5B6770. Signature element: the **flow-line** — 2 muted process lines + 1 signal
 line converging/branching, scroll-drawn, reduced-motion respected. Voice: klar, präzise, Sie-Form,

@@ -32,7 +32,7 @@ const OUT = path.join(DOCS, 'INDEX.md');
 const EXTERNAL_NODES = [
   { id: 'claude-md', title: 'CLAUDE.md (constitution)', type: 'constitution', file: 'CLAUDE.md', depends_on: ['state', 'agent-system'] },
   { id: 'design', title: 'DESIGN.md (visual world)', type: 'artifact', file: 'DESIGN.md', depends_on: ['brand'] },
-  { id: 'product', title: 'PRODUCT.md (product schema)', type: 'artifact', file: 'PRODUCT.md', depends_on: ['vision', 'offer', 'brand'] },
+  { id: 'product', title: 'PRODUCT.md (product schema)', type: 'artifact', file: 'PRODUCT.md', depends_on: ['vision', 'offer', 'brand', 'decisions'] },
   { id: 'readme', title: 'README.md (repo map)', type: 'artifact', file: 'README.md', depends_on: ['state'] },
 ];
 
@@ -95,6 +95,15 @@ function walk(dir, acc = []) {
 
 const rel = (p) => path.relative(ROOT, p).split(path.sep).join('/');
 
+/**
+ * Remove fenced blocks and inline code before scanning for links or D-entries.
+ * Without this, a document that *explains* the syntax breaks the build: the
+ * `## Template` block in 05-decisions.md would mint a phantom decision the
+ * moment its placeholder used digits, and a doc showing an example [[link]]
+ * would fail as a broken edge. Examples must be quotable.
+ */
+const stripCode = (md) => md.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
+
 // ─── decisions ──────────────────────────────────────────────────────────────
 /** Pull D-entries out of the append-only decision log. */
 function parseDecisions(body) {
@@ -120,7 +129,15 @@ const nodes = new Map();
 for (const file of walk(DOCS)) {
   if (path.basename(file) === 'INDEX.md') continue; // generated; never an input
   const raw = fs.readFileSync(file, 'utf8');
-  const { data, body } = parseFrontmatter(raw, rel(file));
+  let data, body;
+  try {
+    ({ data, body } = parseFrontmatter(raw, rel(file)));
+  } catch (err) {
+    // Keep malformed input inside the curated error report rather than
+    // letting a stack trace escape — the script has one error contract.
+    errors.push(err.message);
+    continue;
+  }
   if (!data) {
     errors.push(`${rel(file)}: missing frontmatter. Every doc in docs/ is a graph node — add an \`id\`.`);
     continue;
@@ -141,7 +158,7 @@ for (const file of walk(DOCS)) {
     errors.push(`${rel(file)}: duplicate id \`${data.id}\` (also in ${nodes.get(data.id).file})`);
     continue;
   }
-  const links = [...body.matchAll(/\[\[([a-z0-9-]+)\]\]/g)].map((m) => m[1]);
+  const links = [...stripCode(body).matchAll(/\[\[([a-z0-9-]+)\]\]/g)].map((m) => m[1]);
   nodes.set(data.id, {
     ...data,
     file: rel(file),
@@ -159,6 +176,12 @@ for (const ext of EXTERNAL_NODES) {
     errors.push(`${ext.file}: declared as an external graph node but the file does not exist`);
     continue;
   }
+  if (nodes.has(ext.id)) {
+    // Without this the external node silently overwrites the doc, dropping it
+    // from the graph with a clean exit 0 — the opposite of failing loudly.
+    errors.push(`${nodes.get(ext.id).file}: id \`${ext.id}\` collides with the external node declared for ${ext.file}. Rename one.`);
+    continue;
+  }
   nodes.set(ext.id, {
     status: 'active', owner: 'partner-b', updated: '—',
     decisions: [], cites_history: [], links: [],
@@ -168,7 +191,7 @@ for (const ext of EXTERNAL_NODES) {
 
 const log = [...nodes.values()].find((n) => n.type === 'decision-log');
 const decisions = log
-  ? parseDecisions(fs.readFileSync(path.join(ROOT, log.file), 'utf8'))
+  ? parseDecisions(stripCode(fs.readFileSync(path.join(ROOT, log.file), 'utf8')))
   : new Map();
 if (!log) errors.push('No doc with `type: decision-log` found — expected docs/05-decisions.md');
 
@@ -219,6 +242,18 @@ if (errors.length) {
 }
 
 // ─── emit ───────────────────────────────────────────────────────────────────
+/**
+ * Newest `updated` across the docs — NOT the wall clock. A generated file that
+ * bakes in today's date produces a dirty diff on the first build of every new
+ * day with zero content change, which trains people to ignore INDEX.md diffs.
+ * The whole point of this file is that a diff means something.
+ */
+const contentDate = [...nodes.values()]
+  .map((n) => n.updated)
+  .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+  .sort()
+  .pop() || 'unknown';
+
 const mid = (id) => id.replace(/-/g, '_');
 /** Link target relative to docs/, since INDEX.md lives there. */
 const docHref = (node) => path.relative(DOCS, path.join(ROOT, node.file)).split(path.sep).join('/');
@@ -253,7 +288,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it \`depends
 \`npm run kb\` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Generated ${new Date().toISOString().slice(0, 10)} · ${nodes.size} nodes · ${decisions.size} decisions
+Content as of ${contentDate} · ${nodes.size} nodes · ${decisions.size} decisions
 
 ## Map
 

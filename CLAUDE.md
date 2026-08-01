@@ -67,10 +67,11 @@ have to re-derive, and you can ask the founder a question.
 
 Full protocol and anti-patterns: `docs/06-agent-system.md`.
 
-## Stack (decided — see D-002, D-015)
-Astro 5 + Tailwind + MDX in `website/`, deployed as a Cloudflare static-asset Worker, Plausible
-analytics (specced, not yet installed), contact form via a GDPR-compatible provider. Node LTS.
-TypeScript strict where applicable.
+## Stack (see D-002, superseded on two points by D-022 and D-023)
+Astro 7 + Tailwind 4 + MDX in `website/`, deployed as a Cloudflare static-asset Worker (D-022),
+Plausible analytics (specced, not yet installed), contact form via a GDPR-compatible provider.
+Node LTS. TypeScript strict where applicable. `website/package.json` is authoritative for
+versions — D-002's "Astro 5, Cloudflare Pages" is history, not state.
 
 Three single sources in the website — never work around them:
 - Brand name and URLs → `website/src/config/site.ts`

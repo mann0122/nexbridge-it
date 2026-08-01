@@ -14,7 +14,7 @@ DESIGN.md          Committed visual world. Stays at root — the impeccable skil
 PRODUCT.md         Product schema. Same constraint.
 docs/              Knowledge base. Graph-linked, generated index, append-only decision log.
 ops/               Business templates (Angebot, Rechnung) + the graph generator.
-website/           The site: Astro 5 + Tailwind, live on nexbridge-it.com.
+website/           The site: Astro 7 + Tailwind 4, deployed to nexbridge-it.com.
 .claude/           Agents, slash commands, skills, hooks.
 ```
 
@@ -45,7 +45,12 @@ it were live.
 
 This is not ceremony. Four files once disagreed about our own domain: one said the `.de` belonged
 to someone else, the decision log said it was free, this README said register the `.io`, and the
-site was live on the `.com`. Prose cross-references rot silently. Declared edges fail loudly.
+site was deployed to the `.com`. Prose cross-references rot silently; declared edges fail loudly.
+
+It has limits worth knowing: it checks that a cited decision *exists* and is live, not that the
+decision's content supports the claim citing it. That gap is how `D-015` — an entry about a
+`pages.dev` preview — ended up cited as the authority for moving to a Worker. Reading is still
+your job.
 
 If you edit anything under `docs/`, run `npm run kb` before committing.
 

@@ -19,8 +19,9 @@ and the bridge between systems that do not talk to each other. Both readings are
 literally what the hero schematic draws.
 Wordmark: `NexBridge-IT` in CamelCase with a signal-orange period (#FF4D00).
 
-Domain: the site is live on **nexbridge-it.com** — the single source is
-`website/src/config/site.ts`, not this file.
+Domain: the configured origin is **nexbridge-it.com** — the single source is
+`website/src/config/site.ts`, not this file. Registration is unconfirmed; `site.ts:8` still
+describes the URL as "preview until the domain is registered".
 `TBD:` [[research-domains]] recorded nexbridge-it.com as TAKEN on 2026-07-27, the day before the
 site went live on it. Founders must confirm which registration actually holds, and whether
 nexbridge-it.de — free per D-016 and the stronger choice for Mittelstand buyers — was secured.

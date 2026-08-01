@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-01
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018]
+decisions: [D-016, D-018, D-019, D-022, D-023]
 ---
 
 # Where things stand
@@ -37,16 +37,19 @@ Details → [[vision]].
 | Internal floor prices | **Not agreed.** `TBD:` in [[offer]] — blocks consistent quoting. |
 
 All prices netto zzgl. USt. The client always gets a fixed-price Angebot before build starts.
-The 1.900 € audit price in D-007 is **superseded** — do not quote it. Details → [[offer]].
+Any audit price other than 295 € is superseded — D-007's figures are history. Details → [[offer]].
 
 ## Website state
 
-Live on **nexbridge-it.com**. Astro 5 + Tailwind, deployed as a Cloudflare static-asset Worker.
+Configured origin **nexbridge-it.com** (`website/src/config/site.ts`), deployed as a Cloudflare
+static-asset Worker (D-022). **Registration unconfirmed** — see open item 1; `site.ts:8` still
+calls the URL "preview until the domain is registered". Astro 7 + Tailwind 4 (D-023).
 Bilingual from day one: German at `/`, English at `/en/`.
 
 **Four routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`.
 The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
-pages — a deliberate choice, see `website/src/components/Header.astro:17`.
+pages — temporary, "until dedicated subpages exist"
+(`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
 
 Three single sources you must not work around:
 
@@ -65,10 +68,10 @@ Ranked. Owner in brackets.
    whether `nexbridge-it.de` (free per D-016, and the stronger choice for Mittelstand buyers)
    was secured. Confirm both, then log a decision entry.
 2. **Analytics not installed** [partner-b] — `plausibleDomain` and `cfAnalyticsToken` in
-   `site.ts` are both empty. D-013 flags this as do-before-driving-traffic. Right now the site
-   makes zero third-party requests, which is a GDPR asset, not just a gap.
+   `site.ts` are both empty; the site makes zero third-party requests. D-013 flags this as
+   do-before-driving-traffic.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
-   to opening the visitor's mail client. Never loses an enquiry, but it is unmeasurable.
+   to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Legal pages are skeletons** [founders] — `/impressum` and `/datenschutz` both render
    "Inhalt folgt vor Veröffentlichung." Required before any real traffic.
 5. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
@@ -84,10 +87,8 @@ Ranked. Owner in brackets.
 
 ## Blocked / pending
 
-**D-005 — legal vehicle** (GbR vs Einzelunternehmen) is the only `PENDING` decision.
-**Do not raise it.** D-008 supersedes the concern in practice: the founders confirmed all
-legal/admin groundwork is handled outside this repo, and agent output must not re-litigate it.
-No current work depends on D-005.
+**D-005 — legal vehicle** is the only `PENDING` decision. **Do not raise it** — see D-008.
+No current work depends on it.
 
 ## Working rules that bite most often
 
@@ -102,12 +103,9 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-**The repo move is decided but not executed.** D-019 relocates this repo to
-`C:\Users\manus\Projects\nexbridge-it`. It cannot run from inside a Claude Code session — Windows
-refuses to move a directory a live process is working in — so it runs from a separate PowerShell
-window with VS Code closed. Until that happens the repo is still at
-`Downloads\klarfluss-kit\klarfluss\`. If you are reading this from the new path, the move is done
-and this section can go.
+**Repo move decided, not executed** (D-019) — target `C:\Users\manus\Projects\nexbridge-it`,
+runs via `move-nexbridge.ps1` from a separate PowerShell window. If you are reading this from the
+new path, the move is done and this section can go.
 
 ## Next
 

@@ -25,7 +25,7 @@ npm run build    # static output to dist/
 npm run preview  # serve the build
 ```
 
-Deployed as a Cloudflare static-asset Worker (`wrangler.jsonc`), not Pages — D-015. Custom domains
+Deployed as a Cloudflare static-asset Worker (`wrangler.jsonc`), not Pages — D-022. Custom domains
 are attached in the Cloudflare dashboard, not via `routes`.
 
 ## Rules that bite

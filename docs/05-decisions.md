@@ -190,6 +190,30 @@ Hard cap of 3 iterations, then stop and ask the founder. A loop with no terminat
 does not converge — it burns budget rediscovering the same disagreement between two agents.
 New agent: `kb-curator`, owning `docs/` consistency and the append-only rule on this log.
 
+## D-022 | 2026-08-01 | Deploy target is a Cloudflare static-asset Worker, not Pages | DECIDED
+Recorded retroactively. The move from Cloudflare Pages to a static-asset Worker happened in
+commit `e45bc6e` and is visible in `website/wrangler.jsonc` (worker name `nexbridge-it-site`,
+assets served from `./dist`, `not_found_handling: "404-page"`), but no decision entry was ever
+written for it. The commit message and several documents cited **D-015** as the authority —
+D-015 is about publishing a preview to a `*.pages.dev` URL and says the opposite. D-002 likewise
+still says Pages, correctly, as history.
+
+Consequence: custom domains are attached in the Cloudflare dashboard rather than via `routes`,
+because the wrangler OAuth token lacks `dns_records:write`. Anything describing our deploy target
+cites D-022 from here on. D-002 and D-015 stay untouched — they are history, and the log is
+append-only.
+
+Found by the knowledge-base audit that D-020 introduced, which is the point of it: a citation
+whose target says the opposite of the claim is exactly the rot that prose cross-references hide.
+Note the limit this exposes — the graph validates that a cited decision *exists* and is live, not
+that its content supports the claim. That check remains human.
+
+## D-023 | 2026-08-01 | Astro 7, not Astro 5 | DECIDED
+`website/package.json` declares `astro ^7.1.3` and the lockfile resolves 7.1.3, but CLAUDE.md,
+README.md, `03-website-spec.md`, `frontend-dev.md` and the new STATE.md all said "Astro 5",
+inherited from D-002 and never revisited after the upgrade. Corrected in every state document.
+D-002 keeps its original wording — it was true when written.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

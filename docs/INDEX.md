@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Generated 2026-08-01 · 15 nodes · 21 decisions
+Content as of 2026-08-01 · 15 nodes · 23 decisions
 
 ## Map
 
@@ -56,6 +56,7 @@ graph LR
   vision --> product
   offer --> product
   brand --> product
+  decisions --> product
   state --> readme
 ```
 
@@ -85,7 +86,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `brand` | Brand | knowledge | active | partner-b | 2026-08-01 | [docs/02-brand.md](02-brand.md) | `website-spec`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-08-01 | [docs/05-decisions.md](05-decisions.md) | `state` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-08-01 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
@@ -117,13 +118,15 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-012 | 2026-07-26 | No FAQ — objections answered inside a narrative | DECIDED | — |
 | D-013 | 2026-07-26 | Contact: real form, mailto only as fallback | DECIDED | `website-spec` |
 | ~~D-014~~ | 2026-07-26 | Name: NextBridge | SUPERSEDED by D-016 (one day later) | — |
-| D-015 | 2026-07-26 | Published preview on Cloudflare Pages | DECIDED | `website-spec` |
+| D-015 | 2026-07-26 | Published preview on Cloudflare Pages | DECIDED | — |
 | D-016 | 2026-07-27 | Name: NexBridge-IT · Domain: nexbridge-it.de | DECIDED | `brand`, `research-domains`, `state` |
 | D-017 | 2026-07-27 | Open to AI crawlers; SEO baseline shipped | DECIDED | `website-spec` |
 | D-018 | 2026-07-27 | Pricing: one public price only | DECIDED — supersedes D-007 | `offer`, `state` |
-| D-019 | 2026-08-01 | Repo lives at C:\Users\manus\Projects\nexbridge-it | DECIDED | — |
+| D-019 | 2026-08-01 | Repo lives at C:\Users\manus\Projects\nexbridge-it | DECIDED | `state` |
 | D-020 | 2026-08-01 | Knowledge base is a generated graph; STATE.md is the bootstrap | DECIDED | — |
 | D-021 | 2026-08-01 | Orchestration: tiered loop, gates, 3-iteration cap | DECIDED | `agent-system` |
+| D-022 | 2026-08-01 | Deploy target is a Cloudflare static-asset Worker, not Pages | DECIDED | `website-spec`, `state` |
+| D-023 | 2026-08-01 | Astro 7, not Astro 5 | DECIDED | `website-spec`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 
@@ -131,4 +134,4 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 
 ---
 
-_15 nodes, 25 edges, 0 broken. Rebuild: `npm run kb`._
+_15 nodes, 26 edges, 0 broken. Rebuild: `npm run kb`._

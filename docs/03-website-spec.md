@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-01
 depends_on: [offer, brand]
-decisions: [D-002, D-010, D-013, D-015, D-017]
+decisions: [D-002, D-010, D-013, D-017, D-022, D-023]
 ---
 
 # 03 — Website Spec (nexbridge-it.com)
@@ -15,10 +15,10 @@ decisions: [D-002, D-010, D-013, D-015, D-017]
 One job: convert a Mittelstand decision-maker (sent by Partner A or via search) into an
 Erstgespräch booking. Everything serves that.
 
-## Tech (decided — D-002)
-Astro 5 + Tailwind + MDX. Deployed as a **Cloudflare static-asset Worker** (`website/wrangler.jsonc`)
-— D-002 said Pages, D-015 moved it; custom domains are attached in the dashboard, not via
-`routes`. Plausible (cookieless, EU) is specced but **not yet installed** — `plausibleDomain` in
+## Tech (D-002, superseded on two points by D-022 and D-023)
+**Astro 7 + Tailwind 4 + MDX** — D-002 said Astro 5; `website/package.json` is authoritative.
+Deployed as a **Cloudflare static-asset Worker** (`website/wrangler.jsonc`, D-022), not Pages;
+custom domains are attached in the dashboard, not via `routes`. Plausible (cookieless, EU) is specced but **not yet installed** — `plausibleDomain` in
 `src/config/site.ts` is still empty, and D-013 flags this as a do-before-driving-traffic item.
 Contact form via GDPR-compatible provider with explicit consent checkbox + double opt-in for
 anything recurring.

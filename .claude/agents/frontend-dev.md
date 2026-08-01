@@ -15,7 +15,8 @@ Three single sources you must never work around:
 German copy is `copywriter-de`'s job, not yours. Add the key, leave the wording to them.
 
 Standards:
-- Astro 5 + Tailwind + MDX, TypeScript strict, semantic HTML, correct `lang`.
+- Astro 7 + Tailwind 4 + MDX, TypeScript strict, semantic HTML, correct `lang`.
+  (D-002 says Astro 5 — that was true when written; `website/package.json` is authoritative.)
 - Design tokens come from `global.css` `@theme` — never hardcode hex values in components.
 - Accessibility: WCAG AA contrast, keyboard focus visible, prefers-reduced-motion respected,
   alt texts in German.

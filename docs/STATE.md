@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-01
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-019, D-022, D-023]
+decisions: [D-016, D-018, D-019, D-022, D-023, D-025]
 ---
 
 # Where things stand
@@ -41,9 +41,8 @@ Any audit price other than 295 € is superseded — D-007's figures are history
 
 ## Website state
 
-Configured origin **nexbridge-it.com** (`website/src/config/site.ts`), deployed as a Cloudflare
-static-asset Worker (D-022). **Registration unconfirmed** — see open item 1; `site.ts:8` still
-calls the URL "preview until the domain is registered". Astro 7 + Tailwind 4 (D-023).
+Live on **nexbridge-it.com** — domain registered to us, confirmed by the founder (D-025).
+Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-023).
 Bilingual from day one: German at `/`, English at `/en/`.
 
 **Four routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`.
@@ -63,20 +62,18 @@ Details → [[website-spec]], visual world → `DESIGN.md`.
 
 Ranked. Owner in brackets.
 
-1. **Domain registration is unconfirmed** [founders] — the site is live on `nexbridge-it.com`,
-   but [[research-domains]] recorded that domain as TAKEN one day earlier. Also unresolved:
-   whether `nexbridge-it.de` (free per D-016, and the stronger choice for Mittelstand buyers)
-   was secured. Confirm both, then log a decision entry.
+1. **Legal pages are skeletons** [founders] — `/impressum` and `/datenschutz` both render
+   "Inhalt folgt vor Veröffentlichung." Required before any real traffic.
 2. **Analytics not installed** [partner-b] — `plausibleDomain` and `cfAnalyticsToken` in
    `site.ts` are both empty; the site makes zero third-party requests. D-013 flags this as
    do-before-driving-traffic.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
-4. **Legal pages are skeletons** [founders] — `/impressum` and `/datenschutz` both render
-   "Inhalt folgt vor Veröffentlichung." Required before any real traffic.
-5. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
-6. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
-7. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
+4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
+5. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
+6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
+7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
+   choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
 
 ### Known defects (technical, none blocking)
 

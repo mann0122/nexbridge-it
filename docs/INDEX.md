@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-01 · 15 nodes · 24 decisions
+Content as of 2026-08-01 · 15 nodes · 25 decisions
 
 ## Map
 
@@ -37,10 +37,11 @@ graph LR
   brand --> design
   vision --> offer
   vision --> brand
-  brand -.-> research_domains
   offer --> website_spec
   brand --> website_spec
   offer --> delivery
+  decisions -.-> state
+  decisions -.-> brand
   vision --> agent_system
   agent_system -.-> decisions
   delivery --> clients
@@ -52,7 +53,6 @@ graph LR
   website_spec --> state
   decisions --> state
   agent_system --> state
-  state -.-> research_domains
   vision --> product
   offer --> product
   brand --> product
@@ -128,6 +128,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-022 | 2026-08-01 | Deploy target is a Cloudflare static-asset Worker, not Pages | DECIDED | `website-spec`, `state` |
 | D-023 | 2026-08-01 | Astro 7, not Astro 5 | DECIDED | `website-spec`, `state` |
 | D-024 | 2026-08-01 | 404 page: German-only, noindex, reports the requested path | DECIDED | — |
+| D-025 | 2026-08-01 | nexbridge-it.com is registered to us | DECIDED | `brand`, `research-domains`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

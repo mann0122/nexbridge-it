@@ -235,6 +235,18 @@ The signature device is the Zeichnungskopf (status + requested path), not the he
 the frame is `hidden lg:block` and mistyped URLs mostly arrive on a phone. The path is written
 with `textContent`, never `innerHTML`: it is attacker-controlled.
 
+## D-025 | 2026-08-01 | nexbridge-it.com is registered to us | DECIDED
+Founder confirmed in session: the domain the site runs on is purchased, invoice on file. This
+closes the contradiction D-020 flagged — `docs/research/domain-availability.md` recorded
+`nexbridge-it.com` as TAKEN via RDAP on 2026-07-27, one day before the site went live on it.
+Whether that reading was wrong or the domain was acquired afterwards is moot and not worth
+chasing; the founder holds it either way.
+
+Consequence: `site.ts` no longer describes the URL as a preview, and "registration unconfirmed"
+is gone from [[state]] and [[brand]]. Still unrecorded: whether `nexbridge-it.de` was also
+secured — D-016 recommended it as the stronger choice for Mittelstand buyers. Not blocking
+anything; log it if and when it happens. Owner: founders.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

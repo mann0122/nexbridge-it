@@ -5,7 +5,7 @@
 export const SITE = {
   /** Brand name as used in the wordmark. */
   name: 'NexBridge-IT',
-  /** Canonical production origin. Preview until the domain is registered. */
+  /** Canonical production origin. Domain registered to us — D-025. */
   url: 'https://nexbridge-it.com',
   region: 'Baden-Württemberg',
   foundedYear: 2026,

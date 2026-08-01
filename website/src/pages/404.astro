@@ -1,0 +1,112 @@
+---
+/*
+ * Served for every unmatched URL — `wrangler.jsonc` sets
+ * `not_found_handling: "404-page"`, which looks for `dist/404.html`. Before
+ * this file existed that setting was inert.
+ *
+ * German, because `/` is the German site and a wrong URL carries no language
+ * signal. Cloudflare serves this one file for every unmatched path, so an
+ * English visitor lands here too — hence the explicit language link.
+ *
+ * `noindex` matters: this page answers under every wrong address, so the
+ * canonical, `og:url` and the JSON-LD offer graph are all suppressed. Without
+ * that, every mistyped URL would publish our service catalogue.
+ *
+ * The signature device here is the Zeichnungskopf (DESIGN.md, composition
+ * grammar), not the hero's DIN frame — the frame is `hidden lg:block`, and a
+ * mistyped URL mostly arrives on a phone.
+ */
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations('de');
+---
+
+<Layout
+  lang="de"
+  path="/404"
+  title={t('notFound.meta.title')}
+  description={t('notFound.meta.description')}
+  hasAlternate={false}
+  noindex
+>
+  <Header lang="de" path="/404" hasAlternate={false} />
+
+  {/* Footer owns the seam below — one border per edge, never two. */}
+  <main id="main" class="surface-grid flex min-h-[70vh] items-center">
+    <div class="mx-auto w-full max-w-[1200px] px-6 py-16 md:py-28">
+      <h1 class="type-display max-w-[18ch] text-[clamp(2rem,5.5vw,4rem)] text-paper">
+        {t('notFound.heading')}
+      </h1>
+
+      {/*
+        Zeichnungskopf: an engineering document reports the fault code and the
+        offending input. The path is the one genuinely useful thing a 404 can
+        tell a visitor, so it is worth the five lines of script below.
+      */}
+      <dl
+        class="mt-10 grid max-w-[34rem] grid-cols-1 divide-y divide-steel-soft border border-steel-soft sm:grid-cols-[auto_1fr] sm:divide-x sm:divide-y-0"
+      >
+        <div class="px-4 py-3">
+          <dt class="type-annot text-steel">{t('notFound.labelStatus')}</dt>
+          <dd class="mt-1 font-mono text-[0.8125rem] text-paper">404</dd>
+        </div>
+        <div class="min-w-0 px-4 py-3">
+          <dt class="type-annot text-steel">{t('notFound.labelPath')}</dt>
+          <dd
+            id="nf-path"
+            class="mt-1 truncate font-mono text-[0.8125rem] text-paper"
+            title="–"
+          >
+            –
+          </dd>
+        </div>
+      </dl>
+
+      <p class="mt-8 max-w-[54ch] leading-relaxed text-steel">
+        {t('notFound.body')}
+      </p>
+
+      <div class="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <a
+          href="/"
+          class="group inline-flex items-center gap-3 bg-signal px-6 py-3.5 font-semibold text-graphite"
+        >
+          {t('notFound.cta')}
+          <span
+            class="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5 motion-reduce:transition-none"
+            aria-hidden="true">→</span
+          >
+        </a>
+        <a
+          href="/en/"
+          lang="en"
+          hreflang="en"
+          class="type-annot border border-steel-soft px-2.5 py-3 text-steel transition-colors hover:border-steel hover:text-paper"
+        >
+          {t('notFound.ctaEn')}
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang="de" />
+</Layout>
+
+{/*
+  Fills the Adresse row with the path that was actually requested. textContent,
+  never innerHTML — the path is attacker-controlled. Server-rendered fallback
+  is an en dash, so the row degrades honestly without JS.
+*/}
+<script is:inline>
+  (function () {
+    var el = document.getElementById('nf-path');
+    if (!el) return;
+    var p = (window.location.pathname || '/') + (window.location.search || '');
+    if (p.length > 120) p = p.slice(0, 119) + '…';
+    el.textContent = p;
+    el.setAttribute('title', p);
+  })();
+</script>

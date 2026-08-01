@@ -214,6 +214,27 @@ README.md, `03-website-spec.md`, `frontend-dev.md` and the new STATE.md all said
 inherited from D-002 and never revisited after the upgrade. Corrected in every state document.
 D-002 keeps its original wording — it was true when written.
 
+## D-024 | 2026-08-01 | 404 page: German-only, noindex, reports the requested path | DECIDED
+`wrangler.jsonc` has always set `not_found_handling: "404-page"`, but no `404.astro` existed, so
+`dist/404.html` was never built and the setting was inert. Now built.
+
+**German-only, deliberately.** Cloudflare serves one `dist/404.html` for every unmatched path, so
+a language-specific 404 is not possible without a route plus path-prefix handling. `/` is the
+German site and a wrong URL carries no language signal, so German is the honest default; the
+English start page gets an explicit link. The `en` block of `notFound.*` in `i18n/ui.ts` exists
+only to satisfy the type constraint and is never rendered — noted in a comment there so nobody
+spends time tuning copy that does not ship.
+
+**`noindex` suppresses more than the robots tag.** A 404 answers under *every* wrong address, so
+`Layout.astro` now gates the canonical, `og:url` **and** the JSON-LD graph behind the same flag.
+Without that, every mistyped URL published our `ProfessionalService` + `OfferCatalog` markup as
+though it were a real offer page. Found by `design-critic`; the first implementation gated only
+the canonical.
+
+The signature device is the Zeichnungskopf (status + requested path), not the hero's DIN frame —
+the frame is `hidden lg:block` and mistyped URLs mostly arrive on a phone. The path is written
+with `textContent`, never `innerHTML`: it is attacker-controlled.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

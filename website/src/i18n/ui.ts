@@ -201,6 +201,22 @@ export const ui = {
     'footer.contact': 'Kontakt',
     'footer.legal.impressum': 'Impressum',
     'footer.legal.datenschutz': 'Datenschutz',
+
+    /*
+     * The `en` twins of these keys are required by the type constraint but are
+     * never rendered: 404.astro is German-only, because Cloudflare serves one
+     * dist/404.html for every unmatched path — English included. Keep them
+     * correct, do not spend time tuning them until an English 404 route exists.
+     */
+    'notFound.meta.title': 'Seite nicht gefunden – NexBridge-IT',
+    'notFound.meta.description': 'Diese Adresse existiert nicht. Zurück zur Startseite.',
+    'notFound.heading': 'Diese Seite gibt es nicht.',
+    'notFound.body':
+      'Entweder stimmt die Adresse nicht, oder die Seite ist umgezogen. Auf der Startseite finden Sie Leistungen, Vorgehen und Kontakt.',
+    'notFound.labelStatus': 'Status',
+    'notFound.labelPath': 'Adresse',
+    'notFound.cta': 'Zur Startseite',
+    'notFound.ctaEn': 'Switch to English',
   },
   en: {
     'meta.title': 'NexBridge-IT — Processes that run themselves',
@@ -391,6 +407,16 @@ export const ui = {
     'footer.contact': 'Contact',
     'footer.legal.impressum': 'Imprint',
     'footer.legal.datenschutz': 'Privacy',
+
+    'notFound.meta.title': 'Page not found — NexBridge-IT',
+    'notFound.meta.description': 'This page does not exist. Head back to the home page.',
+    'notFound.heading': 'This page does not exist.',
+    'notFound.body':
+      'The address may contain a typo, or the page has moved. Services, approach and contact are all on the home page.',
+    'notFound.labelStatus': 'Status',
+    'notFound.labelPath': 'Address',
+    'notFound.cta': 'Back to the home page',
+    'notFound.ctaEn': 'Zu Deutsch wechseln',
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-01 · 15 nodes · 23 decisions
+Content as of 2026-08-01 · 15 nodes · 24 decisions
 
 ## Map
 
@@ -127,6 +127,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-021 | 2026-08-01 | Orchestration: tiered loop, gates, 3-iteration cap | DECIDED | `agent-system` |
 | D-022 | 2026-08-01 | Deploy target is a Cloudflare static-asset Worker, not Pages | DECIDED | `website-spec`, `state` |
 | D-023 | 2026-08-01 | Astro 7, not Astro 5 | DECIDED | `website-spec`, `state` |
+| D-024 | 2026-08-01 | 404 page: German-only, noindex, reports the requested path | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

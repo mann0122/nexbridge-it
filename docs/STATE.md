@@ -80,10 +80,9 @@ Ranked. Owner in brackets.
 
 ### Known defects (technical, none blocking)
 
-- `website/wrangler.jsonc:18` sets `not_found_handling: "404-page"`, but no `404.astro` exists,
-  so `dist/404.html` is never built and the setting is inert.
-- `website/README.md` is still the unmodified Astro starter boilerplate.
 - No `/en/impressum` or `/en/datenschutz` — an English visitor lands on German legal pages.
+- The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
+  an English visitor at `/en/tippfehler` gets the German page.
 
 ## Blocked / pending
 

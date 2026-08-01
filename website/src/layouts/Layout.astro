@@ -14,9 +14,11 @@ interface Props {
   description?: string;
   /** False for pages that exist in one language only (legal pages). */
   hasAlternate?: boolean;
+  /** True for pages that must stay out of the index (404). Also drops the canonical. */
+  noindex?: boolean;
 }
 
-const { lang, path, title, description, hasAlternate = true } = Astro.props;
+const { lang, path, title, description, hasAlternate = true, noindex = false } = Astro.props;
 const t = useTranslations(lang);
 const metaTitle = title ?? t('meta.title');
 const metaDescription = description ?? t('meta.description');
@@ -90,7 +92,9 @@ const structuredData = {
     <title>{metaTitle}</title>
     <meta name="description" content={metaDescription} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonical} />
+    {/* A 404 is served under every wrong URL — a canonical there would point
+        search engines at an error page as though it were the real content. */}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {
       hasAlternate && (
         <>
@@ -104,7 +108,7 @@ const structuredData = {
     <meta property="og:title" content={metaTitle} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={new URL('/og.png', SITE.url).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -116,9 +120,16 @@ const structuredData = {
     <meta name="twitter:title" content={metaTitle} />
     <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={new URL('/og.png', SITE.url).href} />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
+    />
     <meta name="theme-color" content="#14171A" />
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
+    {/* The 404 answers under every wrong URL. Shipping the ProfessionalService
+        + OfferCatalog graph there would publish our offer page at addresses
+        that do not exist — so structured data follows the same gate as the
+        canonical, not just the robots directive. */}
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />}
     <Analytics />
   </head>
   <body>

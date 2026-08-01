@@ -20,6 +20,7 @@ export const ui = {
     'a11y.mainNav': 'Hauptnavigation',
     'a11y.flowDiagram': 'Schema: manuelle Abläufe werden zu einem automatischen Prozess',
     'a11y.processDiagram': 'Ablauf: drei Phasen von der Analyse bis zum laufenden Betrieb',
+    'a11y.stageDiagram': 'Schema in drei Zuständen: vom Ist-Zustand über den Übergang zum Soll-Zustand',
     'a11y.legalNav': 'Rechtliches',
 
     'nav.leistungen': 'Leistungen',
@@ -65,6 +66,14 @@ export const ui = {
     'problems.3.pos': 'Pos. C',
     'problems.3.title': 'Zahlen kommen zu spät',
     'problems.3.note': 'Bis der Bericht fertig ist, ist er veraltet.',
+
+    'stage.kicker': 'Ablaufschema · Ist → Soll',
+    'stage.1.label': 'Ist-Zustand',
+    'stage.1.note': 'Der Ablauf verteilt sich auf Personen, Dateien und Systeme.',
+    'stage.2.label': 'Übergang',
+    'stage.2.note': 'Wir verbinden, was heute getrennt läuft.',
+    'stage.3.label': 'Soll-Zustand',
+    'stage.3.note': 'Ein Ablauf, der läuft – und sich meldet, wenn etwas hakt.',
 
     'services.kicker': 'Leistungen · NB-01–NB-04',
     'services.title': 'Vier Wege, ein Ergebnis: weniger Handarbeit.',
@@ -229,6 +238,7 @@ export const ui = {
     'a11y.mainNav': 'Main navigation',
     'a11y.flowDiagram': 'Diagram: manual workflows become one automated process',
     'a11y.processDiagram': 'Flow: three phases from analysis to steady operation',
+    'a11y.stageDiagram': 'Schematic in three states: from current state through transition to target state',
     'a11y.legalNav': 'Legal',
 
     'nav.leistungen': 'Services',
@@ -274,6 +284,14 @@ export const ui = {
     'problems.3.pos': 'Item C',
     'problems.3.title': 'Numbers arrive too late',
     'problems.3.note': 'By the time the report is done, it’s outdated.',
+
+    'stage.kicker': 'Process schematic · current → target',
+    'stage.1.label': 'Current state',
+    'stage.1.note': 'The process is spread across people, files and systems.',
+    'stage.2.label': 'Transition',
+    'stage.2.note': 'We connect what runs separately today.',
+    'stage.3.label': 'Target state',
+    'stage.3.note': 'One process that runs — and tells you when something gets stuck.',
 
     'services.kicker': 'Services · NB-01–NB-04',
     'services.title': 'Four routes, one result: less manual work.',

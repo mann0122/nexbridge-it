@@ -70,7 +70,25 @@ prefers-reduced-motion, and `?snap` renders final states for static capture.
 - **Crosshair cursor** with magnetic CTAs (`data-magnetic`), fine-pointer devices only.
 - **Marquee** annotation band as section divider; pauses on hover.
 - **Live sparkline** in the demo dashboard — a demo that stands still proves nothing.
-Budget: ~176 KB JS across the page, zero external asset requests.
+
+**The focal moment — Wandlung** (`TransformStage.astro`, added 2026-08-02, D-028). One pinned
+full-viewport sheet between Problems and Services, 240svh of scroll, where a single particle
+object rearranges through three drawn states: *Ist-Zustand* (separate assemblies that never
+connect) → *Übergang* (the bridge) → *Soll-Zustand* (a signal-flow schematic whose feedback loop
+is the monitoring). Every particle keeps a stable identity across all three, so it reads as one
+object being reorganised, never as pictures crossfading. Shapes are line/arc outlines extruded
+with `twin()` — the same drawing grammar as the rest of the site, never a sphere or a blob.
+Palette is tokens only, signal rationed to 6.25%, glow off. Composition is a drawing sheet:
+kicker top-left, drawing centred, caption and a measured `01 / 03` scale at the foot, DIN frame
+row B column 2 (the hero holds A/1).
+
+Two constraints, learned by failing first (D-026 → D-027): **the camera must be locked**
+(`spinSpeed: 0`, or a drawn outline never faces the viewer and reads as grey dirt), and **it
+needs a whole viewport** — behind copy there is no setting that is both legible as a shape and
+harmless to the text. This is the page's *only* pinned sequence; a second one would make the site
+a showreel.
+
+Budget: ~193 KB JS across the page (65 KB brotli), zero external asset requests.
 
 ## Components (as they get built)
 

@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-01 · 15 nodes · 25 decisions
+Content as of 2026-08-02 · 15 nodes · 28 decisions
 
 ## Map
 
@@ -86,7 +86,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `brand` | Brand | knowledge | active | partner-b | 2026-08-01 | [docs/02-brand.md](02-brand.md) | `website-spec`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-08-01 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-08-02 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
@@ -129,6 +129,9 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-023 | 2026-08-01 | Astro 7, not Astro 5 | DECIDED | `website-spec`, `state` |
 | D-024 | 2026-08-01 | 404 page: German-only, noindex, reports the requested path | DECIDED | — |
 | D-025 | 2026-08-01 | nexbridge-it.com is registered to us | DECIDED | `brand`, `research-domains`, `state` |
+| ~~D-026~~ | 2026-08-02 | Particle field adopted for the Vorgehen section only | SUPERSEDED by D-027 | — |
+| D-027 | 2026-08-02 | Particle field reverted from the homepage; needs its own layout | DECIDED | — |
+| D-028 | 2026-08-02 | Wandlung: the particle field gets its own pinned stage | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

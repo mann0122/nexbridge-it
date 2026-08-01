@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>particle-field — NexBridge-IT brand study</title>
+<!--
+  INTERNAL LAB FILE. Not shipped, not customer-facing, deliberately English —
+  no German marketing copy is invented here (CLAUDE.md hard rule 1).
+  Open directly in a browser; no server or build step required.
+
+  This is the upstream effect recoloured to the brand and driven by shapes
+  authored in the drawing-office grammar. The controls exist so the founder
+  can judge the settings that actually decide whether this ships.
+-->
+<style>
+  :root {
+    --graphite: #14171A;
+    --graphite-2: #1B1F23;
+    --paper: #F7F5F0;
+    --signal: #FF4D00;
+    --steel: #8B959E;
+    --steel-deep: #5B6770;
+    --steel-soft: #39424A;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--graphite); scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--graphite); color: var(--paper);
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Graph-paper ground — .surface-grid from global.css */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* The field: fixed behind everything, decorative, never interactive.
+     Directional mask mirrors FlowField.astro — quiet where type sits. */
+  #field {
+    position: fixed; inset: 0;
+    width: 100vw; height: 100svh;
+    display: block; z-index: 1; pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,.18) 0%, rgba(0,0,0,.34) 30%, rgba(0,0,0,.9) 64%, rgba(0,0,0,1) 100%);
+    mask-image: linear-gradient(to right, rgba(0,0,0,.18) 0%, rgba(0,0,0,.34) 30%, rgba(0,0,0,.9) 64%, rgba(0,0,0,1) 100%);
+  }
+
+  main { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  section {
+    min-height: 100svh; padding: 140px 0 120px;
+    display: flex; flex-direction: column; justify-content: center;
+    gap: 20px; max-width: 34rem;
+  }
+
+  .annot {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--steel); display: flex; align-items: center; gap: 12px;
+  }
+  .annot::after { content: ''; flex: 1; height: 1px; background: var(--steel-soft); }
+
+  h1, h2 {
+    margin: 0; font-weight: 700; letter-spacing: -0.02em; line-height: 1.04;
+    text-wrap: balance;
+  }
+  h1 { font-size: clamp(2.5rem, 6.5vw, 5.6rem); }
+  h2 { font-size: clamp(2rem, 4.4vw, 3.4rem); }
+  p { margin: 0; font-size: 1.0625rem; line-height: 1.6; color: var(--steel); max-width: 42ch; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; color: var(--paper); }
+  .sig { color: var(--signal); }
+
+  /* Stage readout — a measurement, in the brand's annotation voice */
+  .readout {
+    position: fixed; z-index: 5; bottom: 20px; left: 24px; right: 24px;
+    display: flex; align-items: center; gap: 16px; pointer-events: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--steel-deep);
+  }
+  .readout .bar { flex: 1; height: 1px; background: var(--steel-soft); }
+  .readout .bar > i { display: block; height: 1px; width: 0%; background: var(--signal); }
+
+  /* Evaluation controls */
+  .panel {
+    position: fixed; z-index: 6; top: 16px; right: 16px;
+    background: var(--graphite-2); border: 1px solid var(--steel-soft);
+    padding: 12px 14px; display: grid; gap: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--steel); max-width: 210px;
+  }
+  .panel strong { color: var(--paper); font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em; }
+  .panel label { display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; }
+  .panel input[type=range] { width: 92px; accent-color: var(--signal); }
+  .panel select { background: var(--graphite); color: var(--paper); border: 1px solid var(--steel-soft); font: inherit; padding: 2px 4px; }
+  .panel .warn { color: var(--signal); font-size: 10px; line-height: 1.4; }
+  @media (max-width: 720px) { .panel { display: none; } }
+
+  :focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Decorative: hidden from assistive tech, as FlowField.astro does. -->
+<canvas id="field" aria-hidden="true"></canvas>
+
+<main>
+  <!-- NOTE: no ParticleField.reveal() here. It sets opacity:0 via inline style
+       and re-hides sections on exit, which breaks DESIGN.md's "from already-visible
+       layouts" rule and global.css's no-JS-safe contract. The site's own
+       revealGroup() in src/scripts/motion.ts is the correct mechanism. -->
+  <section data-pf-stage>
+    <span class="annot">Stage 01 — scatter</span>
+    <h1>One object, <span class="sig">rearranging</span>.</h1>
+    <p>Every particle keeps a stable identity across shapes, so the morph reads as a single
+       object being reorganised rather than two images crossfading. That is the whole trick,
+       and it is the reason this looks engineered instead of decorative.</p>
+  </section>
+
+  <section data-pf-stage>
+    <span class="annot">Stage 02 — bridge</span>
+    <h2>The brand metaphor, built in.</h2>
+    <p>A suspension bridge is one of the library's stock shapes — cables, towers, deck and
+       hangers, authored as line segments and extruded into two planes. It arrives on-brand
+       before anyone customises anything.</p>
+  </section>
+
+  <section data-pf-stage>
+    <span class="annot">Stage 03 — schematic (custom)</span>
+    <h2>Authored in drawing grammar.</h2>
+    <p>Three process blocks, directed connectors with arrowheads, instrument tag bubbles and a
+       feedback return path — a P&amp;ID signal flow written with <code>line()</code>,
+       <code>arc()</code> and <code>rect()</code> in unit space, then extruded by
+       <code>twin()</code>.</p>
+  </section>
+
+  <section data-pf-stage>
+    <span class="annot">Stage 04 — dimensioned (custom)</span>
+    <h2>Measured, not styled.</h2>
+    <p>A part outline carrying real dimension lines: extension lines, arrow terminators, bore
+       circles. The field can draw the same vocabulary the rest of the site uses in flat SVG.</p>
+  </section>
+
+  <section data-pf-stage>
+    <span class="annot">Stage 05 — title block (custom)</span>
+    <h2>The Zeichnungskopf, in three dimensions.</h2>
+    <p>The recurring bordered mini-table with drawing-frame corner ticks. Holds at the end of
+       the scroll rather than resolving into nothing.</p>
+  </section>
+</main>
+
+<div class="readout">
+  <span id="stage-name">SCATTER</span>
+  <span class="bar"><i id="stage-bar"></i></span>
+  <span id="stage-fps">— FPS</span>
+</div>
+
+<aside class="panel">
+  <strong>Evaluation</strong>
+  <label>count <input id="c-count" type="range" min="200" max="2400" step="100" value="1200" /></label>
+  <label>size <input id="c-size" type="range" min="0.5" max="1.6" step="0.02" value="0.92" /></label>
+  <label>spin <input id="c-spin" type="range" min="0" max="1.5" step="0.05" value="0.55" /></label>
+  <label>style
+    <select id="c-style">
+      <option value="triangle">triangle</option>
+      <option value="filled">filled</option>
+      <option value="dot">dot</option>
+    </select>
+  </label>
+  <label>glow <input id="c-glow" type="checkbox" /></label>
+  <span class="warn" id="c-warn"></span>
+</aside>
+
+<script src="particle-field.js"></script>
+<script src="nexbridge-preset.js"></script>
+<script>
+  var S = NexBridgeField.shapes;
+
+  /* Looked up before init(): the constructor calls onScroll(), which fires
+     onProgress synchronously — anything referenced there must already exist. */
+  var bar = document.getElementById('stage-bar');
+  var label = document.getElementById('stage-name');
+  var fpsEl = document.getElementById('stage-fps');
+  var warn = document.getElementById('c-warn');
+
+  var field = NexBridgeField.init({
+    canvas: '#field',
+    sectionSelector: '[data-pf-stage]',
+    stages: [
+      { shape: 'scatter',      x: 0.60, intensity: 0.50, name: 'scatter' },
+      { shape: 'bridge',       x: 0.66, intensity: 0.95, name: 'bridge' },
+      { shape: S.schematic,    x: 0.62, intensity: 0.80, name: 'schematic' },
+      { shape: S.dimensioned,  x: 0.64, intensity: 0.75, name: 'dimensioned' },
+      { shape: S.titleblock,   x: 0.58, intensity: 0.85, name: 'title block' }
+    ],
+    onProgress: function (p, name) {
+      bar.style.width = (p * 100).toFixed(1) + '%';
+      label.textContent = String(name).toUpperCase();
+    }
+  });
+
+  /* Frame budget readout — the number that decides whether this can ship
+     alongside a Lighthouse >= 95 performance requirement. */
+  var frames = 0, last = performance.now();
+  (function tick(now) {
+    frames++;
+    if (now - last >= 1000) {
+      var fps = Math.round((frames * 1000) / (now - last));
+      fpsEl.textContent = fps + ' FPS';
+      fpsEl.style.color = fps < 50 ? '#FF4D00' : '#5B6770';
+      frames = 0; last = now;
+    }
+    requestAnimationFrame(tick);
+  })(last);
+
+  function bind(id, key, cast) {
+    var el = document.getElementById(id);
+    el.addEventListener('input', function () {
+      var v = el.type === 'checkbox' ? el.checked : cast(el.value);
+      var patch = {}; patch[key] = v;
+      field.set(patch);
+      warn.textContent = (key === 'glow' && v)
+        ? 'glow adds shadowBlur halos — banned by DESIGN.md anti-patterns.'
+        : '';
+    });
+  }
+  bind('c-count', 'count', Number);
+  bind('c-size', 'size', Number);
+  bind('c-spin', 'spinSpeed', Number);
+  bind('c-style', 'style', String);
+  bind('c-glow', 'glow', Boolean);
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-01
+updated: 2026-08-02
 depends_on: []
 decisions: []
 ---
@@ -246,6 +246,81 @@ Consequence: `site.ts` no longer describes the URL as a preview, and "registrati
 is gone from [[state]] and [[brand]]. Still unrecorded: whether `nexbridge-it.de` was also
 secured — D-016 recommended it as the stronger choice for Mittelstand buyers. Not blocking
 anything; log it if and when it happens. Owner: founders.
+
+## D-026 | 2026-08-02 | Particle field adopted for the Vorgehen section only | SUPERSEDED by D-027
+A vendored scroll-morphing particle field (`design/particle-field/`, studied in its `STUDY.md`)
+now backs the three phases in `Process.astro`. Chosen because the library authors shapes as
+line/arc outlines extruded with `twin()` — the same drawing grammar as the rest of the site — so
+it extends the world rather than importing a different one. Custom shapes map to the copy:
+Phase 1 *beziffert* → a dimensioned part, Phase 2 builds → the bridge, Phase 3 *überwacht* →
+a signal-flow schematic whose feedback loop is the monitoring.
+
+**Rejected for the hero.** `FlowField.astro` is already there, is bespoke, carries the "Fluss"
+metaphor and paints synchronously so the artwork survives throttled rAF. Two generative particle
+systems in one viewport is two focal points and a blown signal ration.
+
+Consequences: upstream's teal/amber palette and `glow: true` were replaced in the vendored
+production copy (`website/src/scripts/vendor/particle-field.js`, three marked `NEXBRIDGE PATCH`
+blocks that also add off-screen pause and a debounced resize — both gaps FlowField already
+handled). Homepage JS moves from ~178 KB to ~192 KB raw (65.1 KB brotli); DESIGN.md's stated
+~176 KB budget is updated to match. `ParticleField.reveal()` is banned — it re-hides sections on
+scroll-out, breaking the no-JS-safe contract. Owner: partner-b.
+
+## D-027 | 2026-08-02 | Particle field reverted from the homepage; needs its own layout | DECIDED
+D-026 was built, rendered in a headless browser, reviewed against the screenshots and reverted the
+same day. The homepage is back to its prior state and the DESIGN.md motion section with it. The
+field stays a `design/` proposal until there is a page laid out around it.
+
+**Why it failed:** the Vorgehen section's copy spans the full grid — title, note and price column
+— so there is no empty region to park artwork in. Every setting was one of two failures: faint
+enough to leave the copy alone and it reads as dirt on the screen, or strong enough to read as a
+shape and it crawls across the price column. `295 € Festpreis` is the only price on the site;
+degrading it for a background effect is a bad trade. The placement was chosen as the smallest,
+safest change, which turned out not to mean suitable.
+
+**Two findings worth keeping.** First, *lock the camera*: upstream orbits continuously
+(`spinSpeed` drives yaw), so at section scale a drawn outline almost never faces the viewer and
+reads as a cloud of specks. `spinSpeed: 0` makes the shapes legible while scroll still turns them,
+because yaw is also a function of stage position. This is not optional and is not in the upstream
+docs. Second, *the effect needs a layout designed around it* — an empty column or half-viewport —
+which is what a dedicated `/vorgehen` page would give it. Retrofitting it behind dense copy does
+not work at any setting.
+
+Artefacts kept in `design/particle-field/`: the brand preset and custom shapes, the tuned demo,
+and `particle-field.production.js` — the patched library (pause/resume, debounced resize,
+brand-safe defaults) ready to drop in when the page exists. Owner: partner-b.
+
+## D-028 | 2026-08-02 | Wandlung: the particle field gets its own pinned stage | DECIDED
+D-027 said the effect needs a layout built around it. Rather than wait for a `/vorgehen` subpage,
+we built that layout on the homepage as a new section between Problems and Services
+(`TransformStage.astro`, `#wandlung`): a pinned full-viewport sheet, 240svh of scroll, where one
+object rearranges through three drawn states — *Ist-Zustand* (separate assemblies) → *Übergang*
+(the bridge) → *Soll-Zustand* (a signal-flow schematic whose feedback loop is the monitoring).
+
+**Why here.** Problems states the chaos and Services states what we build; the page asserted the
+transformation between them but never showed it. This is the page's one authored focal moment,
+and giving the field a whole viewport is what D-027 proved it needs — the earlier failure was
+never the effect, it was asking it to share space with copy.
+
+Consequences: homepage JS ~193 KB raw / 65 KB brotli (DESIGN.md's ~176 KB line updated); page
+height 7100 → 9260 px at 1440×900. New i18n keys `stage.*` and `a11y.stageDiagram` in both
+languages. A custom `fragments` shape was added to the preset because the stock
+`scatter` disperses across the whole viewport, reads as dust and lands on the caption. Verified
+in a headless browser at 1440×900 and 360×740, plus reduced-motion and `?snap`.
+
+**Both gates ran and both found real defects.** `copywriter-de` replaced the „Wandlung" kicker
+with „Ablaufschema" (every other kicker names a document; „Wandlung" was the one consulting-
+register word, and it carries a Kaufrecht reading), rewrote `stage.3.note` because
+„überwacht sich selbst" contradicted `process.3.note` and promised a mechanism the offer does not,
+and fixed the EN false friend „Actual" → „Current". The section id `#wandlung` survives as the
+internal name only. `design-critic` blocked on three: the scale bar was a second signal carrier in
+a viewport the field already owns (now steel); the DIN frame was drawn three-sided because
+`top-2` sat under the 4rem sticky header for the whole pin (now `top-[4.5rem]`); and reduced
+motion removed the *argument*, not just the motion — states 1 and 2 stayed at `opacity: 0`, so a
+reduced-motion visitor scrolled 240svh to read only the conclusion. Reduced motion now collapses
+the section to 100svh and stacks all three captions. Also fixed: the palette is read from the
+`@theme` custom properties instead of hardcoded hex, so a token edit actually moves the field.
+Owner: partner-b.
 
 ## Template
 ```

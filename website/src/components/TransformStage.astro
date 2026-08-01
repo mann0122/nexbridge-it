@@ -1,0 +1,260 @@
+---
+/**
+ * Wandlung — the transformation the page asserts but never shows.
+ *
+ * Problems states the chaos; Services states what we build. Between them the
+ * site had no beat for the change itself. This is that beat, and it is the
+ * page's one authored focal moment: a pinned viewport where a single object
+ * rearranges itself through three drawn states as you scroll.
+ *
+ *   Ist-Zustand   → scatter    (work spread across people, files, systems)
+ *   Übergang      → bridge     (the crossing; the brand mark)
+ *   Soll-Zustand  → schematic  (a signal flow whose feedback loop is the
+ *                               monitoring — "läuft von selbst", drawn)
+ *
+ * Every particle keeps a stable identity across all three, so it reads as one
+ * object being reorganised, never as three pictures crossfading.
+ *
+ * Two constraints learned the hard way (D-027):
+ *   1. The camera must be locked (`spinSpeed: 0`). Upstream orbits
+ *      continuously, so a drawn outline almost never faces the viewer and the
+ *      field reads as grey dirt. Scroll still turns it — yaw is also a
+ *      function of stage position.
+ *   2. It needs a whole viewport. Behind copy there is no setting that is both
+ *      legible as a shape and harmless to the text.
+ */
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const states = [1, 2, 3].map((i) => ({
+  label: t(`stage.${i}.label` as Parameters<typeof t>[0]),
+  note: t(`stage.${i}.note` as Parameters<typeof t>[0]),
+}));
+---
+
+<section id="wandlung" class="relative bg-graphite" aria-label={t('a11y.stageDiagram')}>
+  {/* Scroll length: roughly one viewport per state transition. */}
+  <div class="stage-scroll h-[240svh]">
+    <div class="surface-grid sticky top-0 h-svh overflow-hidden">
+      <canvas
+        id="stage-field"
+        class="stage-field pointer-events-none absolute inset-0 h-full w-full"
+        aria-hidden="true"></canvas>
+
+      {/* DIN drawing-frame: row B, column 2 — the hero carries A/1. The sheet
+          is pinned under a 4rem sticky header, so the frame starts below it;
+          at top-2 its top edge and the upper "2" marker never render. */}
+      <div
+        class="pointer-events-none absolute inset-x-4 bottom-2 top-[4.5rem] hidden border border-steel-soft/60 lg:block"
+        aria-hidden="true">
+        <span class="type-annot absolute left-2 top-1/2 -translate-y-1/2 text-steel-deep">B</span>
+        <span class="type-annot absolute right-2 top-1/2 -translate-y-1/2 text-steel-deep">B</span>
+        <span class="type-annot absolute left-1/2 top-1.5 -translate-x-1/2 text-steel-deep">2</span>
+        <span class="type-annot absolute bottom-1.5 left-1/2 -translate-x-1/2 text-steel-deep">2</span>
+      </div>
+
+      {/* pt clears the sticky header, which overlays the top of the pinned sheet. */}
+      <div class="pointer-events-none absolute inset-0 mx-auto flex h-full max-w-[1200px] flex-col justify-between px-6 pb-14 pt-24 md:pb-20 md:pt-28">
+        <p class="type-annot text-steel">{t('stage.kicker')}</p>
+
+        {/* Caption and scale sit together at the foot of the sheet, clear of
+            the drawing at every breakpoint. */}
+        <div>
+          {/* Ships with state 1 visible, so a failed script leaves a readable
+              caption rather than a blank stage. */}
+          <div class="stage-readout relative h-[5.75rem] md:h-[4rem]">
+            {
+              states.map((s, i) => (
+                <div class="stage-state absolute inset-0 flex flex-col justify-end gap-1.5" data-active={i === 0 ? 'true' : 'false'}>
+                  <p class="type-subhead text-2xl text-paper md:text-3xl">{s.label}</p>
+                  <p class="max-w-[38ch] text-[0.95rem] leading-relaxed text-steel">{s.note}</p>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="stage-scale mt-7 flex items-center gap-4">
+            {/* steel, not steel-deep: this reports state, and steel-deep is
+                3.2:1 on graphite. steel is 5.9:1 and passes AA. */}
+            <span class="type-annot whitespace-nowrap text-steel">
+              <span id="stage-index">01</span> / 03
+            </span>
+            <span class="h-px flex-1 bg-steel-soft">
+              {/* scaleX, not width: this animates alongside a 1400-particle
+                  canvas loop, and width would invalidate layout every frame.
+                  Same device as the rail in Process.astro. */}
+              {/* steel, not signal: the field already carries the accent in
+                  this viewport, and a scale in drawing grammar is a hairline. */}
+              <i id="stage-bar" class="block h-px w-full origin-left bg-steel" style="transform: scaleX(0)"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Scroll anchors. Absolute so they add no height of their own; a state
+      settles when its anchor's centre reaches the centre of the viewport.
+      Inset to 45svh…195svh: the stage is only pinned while the viewport
+      centre is inside that band, and a state that settles outside it is seen
+      half-scrolled rather than on a full sheet. */}
+  <div class="pointer-events-none absolute inset-x-0 top-[45svh] h-[150svh]" aria-hidden="true">
+    <div class="stage-anchor h-1/3"></div>
+    <div class="stage-anchor h-1/3"></div>
+    <div class="stage-anchor h-1/3"></div>
+  </div>
+</section>
+
+<style>
+  /* Keep the field off the caption and the kicker without masking its middle,
+     where the drawing has to read. */
+  .stage-field {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(0, 0, 0, 1) 17%,
+      rgba(0, 0, 0, 1) 74%,
+      transparent 95%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(0, 0, 0, 1) 17%,
+      rgba(0, 0, 0, 1) 74%,
+      transparent 95%
+    );
+  }
+
+  .stage-state {
+    opacity: 0;
+    transition: opacity 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .stage-state[data-active='true'] {
+    opacity: 1;
+  }
+
+  #stage-bar {
+    transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Reduced motion must remove the motion, not the argument. Scrubbing is what
+     revealed states 2 and 3, so without it the section would collapse to its
+     conclusion and still cost 240svh of scroll. Show all three captions
+     stacked on a single screen and drop the scale, which then measures
+     nothing. */
+  @media (prefers-reduced-motion: reduce) {
+    .stage-state,
+    #stage-bar {
+      transition: none;
+    }
+    .stage-scroll {
+      height: 100svh;
+    }
+    .stage-readout {
+      height: auto;
+    }
+    .stage-state {
+      position: static;
+      opacity: 1;
+      margin-top: 1.25rem;
+    }
+    .stage-scale {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /* Order matters: the preset reads window.ParticleField at module scope. */
+  import '../scripts/vendor/particle-field.js';
+  import '../scripts/vendor/nexbridge-field.js';
+  import { motionOff } from '../scripts/motion';
+
+  interface Field {
+    pos: number;
+    target: number;
+    pause(): void;
+    resume(): void;
+    measure(): void;
+    resize(): void;
+  }
+  interface FieldApi {
+    init(opts: Record<string, unknown>): Field;
+    shapes: Record<string, unknown>;
+  }
+
+  const NB = (window as unknown as { NexBridgeField?: FieldApi }).NexBridgeField;
+  const canvas = document.getElementById('stage-field');
+  const section = document.getElementById('wandlung');
+  const states = Array.from(document.querySelectorAll<HTMLElement>('.stage-state'));
+  const bar = document.getElementById('stage-bar');
+  const index = document.getElementById('stage-index');
+  const LAST = 2;
+
+  if (NB && canvas && section) {
+    const S = NB.shapes;
+
+    function paint(stageFloat: number) {
+      const active = Math.round(Math.max(0, Math.min(LAST, stageFloat)));
+      states.forEach((el, i) => el.setAttribute('data-active', i === active ? 'true' : 'false'));
+      if (bar) bar.style.transform = 'scaleX(' + (stageFloat / LAST).toFixed(4) + ')';
+      if (index) index.textContent = '0' + (active + 1);
+    }
+
+    const field = NB.init({
+      canvas,
+      sectionSelector: '#wandlung .stage-anchor',
+      // Centred: the stage is otherwise empty, so the drawing owns the middle.
+      stages: [
+        { shape: S.fragments, x: 0.5, intensity: 0.9, name: 'ist' },
+        { shape: 'bridge', x: 0.5, intensity: 1, name: 'uebergang' },
+        { shape: S.schematic, x: 0.5, intensity: 0.95, name: 'soll' },
+      ],
+      count: window.innerWidth < 768 ? 520 : 1200,
+      size: 0.9,
+      morphEase: 0.045,
+      // The one non-negotiable: see the header comment.
+      spinSpeed: 0,
+      onProgress: (_p: number, _n: string, stageFloat: number) => paint(stageFloat),
+    });
+
+    if (motionOff) {
+      // Render the resolved state once and stop — the site's ?snap convention.
+      const drawStatic = () => {
+        field.resize();
+        field.target = LAST;
+        field.pos = LAST;
+        paint(LAST);
+        field.resume();
+        requestAnimationFrame(() => field.pause());
+      };
+      drawStatic();
+      window.addEventListener('load', drawStatic);
+    } else {
+      // Both conditions must hold, so returning to the tab does not restart a
+      // field that is nowhere near the viewport.
+      let inView = false;
+      let visible = !document.hidden;
+      const sync = () => (inView && visible ? field.resume() : field.pause());
+
+      new IntersectionObserver((entries) => {
+        inView = entries.some((e) => e.isIntersecting);
+        sync();
+      }, { threshold: 0 }).observe(section);
+
+      document.addEventListener('visibilitychange', () => {
+        visible = !document.hidden;
+        sync();
+      });
+
+      // Webfonts settle after load and move every anchor the stage maths uses.
+      window.addEventListener('load', () => field.measure());
+    }
+  }
+</script>

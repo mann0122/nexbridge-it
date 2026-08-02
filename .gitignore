@@ -13,6 +13,34 @@ node_modules/
 .impeccable/
 .wrangler/
 
+# vendored third-party agent skills — installed with `npx skills add <owner>/<repo>`.
+# These are one machine's tooling, not part of the product, so they stay out of git.
+# The real files live in .agents/skills/; each entry under .claude/skills/ below is a
+# junction into it. Deleting .agents/ therefore empties them — reinstall, don't repair.
+# Adding a new vendored skill? Add its .claude/skills/ junction to the list below too.
+.agents/
+skills-lock.json
+.claude/skills/banner-design/
+.claude/skills/brand/
+.claude/skills/design/
+.claude/skills/design-system/
+.claude/skills/design-taste-frontend/
+.claude/skills/design-taste-frontend-v1/
+.claude/skills/full-output-enforcement/
+.claude/skills/gpt-taste/
+.claude/skills/high-end-visual-design/
+.claude/skills/image-to-code/
+.claude/skills/imagegen-frontend-mobile/
+.claude/skills/imagegen-frontend-web/
+.claude/skills/industrial-brutalist-ui/
+.claude/skills/minimalist-ui/
+.claude/skills/prototype/
+.claude/skills/redesign-existing-projects/
+.claude/skills/slides/
+.claude/skills/stitch-design-taste/
+.claude/skills/ui-styling/
+.claude/skills/ui-ux-pro-max/
+
 # OS junk
 .DS_Store
 Thumbs.db

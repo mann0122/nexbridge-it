@@ -9,8 +9,8 @@ export const SITE = {
   url: 'https://nexbridge-it.com',
   region: 'Baden-Württemberg',
   foundedYear: 2026,
-  /** Where enquiries land. TBD: confirm once the domain is registered. */
-  email: 'kontakt@nexbridge-it.com',
+  /** Where enquiries land. Official venture mailbox, confirmed by the founder — D-029. */
+  email: 'nexbridge-it@mailbox.org',
   /**
    * Booking tool link (e.g. a self-hosted Cal.com instance — keeps the
    * GDPR-first positioning). Reserved: nothing reads this yet. Wiring the

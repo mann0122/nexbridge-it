@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-02 · 15 nodes · 28 decisions
+Content as of 2026-08-02 · 15 nodes · 29 decisions
 
 ## Map
 
@@ -132,6 +132,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | ~~D-026~~ | 2026-08-02 | Particle field adopted for the Vorgehen section only | SUPERSEDED by D-027 | — |
 | D-027 | 2026-08-02 | Particle field reverted from the homepage; needs its own layout | DECIDED | — |
 | D-028 | 2026-08-02 | Wandlung: the particle field gets its own pinned stage | DECIDED | — |
+| D-029 | 2026-08-02 | Official venture email: nexbridge-it@mailbox.org | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

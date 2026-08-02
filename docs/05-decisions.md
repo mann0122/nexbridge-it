@@ -322,6 +322,16 @@ the section to 100svh and stacks all three captions. Also fixed: the palette is 
 `@theme` custom properties instead of hardcoded hex, so a token edit actually moves the field.
 Owner: partner-b.
 
+## D-029 | 2026-08-02 | Official venture email: nexbridge-it@mailbox.org | DECIDED
+Founder confirmed in session. Replaces the placeholder `kontakt@nexbridge-it.com` in
+`website/src/config/site.ts`, which was marked `TBD: confirm once the domain is registered`.
+Everything else reads `SITE.email`, so the footer and both contact links follow automatically.
+
+mailbox.org is a German provider (Berlin), which keeps enquiry mail inside Germany and is
+consistent with the GDPR-first positioning — worth stating plainly if a prospect asks.
+Unchanged: `formEndpoint` is still empty, so the contact form falls back to the visitor's mail
+client and enquiries remain unmeasurable (open item 3 in [[state]]). Owner: founders.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

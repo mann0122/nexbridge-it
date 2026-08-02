@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-02 · 15 nodes · 34 decisions
+Content as of 2026-08-02 · 15 nodes · 35 decisions
 
 ## Map
 
@@ -138,6 +138,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-032 | 2026-08-02 | The site has no icon vocabulary | DECIDED | — |
 | D-033 | 2026-08-02 | Wandlung re-themed to the AI stack; solid pyramid mark | DECIDED | — |
 | D-034 | 2026-08-02 | Wandlung: volumetric fill, a brain, 9000 particles | DECIDED | — |
+| D-035 | 2026-08-02 | Particle field removed from the site entirely | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

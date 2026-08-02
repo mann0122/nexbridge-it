@@ -20,7 +20,6 @@ export const ui = {
     'a11y.mainNav': 'Hauptnavigation',
     'a11y.flowDiagram': 'Schema: manuelle Abläufe werden zu einem automatischen Prozess',
     'a11y.processDiagram': 'Ablauf: drei Phasen von der Analyse bis zum laufenden Betrieb',
-    'a11y.stageDiagram': 'Schema in drei Zuständen: von Ihren Systemen über den Agenten zum laufenden Prozess',
     'a11y.legalNav': 'Rechtliches',
 
     'nav.leistungen': 'Leistungen',
@@ -66,14 +65,6 @@ export const ui = {
     'problems.3.pos': 'Pos. C',
     'problems.3.title': 'Zahlen kommen zu spät',
     'problems.3.note': 'Bis der Bericht fertig ist, ist er veraltet.',
-
-    'stage.kicker': 'Übersichtsschema · Systeme → Agent → Betrieb',
-    'stage.1.label': 'Ihre Systeme',
-    'stage.1.note': 'ERP, CRM, Dateien – alles da, jedes System für sich.',
-    'stage.2.label': 'Der Agent',
-    'stage.2.note': 'Wir bauen den Agenten, der die Handarbeit dazwischen übernimmt.',
-    'stage.3.label': 'Im Betrieb',
-    'stage.3.note': 'Der Prozess läuft – und meldet sich, wenn etwas hängen bleibt.',
 
     'services.kicker': 'Leistungen · NB-01–NB-04',
     'services.title': 'Vier Wege, ein Ergebnis: weniger Handarbeit.',
@@ -238,7 +229,6 @@ export const ui = {
     'a11y.mainNav': 'Main navigation',
     'a11y.flowDiagram': 'Diagram: manual workflows become one automated process',
     'a11y.processDiagram': 'Flow: three phases from analysis to steady operation',
-    'a11y.stageDiagram': 'Schematic in three states: from your systems through the agent to the running process',
     'a11y.legalNav': 'Legal',
 
     'nav.leistungen': 'Services',
@@ -284,14 +274,6 @@ export const ui = {
     'problems.3.pos': 'Item C',
     'problems.3.title': 'Numbers arrive too late',
     'problems.3.note': 'By the time the report is done, it’s outdated.',
-
-    'stage.kicker': 'Overview schematic · systems → agent → operation',
-    'stage.1.label': 'Your systems',
-    'stage.1.note': 'ERP, CRM, files — all in place, each one on its own.',
-    'stage.2.label': 'The agent',
-    'stage.2.note': 'We build the agent that takes over the manual work in between.',
-    'stage.3.label': 'In operation',
-    'stage.3.note': 'The process runs — and tells you when something gets stuck.',
 
     'services.kicker': 'Services · NB-01–NB-04',
     'services.title': 'Four routes, one result: less manual work.',

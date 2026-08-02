@@ -71,39 +71,11 @@ prefers-reduced-motion, and `?snap` renders final states for static capture.
 - **Marquee** annotation band as section divider; pauses on hover.
 - **Live sparkline** in the demo dashboard — a demo that stands still proves nothing.
 
-**The focal moment — Wandlung** (`TransformStage.astro`, added 2026-08-02, D-028). One pinned
-full-viewport sheet between Problems and Services, 240svh of scroll, where a single particle
-object rearranges through three drawn states — re-themed to the AI stack in D-033, densified in
-D-034: *Ihre Systeme* (a silicon die in plan view) → *Der Agent* (a brain, **filled** rather than
-outlined, its sulci carved as grooves out of the particle body) → *Im Betrieb* (a data pipeline in
-the P&ID duct whose feedback return carries the instrument tag). Every particle keeps a stable identity across all three, so it reads as one object being
-reorganised, never as pictures crossfading. These are AI subjects drawn the way an engineer would
-draw them — the glowing brain and the floating node cloud are the category rut and stay banned.
-Shapes are line/arc outlines extruded with `twin()`, never a sphere or a blob. Palette is tokens
-only, signal rationed to 6.25%, glow off. Composition is a drawing sheet: kicker top-left, drawing
-centred, caption and a measured `01 / 03` scale at the foot, DIN frame row B column 2 (the hero
-holds A/1).
+**No pinned scroll sequence.** A morphing particle stage was built and removed across
+D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
+`FlowField` in the hero is the page's only generative canvas, and one is the limit.
 
-The mark is a **solid shaded tetrahedron**, depth-sorted so near particles occlude far ones — that
-occlusion is what makes the field read as matter rather than as a transparent cloud. Faces are
-flat fills from a 16-step ramp mixing one token toward the ground token, so shading can never
-invent a hue. Third constraint, alongside the two below: **marks shrink as count rises**
-(`size 0.62`, `count 9000`). A 5px pyramid on a 1px path turns a hairline into a caterpillar.
-
-Fourth: **outline shapes can never gain mass.** `fromOutline` distributes along path length, so a
-shape stays a wireframe however many particles you add. Density comes from `fromFill`, which
-rasterises the silhouette and fills the interior, with depth from a lens profile so the form reads
-round. Mark sizes are deliberately uneven (`sizeVar`) — the scatter of a few large marks is most
-of the texture. Palette runs on 7 tints mixed from the tokens; signal is checked **by area**, not
-by count, and sits at 4.4% of drawn pixels.
-
-Two constraints, learned by failing first (D-026 → D-027): **the camera must be locked**
-(`spinSpeed: 0`, or a drawn outline never faces the viewer and reads as grey dirt), and **it
-needs a whole viewport** — behind copy there is no setting that is both legible as a shape and
-harmless to the text. This is the page's *only* pinned sequence; a second one would make the site
-a showreel.
-
-Budget: ~193 KB JS across the page (65 KB brotli), zero external asset requests.
+Budget: ~176 KB JS across the page, zero external asset requests.
 
 ## Components (as they get built)
 
@@ -149,7 +121,7 @@ databases. Consult for a pattern or a precedent; do not adopt their palettes, fo
 | Skill | Why it fights this file |
 |---|---|
 | `stitch-design-taste` | Generates DESIGN.md files — would overwrite this brief |
-| `gpt-taste` | Mandates pinning/stacking/scrubbing throughout; Wandlung is the page's only pinned sequence |
+| `gpt-taste` | Mandates pinning/stacking/scrubbing throughout; this page has no pinned sequence |
 | `apple-design` | Translucent/glass materials — glassmorphism is a hard ban above |
 | `minimalist-ui` | Muted pastels and bento grids — signal is rationed, icon-card grids banned |
 | `industrial-brutalist-ui` | Nearest cousin, wrong register: analog degradation and military terminal, not a drawing office |

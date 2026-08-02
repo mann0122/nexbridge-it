@@ -464,6 +464,33 @@ tetra faces; default stays solid. Ink coverage went 2.5% → 8.6% on the brain s
 objective check that the fill actually happened. Homepage JS ~204 KB raw / 69 KB brotli.
 Owner: partner-b.
 
+## D-035 | 2026-08-02 | Particle field removed from the site entirely | DECIDED
+Founder call, after four rounds: "it is not working well and i do not want to ruin my website."
+Removed completely — `TransformStage.astro`, `website/src/scripts/vendor/`, the `design/` lab, the
+`stage.*` and `a11y.stageDiagram` keys in both languages, and the DESIGN.md motion entry. The
+homepage is back to Problems → Services with no section between them. Supersedes the *shipping*
+status of D-028, D-033 and D-034; those entries stay as written, this is the outcome.
+
+**`FlowField.astro` in the hero is untouched** and was never in question — it predates all of this
+(D-011), is bespoke rather than vendored, and the founder never raised it. It remains the page's
+only generative canvas.
+
+Worth keeping from the attempt, because the next person will be tempted again:
+1. **A drawn outline needs a locked camera.** Any orbit and the shape almost never faces the
+   viewer; it reads as grey dirt (D-027).
+2. **A canvas effect needs a whole viewport.** Behind copy there is no setting that is both
+   legible as a shape and harmless to the text (D-027).
+3. **Outline shapes cannot gain mass** — particles distributed along path *length* stay a
+   wireframe however many you add; only filling the interior gives a form weight (D-034).
+4. **Marks must shrink as count rises**, or every hairline becomes a caterpillar (D-033).
+
+The honest read on why it still failed: each round fixed the stated defect and the section kept
+not being worth its 240svh. That is a signal about the *idea*, not the execution — a wordless
+abstract animation is a poor fit for a buyer the positioning describes as sceptical of hype and
+deciding on concrete numbers. If a visual beat is wanted between Problems and Services later, the
+cheaper and more on-brand instinct is a drawn SVG diagram, static or lightly scroll-drawn, in the
+grammar the rest of the site already uses. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

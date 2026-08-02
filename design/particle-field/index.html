@@ -160,21 +160,27 @@
 
 <aside class="panel">
   <strong>Evaluation</strong>
-  <label>count <input id="c-count" type="range" min="200" max="2400" step="100" value="1200" /></label>
-  <label>size <input id="c-size" type="range" min="0.5" max="1.6" step="0.02" value="0.92" /></label>
+  <label>count <input id="c-count" type="range" min="200" max="4000" step="100" value="1200" /></label>
+  <label>size <input id="c-size" type="range" min="0.3" max="1.6" step="0.02" value="0.92" /></label>
   <label>spin <input id="c-spin" type="range" min="0" max="1.5" step="0.05" value="0.55" /></label>
   <label>style
     <select id="c-style">
+      <option value="solid">solid (pyramid)</option>
       <option value="triangle">triangle</option>
       <option value="filled">filled</option>
       <option value="dot">dot</option>
     </select>
   </label>
+  <label>sort <input id="c-sort" type="checkbox" checked /></label>
+  <label>cull <input id="c-cull" type="checkbox" checked /></label>
+  <label>ghost <input id="c-ghost" type="checkbox" /></label>
   <label>glow <input id="c-glow" type="checkbox" /></label>
   <span class="warn" id="c-warn"></span>
 </aside>
 
-<script src="particle-field.js"></script>
+<!-- The PRODUCTION engine, not the pristine upstream: the lab has to test what
+     ships. Pristine stays at particle-field.js purely for diffing. -->
+<script src="particle-field.production.js"></script>
 <script src="nexbridge-preset.js"></script>
 <script>
   var S = NexBridgeField.shapes;
@@ -232,6 +238,15 @@
   bind('c-spin', 'spinSpeed', Number);
   bind('c-style', 'style', String);
   bind('c-glow', 'glow', Boolean);
+  /* Diagnostics. `sort` and `cull` exist to be switched OFF: with the solid
+     style, disabling either must visibly degrade the render — that is the
+     proof they are doing work. `ghost` strokes the raw outline underneath, so
+     you can see whether particle mass is wandering off the drawn path. */
+  bind('c-sort', 'depthSort', Boolean);
+  bind('c-cull', 'backfaceCull', Boolean);
+  bind('c-ghost', 'ghost', Boolean);
+
+  field.set({ style: 'solid' });
 </script>
 </body>
 </html>

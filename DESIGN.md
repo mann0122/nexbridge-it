@@ -73,14 +73,22 @@ prefers-reduced-motion, and `?snap` renders final states for static capture.
 
 **The focal moment — Wandlung** (`TransformStage.astro`, added 2026-08-02, D-028). One pinned
 full-viewport sheet between Problems and Services, 240svh of scroll, where a single particle
-object rearranges through three drawn states: *Ist-Zustand* (separate assemblies that never
-connect) → *Übergang* (the bridge) → *Soll-Zustand* (a signal-flow schematic whose feedback loop
-is the monitoring). Every particle keeps a stable identity across all three, so it reads as one
-object being reorganised, never as pictures crossfading. Shapes are line/arc outlines extruded
-with `twin()` — the same drawing grammar as the rest of the site, never a sphere or a blob.
-Palette is tokens only, signal rationed to 6.25%, glow off. Composition is a drawing sheet:
-kicker top-left, drawing centred, caption and a measured `01 / 03` scale at the foot, DIN frame
-row B column 2 (the hero holds A/1).
+object rearranges through three drawn states — re-themed to the AI stack in D-033: *Ihre Systeme*
+(a silicon die in plan view) → *Der Agent* (a layered network as a Schaltbild on a dimension line)
+→ *Im Betrieb* (a data pipeline in the P&ID duct whose feedback return carries the instrument
+tag). Every particle keeps a stable identity across all three, so it reads as one object being
+reorganised, never as pictures crossfading. These are AI subjects drawn the way an engineer would
+draw them — the glowing brain and the floating node cloud are the category rut and stay banned.
+Shapes are line/arc outlines extruded with `twin()`, never a sphere or a blob. Palette is tokens
+only, signal rationed to 6.25%, glow off. Composition is a drawing sheet: kicker top-left, drawing
+centred, caption and a measured `01 / 03` scale at the foot, DIN frame row B column 2 (the hero
+holds A/1).
+
+The mark is a **solid shaded tetrahedron**, depth-sorted so near particles occlude far ones — that
+occlusion is what makes the field read as matter rather than as a transparent cloud. Faces are
+flat fills from a 16-step ramp mixing one token toward the ground token, so shading can never
+invent a hue. Third constraint, alongside the two below: **marks shrink as count rises**
+(`size 0.78`, `count 2400`). A 5px pyramid on a 1px path turns a hairline into a caterpillar.
 
 Two constraints, learned by failing first (D-026 → D-027): **the camera must be locked**
 (`spinSpeed: 0`, or a drawn outline never faces the viewer and reads as grey dirt), and **it
@@ -103,3 +111,42 @@ Budget: ~193 KB JS across the page (65 KB brotli), zero external asset requests.
 Purple/teal gradients · glassmorphism · 3D blobs · stock photos · Inter/DM Sans · gradient text
 · cards in cards · >1 signal element per viewport · eyebrow-on-every-section · icon-card grids
 · colored left-borders >1px · dark-with-neon-glow rendition (offset+blur shadows only, no halos).
+
+## Skill routing (D-031)
+
+Many design skills are installed on this machine. Most were written for a *different* world and
+carry prescriptive defaults — their own type scale, their own shadows, their own idea of what a
+premium site looks like. Loading one for NexBridge UI work does not add taste, it adds a second
+opinion that competes with this file. The brief wins over any skill default; this section names
+which skills are allowed to speak at all.
+
+**House flow.** `impeccable` — this document was written per its new-work flow. Design work that
+needs a process uses it.
+
+**Motion.** `gsap-core`, `gsap-scrolltrigger`, `gsap-timeline`, `gsap-plugins`, `gsap-performance`,
+`gsap-utils` — GSAP is the only engine (D-030). `emil-design-eng` for interaction polish and the
+invisible details. `animation-vocabulary` to name an effect before building it.
+(`gsap-frameworks` is Vue/Svelte lifecycle — not our stack; Astro uses vanilla `<script>`.)
+
+**System.** `design-system` for token architecture — it thinks in primitive → semantic → component,
+which is how `global.css` `@theme` is already built.
+
+**Audit.** `review-animations` and `find-animation-opportunities` (read-only, they propose, they
+do not edit). `web-perf` against the ~193 KB / 65 KB brotli budget and the Lighthouse ≥ 95 floor.
+
+**Reference only, never prescription.** `ui-ux-pro-max`, `brand`, `design` — large lookup
+databases. Consult for a pattern or a precedent; do not adopt their palettes, fonts or defaults.
+
+**Out of world — do not load for NexBridge UI.** Not deleted, just not ours:
+
+| Skill | Why it fights this file |
+|---|---|
+| `stitch-design-taste` | Generates DESIGN.md files — would overwrite this brief |
+| `gpt-taste` | Mandates pinning/stacking/scrubbing throughout; Wandlung is the page's only pinned sequence |
+| `apple-design` | Translucent/glass materials — glassmorphism is a hard ban above |
+| `minimalist-ui` | Muted pastels and bento grids — signal is rationed, icon-card grids banned |
+| `industrial-brutalist-ui` | Nearest cousin, wrong register: analog degradation and military terminal, not a drawing office |
+| `high-end-visual-design` | Prescribes its own fonts, shadows and card structures over the tokens |
+| `banner-design`, `brandkit`, `imagegen-frontend-web`, `imagegen-frontend-mobile`, `image-to-code`, `slides` | Generated imagery. This world is drawn and measured; stock and generated visuals are banned |
+
+Adding a design skill to the allowed set is a decision — log it. Deleting one is not required.

@@ -332,6 +332,102 @@ consistent with the GDPR-first positioning — worth stating plainly if a prospe
 Unchanged: `formEndpoint` is still empty, so the contact form falls back to the visitor's mail
 client and enquiries remain unmeasurable (open item 3 in [[state]]). Owner: founders.
 
+## D-030 | 2026-08-02 | GSAP is the only animation engine | DECIDED
+`animejs` and `motion` were installed in `website/` during a session, then removed the same day
+without ever being imported. GSAP stays as the single motion engine, with Lenis bound to its
+ticker.
+
+**Why.** `DESIGN.md` already pins the motion signature to GSAP + ScrollTrigger, drives Lenis off
+the GSAP ticker, and sets a hard page budget of ~193 KB JS / 65 KB brotli. Neither library adds a
+capability GSAP lacks — both cover WAAPI-style tweens, timelines and stagger, which GSAP already
+does, while ScrollTrigger/pinning/SplitText (the things the flow-line and Wandlung actually need)
+have no equivalent in either. A second engine would spend budget for nothing and add a second
+place to forget `prefers-reduced-motion`, which is a standing rule in `website/CLAUDE.md`.
+
+Consequences: `website/package.json` dependencies are unchanged from before the install; build
+verified clean, 5 routes, no bundle change since nothing imported them. The general rule this sets:
+**one animation engine.** Adding a second is a decision that has to beat GSAP on a capability
+DESIGN.md actually calls for, not a preference. Owner: partner-b.
+
+## D-031 | 2026-08-02 | Design skills are allowlisted, not accumulated | DECIDED
+52 skills were installed on the delivery machine, ~24 of them design/UI. `DESIGN.md` gains a
+**Skill routing** section naming which ones govern design work here (`impeccable` as house flow,
+the `gsap-*` family, `emil-design-eng`, `design-system`, the read-only audit skills) and which are
+out-of-world.
+
+**Why.** More design skills is not more taste. Each style skill carries prescriptive defaults —
+its own type scale, shadows, palette — and several contradict the committed world outright:
+`stitch-design-taste` *generates* DESIGN.md files and would overwrite the brief; `gpt-taste`
+mandates pinned/stacked scroll sections when D-028 fixed Wandlung as the page's only pinned
+sequence; `apple-design` centres on translucent glass, which the anti-pattern list hard-bans.
+DESIGN.md's existing line "the brief wins over any skill default" was prose patching this; the
+routing table makes precedence checkable.
+
+Consequences: three exact duplicates deleted — `redesign-skill` (byte-identical to
+`redesign-existing-projects`), `taste-skill` (byte-identical to `design-taste-frontend`), and
+`design-taste-frontend-v1` (upstream back-compat copy). The first two were git-tracked, so the
+deletion is recoverable; the third was a gitignored junction and was removed from `.agents/`,
+`.gitignore` and `skills-lock.json` together. Nothing else was uninstalled — out-of-world skills
+stay on disk and simply are not loaded, since a skill only shapes output when it runs. Adding a
+skill to the allowed set is a decision and gets logged. Owner: partner-b.
+
+## D-032 | 2026-08-02 | The site has no icon vocabulary | DECIDED
+A shadcn registry item (`plug-connected-icon`, itshover.com) was requested, ported to a
+dependency-free Astro component, failed the `design-critic` gate and was deleted the same session.
+Introducing an icon set is a DESIGN.md-level decision, not an implementation detail.
+
+**Why.** This world draws *process*, not objects — labelled inputs, part numbers, dimension ticks,
+a signal leaving a block. Nothing on the site is a miniature picture of a physical thing, and a
+plug pictogram is the noun. Three checkable mismatches confirmed it: `stroke-linecap="round"`
+appears nowhere else in `website/src/` (the site's lines are butt-capped throughout), the site's
+stroke weights are 1.5 and 2.5 while the icon introduced a fourth at 2, and `DESIGN.md` enumerates
+the permitted content structures as "diagrams, annotated lists, measured tables" while hard-banning
+icon-card grids. The deepest objection is brand, not craft: `docs/02-brand.md` fixes the flow-line
+as "the one memorable device — everything else stays quiet", and a plug snapping shut is a second,
+cheaper *things-connect* mark competing with it.
+
+Consequences: `website/src/components/icons/` deleted; it never had a call site. The `shadcn add`
+path also wrote `motion` and `animejs` into `website/package.json` before stalling on its init
+prompt — reverted and pruned, per D-030. If an icon vocabulary is ever wanted, the drawing rules
+get decided *first* — butt caps, miter joins, 1.5px on a 24-unit grid, symbols from P&ID /
+signal-flow grammar, no pictograms of physical objects — and `DESIGN.md` gains a Components line
+before the first file lands. Building the first icon and back-filling the rules is how a design
+system dies. Owner: partner-b.
+
+## D-033 | 2026-08-02 | Wandlung re-themed to the AI stack; solid pyramid mark | DECIDED
+Founder direction: more particles, pyramids instead of flat triangles, rendered in 3D, the
+aggregate reading as one solid object, and shapes that say "AI company". Supersedes the shape
+list in D-028 (`fragments → bridge → schematic`), which described the drawings the section no
+longer contains — D-028 stays as written, this is the correction.
+
+**Shapes** are now `die → neuralnet → pipeline`: a silicon die in plan view, a layered network as
+a Schaltbild on a dimension line, and a running data pipeline in the P&ID duct whose feedback
+return carries the instrument tag. **The drawing-office world stays** — these are the AI subjects
+drawn the way an engineer would draw them, not the glowing brain and the floating node cloud,
+which are the category rut and already banned. Copy follows the shapes: *Ihre Systeme → Der Agent
+→ Im Betrieb* (`copywriter-de`, who also retired the „Ist → Soll" kicker because state 2 is now a
+built object rather than a transition).
+
+**The mark** is a solid shaded tetrahedron: four vertices, four faces, per-vertex perspective
+divide, back-face culling, flat Lambert shading against a light fixed in *eye* space (world-space
+would swing faces bright↔dark as the reader scrolls, since yaw is scroll-driven). Faces are filled
+from a precomputed 16-step ramp per palette colour, each step a linear mix between one token and
+the ground token — so shading cannot invent a hue, and every face is a flat fill, not a gradient.
+A painter's-algorithm counting sort (512 buckets, no per-frame allocation) means a near particle
+genuinely occludes a far one; that is what makes it read as matter instead of a transparent cloud.
+
+**Marks got smaller as count went up** — `size 0.9 → 0.78`, `count 1200 → 2400`, jitter halved.
+The two founder asks support each other only in that direction: a 5px pyramid on a 1px path turns
+a hairline into a caterpillar, which is the D-027 failure again. Tuned against real screenshots;
+the first attempt at `size 0.60` put almost every particle under the LOD threshold, so nothing
+rendered as a pyramid at all and the shade ramp buried the rest in the ground colour.
+
+Density was paid for first: samplers now take an out-param, `fromOutline` caches its path
+resolution (a pure function of the particle's fixed randoms), tumble and drift trig are hoisted or
+expanded by the angle-sum identity, and particles build lazily. Upstream allocated two arrays per
+particle per frame and rescanned ~50 path segments per particle per frame. `MAX` 2400 → 4000,
+`maxDpr` capped at 1.5. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

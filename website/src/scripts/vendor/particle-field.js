@@ -1,5 +1,5 @@
 /*!
- * particle-field.js — scroll-morphing 3D triangle particle field
+ * particle-field.js — scroll-morphing 3D particle field
  * Zero dependencies. ~1 canvas, requestAnimationFrame, no build step.
  *
  *   <canvas id="pf"></canvas>
@@ -10,20 +10,55 @@
  *
  * ---------------------------------------------------------------------------
  * NEXBRIDGE PRODUCTION COPY — patched. The pristine upstream file is kept at
- * design/particle-field/particle-field.js for diffing. Two patches, both
- * marked `NEXBRIDGE PATCH` below, both closing gaps FlowField.astro already
- * handles:
+ * design/particle-field/particle-field.js for diffing. Patches are marked
+ * `NEXBRIDGE PATCH` below:
  *   1. pause()/resume() — upstream runs its rAF loop unconditionally, even
  *      when the canvas is off-screen or the tab is hidden.
  *   2. debounced resize — upstream re-measures every anchor on every resize
  *      event; mobile URL-bar show/hide fires that mid-scroll.
+ *   3. brand-safe defaults — upstream ships a teal/amber demo palette and
+ *      glow:true, both banned. Dead banned hex must not reach the bundle.
+ *   4. allocation-free sampling — samplers take an optional out-param and
+ *      fromOutline caches its path resolution, which is a pure function of
+ *      the particle's fixed randoms. Upstream allocated two arrays per
+ *      particle per frame and rescanned every path segment per particle.
+ *   5. depth sort + the 'solid' style — a painter's-algorithm counting sort
+ *      and a shaded tetrahedron mark, so the field reads as one solid object
+ *      instead of a transparent cloud.
  * ---------------------------------------------------------------------------
  */
 (function (root) {
   'use strict';
 
   var PI = Math.PI;
+  var TAU = PI * 2;
   var TRI = [[1, 0], [-0.5, 0.866], [-0.5, -0.866]];
+  var MAX = 4000;
+
+  /* Regular tetrahedron on alternating cube corners, circumradius 1 so it is
+     the same visual weight as TRI and `size` keeps its meaning. Winding is
+     outward-CCW; all four face normals were checked against their centroids. */
+  var K = 0.5773502691896258; // 1/sqrt(3)
+  var TET = [K, K, K, K, -K, -K, -K, K, -K, -K, -K, K];
+  var TET_F = [0, 1, 2, 0, 2, 3, 0, 3, 1, 1, 3, 2];
+  var TET_NLEN = 2.309401076758503; // |e1 x e2|, identical for all four faces
+
+  /* Light fixed in EYE space, not world space. Yaw is driven by scroll, so a
+     world-fixed lamp would swing whole faces bright<->dark as the reader
+     scrolls — exactly the legibility failure this effect was rebuilt to avoid.
+     Up and to the left, slightly in front of the sheet. */
+  var LX = -0.42, LY = -0.58, LZ = -0.70;
+
+  var SHADES = 16;
+  /* Floor and the two ramp terms below are set so a mid-facing face at mid
+     depth lands around 80% of the token colour. Tuned against the render: a
+     physically "correct" Lambert falloff on a dark ground puts most faces so
+     close to the ground colour that the drawing disappears. */
+  var SHADE_FLOOR = 0.18;
+  var LIT_BASE = 0.62, LIT_RANGE = 0.38;      // ambient .. full lambert
+  var AERIAL_BASE = 0.78, AERIAL_RANGE = 0.22; // far .. near
+
+  var TMP = [0, 0, 0];
 
   /* ------------------------------------------------------------------ *
    * Outline primitives — author a shape as line + arc segments in unit
@@ -49,8 +84,14 @@
   }
 
   /**
-   * fromOutline(prims, scale, depthFn, jitter) -> sampler(q, W, H) -> [x, y, z]
-   * Coordinates are world units centred on the origin; the renderer places them.
+   * fromOutline(prims, scale, depthFn, jitter) -> sampler(q, W, H, out) -> [x,y,z]
+   *
+   * NEXBRIDGE PATCH 4. Two changes from upstream, both invisible to callers:
+   *   - optional `out` param, written in place and returned (see `sample`);
+   *   - the path walk is cached. Which segment a particle lands on, and where
+   *     along it, is a pure function of q.r[] and never changes; only the
+   *     screen scale does. Upstream rescanned ~50 segments per particle per
+   *     frame and recomputed the arc trig with it.
    */
   function fromOutline(prims, scale, depthFn, jitter) {
     var cum = [], total = 0;
@@ -59,8 +100,10 @@
       total += p[0] === 'L' ? Math.hypot(p[3] - p[1], p[4] - p[2]) : Math.abs(p[5] - p[4]) * p[3];
       cum.push(total);
     }
-    return function (q, W, H) {
-      var m = Math.min(W, H) * scale;
+    var j = jitter == null ? 0.006 : jitter;
+    var cache = null, seen = null;
+
+    function resolve(q, out) {
       var tgt = q.r[0] * total, k = 0;
       while (k < cum.length - 1 && cum[k] < tgt) k++;
       var prev = k === 0 ? 0 : cum[k - 1];
@@ -69,11 +112,46 @@
       var x, y;
       if (sg[0] === 'L') { x = sg[1] + (sg[3] - sg[1]) * u; y = sg[2] + (sg[4] - sg[2]) * u; }
       else { var a = sg[4] + (sg[5] - sg[4]) * u; x = sg[1] + Math.cos(a) * sg[3]; y = sg[2] + Math.sin(a) * sg[3]; }
-      var j = jitter == null ? 0.006 : jitter;
-      x += (q.r[4] - 0.5) * j;
-      y += (q.r[5] - 0.5) * j;
-      return [x * m, y * m, (depthFn ? depthFn(q) : 0) * m];
+      out[0] = x + (q.r[4] - 0.5) * j;
+      out[1] = y + (q.r[5] - 0.5) * j;
+      out[2] = depthFn ? depthFn(q) : 0;
+    }
+
+    var fn = function (q, W, H, out) {
+      out = out || [0, 0, 0];
+      var m = Math.min(W, H) * scale;
+      var i = q.i;
+      if (i == null) { // synthetic particle, no stable index — resolve directly
+        resolve(q, out);
+        out[0] *= m; out[1] *= m; out[2] *= m;
+        return out;
+      }
+      if (!cache) { cache = new Float32Array(MAX * 3); seen = new Uint8Array(MAX); }
+      var b = i * 3;
+      if (!seen[i]) {
+        resolve(q, TMP);
+        cache[b] = TMP[0]; cache[b + 1] = TMP[1]; cache[b + 2] = TMP[2];
+        seen[i] = 1;
+      }
+      out[0] = cache[b] * m; out[1] = cache[b + 1] * m; out[2] = cache[b + 2] * m;
+      return out;
     };
+    // Exposed so the lab can stroke the ideal outline under the particles.
+    fn.prims = prims;
+    fn.scale = scale;
+    return fn;
+  }
+
+  /**
+   * Bridges old and new sampler contracts. A converted sampler writes `out`
+   * and returns it (one reference compare, free); a legacy one that still
+   * returns a fresh array is copied across. Both keep working, which matters
+   * because user shapes and the standalone demo rely on the return form.
+   */
+  function sample(fn, q, W, H, out) {
+    var r = fn(q, W, H, out);
+    if (r !== out) { out[0] = r[0]; out[1] = r[1]; out[2] = r[2] || 0; }
+    return out;
   }
 
   /* ------------------------------------------------------------------ *
@@ -116,17 +194,17 @@
   );
 
   var gearPrims = (function () {
-    var p = [A(0, 0, 0.30, 0, PI * 2), A(0, 0, 0.13, 0, PI * 2), A(0, 0, 0.05, 0, PI * 2)];
+    var p = [A(0, 0, 0.30, 0, TAU), A(0, 0, 0.13, 0, TAU), A(0, 0, 0.05, 0, TAU)];
     var n = 12;
     for (var i = 0; i < n; i++) {
-      var a0 = (i / n) * PI * 2 - 0.10, a1 = (i / n) * PI * 2 + 0.10;
+      var a0 = (i / n) * TAU - 0.10, a1 = (i / n) * TAU + 0.10;
       p = p.concat(poly([
         [Math.cos(a0) * 0.30, Math.sin(a0) * 0.30],
         [Math.cos(a0) * 0.375, Math.sin(a0) * 0.375],
         [Math.cos(a1) * 0.375, Math.sin(a1) * 0.375],
         [Math.cos(a1) * 0.30, Math.sin(a1) * 0.30]
       ]));
-      var a = (i / n) * PI * 2;
+      var a = (i / n) * TAU;
       if (i % 2 === 0) p.push(L(Math.cos(a) * 0.05, Math.sin(a) * 0.05, Math.cos(a) * 0.13, Math.sin(a) * 0.13));
     }
     return p;
@@ -146,78 +224,120 @@
     return p;
   })();
 
-  /* volumetric shapes (defined directly in 3D) */
+  /* volumetric shapes (defined directly in 3D) — all out-param, no allocation */
 
   var network = (function () {
     var hubs = [[-0.27, -0.17, 0.21], [0.27, -0.17, -0.21], [-0.27, 0.17, -0.21], [0.27, 0.17, 0.21]];
     var edges = [];
     for (var i = 0; i < 4; i++) for (var j = i + 1; j < 4; j++) edges.push([hubs[i], hubs[j]]);
-    return function (q, W, H) {
+    return function (q, W, H, out) {
+      out = out || [0, 0, 0];
       var m = Math.min(W, H) * 0.80;
       if (q.r[0] < 0.55) {
         var h = hubs[Math.floor(q.r[1] * 4) % 4];
-        var a = q.r[2] * PI * 2, b = Math.acos(2 * q.r[3] - 1), rr = 0.08 * (0.7 + q.r[4] * 0.3);
-        return [(h[0] + Math.sin(b) * Math.cos(a) * rr) * m,
-                (h[1] + Math.sin(b) * Math.sin(a) * rr) * m,
-                (h[2] + Math.cos(b) * rr) * m];
+        var a = q.r[2] * TAU, b = Math.acos(2 * q.r[3] - 1), rr = 0.08 * (0.7 + q.r[4] * 0.3);
+        out[0] = (h[0] + Math.sin(b) * Math.cos(a) * rr) * m;
+        out[1] = (h[1] + Math.sin(b) * Math.sin(a) * rr) * m;
+        out[2] = (h[2] + Math.cos(b) * rr) * m;
+        return out;
       }
       var e = edges[Math.floor(q.r[1] * edges.length) % edges.length], u = q.r[2];
-      return [(e[0][0] + (e[1][0] - e[0][0]) * u) * m,
-              (e[0][1] + (e[1][1] - e[0][1]) * u) * m,
-              (e[0][2] + (e[1][2] - e[0][2]) * u) * m];
+      out[0] = (e[0][0] + (e[1][0] - e[0][0]) * u) * m;
+      out[1] = (e[0][1] + (e[1][1] - e[0][1]) * u) * m;
+      out[2] = (e[0][2] + (e[1][2] - e[0][2]) * u) * m;
+      return out;
     };
   })();
 
-  function pair(q, W, H) {
-    var m = Math.min(W, H) * 0.68, a = q.r[1] * PI * 2;
+  function pair(q, W, H, out) {
+    out = out || [0, 0, 0];
+    var m = Math.min(W, H) * 0.68, a = q.r[1] * TAU;
     if (q.r[0] < 0.52) {
       var side = q.r[2] < 0.5 ? -0.19 : 0.19;
       var b = Math.acos(2 * q.r[3] - 1), rr = 0.13 * (0.76 + q.r[4] * 0.24);
-      return [(side + Math.sin(b) * Math.cos(a) * rr) * m, Math.sin(b) * Math.sin(a) * rr * m, Math.cos(b) * rr * m];
+      out[0] = (side + Math.sin(b) * Math.cos(a) * rr) * m;
+      out[1] = Math.sin(b) * Math.sin(a) * rr * m;
+      out[2] = Math.cos(b) * rr * m;
+      return out;
     }
     var R = 0.33 + (q.r[4] - 0.5) * 0.02, dir = q.r[2] < 0.5 ? 1 : -1;
-    return [Math.cos(a) * R * m, Math.sin(a) * R * 0.60 * m, dir * Math.sin(a) * R * 0.52 * m];
+    out[0] = Math.cos(a) * R * m;
+    out[1] = Math.sin(a) * R * 0.60 * m;
+    out[2] = dir * Math.sin(a) * R * 0.52 * m;
+    return out;
   }
 
-  function dial(q, W, H) {
-    var m = Math.min(W, H) * 0.72, a = q.r[1] * PI * 2;
-    if (q.r[2] < 0.07) { var rr = 0.07 * q.r[3]; return [Math.cos(a) * rr * m, Math.sin(a) * rr * m, 0]; }
+  function dial(q, W, H, out) {
+    out = out || [0, 0, 0];
+    var m = Math.min(W, H) * 0.72, a = q.r[1] * TAU;
+    if (q.r[2] < 0.07) {
+      var rr = 0.07 * q.r[3];
+      out[0] = Math.cos(a) * rr * m; out[1] = Math.sin(a) * rr * m; out[2] = 0;
+      return out;
+    }
     var which = Math.floor(q.r[0] * 3) % 3;
     var R = (0.30 + (q.r[4] - 0.5) * 0.014) * (which === 2 ? 0.76 : 1);
     var c = Math.cos(a) * R * m, s = Math.sin(a) * R * m;
-    if (which === 0) return [c, s, 0];
-    if (which === 1) return [c, 0, s];
-    return [0, c, s];
+    if (which === 0) { out[0] = c; out[1] = s; out[2] = 0; }
+    else if (which === 1) { out[0] = c; out[1] = 0; out[2] = s; }
+    else { out[0] = 0; out[1] = c; out[2] = s; }
+    return out;
   }
 
-  function scatter(q, W, H) {
-    return [(q.r[0] - 0.5) * 1.15 * W, (q.r[1] - 0.5) * 1.15 * H, (q.r[2] - 0.5) * Math.min(W, H) * 0.95];
+  function scatter(q, W, H, out) {
+    out = out || [0, 0, 0];
+    out[0] = (q.r[0] - 0.5) * 1.15 * W;
+    out[1] = (q.r[1] - 0.5) * 1.15 * H;
+    out[2] = (q.r[2] - 0.5) * Math.min(W, H) * 0.95;
+    return out;
   }
 
-  function sphere(q, W, H) {
+  function sphere(q, W, H, out) {
+    out = out || [0, 0, 0];
     var m = Math.min(W, H) * 0.34;
-    var a = q.r[0] * PI * 2, b = Math.acos(2 * q.r[1] - 1), r = Math.pow(q.r[2], 0.28);
-    return [Math.sin(b) * Math.cos(a) * r * m, Math.sin(b) * Math.sin(a) * r * m, Math.cos(b) * r * m];
+    var a = q.r[0] * TAU, b = Math.acos(2 * q.r[1] - 1), r = Math.pow(q.r[2], 0.28);
+    out[0] = Math.sin(b) * Math.cos(a) * r * m;
+    out[1] = Math.sin(b) * Math.sin(a) * r * m;
+    out[2] = Math.cos(b) * r * m;
+    return out;
   }
 
-  function cube(q, W, H) {
+  function cube(q, W, H, out) {
+    out = out || [0, 0, 0];
     var m = Math.min(W, H) * 0.30;
-    var f = Math.floor(q.r[0] * 6), u = (q.r[1] - 0.5) * 2, v = (q.r[2] - 0.5) * 2;
-    var c = [[u, v, 1], [u, v, -1], [u, 1, v], [u, -1, v], [1, u, v], [-1, u, v]][f % 6];
-    return [c[0] * m, c[1] * m, c[2] * m];
+    var f = Math.floor(q.r[0] * 6) % 6, u = (q.r[1] - 0.5) * 2, v = (q.r[2] - 0.5) * 2;
+    // switch, not an array-of-arrays literal: upstream allocated 7 arrays per call
+    switch (f) {
+      case 0: out[0] = u; out[1] = v; out[2] = 1; break;
+      case 1: out[0] = u; out[1] = v; out[2] = -1; break;
+      case 2: out[0] = u; out[1] = 1; out[2] = v; break;
+      case 3: out[0] = u; out[1] = -1; out[2] = v; break;
+      case 4: out[0] = 1; out[1] = u; out[2] = v; break;
+      default: out[0] = -1; out[1] = u; out[2] = v;
+    }
+    out[0] *= m; out[1] *= m; out[2] *= m;
+    return out;
   }
 
-  function torus(q, W, H) {
+  function torus(q, W, H, out) {
+    out = out || [0, 0, 0];
     var m = Math.min(W, H) * 0.30;
-    var a = q.r[0] * PI * 2, b = q.r[1] * PI * 2, tube = 0.30;
-    return [(1 + tube * Math.cos(b)) * Math.cos(a) * m, (1 + tube * Math.cos(b)) * Math.sin(a) * m, tube * Math.sin(b) * m];
+    var a = q.r[0] * TAU, b = q.r[1] * TAU, tube = 0.30;
+    out[0] = (1 + tube * Math.cos(b)) * Math.cos(a) * m;
+    out[1] = (1 + tube * Math.cos(b)) * Math.sin(a) * m;
+    out[2] = tube * Math.sin(b) * m;
+    return out;
   }
 
-  function helix(q, W, H) {
+  function helix(q, W, H, out) {
+    out = out || [0, 0, 0];
     var m = Math.min(W, H) * 0.30;
     var strand = q.r[0] < 0.5 ? 0 : PI, u = q.r[1];
     var a = u * PI * 4 + strand;
-    return [Math.cos(a) * m * 0.55, (u - 0.5) * m * 1.7, Math.sin(a) * m * 0.55];
+    out[0] = Math.cos(a) * m * 0.55;
+    out[1] = (u - 0.5) * m * 1.7;
+    out[2] = Math.sin(a) * m * 0.55;
+    return out;
   }
 
   var shapes = {
@@ -234,6 +354,39 @@
     torus: torus,
     helix: helix
   };
+
+  /* ------------------------------------------------------------------ *
+   * Shade ramps — NEXBRIDGE PATCH 5
+   *
+   * Flat shading needs one fill colour per (colour, brightness) pair. Build
+   * them once: each entry is a linear mix between exactly one palette token
+   * and the GROUND colour, so no ramp can introduce a hue that is not already
+   * in the design system, and every face is a flat fill — not a gradient.
+   * The strings are identity-stable, so the canvas colour parser caches them.
+   * ------------------------------------------------------------------ */
+
+  function hexToRgb(h) {
+    h = String(h).trim().replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (isNaN(n) || h.length !== 6) return null;
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  function buildRamp(color, ground) {
+    var c = hexToRgb(color), g = hexToRgb(ground), out = [], i;
+    if (!c || !g) { // non-hex colour: no shading rather than a wrong colour
+      for (i = 0; i < SHADES; i++) out.push(color);
+      return out;
+    }
+    for (i = 0; i < SHADES; i++) {
+      var k = SHADE_FLOOR + (1 - SHADE_FLOOR) * (i / (SHADES - 1));
+      out.push('rgb(' + Math.round(g[0] + (c[0] - g[0]) * k) + ','
+                      + Math.round(g[1] + (c[1] - g[1]) * k) + ','
+                      + Math.round(g[2] + (c[2] - g[2]) * k) + ')');
+    }
+    return out;
+  }
 
   /* ------------------------------------------------------------------ *
    * Engine
@@ -260,18 +413,24 @@
       '#FF4D00', '#8B959E', '#5B6770', '#F7F5F0',
       '#8B959E', '#5B6770', '#8B959E', '#F7F5F0'
     ],
-    count: 1500,       // particles drawn (max 2400)
-    style: 'triangle', // 'triangle' | 'filled' | 'dot'
-    size: 1,           // particle size multiplier
-    opacity: 1,        // overall field opacity multiplier
-    glow: false,       // NEXBRIDGE PATCH 3: no halos (DESIGN.md anti-pattern)
-    spinSpeed: 1,      // camera orbit + particle tumble speed (0 = frozen)
-    morphEase: 0.06,   // 0.02 slow / 0.15 snappy shape transition
+    ground: '#14171A',   // what shading mixes toward; set from --color-graphite
+    count: 1500,         // particles drawn (max 4000)
+    style: 'triangle',   // 'solid' | 'triangle' | 'filled' | 'dot'
+    size: 1,             // particle size multiplier
+    opacity: 1,          // overall field opacity multiplier
+    glow: false,         // NEXBRIDGE PATCH 3: no halos (DESIGN.md anti-pattern)
+    spinSpeed: 1,        // camera orbit + particle tumble speed (0 = frozen)
+    morphEase: 0.06,     // 0.02 slow / 0.15 snappy shape transition
     pointerParallax: 1,
-    respectReducedMotion: true
+    respectReducedMotion: true,
+    maxDpr: 2,           // canvas backing-store cap; 1.5 halves the fill cost
+    depthSort: true,     // painter's algorithm — required for 'solid' to read
+    backfaceCull: true,  // diagnostics may switch this off
+    lodPx: 2.0,          // below this projected size, one flat facet will do
+    ghost: false         // stroke the ideal outline under the field (lab only)
   };
 
-  var MAX = 2400;
+  var BUCKETS = 512;
 
   function ParticleFieldInstance(opts) {
     var o = {};
@@ -294,7 +453,29 @@
     this.progress = 0;
     this.paused = false; /* NEXBRIDGE PATCH 1 */
 
-    this._buildParticles();
+    /* Scratch, allocated once. The loop must not allocate. */
+    this.sa = [0, 0, 0];
+    this.sb = [0, 0, 0];
+    this.px = new Float32Array(MAX);
+    this.py = new Float32Array(MAX);
+    this.pz = new Float32Array(MAX);
+    this.pper = new Float32Array(MAX);
+    this.psx = new Float32Array(MAX);
+    this.psy = new Float32Array(MAX);
+    this.pbk = new Int32Array(MAX);
+    this.vis = new Int32Array(MAX);
+    this.order = new Int32Array(MAX);
+    this.counts = new Int32Array(BUCKETS);
+    this.start = new Int32Array(BUCKETS);
+    this.vex = new Float64Array(4);
+    this.vey = new Float64Array(4);
+    this.vez = new Float64Array(4);
+    this.vsx = new Float64Array(4);
+    this.vsy = new Float64Array(4);
+
+    this.parts = [];
+    this._ramps = {};
+
     this._resolveStages();
     this._bind();
     this.resize();
@@ -303,21 +484,50 @@
     this.raf = requestAnimationFrame(this._loop);
   }
 
-  ParticleFieldInstance.prototype._buildParticles = function () {
-    var P = this.o.colors, parts = [];
-    function rnd(i, s) { var x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453; return x - Math.floor(x); }
-    for (var i = 0; i < MAX; i++) {
+  function rnd(i, s) { var x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453; return x - Math.floor(x); }
+
+  ParticleFieldInstance.prototype._ramp = function (color) {
+    var key = color + '|' + this.o.ground;
+    var r = this._ramps[key];
+    if (!r) { r = this._ramps[key] = buildRamp(color, this.o.ground); }
+    return r;
+  };
+
+  /**
+   * Build particles lazily and grow on demand. `rnd(i, s)` is a pure function
+   * of the index, so appending produces exactly the particles a full build
+   * would have — identity, palette distribution and the fromOutline caches all
+   * stay valid. Building all of MAX up front was a long task in the load
+   * window for a field that lives below the fold.
+   */
+  ParticleFieldInstance.prototype._ensure = function (n) {
+    var parts = this.parts;
+    if (parts.length >= n) return;
+    var P = this.o.colors;
+    for (var i = parts.length; i < n; i++) {
+      var color = P[Math.floor(rnd(i, 8) * P.length)];
+      var rot = rnd(i, 9) * TAU, rot2 = rnd(i, 12) * TAU;
+      var p0 = rnd(i, 1) * 12, p1 = rnd(i, 2) * 12, p2 = rnd(i, 3) * 12;
       parts.push({
+        i: i,
         r: [rnd(i, 1), rnd(i, 2), rnd(i, 3), rnd(i, 4), rnd(i, 5), rnd(i, 6)],
         depth: 0.22 + rnd(i, 7) * 0.78,
-        color: P[Math.floor(rnd(i, 8) * P.length)],
-        rot: rnd(i, 9) * PI * 2,
-        rot2: rnd(i, 12) * PI * 2,
+        color: color,
+        ramp: this._ramp(color),
+        rot: rot,
+        rot2: rot2,
         spin: (rnd(i, 10) - 0.5) * 0.85,
-        spin2: (rnd(i, 13) - 0.5) * 0.65
+        spin2: (rnd(i, 13) - 0.5) * 0.65,
+        /* Tumble at spinSpeed 0 is constant — production's case. */
+        crot: Math.cos(rot), srot: Math.sin(rot),
+        crot2: Math.cos(rot2), srot2: Math.sin(rot2),
+        /* Drift phases, so sin(t*w + p) expands to per-frame scalars times
+           these constants instead of three trig calls per particle per frame. */
+        cp0: Math.cos(p0), sp0: Math.sin(p0),
+        cp1: Math.cos(p1), sp1: Math.sin(p1),
+        cp2: Math.cos(p2), sp2: Math.sin(p2)
       });
     }
-    this.parts = parts;
   };
 
   ParticleFieldInstance.prototype._resolveStages = function () {
@@ -339,8 +549,11 @@
 
   ParticleFieldInstance.prototype.set = function (patch) {
     for (var k in patch) this.o[k] = patch[k];
-    if (patch.colors) this._buildParticles();
+    // Colours and ground both invalidate every particle's ramp; rebuilding
+    // lazily keeps the deterministic identity.
+    if (patch.colors || patch.ground) { this._ramps = {}; this.parts = []; }
     if (patch.stages) this.setStages(patch.stages);
+    if (patch.maxDpr) this.resize();
   };
 
   ParticleFieldInstance.prototype.measure = function () {
@@ -352,7 +565,7 @@
   };
 
   ParticleFieldInstance.prototype.resize = function () {
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, this.o.maxDpr);
     this.W = this.cv.clientWidth; this.H = this.cv.clientHeight;
     this.cv.width = Math.round(this.W * dpr);
     this.cv.height = Math.round(this.H * dpr);
@@ -420,6 +633,26 @@
     window.addEventListener('mousemove', this._onMove, { passive: true });
   };
 
+  /** Lab diagnostic: stroke the ideal outline so you can see whether particle
+      mass is wandering off the drawn path. 2D only — it ignores camera yaw. */
+  ParticleFieldInstance.prototype._drawGhost = function (fn, ox, oy) {
+    var prims = fn && fn.prims;
+    if (!prims) return;
+    var ctx = this.ctx, m = Math.min(this.W, this.H) * fn.scale;
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.strokeStyle = '#FF4D00';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var i = 0; i < prims.length; i++) {
+      var s = prims[i];
+      if (s[0] === 'L') { ctx.moveTo(ox + s[1] * m, oy + s[2] * m); ctx.lineTo(ox + s[3] * m, oy + s[4] * m); }
+      else { ctx.moveTo(ox + (s[1] + s[3]) * m, oy + s[2] * m); ctx.arc(ox + s[1] * m, oy + s[2] * m, s[3] * m, s[4], s[5]); }
+    }
+    ctx.stroke();
+    ctx.restore();
+  };
+
   ParticleFieldInstance.prototype._loop = function (ts) {
     var o = this.o, ctx = this.ctx, W = this.W, H = this.H;
     var t = this.reduced ? 0 : ts / 1000;
@@ -441,59 +674,195 @@
     var cyw = Math.cos(yaw), syw = Math.sin(yaw), cpt = Math.cos(pitch), spt = Math.sin(pitch);
 
     var FOV = Math.min(W, H) * 1.3;
+    var FOVMIN = FOV * 0.3;
     var ox = W * (A2.x + (B2.x - A2.x) * st), oy = H * 0.5;
-    var live = Math.max(50, Math.min(MAX, Math.round(o.count)));
-    var isDot = o.style === 'dot', isFill = o.style === 'filled';
+    var live = Math.max(50, Math.min(MAX, Math.round(o.count) || 50));
+    this._ensure(live);
+
+    var style = o.style;
+    var isDot = style === 'dot', isFill = style === 'filled', isSolid = style === 'solid';
+    var size = o.size, glowOn = o.glow, lodPx = o.lodPx, cullOn = o.backfaceCull;
+    var parts = this.parts, sa = this.sa, sb = this.sb;
+    var px = this.px, py = this.py, pz = this.pz, pper = this.pper;
+    var psx = this.psx, psy = this.psy, pbk = this.pbk, vis = this.vis, order = this.order;
+    var counts = this.counts, start = this.start;
+    var vex = this.vex, vey = this.vey, vez = this.vez, vsx = this.vsx, vsy = this.vsy;
+
+    /* Drift by the angle-sum identity: the time terms are per-frame scalars,
+       the phase terms are per-particle constants baked in at build time. Same
+       arithmetic result, three fewer trig calls per particle per frame. */
+    var sA = Math.sin(t * 0.24), cA = Math.cos(t * 0.24);
+    var sB = Math.sin(t * 0.21), cB = Math.cos(t * 0.21);
+    var sC = Math.sin(t * 0.19), cC = Math.cos(t * 0.19);
+
+    // Only sample the second shape when the morph is actually between stages.
+    var onlyA = st < 1e-4, onlyB = st > 1 - 1e-4;
 
     ctx.clearRect(0, 0, W, H);
     ctx.lineWidth = 1;
+    if (!glowOn) ctx.shadowBlur = 0;
+    if (o.ghost) this._drawGhost(onlyB ? B2.f : A2.f, ox, oy);
 
-    for (var i = 0; i < live; i++) {
-      var q = this.parts[i];
-      var a = A2.f(q, W, H), b = B2.f(q, W, H);
+    /* ---- pass A: sample, transform, project, cull, bucket ---------------- */
+    var i, k, nVis = 0;
+    var invSpan = 1 / (FOV * 1.6);
+    if (o.depthSort) for (i = 0; i < BUCKETS; i++) counts[i] = 0;
+
+    for (i = 0; i < live; i++) {
+      var q = parts[i];
+      var ax, ay, az;
+      if (onlyB) { sample(B2.f, q, W, H, sb); ax = sb[0]; ay = sb[1]; az = sb[2]; }
+      else if (onlyA) { sample(A2.f, q, W, H, sa); ax = sa[0]; ay = sa[1]; az = sa[2]; }
+      else {
+        sample(A2.f, q, W, H, sa);
+        sample(B2.f, q, W, H, sb);
+        ax = sa[0] + (sb[0] - sa[0]) * st;
+        ay = sa[1] + (sb[1] - sa[1]) * st;
+        az = sa[2] + (sb[2] - sa[2]) * st;
+      }
+
       var drift = 2.5 + q.depth * 4;
-      var wx = a[0] + (b[0] - a[0]) * st + Math.sin(t * 0.24 + q.r[0] * 12) * drift;
-      var wy = a[1] + (b[1] - a[1]) * st + Math.cos(t * 0.21 + q.r[1] * 12) * drift;
-      var wz = (a[2] || 0) + ((b[2] || 0) - (a[2] || 0)) * st + Math.sin(t * 0.19 + q.r[2] * 12) * drift;
+      var wx = ax + (sA * q.cp0 + cA * q.sp0) * drift;
+      var wy = ay + (cB * q.cp1 - sB * q.sp1) * drift;
+      var wz = az + (sC * q.cp2 + cC * q.sp2) * drift;
 
       var x1 = wx * cyw + wz * syw, z1 = wz * cyw - wx * syw;
       var y1 = wy * cpt - z1 * spt, z2 = wy * spt + z1 * cpt;
-      var per = FOV / Math.max(FOV * 0.3, FOV + z2);
+      var den = FOV + z2; if (den < FOVMIN) den = FOVMIN;
+      var per = FOV / den;
       var sx = ox + x1 * per, sy = oy + y1 * per;
       if (sx < -50 || sx > W + 50 || sy < -50 || sy > H + 50) continue;
 
-      var s0 = (1.5 + q.depth * 3.4) * o.size;
-      var near = Math.max(0, Math.min(1, (per - 0.62) / 0.85));
-      ctx.globalAlpha = Math.min(1, (0.10 + q.depth * 0.34 + near * 0.46) * intensity);
-      ctx.strokeStyle = q.color;
-      ctx.fillStyle = q.color;
-      var hot = o.glow && near > 0.66;
-      ctx.shadowBlur = hot ? 9 : 0;
-      if (hot) ctx.shadowColor = q.color;
+      px[i] = x1; py[i] = y1; pz[i] = z2; pper[i] = per; psx[i] = sx; psy[i] = sy;
+      if (o.depthSort) {
+        var b = (z2 * invSpan + 0.5) * (BUCKETS - 1) | 0;
+        if (b < 0) b = 0; else if (b >= BUCKETS) b = BUCKETS - 1;
+        pbk[i] = b; counts[b]++;
+      }
+      vis[nVis++] = i;
+    }
+
+    /* ---- counting sort: far bucket first, so near particles paint last --- */
+    if (o.depthSort) {
+      var pos2 = 0;
+      for (k = BUCKETS - 1; k >= 0; k--) { start[k] = pos2; pos2 += counts[k]; }
+      for (k = 0; k < nVis; k++) { var ii = vis[k]; order[start[pbk[ii]]++] = ii; }
+    } else {
+      for (k = 0; k < nVis; k++) order[k] = vis[k];
+    }
+
+    /* ---- pass B: draw ---------------------------------------------------- */
+    // Solid faces carry their depth cue in the shade ramp, so alpha is a
+    // per-frame constant. That is what lets a near particle actually occlude
+    // the one behind it instead of blending with it.
+    if (isSolid) ctx.globalAlpha = Math.min(1, intensity);
+
+    for (k = 0; k < nVis; k++) {
+      i = order[k];
+      var p = parts[i];
+      var X1 = px[i], Y1 = py[i], Z2 = pz[i], PER = pper[i];
+      var s0 = (1.5 + p.depth * 3.4) * size;
+      var near = (PER - 0.62) / 0.85; if (near < 0) near = 0; else if (near > 1) near = 1;
+
+      if (!isSolid) {
+        ctx.globalAlpha = Math.min(1, (0.10 + p.depth * 0.34 + near * 0.46) * intensity);
+        if (glowOn) {
+          var hot = near > 0.66;
+          ctx.shadowBlur = hot ? 9 : 0;
+          if (hot) ctx.shadowColor = p.color;
+        }
+      }
 
       if (isDot) {
+        ctx.fillStyle = p.color;
         ctx.beginPath();
-        ctx.arc(sx, sy, Math.max(0.4, s0 * per * 0.36), 0, PI * 2);
+        ctx.arc(psx[i], psy[i], Math.max(0.4, s0 * PER * 0.36), 0, TAU);
         ctx.fill();
-      } else {
-        // real facet: own tumble on two axes, camera transform, projected per vertex
-        var pa = q.rot + t * q.spin * spd, pb = q.rot2 + t * q.spin2 * spd;
-        var cpa = Math.cos(pa), spa = Math.sin(pa), cpb = Math.cos(pb), spb = Math.sin(pb);
-        ctx.beginPath();
-        for (var k = 0; k < 3; k++) {
-          var vx = TRI[k][0] * s0, vy = TRI[k][1] * s0;
-          var ty = vy * cpb, tz = vy * spb;
-          var tx2 = vx * cpa + tz * spa, tz2 = tz * cpa - vx * spa;
-          var ex = tx2 * cyw + tz2 * syw, ez = tz2 * cyw - tx2 * syw;
-          var ey = ty * cpt - ez * spt, ez2 = ty * spt + ez * cpt;
-          var vp = FOV / Math.max(FOV * 0.3, FOV + z2 + ez2);
-          var fx = ox + (x1 + ex) * vp, fy = oy + (y1 + ey) * vp;
-          if (k === 0) ctx.moveTo(fx, fy); else ctx.lineTo(fx, fy);
-        }
-        ctx.closePath();
-        if (isFill) ctx.fill(); else ctx.stroke();
+        continue;
       }
+
+      // particle tumble; constant when the camera is locked, which is production
+      var cpa, spa, cpb, spb;
+      if (spd === 0) { cpa = p.crot; spa = p.srot; cpb = p.crot2; spb = p.srot2; }
+      else {
+        var pa = p.rot + t * p.spin * spd, pb = p.rot2 + t * p.spin2 * spd;
+        cpa = Math.cos(pa); spa = Math.sin(pa); cpb = Math.cos(pb); spb = Math.sin(pb);
+      }
+
+      if (isSolid && s0 * PER >= lodPx) {
+        /* Four vertices, four faces. Each vertex gets its own perspective
+           divide — that is what makes this a solid rather than a billboard. */
+        for (var v = 0; v < 4; v++) {
+          var vx = TET[v * 3] * s0, vy = TET[v * 3 + 1] * s0, vz = TET[v * 3 + 2] * s0;
+          var t1y = vy * cpb - vz * spb, t1z = vy * spb + vz * cpb;
+          var t2x = vx * cpa + t1z * spa, t2z = t1z * cpa - vx * spa;
+          var ex = t2x * cyw + t2z * syw, ez = t2z * cyw - t2x * syw;
+          var ey = t1y * cpt - ez * spt, ez2 = t1y * spt + ez * cpt;
+          var vden = FOV + Z2 + ez2; if (vden < FOVMIN) vden = FOVMIN;
+          var vp = FOV / vden;
+          vex[v] = ex; vey[v] = ey; vez[v] = ez2;
+          vsx[v] = ox + (X1 + ex) * vp;
+          vsy[v] = oy + (Y1 + ey) * vp;
+        }
+
+        var invN = 1 / (TET_NLEN * s0 * s0);
+        var aerial = AERIAL_BASE + AERIAL_RANGE * near;
+        for (var f = 0; f < 4; f++) {
+          var i0 = TET_F[f * 3], i1 = TET_F[f * 3 + 1], i2 = TET_F[f * 3 + 2];
+          var e1sx = vsx[i1] - vsx[i0], e1sy = vsy[i1] - vsy[i0];
+          var e2sx = vsx[i2] - vsx[i0], e2sy = vsy[i2] - vsy[i0];
+          // Front-facing under a y-down, +z-away frame is a negative 2D cross.
+          if (cullOn && e1sx * e2sy - e1sy * e2sx >= 0) continue;
+
+          var e1x = vex[i1] - vex[i0], e1y = vey[i1] - vey[i0], e1z = vez[i1] - vez[i0];
+          var e2x = vex[i2] - vex[i0], e2y = vey[i2] - vey[i0], e2z = vez[i2] - vez[i0];
+          var nx = e1y * e2z - e1z * e2y;
+          var ny = e1z * e2x - e1x * e2z;
+          var nz = e1x * e2y - e1y * e2x;
+          // -z points at the viewer; flip so the lit side is the visible side
+          if (nz > 0) { nx = -nx; ny = -ny; nz = -nz; }
+          var ndl = (nx * LX + ny * LY + nz * LZ) * invN;
+          if (ndl < 0) ndl = 0;
+          var idx = ((LIT_BASE + LIT_RANGE * ndl) * aerial * (SHADES - 1) + 0.5) | 0;
+          if (idx < 0) idx = 0; else if (idx >= SHADES) idx = SHADES - 1;
+
+          ctx.fillStyle = p.ramp[idx];
+          ctx.beginPath();
+          ctx.moveTo(vsx[i0], vsy[i0]);
+          ctx.lineTo(vsx[i1], vsy[i1]);
+          ctx.lineTo(vsx[i2], vsy[i2]);
+          ctx.fill();
+        }
+        continue;
+      }
+
+      /* Flat facet: the legacy triangle, and the LOD fallback for solid — at
+         a few pixels the shading of a tetrahedron is imperceptible. */
+      if (isSolid) {
+        var lodIdx = (0.86 * (AERIAL_BASE + AERIAL_RANGE * near) * (SHADES - 1) + 0.5) | 0;
+        if (lodIdx < 0) lodIdx = 0; else if (lodIdx >= SHADES) lodIdx = SHADES - 1;
+        ctx.fillStyle = p.ramp[lodIdx];
+      } else if (isFill) ctx.fillStyle = p.color;
+      else ctx.strokeStyle = p.color;
+
+      // `tv`, not `k`: k is the outer draw-order index and reusing it here
+      // would silently restart the whole pass.
+      ctx.beginPath();
+      for (var tv = 0; tv < 3; tv++) {
+        var tvx = TRI[tv][0] * s0, tvy = TRI[tv][1] * s0;
+        var ty = tvy * cpb, tz = tvy * spb;
+        var tx2 = tvx * cpa + tz * spa, tz2 = tz * cpa - tvx * spa;
+        var tex = tx2 * cyw + tz2 * syw, tez = tz2 * cyw - tx2 * syw;
+        var tey = ty * cpt - tez * spt, tez2 = ty * spt + tez * cpt;
+        var tden = FOV + Z2 + tez2; if (tden < FOVMIN) tden = FOVMIN;
+        var tvp = FOV / tden;
+        var fx = ox + (X1 + tex) * tvp, fy = oy + (Y1 + tey) * tvp;
+        if (k === 0) ctx.moveTo(fx, fy); else ctx.lineTo(fx, fy);
+      }
+      if (isFill || isSolid) ctx.fill();
+      else { ctx.closePath(); ctx.stroke(); }
     }
+
     ctx.shadowBlur = 0;
     ctx.globalAlpha = 1;
     this.raf = requestAnimationFrame(this._loop);

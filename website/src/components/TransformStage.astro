@@ -7,10 +7,15 @@
  * page's one authored focal moment: a pinned viewport where a single object
  * rearranges itself through three drawn states as you scroll.
  *
- *   Ist-Zustand   → scatter    (work spread across people, files, systems)
- *   Übergang      → bridge     (the crossing; the brand mark)
- *   Soll-Zustand  → schematic  (a signal flow whose feedback loop is the
- *                               monitoring — "läuft von selbst", drawn)
+ *   Ihre Systeme  → die        (a silicon die in plan view: the substrate)
+ *   Der Agent     → neuralnet  (a layered network as a Schaltbild)
+ *   Im Betrieb    → pipeline   (a data pipeline whose feedback loop carries
+ *                               the instrument tag — the monitoring, drawn)
+ *
+ * The particle mark is a solid shaded tetrahedron, depth-sorted, so the field
+ * reads as one solid object rather than a transparent cloud. Marks are small
+ * and numerous on purpose (D-030): each particle is 3D matter, but the
+ * aggregate has to stay a drawn diagram.
  *
  * Every particle keeps a stable identity across all three, so it reads as one
  * object being reorganised, never as three pictures crossfading.
@@ -212,12 +217,12 @@ const states = [1, 2, 3].map((i) => ({
       sectionSelector: '#wandlung .stage-anchor',
       // Centred: the stage is otherwise empty, so the drawing owns the middle.
       stages: [
-        { shape: S.fragments, x: 0.5, intensity: 0.9, name: 'ist' },
-        { shape: 'bridge', x: 0.5, intensity: 1, name: 'uebergang' },
-        { shape: S.schematic, x: 0.5, intensity: 0.95, name: 'soll' },
+        { shape: S.die, x: 0.5, intensity: 0.92, name: 'systeme' },
+        { shape: S.neuralnet, x: 0.5, intensity: 1, name: 'agent' },
+        { shape: S.pipeline, x: 0.5, intensity: 0.96, name: 'betrieb' },
       ],
-      count: window.innerWidth < 768 ? 520 : 1200,
-      size: 0.9,
+      // count, size, style and maxDpr come from the preset: the solid mark
+      // only works if they are tuned together, so they live in one place.
       morphEase: 0.045,
       // The one non-negotiable: see the header comment.
       spinSpeed: 0,

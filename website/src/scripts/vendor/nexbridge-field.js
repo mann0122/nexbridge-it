@@ -126,7 +126,129 @@
     [P.arc(0.33, -0.01, 0.038, 0, TAU)]
   );
 
+  /* ------------------------------------------------------------------ *
+   * The AI stack, drawn in the drawing office — D-030.
+   *
+   * The temptation with "make it look like AI" is the glowing brain and the
+   * floating node cloud. Both are the category rut, and both are banned here.
+   * These are the same subjects rendered the way an engineer would draw them:
+   * a die in plan view, a network as a Schaltbild on a dimension line, a
+   * pipeline in the P&ID duct. Unmistakably a tech company, still this one.
+   * ------------------------------------------------------------------ */
+
+  /* Silizium-Die im Gehäuse, plan view. The three nested rectangles are over
+     half the path length, so the silhouette dominates and the pins stay pins
+     instead of eating the particle budget. */
+  var diePrims = (function () {
+    var p = [].concat(
+      P.rect(-0.300, -0.225, 0.300, 0.225),   // package body
+      P.rect(-0.175, -0.125, 0.175, 0.125),   // die cavity
+      P.rect(-0.070, -0.050, 0.070, 0.050)    // core block
+    );
+    p.push(P.arc(-0.300, 0, 0.038, -Math.PI / 2, Math.PI / 2));   // pin-1 notch
+    p.push(P.line(-0.175, -0.088, 0.175, -0.088));                // internal bus
+    p.push(P.line(-0.175, 0.088, 0.175, 0.088));
+    p.push(P.line(-0.175, -0.020, -0.070, -0.020));
+    p.push(P.line(0.070, -0.020, 0.175, -0.020));
+    p.push(P.line(-0.175, 0.020, -0.070, 0.020));
+    p.push(P.line(0.070, 0.020, 0.175, 0.020));
+    p = p.concat(                                                  // bond routing
+      P.poly([[-0.175, -0.105], [-0.240, -0.105], [-0.240, -0.165]]),
+      P.poly([[-0.175, 0.105], [-0.240, 0.105], [-0.240, 0.165]]),
+      P.poly([[0.175, -0.105], [0.240, -0.105], [0.240, -0.165]]),
+      P.poly([[0.175, 0.105], [0.240, 0.105], [0.240, 0.165]])
+    );
+    for (var k = 0; k < 8; k++) {                                  // pin rows
+      var y = -0.175 + k * 0.050;
+      p.push(P.line(-0.300, y, -0.368, y));
+      p.push(P.line(0.300, y, 0.368, y));
+    }
+    return p;
+  })();
+
+  /* Neuronales Netz als Schaltbild. Edges are pruned to near neighbours: a
+     fully connected 4-5-5-3 is a grey mesh at particle resolution, not a
+     diagram. The dimension line with per-layer ticks along the bottom is what
+     keeps this an engineering drawing rather than a sci-fi brain — do not
+     drop it. */
+  var netPrims = (function () {
+    /* Deliberately sparse. A 4-5-5-3 net with 30 edges renders as a grey mesh
+       at particle resolution — the layers vanish. Fewer, bigger nodes with
+       wider gaps keep the columnar structure legible, which is the only thing
+       that makes this read as a network rather than a cloud. */
+    var LX = [-0.38, -0.13, 0.13, 0.38], LN = [3, 4, 4, 2];
+    var GAP = 0.160, NR = 0.052, YOFF = -0.030;
+    var nodes = [], p = [], l, i, j;
+    for (l = 0; l < 4; l++) {
+      var col = [], n = LN[l], y0 = -((n - 1) / 2) * GAP + YOFF;
+      for (i = 0; i < n; i++) col.push([LX[l], y0 + i * GAP]);
+      nodes.push(col);
+    }
+    for (l = 0; l < 3; l++) {
+      for (i = 0; i < nodes[l].length; i++) {
+        for (j = 0; j < nodes[l + 1].length; j++) {
+          var a0 = nodes[l][i], b0 = nodes[l + 1][j];
+          if (Math.abs(a0[1] - b0[1]) > GAP * 1.15) continue;
+          var dx = b0[0] - a0[0], dy = b0[1] - a0[1], len = Math.sqrt(dx * dx + dy * dy);
+          var ux = dx / len, uy = dy / len;
+          // trimmed to the node radius so edges do not smear into the circles
+          p.push(P.line(a0[0] + ux * NR, a0[1] + uy * NR, b0[0] - ux * NR, b0[1] - uy * NR));
+        }
+      }
+    }
+    for (l = 0; l < 4; l++) {
+      for (i = 0; i < nodes[l].length; i++) p.push(P.arc(nodes[l][i][0], nodes[l][i][1], NR, 0, TAU));
+    }
+    for (i = 0; i < LN[0]; i++) p.push(P.line(-0.460, nodes[0][i][1], -0.360 - NR, nodes[0][i][1]));
+    for (i = 0; i < LN[3]; i++) p.push(P.line(0.360 + NR, nodes[3][i][1], 0.460, nodes[3][i][1]));
+    p.push(P.line(-0.360, 0.265, 0.360, 0.265));                   // layer axis
+    for (l = 0; l < 4; l++) p.push(P.line(LX[l], 0.235, LX[l], 0.295));
+    return p;
+  })();
+
+  /* Datenstrecke im P&ID-Duktus: Quelle, Puffer, Transformation, Senke —
+     gerichtet, mit Paketen auf der Strecke, Prüfzweig und einem Rückführpfad,
+     der den Instrumentenkreis trägt. Das Monitoring, gezeichnet. */
+  var pipelinePrims = (function () {
+    var SX = [-0.375, -0.125, 0.125, 0.375], HW = 0.075, HH = 0.078;
+    var p = [], i;
+    for (i = 0; i < 4; i++) p = p.concat(P.rect(SX[i] - HW, -HH, SX[i] + HW, HH));
+    p.push(P.line(-0.165, -HH, -0.165, HH));                       // queue dividers
+    p.push(P.line(-0.125, -HH, -0.125, HH));
+    p.push(P.line(-0.085, -HH, -0.085, HH));
+    p = p.concat(P.poly([[0.050, HH], [0.200, -HH]]));             // transform diagonal
+    p.push(P.line(0.300, -0.040, 0.450, -0.040));                  // store rule
+    for (i = 0; i < 3; i++) {
+      var x0 = SX[i] + HW, x1 = SX[i + 1] - HW, xm = (x0 + x1) / 2;
+      p.push(P.line(x0, 0, x1, 0));
+      p = p.concat(P.poly([[x1 - 0.032, -0.024], [x1, 0], [x1 - 0.032, 0.024]]));
+      p = p.concat(P.rect(xm - 0.016, -0.016, xm + 0.016, 0.016));  // packet in flight
+    }
+    p.push(P.line(-0.480, 0.000, -0.450, 0.000));                  // inlet terminator
+    p.push(P.line(-0.480, -0.030, -0.480, 0.030));
+    p.push(P.line(0.450, 0.000, 0.480, 0.000));                    // outlet terminator
+    p.push(P.line(0.480, -0.030, 0.480, 0.030));
+    p = p.concat(P.poly([[0.375, -HH], [0.375, -0.250], [-0.375, -0.250], [-0.375, -HH]]));
+    p = p.concat(P.poly([[-0.403, -0.192], [-0.375, -HH], [-0.347, -0.192]]));
+    p.push(P.arc(0, -0.322, 0.052, 0, TAU));                       // instrument tag
+    p.push(P.line(0.000, -0.270, 0.000, -0.250));
+    p.push(P.line(-0.026, -0.322, 0.026, -0.322));
+    p.push(P.line(0.000, -0.348, 0.000, -0.296));
+    p = p.concat(P.rect(0.050, 0.205, 0.200, 0.310));              // check branch
+    p.push(P.line(0.125, HH, 0.125, 0.205));
+    p = p.concat(P.poly([[0.097, 0.147], [0.125, 0.205], [0.153, 0.147]]));
+    p = p.concat(P.poly([[0.200, 0.2575], [0.290, 0.2575], [0.290, 0.000]]));
+    p = p.concat(P.poly([[0.266, 0.030], [0.290, 0.000], [0.314, 0.030]]));
+    return p;
+  })();
+
   var SHAPES = {
+    /* Jitter drops from the 0.006 default to 0.004 for the AI-stack shapes:
+       what was invisible under a 1px stroke becomes a fuzzy three-particle
+       band under solid pyramids. */
+    die: P.fromOutline(diePrims, 0.92, P.twin(0.050), 0.002),
+    neuralnet: P.fromOutline(netPrims, 0.88, P.twin(0.055), 0.002),
+    pipeline: P.fromOutline(pipelinePrims, 0.90, P.twin(0.050), 0.002),
     schematic: P.fromOutline(schematicPrims, 0.86, P.twin(0.055)),
     titleblock: P.fromOutline(titleBlockPrims, 0.92, P.twin(0.05)),
     dimensioned: P.fromOutline(dimensionedPrims, 0.78, P.twin(0.06)),
@@ -143,11 +265,16 @@
    * ------------------------------------------------------------------ */
   var BASE = {
     colors: PALETTE,
-    style: 'triangle',
+    ground: token('--color-graphite', '#14171A'), // what shading mixes toward
+    style: 'solid',
     glow: false,
     spinSpeed: 0.55,
     morphEase: 0.05,
-    size: 0.92,
+    /* Marks get SMALLER as count goes up. Each particle is solid 3D matter,
+       but the aggregate has to stay a drawn diagram — a 5px pyramid on a 1px
+       path turns a hairline into a caterpillar. */
+    size: 0.78,
+    maxDpr: 1.5,
     pointerParallax: 0.6,
     respectReducedMotion: true
   };
@@ -171,7 +298,7 @@
     if (snap) cfg.spinSpeed = 0;
 
     // Mobile budget: the library's own guidance is ~700 under 768px.
-    if (cfg.count == null) cfg.count = root.innerWidth < 768 ? 640 : 1200;
+    if (cfg.count == null) cfg.count = root.innerWidth < 768 ? 900 : 2400;
 
     return P.init(cfg);
   }

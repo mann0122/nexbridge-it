@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-02 · 15 nodes · 29 decisions
+Content as of 2026-08-02 · 15 nodes · 33 decisions
 
 ## Map
 
@@ -133,6 +133,10 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-027 | 2026-08-02 | Particle field reverted from the homepage; needs its own layout | DECIDED | — |
 | D-028 | 2026-08-02 | Wandlung: the particle field gets its own pinned stage | DECIDED | — |
 | D-029 | 2026-08-02 | Official venture email: nexbridge-it@mailbox.org | DECIDED | — |
+| D-030 | 2026-08-02 | GSAP is the only animation engine | DECIDED | — |
+| D-031 | 2026-08-02 | Design skills are allowlisted, not accumulated | DECIDED | — |
+| D-032 | 2026-08-02 | The site has no icon vocabulary | DECIDED | — |
+| D-033 | 2026-08-02 | Wandlung re-themed to the AI stack; solid pyramid mark | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

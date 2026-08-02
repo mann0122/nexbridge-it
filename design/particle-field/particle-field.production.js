@@ -33,7 +33,7 @@
   var PI = Math.PI;
   var TAU = PI * 2;
   var TRI = [[1, 0], [-0.5, 0.866], [-0.5, -0.866]];
-  var MAX = 4000;
+  var MAX = 16000;
 
   /* Regular tetrahedron on alternating cube corners, circumradius 1 so it is
      the same visual weight as TRI and `size` keeps its meaning. Winding is
@@ -137,6 +137,153 @@
       return out;
     };
     // Exposed so the lab can stroke the ideal outline under the particles.
+    fn.prims = prims;
+    fn.scale = scale;
+    return fn;
+  }
+
+  /**
+   * fromFill(prims, scale, opts) -> sampler(q, W, H, out)
+   *
+   * `fromOutline` distributes along path LENGTH, so a shape is always a
+   * wireframe — adding particles only thickens the lines, it never gives the
+   * form mass. This fills the interior instead: rasterise the outline once,
+   * keep every covered pixel, and let each particle claim one.
+   *
+   * opts.thickness  half-depth of the lens profile (unit space, default 0.10)
+   * opts.carve      prims stroked out of the fill, so a groove reads as a gap
+   *                 in the particle mass — how the brain gets its sulci
+   * opts.carveWidth stroke width for those, in unit space
+   * opts.res        raster resolution on the long side (default 240)
+   */
+  function fromFill(prims, scale, opts) {
+    opts = opts || {};
+    var thick = opts.thickness == null ? 0.10 : opts.thickness;
+    var jit = opts.jitter == null ? 0.004 : opts.jitter;
+    var RES = opts.res || 240;
+    var fallback = fromOutline(prims, scale, twin(thick), jit);
+
+    var built = false, pts = null, nPts = 0;
+    var rw = 0, sc = 1, minX = 0, minY = 0, ccx = 0, ccy = 0, maxR = 1;
+    var cache = null, seen = null;
+
+    function bounds() {
+      var a = 1e9, b = 1e9, c = -1e9, d = -1e9, i, s;
+      for (i = 0; i < prims.length; i++) {
+        s = prims[i];
+        if (s[0] === 'L') {
+          a = Math.min(a, s[1], s[3]); c = Math.max(c, s[1], s[3]);
+          b = Math.min(b, s[2], s[4]); d = Math.max(d, s[2], s[4]);
+        } else {
+          a = Math.min(a, s[1] - s[3]); c = Math.max(c, s[1] + s[3]);
+          b = Math.min(b, s[2] - s[3]); d = Math.max(d, s[2] + s[3]);
+        }
+      }
+      return [a, b, c, d];
+    }
+
+    /* Segments arrive as a flat list, so start a new subpath whenever one does
+       not continue from the previous endpoint. Without this every shape is one
+       tangled path and evenodd fills the wrong regions. */
+    function trace(g, list, k) {
+      var lx = NaN, ly = NaN, i, s;
+      for (i = 0; i < list.length; i++) {
+        s = list[i];
+        if (s[0] === 'L') {
+          if (Math.abs(s[1] - lx) > 1e-6 || Math.abs(s[2] - ly) > 1e-6) g.moveTo(k(s[1], 0), k(s[2], 1));
+          g.lineTo(k(s[3], 0), k(s[4], 1));
+          lx = s[3]; ly = s[4];
+        } else {
+          g.moveTo(k(s[1] + s[3], 0), k(s[2], 1));
+          g.arc(k(s[1], 0), k(s[2], 1), s[3] * sc, s[4], s[5]);
+          lx = NaN; ly = NaN;
+        }
+      }
+    }
+
+    function build() {
+      built = true;
+      if (typeof document === 'undefined') return; // Node harness: no canvas
+      var bb = bounds();
+      minX = bb[0]; minY = bb[1];
+      var w = bb[2] - bb[0], h = bb[3] - bb[1];
+      var span = Math.max(w, h) || 1;
+      sc = RES / span;
+      rw = Math.max(8, Math.ceil(w * sc));
+      var rh = Math.max(8, Math.ceil(h * sc));
+      var cv = document.createElement('canvas');
+      cv.width = rw; cv.height = rh;
+      var g = cv.getContext('2d');
+      var map = function (v, axis) { return axis ? (v - minY) * sc : (v - minX) * sc; };
+
+      g.fillStyle = '#fff';
+      g.beginPath();
+      trace(g, prims, map);
+      // evenodd by default so nested outlines (a die cavity) stay holes;
+      // nonzero when overlapping lobes should union instead (the brain).
+      g.fill(opts.rule || 'evenodd');
+
+      if (opts.carve && opts.carve.length) {
+        g.globalCompositeOperation = 'destination-out';
+        g.strokeStyle = '#fff';
+        g.lineWidth = Math.max(1.5, (opts.carveWidth || 0.012) * sc);
+        g.lineCap = 'round';
+        g.beginPath();
+        trace(g, opts.carve, map);
+        g.stroke();
+        g.globalCompositeOperation = 'source-over';
+      }
+
+      var d = g.getImageData(0, 0, rw, rh).data;
+      var list = [], n = rw * rh, i;
+      for (i = 0; i < n; i++) if (d[i * 4 + 3] > 128) list.push(i);
+      nPts = list.length;
+      if (!nPts) return;
+      pts = Int32Array.from(list);
+
+      // centroid and radius, for the lens depth profile
+      var sx = 0, sy = 0;
+      for (i = 0; i < nPts; i++) { sx += pts[i] % rw; sy += (pts[i] / rw) | 0; }
+      ccx = sx / nPts; ccy = sy / nPts;
+      var m = 0;
+      for (i = 0; i < nPts; i++) {
+        var dx = (pts[i] % rw) - ccx, dy = ((pts[i] / rw) | 0) - ccy;
+        var r2 = dx * dx + dy * dy;
+        if (r2 > m) m = r2;
+      }
+      maxR = Math.sqrt(m) || 1;
+    }
+
+    function resolve(q, out) {
+      var idx = pts[Math.min(nPts - 1, (q.r[0] * nPts) | 0)];
+      var gx = idx % rw, gy = (idx / rw) | 0;
+      var dx = gx - ccx, dy = gy - ccy;
+      var r = Math.sqrt(dx * dx + dy * dy) / maxR;
+      if (r > 1) r = 1;
+      // lens, not slab: the form reads round instead of like two flat sheets
+      var half = thick * Math.sqrt(1 - r * r);
+      out[0] = minX + (gx + 0.5) / sc + (q.r[4] - 0.5) * jit;
+      out[1] = minY + (gy + 0.5) / sc + (q.r[5] - 0.5) * jit;
+      out[2] = (q.r[2] < 0.5 ? -1 : 1) * half * (0.35 + 0.65 * q.r[3]);
+    }
+
+    var fn = function (q, W, H, out) {
+      out = out || [0, 0, 0];
+      if (!built) build();
+      if (!nPts) return fallback(q, W, H, out);
+      var m = Math.min(W, H) * scale;
+      var i = q.i;
+      if (i == null) { resolve(q, out); out[0] *= m; out[1] *= m; out[2] *= m; return out; }
+      if (!cache) { cache = new Float32Array(MAX * 3); seen = new Uint8Array(MAX); }
+      var b = i * 3;
+      if (!seen[i]) {
+        resolve(q, TMP);
+        cache[b] = TMP[0]; cache[b + 1] = TMP[1]; cache[b + 2] = TMP[2];
+        seen[i] = 1;
+      }
+      out[0] = cache[b] * m; out[1] = cache[b + 1] * m; out[2] = cache[b + 2] * m;
+      return out;
+    };
     fn.prims = prims;
     fn.scale = scale;
     return fn;
@@ -417,6 +564,8 @@
     count: 1500,         // particles drawn (max 4000)
     style: 'triangle',   // 'solid' | 'triangle' | 'filled' | 'dot'
     size: 1,             // particle size multiplier
+    sizeVar: 0.55,       // spread of mark sizes; a few large marks carry the texture
+    hollow: false,       // stroke the tetra faces instead of filling them
     opacity: 1,          // overall field opacity multiplier
     glow: false,         // NEXBRIDGE PATCH 3: no halos (DESIGN.md anti-pattern)
     spinSpeed: 1,        // camera orbit + particle tumble speed (0 = frozen)
@@ -518,6 +667,7 @@
         rot2: rot2,
         spin: (rnd(i, 10) - 0.5) * 0.85,
         spin2: (rnd(i, 13) - 0.5) * 0.65,
+        svRaw: rnd(i, 14), // drives the size spread; skewed in the loop
         /* Tumble at spinSpeed 0 is constant — production's case. */
         crot: Math.cos(rot), srot: Math.sin(rot),
         crot2: Math.cos(rot2), srot2: Math.sin(rot2),
@@ -682,6 +832,7 @@
     var style = o.style;
     var isDot = style === 'dot', isFill = style === 'filled', isSolid = style === 'solid';
     var size = o.size, glowOn = o.glow, lodPx = o.lodPx, cullOn = o.backfaceCull;
+    var sizeVar = o.sizeVar, hollow = o.hollow;
     var parts = this.parts, sa = this.sa, sb = this.sb;
     var px = this.px, py = this.py, pz = this.pz, pper = this.pper;
     var psx = this.psx, psy = this.psy, pbk = this.pbk, vis = this.vis, order = this.order;
@@ -761,7 +912,10 @@
       i = order[k];
       var p = parts[i];
       var X1 = px[i], Y1 = py[i], Z2 = pz[i], PER = pper[i];
-      var s0 = (1.5 + p.depth * 3.4) * size;
+      /* Skewed so most marks stay small and a handful are markedly large —
+         that scatter of big marks is most of the field's texture. */
+      var s0 = (1.5 + p.depth * 3.4) * size *
+        (1 + sizeVar * (Math.pow(p.svRaw, 2.4) * 2.6 - 0.35));
       var near = (PER - 0.62) / 0.85; if (near < 0) near = 0; else if (near > 1) near = 1;
 
       if (!isSolid) {
@@ -826,12 +980,12 @@
           var idx = ((LIT_BASE + LIT_RANGE * ndl) * aerial * (SHADES - 1) + 0.5) | 0;
           if (idx < 0) idx = 0; else if (idx >= SHADES) idx = SHADES - 1;
 
-          ctx.fillStyle = p.ramp[idx];
           ctx.beginPath();
           ctx.moveTo(vsx[i0], vsy[i0]);
           ctx.lineTo(vsx[i1], vsy[i1]);
           ctx.lineTo(vsx[i2], vsy[i2]);
-          ctx.fill();
+          if (hollow) { ctx.strokeStyle = p.ramp[idx]; ctx.closePath(); ctx.stroke(); }
+          else { ctx.fillStyle = p.ramp[idx]; ctx.fill(); }
         }
         continue;
       }
@@ -907,6 +1061,7 @@
     reveal: reveal,
     // shape-authoring helpers
     fromOutline: fromOutline,
+    fromFill: fromFill,
     line: L, arc: A, poly: poly, rect: rect, twin: twin
   };
 

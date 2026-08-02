@@ -428,6 +428,42 @@ expanded by the angle-sum identity, and particles build lazily. Upstream allocat
 particle per frame and rescanned ~50 path segments per particle per frame. `MAX` 2400 → 4000,
 `maxDpr` capped at 1.5. Owner: partner-b.
 
+## D-034 | 2026-08-02 | Wandlung: volumetric fill, a brain, 9000 particles | DECIDED
+Founder compared the shipped section against a reference image and it read too thin. Diagnosing
+the gap mattered more than matching it: the reference's density comes from particles filling a
+**volume**, ours traced a **1px path**. `fromOutline` distributes along path *length*, so every
+shape stays a wireframe however many particles you add — more count just thickens the lines. That
+one difference, not colour, was most of the gap.
+
+New `fromFill(prims, scale, opts)` sampler: rasterise the outline once to an offscreen canvas,
+keep every covered pixel, let each particle claim one by its stable random. Depth comes from a
+**lens profile** (`z = ±t·√(1−r²)` from the centroid) so a filled form reads round rather than
+like two flat sheets. Cached by `q.i` exactly as `fromOutline` is, so steady-state sampling is
+still three multiplies. Falls back to outline behaviour where there is no `document`, which keeps
+the Node geometry harness working.
+
+**Shapes: `die → brain → pipeline`.** A brain is a "3D blob" under our own anti-patterns and is
+the most reused image in AI marketing — accepted as founder-directed, and mitigated by keeping it
+in the house grammar: it is *filled* rather than outlined, and its sulci are **carved as grooves
+out of the particle body** (`destination-out` stroke before sampling) instead of painted on. At
+`carveWidth: 0.016` the mass closed over them and they vanished; 0.032 reads. A dimension line
+under it was tried and removed — at this scale it lands in the canvas mask's bottom fade and
+scatters as debris across the caption. Copy needed no change: „Der Agent" describes a brain as
+well as it described a network.
+
+**Palette stayed inside the brand** (founder's call — no D-003 override). Widened from 4 distinct
+colours to 7 by mixing existing tokens (paper↔steel, steel↔steel-deep, steel-deep↔ground), all
+derived through `token()` so a `@theme` edit still moves everything. Signal measured **by area**,
+not by count, because filled faces read heavier than strokes: **4.37% of drawn pixels**, against a
+7% ceiling.
+
+Also: `MAX` 4000 → 16000, `count` 2400 → 9000 desktop / 3000 mobile, `size` 0.78 → 0.62, and a new
+`sizeVar` that skews the mark-size distribution so most stay small and a handful are markedly
+large — that scatter is most of the field's texture. A `hollow` option exists for stroking the
+tetra faces; default stays solid. Ink coverage went 2.5% → 8.6% on the brain state, which is the
+objective check that the fill actually happened. Homepage JS ~204 KB raw / 69 KB brotli.
+Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

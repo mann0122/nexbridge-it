@@ -42,12 +42,33 @@
   var DEEP = token('--color-steel-deep', '#5B6770');
   var SIGNAL = token('--color-signal', '#FF4D00');
 
+  var GROUND = token('--color-graphite', '#14171A');
+
+  /* Intermediate tints, mixed from the tokens themselves — a wider tonal range
+     without importing a hue the design system does not own. A @theme edit
+     still moves every one of them. */
+  function rgbOf(h) {
+    h = String(h).trim().replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function mix(a, b, k) {
+    var x = rgbOf(a), y = rgbOf(b);
+    function c(i) { return Math.round(x[i] + (y[i] - x[i]) * k); }
+    return 'rgb(' + c(0) + ',' + c(1) + ',' + c(2) + ')';
+  }
+  var T1 = mix(PAPER, STEEL, 0.5);
+  var T2 = mix(STEEL, DEEP, 0.5);
+  var T3 = mix(DEEP, GROUND, 0.35);
+
+  /* 18 entries, one of them signal — 5.6% by count. Verify by AREA once the
+     mark count changes; filled faces read heavier than strokes. */
   var PALETTE = [
-    PAPER, STEEL, STEEL, DEEP,
-    PAPER, STEEL, DEEP, STEEL,
+    PAPER, T1, STEEL, T2, DEEP, T3,
+    PAPER, T1, STEEL, T2, DEEP,
     SIGNAL, // the only one
-    STEEL, DEEP, PAPER,
-    STEEL, DEEP, STEEL, PAPER
+    T1, STEEL, T2, DEEP, T1, STEEL
   ];
 
   /* ------------------------------------------------------------------ *
@@ -242,7 +263,67 @@
     return p;
   })();
 
+  /* ------------------------------------------------------------------ *
+   * The brain — D-034, founder-directed.
+   *
+   * A brain is a "3D blob" under DESIGN.md's anti-patterns and is the most
+   * reused image in AI marketing. What keeps this one ours is that it is
+   * FILLED rather than outlined (so it has real mass, which is the whole
+   * point) and that its sulci are carved as grooves in the particle body
+   * instead of painted on — plus a dimension line under it, so the sheet
+   * still reads as a drawing rather than a poster.
+   * ------------------------------------------------------------------ */
+  var brainPrims = (function () {
+    // cortex, closed profile facing left
+    var cortex = P.poly([
+      [-0.42, -0.02], [-0.41, -0.12], [-0.36, -0.21], [-0.28, -0.28],
+      [-0.19, -0.32], [-0.09, -0.34], [0.02, -0.34], [0.13, -0.31],
+      [0.23, -0.26], [0.31, -0.18], [0.36, -0.08], [0.37, 0.02],
+      [0.34, 0.11], [0.28, 0.17], [0.20, 0.20], [0.12, 0.20],
+      [0.04, 0.22], [-0.05, 0.24], [-0.14, 0.24], [-0.23, 0.21],
+      [-0.31, 0.16], [-0.38, 0.09], [-0.42, 0.03], [-0.42, -0.02]
+    ]);
+    var cerebellum = P.poly([
+      [0.18, 0.14], [0.28, 0.14], [0.35, 0.19], [0.37, 0.27],
+      [0.33, 0.34], [0.24, 0.37], [0.15, 0.35], [0.10, 0.29],
+      [0.11, 0.20], [0.18, 0.14]
+    ]);
+    var stem = P.poly([
+      [0.06, 0.24], [0.12, 0.26], [0.14, 0.38], [0.10, 0.44],
+      [0.04, 0.43], [0.03, 0.31], [0.06, 0.24]
+    ]);
+    // dimension line as thin filled bars, so the fill sampler can see it
+    /* No dimension line here, deliberately. It was tried: at this scale it
+       lands inside the canvas mask's bottom fade and scatters as debris across
+       the caption. The DIN frame and the `01 / 03` scale already carry the
+       drawing-sheet framing for this state. */
+    return [].concat(cortex, cerebellum, stem);
+  })();
+
+  /* Carved out of the fill, not drawn on top: a groove reads as a gap in the
+     particle body, which is how a brain actually shows its folds. */
+  var brainSulci = [].concat(
+    P.poly([[-0.30, -0.16], [-0.18, -0.12], [-0.08, -0.18], [0.02, -0.13]]),
+    P.poly([[-0.24, -0.02], [-0.10, 0.02], [0.02, -0.04], [0.14, 0.01]]),
+    P.poly([[-0.14, -0.26], [-0.04, -0.22], [0.06, -0.26], [0.16, -0.20]]),
+    P.poly([[0.10, -0.10], [0.20, -0.06], [0.28, -0.12]]),
+    P.poly([[-0.34, 0.06], [-0.22, 0.10], [-0.10, 0.06]]),
+    P.poly([[0.04, 0.09], [0.13, 0.12], [0.21, 0.08]])
+  );
+
   var SHAPES = {
+    /* The one filled shape. `nonzero` so the cerebellum and stem union with
+       the cortex instead of XOR-ing holes into it. */
+    brain: P.fromFill(brainPrims, 0.84, {
+      rule: 'nonzero',
+      thickness: 0.115,
+      carve: brainSulci,
+      // wide enough that the groove survives both the raster and the jitter —
+      // at 0.016 the particle mass simply closed over it
+      carveWidth: 0.032,
+      jitter: 0.003,
+      res: 260
+    }),
     /* Jitter drops from the 0.006 default to 0.004 for the AI-stack shapes:
        what was invisible under a 1px stroke becomes a fuzzy three-particle
        band under solid pyramids. */
@@ -273,7 +354,8 @@
     /* Marks get SMALLER as count goes up. Each particle is solid 3D matter,
        but the aggregate has to stay a drawn diagram — a 5px pyramid on a 1px
        path turns a hairline into a caterpillar. */
-    size: 0.78,
+    size: 0.62,
+    sizeVar: 0.55,
     maxDpr: 1.5,
     pointerParallax: 0.6,
     respectReducedMotion: true
@@ -298,7 +380,7 @@
     if (snap) cfg.spinSpeed = 0;
 
     // Mobile budget: the library's own guidance is ~700 under 768px.
-    if (cfg.count == null) cfg.count = root.innerWidth < 768 ? 900 : 2400;
+    if (cfg.count == null) cfg.count = root.innerWidth < 768 ? 3000 : 9000;
 
     return P.init(cfg);
   }

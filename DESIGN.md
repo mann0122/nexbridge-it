@@ -73,10 +73,10 @@ prefers-reduced-motion, and `?snap` renders final states for static capture.
 
 **The focal moment — Wandlung** (`TransformStage.astro`, added 2026-08-02, D-028). One pinned
 full-viewport sheet between Problems and Services, 240svh of scroll, where a single particle
-object rearranges through three drawn states — re-themed to the AI stack in D-033: *Ihre Systeme*
-(a silicon die in plan view) → *Der Agent* (a layered network as a Schaltbild on a dimension line)
-→ *Im Betrieb* (a data pipeline in the P&ID duct whose feedback return carries the instrument
-tag). Every particle keeps a stable identity across all three, so it reads as one object being
+object rearranges through three drawn states — re-themed to the AI stack in D-033, densified in
+D-034: *Ihre Systeme* (a silicon die in plan view) → *Der Agent* (a brain, **filled** rather than
+outlined, its sulci carved as grooves out of the particle body) → *Im Betrieb* (a data pipeline in
+the P&ID duct whose feedback return carries the instrument tag). Every particle keeps a stable identity across all three, so it reads as one object being
 reorganised, never as pictures crossfading. These are AI subjects drawn the way an engineer would
 draw them — the glowing brain and the floating node cloud are the category rut and stay banned.
 Shapes are line/arc outlines extruded with `twin()`, never a sphere or a blob. Palette is tokens
@@ -88,7 +88,14 @@ The mark is a **solid shaded tetrahedron**, depth-sorted so near particles occlu
 occlusion is what makes the field read as matter rather than as a transparent cloud. Faces are
 flat fills from a 16-step ramp mixing one token toward the ground token, so shading can never
 invent a hue. Third constraint, alongside the two below: **marks shrink as count rises**
-(`size 0.78`, `count 2400`). A 5px pyramid on a 1px path turns a hairline into a caterpillar.
+(`size 0.62`, `count 9000`). A 5px pyramid on a 1px path turns a hairline into a caterpillar.
+
+Fourth: **outline shapes can never gain mass.** `fromOutline` distributes along path length, so a
+shape stays a wireframe however many particles you add. Density comes from `fromFill`, which
+rasterises the silhouette and fills the interior, with depth from a lens profile so the form reads
+round. Mark sizes are deliberately uneven (`sizeVar`) — the scatter of a few large marks is most
+of the texture. Palette runs on 7 tints mixed from the tokens; signal is checked **by area**, not
+by count, and sits at 4.4% of drawn pixels.
 
 Two constraints, learned by failing first (D-026 → D-027): **the camera must be locked**
 (`spinSpeed: 0`, or a drawn outline never faces the viewer and reads as grey dirt), and **it

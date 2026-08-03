@@ -8,6 +8,9 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+// The legal pages now have English twins, so these links follow the language
+// the reader is already in rather than dropping them into German (D-036).
+const base = lang === 'de' ? '' : '/en';
 ---
 
 {/* Zeichnungskopf: the title block closes the document */}
@@ -36,8 +39,8 @@ const t = useTranslations(lang);
     <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-6 py-4">
       <p class="type-annot text-steel">© {SITE.foundedYear} {SITE.name}</p>
       <nav class="flex gap-6" aria-label={t('a11y.legalNav')}>
-        <a href="/impressum" class="type-annot link-draw text-steel">{t('footer.legal.impressum')}</a>
-        <a href="/datenschutz" class="type-annot link-draw text-steel">{t('footer.legal.datenschutz')}</a>
+        <a href={`${base}/impressum`} class="type-annot link-draw text-steel">{t('footer.legal.impressum')}</a>
+        <a href={`${base}/datenschutz`} class="type-annot link-draw text-steel">{t('footer.legal.datenschutz')}</a>
       </nav>
     </div>
   </div>

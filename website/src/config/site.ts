@@ -11,6 +11,27 @@ export const SITE = {
   foundedYear: 2026,
   /** Where enquiries land. Official venture mailbox, confirmed by the founder — D-029. */
   email: 'nexbridge-it@mailbox.org',
+
+  /* ---------------------------------------------------------------------
+   * Legal identity — D-036. Verbatim from the founder's Impressum document
+   * (2026-08-03). This block is the single source for the Impressum page,
+   * the JSON-LD PostalAddress, and anywhere else the entity is named.
+   * Do not edit these to "fix" them: § 5 DDG data is the founder's and
+   * their adviser's to change, not ours.
+   * ------------------------------------------------------------------- */
+  /** § 5 DDG Diensteanbieter. */
+  legalName: 'Peter Knopp',
+  street: 'Gartenstr. 22',
+  zip: '68799',
+  city: 'Reilingen',
+  country: 'Deutschland',
+  countryCode: 'DE',
+  /** As printed in the Impressum. `phoneE164` is what a tel: href needs. */
+  phone: '01739044077',
+  phoneE164: '+491739044077',
+  representatives: ['Peter Knopp', 'Manush Vaghani'],
+  /** "Stand" date carried by the legal pages. Bump when either text changes. */
+  legalRevision: '08/2026',
   /**
    * Booking tool link (e.g. a self-hosted Cal.com instance — keeps the
    * GDPR-first positioning). Reserved: nothing reads this yet. Wiring the

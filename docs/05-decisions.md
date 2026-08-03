@@ -491,6 +491,53 @@ deciding on concrete numbers. If a visual beat is wanted between Problems and Se
 cheaper and more on-brand instinct is a drawn SVG diagram, static or lightly scroll-drawn, in the
 grammar the rest of the site already uses. Owner: partner-b.
 
+## D-036 | 2026-08-03 | Legal pages filled from the founder's documents | DECIDED
+`/impressum` and `/datenschutz` shipped as skeletons since launch — open item #1 in [[state]] and
+the last thing between the site and real traffic. The founder supplied `Impressum Homepage.docx`
+and `Datenschutzerklärung Homepage.docx` (2026-08-03). Both are now live in German and English.
+
+**Where it lives.** Identity data (name, street, PLZ, city, phone, representatives) in
+`site.ts` — one place, so the Impressum, the Datenschutz controller block and the JSON-LD
+`PostalAddress` cannot drift apart. Document text in a new `src/i18n/legal.ts`, typed
+`as const satisfies Record<Lang, LegalDoc>` so an English section cannot go missing without a
+compile error — the `ui.ts` parity mechanism reused, not the file itself (a 22-section policy
+would bury it). Rendered by two shared components, so DE and EN cannot diverge structurally.
+`region` in `site.ts` finally has a consumer.
+
+**Two edits were made to the German draft, and only two.** Notes addressed to whoever completes
+the document — `[Hosting-Anbieter]`, `[Speicherdauer …]` and five *"Bitte ergänzen Sie hier…"*
+sentences — were replaced with verifiable facts about our own stack: the host is Cloudflare
+(D-022), no cookies are set, no analytics is installed, fonts are self-hosted, and the contact
+form has no endpoint so it hands the message to the visitor's own mail client. Those were
+instructions to an author, not text for a reader. And "Stand: 09/2026" was future-dated;
+corrected to 08/2026. **No legal wording was drafted or reworded** — CLAUDE.md rule 4.
+
+**Deliberately left for a lawyer**, not guessed at:
+1. §4 log retention — we run no server; the period is Cloudflare's, so no number is claimed.
+2. §15 third-country transfer — dormant boilerplate until Cloudflare was named, now live and
+   load-bearing. The fact is stated (US parent, global network, SCCs offered); the adequacy
+   assessment is not ours to make.
+3. §5 Art. 28 AVV — Cloudflare's DPA exists but must be **accepted in the account**. Founder to
+   confirm.
+4. The Impressum names two Geschäftsführer while declaring "Einzelunternehmer". A sole trader has
+   no GF, and two people operating jointly is ordinarily a GbR — which is D-005, still PENDING.
+   Flagged once and **published as written on the founder's explicit instruction**; recorded here
+   so it is not mistaken for an oversight.
+
+**English.** Both documents are fully translated and carry a "the German version is the legally
+binding one" line — standard practice, and what stops a translation becoming a second legal text
+that drifts. Unreviewed. This closes the `/en/` legal defect in [[state]]: `altPath()` needed no
+change, it was already producing the right URL and the pages simply did not exist. `hasAlternate`
+is back on for all four, so the language switch and hreflang pairs work again, and the legal links
+in `Footer` and `Contact` now follow the reader's language.
+
+**Also:** the Organization JSON-LD gains `address` and `telephone`. `Layout.astro` had reserved
+exactly this — *"the Impressum will be the source for address data once it is written"* — and the
+precondition is now met. No `vatID`; the document declines to state one. One real bug found and
+fixed on the way: at 360px the single word "Datenschutzerklärung" renders ~412px wide and put the
+whole page into horizontal scroll on its own; hyphenation now sits on the container so headings
+inherit it. Owner: founders (legal review), partner-b (implementation).
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

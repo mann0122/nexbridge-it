@@ -1,0 +1,75 @@
+---
+/**
+ * Datenschutzerklärung body — shared by /datenschutz and /en/datenschutz.
+ * Text from `src/i18n/legal.ts` (the founder's document, D-036); the
+ * controller block is built from `src/config/site.ts`.
+ *
+ * CLAUDE.md rule 4: legal wording is not drafted or edited here. Section 1 is
+ * rendered from SITE rather than stored as prose, so the address cannot drift
+ * away from the Impressum.
+ */
+import { SITE } from '../config/site';
+import { type Lang } from '../i18n/ui';
+import { useLegal } from '../i18n/legal';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const doc = useLegal(lang);
+const t = doc.datenschutz;
+---
+
+<main id="main" class="surface-paper">
+  {/* hyphens on the CONTAINER, so the h1 inherits it too. "Datenschutz-
+      erklärung" is a single unbreakable 20-character word: at 360px it renders
+      ~412px wide and pushes the page into horizontal scroll on its own. The
+      English title wraps at its space, which is why only the German page did
+      this. */}
+  <div class="mx-auto max-w-[1200px] hyphens-auto break-words px-6 py-20 md:py-28">
+    <h1 class="type-display text-[clamp(2rem,4vw,3.2rem)]">{t.title}</h1>
+
+    {
+      doc.translationNote && (
+        <p class="mt-6 max-w-[68ch] border-l border-line pl-4 text-[0.9rem] leading-relaxed text-steel-deep">
+          {doc.translationNote}
+        </p>
+      )
+    }
+
+    {/* Measure held at 68ch — long-form legal prose, DESIGN.md wants 60–72.
+        German legal compounds are long; hyphenation is inherited from the
+        container above and `lang` is set on <html>, so the browser uses the
+        right dictionary. */}
+    <div class="mt-14 max-w-[68ch]">
+      <section class="border-t border-line py-8">
+        <h2 class="type-subhead text-lg text-graphite">1. {lang === 'de' ? 'Verantwortlicher' : 'Controller'}</h2>
+        <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-deep">{t.controllerLead}</p>
+        <address class="mt-3 not-italic text-[0.95rem] leading-relaxed text-graphite">
+          {SITE.name}<br />
+          {SITE.representatives.join(', ')}<br />
+          {SITE.street}<br />
+          {SITE.zip}&nbsp;{SITE.city}<br />
+          {SITE.country}<br />
+          <a href={`mailto:${SITE.email}`} class="link-draw">{SITE.email}</a>
+        </address>
+      </section>
+
+      {
+        t.sections.map((s) => (
+          <section class="border-t border-line py-8">
+            <h2 class="type-subhead text-lg text-graphite">{s.heading}</h2>
+            {s.body.map((p) => (
+              <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-deep">{p}</p>
+            ))}
+          </section>
+        ))
+      }
+
+      <p class="type-annot mt-10 border-t border-line pt-6 text-steel-deep">
+        {t.revisionLabel}: {SITE.legalRevision}
+      </p>
+    </div>
+  </div>
+</main>

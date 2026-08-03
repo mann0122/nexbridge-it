@@ -1,0 +1,22 @@
+---
+/*
+ * English twin of /impressum. The body is a convenience translation and says
+ * so on the page — the German version is the legally binding one (D-036).
+ * Legal wording is never drafted or edited in the codebase — CLAUDE.md rule 4.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ImpressumBody from '../../components/ImpressumBody.astro';
+---
+
+<Layout
+  lang="en"
+  path="/en/impressum"
+  title="Imprint – NexBridge-IT"
+  description="Imprint of NexBridge-IT: information pursuant to § 5 DDG, contact details and liability notice."
+>
+  <Header lang="en" path="/en/impressum" />
+  <ImpressumBody lang="en" />
+  <Footer lang="en" />
+</Layout>

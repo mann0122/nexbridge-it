@@ -1,0 +1,25 @@
+---
+/*
+ * English twin of /datenschutz. The body is a convenience translation and says
+ * so on the page — the German version is the legally binding one (D-036).
+ * Legal wording is never drafted or edited in the codebase — CLAUDE.md rule 4.
+ *
+ * Path stays /en/datenschutz rather than /en/privacy so altPath() in
+ * i18n/ui.ts keeps working by pure prefix/strip, with no route table.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import DatenschutzBody from '../../components/DatenschutzBody.astro';
+---
+
+<Layout
+  lang="en"
+  path="/en/datenschutz"
+  title="Privacy policy – NexBridge-IT"
+  description="Privacy policy of NexBridge-IT: processing of personal data, legal bases and your rights under the GDPR."
+>
+  <Header lang="en" path="/en/datenschutz" />
+  <DatenschutzBody lang="en" />
+  <Footer lang="en" />
+</Layout>

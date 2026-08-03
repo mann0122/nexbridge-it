@@ -1,23 +1,22 @@
 ---
 /*
- * Legally required page. Skeleton only — final text comes from a reputable
- * generator + human review before launch (CLAUDE.md rule 4). Do not draft
- * legal wording here.
+ * Legally required page. Content is the founder's own document, held verbatim
+ * in src/i18n/legal.ts and rendered by DatenschutzBody (D-036). Legal wording
+ * is never drafted or edited in the codebase — CLAUDE.md rule 4.
  */
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import DatenschutzBody from '../components/DatenschutzBody.astro';
 ---
 
-<Layout lang="de" path="/datenschutz" title="Datenschutzerklärung – NexBridge-IT" description="Datenschutzerklärung von NexBridge-IT." hasAlternate={false}>
-  <Header lang="de" path="/datenschutz" hasAlternate={false} />
-  <main id="main" class="surface-paper">
-    <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
-      <h1 class="type-display text-[clamp(2rem,4vw,3.2rem)]">Datenschutzerklärung</h1>
-      <p class="mt-6 max-w-[60ch] text-[0.95rem] leading-relaxed text-steel-deep">
-        Inhalt folgt vor Veröffentlichung.
-      </p>
-    </div>
-  </main>
+<Layout
+  lang="de"
+  path="/datenschutz"
+  title="Datenschutzerklärung – NexBridge-IT"
+  description="Datenschutzerklärung von NexBridge-IT: Verarbeitung personenbezogener Daten, Rechtsgrundlagen und Ihre Rechte nach DSGVO."
+>
+  <Header lang="de" path="/datenschutz" />
+  <DatenschutzBody lang="de" />
   <Footer lang="de" />
 </Layout>

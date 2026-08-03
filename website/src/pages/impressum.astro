@@ -1,23 +1,22 @@
 ---
 /*
- * Legally required page. Skeleton only — final text comes from a reputable
- * generator + human review before launch (CLAUDE.md rule 4). Do not draft
- * legal wording here.
+ * Legally required page. Content is the founder's own document, held verbatim
+ * in src/i18n/legal.ts and rendered by ImpressumBody (D-036). Legal wording is
+ * never drafted or edited in the codebase — CLAUDE.md rule 4.
  */
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ImpressumBody from '../components/ImpressumBody.astro';
 ---
 
-<Layout lang="de" path="/impressum" title="Impressum – NexBridge-IT" description="Impressum von NexBridge-IT." hasAlternate={false}>
-  <Header lang="de" path="/impressum" hasAlternate={false} />
-  <main id="main" class="surface-paper">
-    <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
-      <h1 class="type-display text-[clamp(2rem,4vw,3.2rem)]">Impressum</h1>
-      <p class="mt-6 max-w-[60ch] text-[0.95rem] leading-relaxed text-steel-deep">
-        Inhalt folgt vor Veröffentlichung.
-      </p>
-    </div>
-  </main>
+<Layout
+  lang="de"
+  path="/impressum"
+  title="Impressum – NexBridge-IT"
+  description="Impressum von NexBridge-IT: Angaben gemäß § 5 DDG, Kontakt und Haftungshinweis."
+>
+  <Header lang="de" path="/impressum" />
+  <ImpressumBody lang="de" />
   <Footer lang="de" />
 </Layout>

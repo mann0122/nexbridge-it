@@ -1,0 +1,84 @@
+---
+/**
+ * Impressum body — shared by /impressum and /en/impressum so the two cannot
+ * drift. Text comes from `src/i18n/legal.ts` (verbatim from the founder's
+ * document, D-036); the identity data comes from `src/config/site.ts` so the
+ * address exists in exactly one place.
+ *
+ * CLAUDE.md rule 4: legal wording is not drafted or edited here.
+ */
+import { SITE } from '../config/site';
+import { type Lang } from '../i18n/ui';
+import { useLegal } from '../i18n/legal';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const doc = useLegal(lang);
+const t = doc.impressum;
+---
+
+<main id="main" class="surface-paper">
+  {/* hyphens on the container so headings inherit — see DatenschutzBody. */}
+  <div class="mx-auto max-w-[1200px] hyphens-auto break-words px-6 py-20 md:py-28">
+    <p class="type-annot text-steel-deep">{t.basis}</p>
+    <h1 class="type-display mt-4 text-[clamp(2rem,4vw,3.2rem)]">{t.title}</h1>
+
+    {
+      doc.translationNote && (
+        <p class="mt-6 max-w-[62ch] border-l border-line pl-4 text-[0.9rem] leading-relaxed text-steel-deep">
+          {doc.translationNote}
+        </p>
+      )
+    }
+
+    {/* hyphens/break-words for the same reason as the Datenschutz page:
+        "Verbraucherschlichtungsstelle" does not fit a 360px column. */}
+    <div class="mt-14 max-w-[62ch] hyphens-auto break-words border-t border-line">
+      {/* Identity block: a Zeichnungskopf, not a card — label left, value right. */}
+      <section class="grid grid-cols-1 gap-1 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6">
+        <h2 class="type-annot text-steel-deep">{t.headings.provider}</h2>
+        <address class="not-italic text-[0.95rem] leading-relaxed text-graphite">
+          {SITE.legalName}<br />
+          {SITE.street}<br />
+          {SITE.zip}&nbsp;{SITE.city}<br />
+          {SITE.country}
+        </address>
+      </section>
+
+      <section class="grid grid-cols-1 gap-1 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6">
+        <h2 class="type-annot text-steel-deep">{t.headings.represented}</h2>
+        <p class="text-[0.95rem] leading-relaxed text-graphite">
+          {SITE.representatives.join(', ')}
+        </p>
+      </section>
+
+      <section class="grid grid-cols-1 gap-1 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6">
+        <h2 class="type-annot text-steel-deep">{t.headings.contact}</h2>
+        <p class="text-[0.95rem] leading-relaxed text-graphite">
+          {t.labels.phone}:{' '}
+          <a href={`tel:${SITE.phoneE164}`} class="link-draw">{SITE.phone}</a><br />
+          {t.labels.email}:{' '}
+          <a href={`mailto:${SITE.email}`} class="link-draw">{SITE.email}</a>
+        </p>
+      </section>
+
+      <section class="grid grid-cols-1 gap-1 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6">
+        <h2 class="type-annot text-steel-deep">{t.headings.vat}</h2>
+        <p class="text-[0.95rem] leading-relaxed text-graphite">{t.vat}</p>
+      </section>
+
+      <section class="grid grid-cols-1 gap-1 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6">
+        <h2 class="type-annot text-steel-deep">{t.headings.dispute}</h2>
+        <p class="text-[0.95rem] leading-relaxed text-graphite">{t.dispute}</p>
+      </section>
+
+      <section class="grid grid-cols-1 gap-1 py-6 md:grid-cols-[12rem_1fr] md:gap-6">
+        <h2 class="type-annot text-steel-deep">{t.headings.liability}</h2>
+        <p class="text-[0.95rem] leading-relaxed text-graphite">{t.liability}</p>
+      </section>
+    </div>
+  </div>
+</main>

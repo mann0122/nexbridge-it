@@ -11,6 +11,9 @@ const t = useTranslations(lang);
 
 const trust = [t('trust.response'), t('trust.noSales'), t('trust.dataStays')];
 
+// Consent link follows the reader's language now that /en/datenschutz exists.
+const base = lang === 'de' ? '' : '/en';
+
 // Handed to the client script as JSON so no customer-facing string is
 // hardcoded in JavaScript (D-010).
 const formStrings = {
@@ -130,7 +133,7 @@ const formStrings = {
               <span>
                 {t('form.consent')}{' '}
                 {t('form.consentMore')}{' '}
-                <a href="/datenschutz" class="link-draw text-paper">{t('form.consentLink')}</a>.
+                <a href={`${base}/datenschutz`} class="link-draw text-paper">{t('form.consentLink')}</a>.
               </span>
             </label>
             <p class="err" id="cf-consent-err" data-err-for="cf-consent"></p>

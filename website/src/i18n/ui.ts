@@ -44,7 +44,7 @@ export const ui = {
     'tb.privacy.label': 'Datenschutz',
     'tb.privacy.value': 'Ihre Daten bleiben in Deutschland',
     'tb.rev.label': 'Stand',
-    'tb.rev.value': '07/2026',
+    'tb.rev.value': '08/2026',
 
     'marquee.gdpr': 'DSGVO-konform',
     'marquee.handover': 'Übergabefertig dokumentiert',
@@ -253,7 +253,7 @@ export const ui = {
     'tb.privacy.label': 'Data privacy',
     'tb.privacy.value': 'Your data stays in Germany',
     'tb.rev.label': 'Revision',
-    'tb.rev.value': '07/2026',
+    'tb.rev.value': '08/2026',
 
     'marquee.gdpr': 'GDPR-compliant',
     'marquee.handover': 'Documented for handover',

@@ -45,7 +45,7 @@ Live on **nexbridge-it.com** — domain registered to us, confirmed by the found
 Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-023).
 Bilingual from day one: German at `/`, English at `/en/`.
 
-**Four routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`.
+**Six routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`.
 The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
@@ -62,8 +62,12 @@ Details → [[website-spec]], visual world → `DESIGN.md`.
 
 Ranked. Owner in brackets.
 
-1. **Legal pages are skeletons** [founders] — `/impressum` and `/datenschutz` both render
-   "Inhalt folgt vor Veröffentlichung." Required before any real traffic.
+1. **Legal pages need a lawyer's read** [founders] — both are filled with the founder's own
+   documents (D-036) and no longer block traffic. Three points were left for a professional
+   rather than guessed at: the Drittland section now that Cloudflare is named, whether the
+   Cloudflare AVV is actually accepted in the account, and the Impressum naming two
+   Geschäftsführer alongside "Einzelunternehmer". The English versions are convenience
+   translations and are unreviewed.
 2. **Analytics not installed** [partner-b] — `plausibleDomain` and `cfAnalyticsToken` in
    `site.ts` are both empty; the site makes zero third-party requests. D-013 flags this as
    do-before-driving-traffic.
@@ -77,7 +81,6 @@ Ranked. Owner in brackets.
 
 ### Known defects (technical, none blocking)
 
-- No `/en/impressum` or `/en/datenschutz` — an English visitor lands on German legal pages.
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
 

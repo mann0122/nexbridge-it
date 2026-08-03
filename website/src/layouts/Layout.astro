@@ -27,9 +27,13 @@ const canonical = new URL(path, SITE.url).href;
 const alternateUrl = new URL(alternate, SITE.url).href;
 
 /**
- * Structured data. Only verifiable facts — no address, phone, rating or
- * founding claims we cannot back up. Google penalises invented markup, and
- * the Impressum will be the source for address data once it is written.
+ * Structured data. Only verifiable facts — no rating or founding claims we
+ * cannot back up; Google penalises invented markup.
+ *
+ * Address and telephone are now present: the Impressum was written (D-036) and
+ * is the source, exactly as this comment previously reserved. Both come from
+ * SITE, so the markup cannot drift from the legal page. Still absent on
+ * purpose: `vatID` — the Impressum declines to state one.
  */
 const structuredData = {
   '@context': 'https://schema.org',
@@ -43,6 +47,15 @@ const structuredData = {
       image: new URL('/og.png', SITE.url).href,
       description: t('meta.description'),
       email: SITE.email,
+      telephone: SITE.phoneE164,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: SITE.street,
+        postalCode: SITE.zip,
+        addressLocality: SITE.city,
+        addressRegion: SITE.region,
+        addressCountry: SITE.countryCode,
+      },
       areaServed: { '@type': 'Country', name: 'Germany' },
       knowsLanguage: ['de', 'en'],
     },

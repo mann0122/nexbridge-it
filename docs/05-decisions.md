@@ -634,6 +634,69 @@ trail is a wash, reduced-motion and coarse-pointer visitors get none of it. Cost
 ~189 KB raw (from ~184), the lifecycle is the whole increase; ogl stays a deferred 50 KB chunk.
 Owner: partner-b.
 
+## D-039 | 2026-08-06 | ClientRouter + the drafting-sheet veil; navigation is a drawing change | DECIDED
+The site navigates client-side now: `<ClientRouter fallback="swap" />` in `Layout`, on all seven
+documents. The router's own cross-fade is disabled globally — the transition is ours: a graphite
+**drafting sheet slides across the board** left→right (the direction the flow-line travels), a
+hairline frame draws in, a Zeichnungskopf stamps the target pathname, sheet number and ISO date,
+the swap happens under full cover, and the sheet exits right so the new page is revealed in
+reading direction. The navigation only waits for the cover itself (0.42s — the frame and stamp
+finish drawing over the already-covered board, a `qa`-gate finding); the reveal is 0.56s, and
+the router's default hover-prefetch makes the fetch ~0. The sheet number is the veil's single
+signal element (D-003 ration).
+
+**The veil is DOM/SVG, not WebGL, by decision.** D-037's qa gate proved WebGL-unavailable is a
+real population, and a route transition that can fail is worse than none; a shader also cannot
+set Fragment Mono type without baking textures. ~2 KB, compositor-only, works under
+`webgl.disabled`. Content is numerals, pathnames, the brand name and a date — zero translatable
+words, so no i18n keys and no copywriter gate, by construction.
+
+Three treatments, not one: normal navigations get the sheet; **history traversals swap bare**
+(users expect instant back); **DE↔EN twins get a 250ms hairline scan** with the scroll position
+carried across — the same drawing gets a new annotation layer, and switching language mid-page
+no longer jumps to top. The scroll carry-over runs for reduced-motion visitors too (a courtesy,
+not motion — `design-critic` finding); everything else they skip: instant swaps, veil
+`display: none`. The veil lives inside SiteOverlays' persisted wrapper because it must survive
+the very swap it covers.
+
+**A covered page must always be uncovered.** The `qa` gate proved two abort paths where the
+router never fires `astro:page-load` after a cover (a same-page hash navigation mid-cover; Back
+pressed from a hash URL) — so `popstate`/`hashchange` reveal a covering veil immediately and a
+4s watchdog backstops anything unforeseen; cover and reveal kill each other's timelines. Two
+more findings from the same gate, both taken: the delegated anchor handler moved to the
+**capture phase**, because the router's own click listener has no hash-link exclusion and was
+stealing every same-page anchor from Lenis (killing the D-038 easing and focus handoff); and
+`html { scroll-behavior: smooth }` is **gone entirely** — motion visitors have Lenis, reduced
+motion wants instant, and the only moments the CSS rule ever applied were the router's scroll
+windows, where it made Back/Forward restoration glide. `404.astro`'s inline path-filler gained
+`data-astro-rerun` — inline scripts run once under the router unless told otherwise. The first
+mount stays at `DOMContentLoaded` (the router's initial `astro:page-load` waits for window
+load, seconds late on a slow connection). Owner: partner-b.
+
+## D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED
+Founder-ordered return of particle motion, superseding D-035's *"removed from the site
+entirely"* **narrowly**: the effect lives inside the hero canvas the page already owns — no
+third canvas, no new library, no layout space, no scroll cost. D-035's four lessons stand;
+lesson 2 (a canvas behind copy cannot win) is respected by construction because the hero
+FlowField already owns its region behind a directional mask that quiets the headline area.
+
+**Scroll is the trigger, dispersion is the grammar.** A scrubbed ScrollTrigger maps hero-exit
+progress onto a dispersion parameter: the flow vector mixes toward a radial impulse from the
+schematic block's position, speed rises 1.4→10.4, alpha falls, trail decay stays low at onset so
+streaks smear long, then ramps so the whole field — static ground included — evaporates. Dead
+particles stop recycling above 0.6 so the sky empties. All of it reverses on scroll-back, and
+after a full evaporation the static ground is repainted softly on return. **Route exits reuse
+the same machinery**: transitions.ts dispatches `flowfield:blast` before the veil covers;
+0.45s `power4.out` tears the field apart in the first 150ms while the sheet crosses at ~450ms —
+blast and sheet read as one gesture. The event contract keeps the coupling zero: on pages
+without the hero, nobody listens.
+
+Also closed here: FlowField's stroke colours now resolve from `@theme` at mount (the
+design-critic finding at D-038 — one of the two literals matched no token; strokes are now
+token-true steel, marginally darker). Cost: ~1 KB. The particle *stage* stays dead; this is
+dispersion of an artwork that already existed, bound to the visitor's own scroll and exit.
+Owner: partner-b, on the founder's explicit instruction with D-035 on the table.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

@@ -21,14 +21,21 @@
 
 /* Base ---------------------------------------------------------------- */
 html {
-  scroll-behavior: smooth;
+  /* No CSS smooth scrolling, deliberately (D-039). Motion visitors have
+     Lenis; reduced-motion visitors want instant; and the ClientRouter
+     restores scroll in exactly the windows where Lenis is destroyed — a
+     `smooth` here made Back/Forward restoration glide, which nobody asked
+     for. Anchor easing is Lenis's job alone. */
+  scroll-behavior: auto;
   background: var(--color-graphite);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+/* The ClientRouter's default cross-fade is replaced by the drafting-sheet
+   veil (D-039) — the browser's own snapshot animation must not run under
+   it, in either direction. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
 }
 
 body {

@@ -17,11 +17,13 @@
 import Grain from './Grain.astro';
 import Cursor from './Cursor.astro';
 import Ribbons from './Ribbons.astro';
+import TransitionVeil from './TransitionVeil.astro';
 ---
 
 <div id="site-overlays" style="display: contents" transition:persist="overlays">
   <Grain />
   <Cursor />
+  <TransitionVeil />
   {/* Cursor trail (D-037). One signal ribbon, calibrated so it reads as a wash
       rather than paint: graphite body copy over it on the paper sections
       computes to 9.6:1. Thickness and alpha are the legibility budget — raising

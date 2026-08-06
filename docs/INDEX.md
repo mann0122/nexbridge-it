@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-06 · 15 nodes · 38 decisions
+Content as of 2026-08-06 · 15 nodes · 40 decisions
 
 ## Map
 
@@ -143,6 +143,8 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-036 | 2026-08-03 | Legal pages filled from the founder's documents | DECIDED | `state` |
 | D-037 | 2026-08-06 | Ribbons cursor trail; a second generative canvas is allowed | DECIDED | `state` |
 | D-038 | 2026-08-06 | Motion lifecycle: one frame clock, one overlay mount, page-scoped inits | DECIDED | `state` |
+| D-039 | 2026-08-06 | ClientRouter + the drafting-sheet veil; navigation is a drawing change | DECIDED | — |
+| D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

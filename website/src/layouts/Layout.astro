@@ -2,6 +2,7 @@
 import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource/fragment-mono';
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { SITE } from '../config/site';
 import { type Lang, useTranslations, altPath } from '../i18n/ui';
 import Analytics from '../components/Analytics.astro';
@@ -144,6 +145,11 @@ const structuredData = {
         that do not exist — so structured data follows the same gate as the
         canonical, not just the robots directive. */}
     {!noindex && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />}
+    {/* Client-side navigation (D-039). fallback="swap" keeps the lifecycle
+        events firing in browsers without the View Transitions API, so the
+        veil choreography works everywhere; the router's own cross-fade is
+        disabled in global.css — the veil is the only transition. */}
+    <ClientRouter fallback="swap" />
     <Analytics />
   </head>
   <body>

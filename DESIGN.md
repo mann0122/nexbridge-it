@@ -71,17 +71,35 @@ prefers-reduced-motion, and `?snap` renders final states for static capture.
 - **Marquee** annotation band as section divider; pauses on hover.
 - **Live sparkline** in the demo dashboard — a demo that stands still proves nothing.
 
+**Route transitions** (D-039): navigation is client-side (Astro ClientRouter) and reads as a
+drawing change, never a SaaS cross-fade (the browser's own is disabled). A graphite drafting
+sheet slides across the board left→right — the flow-line's direction — a hairline frame draws
+in, a Zeichnungskopf stamps the target path, sheet number (the veil's one signal element) and
+date; the swap happens under cover; the sheet exits right so content is revealed in reading
+direction. Navigation waits only for the cover (0.42s). History traversals swap bare. DE↔EN is
+a 250ms hairline scan with the scroll position carried over — same drawing, new annotation
+layer. The veil is DOM/SVG by decision: it must work where WebGL does not.
+
+**Hero dispersion** (D-040): leaving the hero disperses the flow field — scroll-scrubbed, the
+flow vectors mix toward a radial impulse, streaks lengthen, the field evaporates; scrolling
+back re-forms it. Route exits fire the same machinery as a 0.45s blast under the veil. The
+effect lives inside the canvas the hero already owns — no third canvas, no new library — and
+D-035's lessons still govern anything beyond it.
+
 **No pinned scroll sequence.** A morphing particle stage was built and removed across
 D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
 `FlowField` in the hero was the page's only generative canvas until D-037 admitted the `Ribbons`
 cursor trail. **Two now, and two is the limit.** The trail cleared a bar the stage never did: it
 is bound to the visitor's own hand instead of being asked to carry meaning, it costs no layout
 space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
+D-040's dispersion is not a third canvas — it is the first canvas, dispersing.
 
-Budget: **~184 KB JS raw / ~63 KB brotli** on first load (was ~176 KB before D-037), plus a
-**50 KB raw / 12 KB brotli** `ogl` chunk fetched *only* once the cursor trail's gates pass — so
-phones and reduced-motion visitors never download it at all. Zero external asset requests.
-Measure before raising either number; both are checked, not estimated.
+Budget: **under re-measure on `feat/motion-upgrade`** — D-038 put first load at ~189 KB raw
+(from the 184/63 D-037 measured); the router, veil and dispersion add on top, and D-042 will
+record the measured finals plus Lighthouse. The `ogl` chunk stays a deferred **50 KB raw /
+12 KB brotli**, fetched only once the cursor trail's gates pass — phones and reduced-motion
+visitors never download it. Zero external asset requests. The founder pre-accepted growth and
+a mobile Lighthouse below 95 ("wow over budget"); the numbers still get measured, not estimated.
 
 ## Components (as they get built)
 
@@ -122,7 +140,8 @@ invisible details. `animation-vocabulary` to name an effect before building it.
 which is how `global.css` `@theme` is already built.
 
 **Audit.** `review-animations` and `find-animation-opportunities` (read-only, they propose, they
-do not edit). `web-perf` against the ~193 KB / 65 KB brotli budget and the Lighthouse ≥ 95 floor.
+do not edit). `web-perf` against the budget in the Motion section above — one budget, stated
+once — and the Lighthouse floor recorded there (95, relaxed for mobile by founder call at D-041).
 
 **Reference only, never prescription.** `ui-ux-pro-max`, `brand`, `design` — large lookup
 databases. Consult for a pattern or a precedent; do not adopt their palettes, fonts or defaults.

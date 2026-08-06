@@ -42,7 +42,7 @@
 </style>
 
 <script>
-  import { gsap, motionOff, onPage } from '../scripts/motion';
+  import { gsap, motionOff, ScrollTrigger, onPage } from '../scripts/motion';
 
   onPage(() => {
     const canvas = document.getElementById('flow-field') as HTMLCanvasElement | null;
@@ -50,6 +50,20 @@
 
     const ctx = canvas.getContext('2d')!;
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    /* Stroke colours resolve from the @theme tokens at mount — same contract
+       as Ribbons. The fallbacks only exist for a hostile environment where
+       getComputedStyle yields nothing; they are the tokens' own values. */
+    const hexToRgb = (hex: string): string | null => {
+      const m = /^#([0-9a-f]{6})$/i.exec(hex);
+      if (!m) return null;
+      const n = parseInt(m[1], 16);
+      return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+    };
+    const token = (name: string, fallback: string): string =>
+      hexToRgb(getComputedStyle(document.documentElement).getPropertyValue(name).trim()) ?? fallback;
+    const SIGNAL_RGB = token('--color-signal', '255,77,0');
+    const STEEL_RGB = token('--color-steel', '139,149,158');
 
     /* ---- value noise (dependency-free, reseeded each mount) ------------- */
     const perm = new Uint8Array(512);
@@ -99,6 +113,21 @@
     let particles: P[] = [];
     let running = false;
 
+    /* Dispersion (D-040): 0 = laminar flow, 1 = the field blasted apart.
+       Two sources, blended by max — the scroll scrub (leaving the hero
+       disperses the field, scrolling back re-forms it) and the one-shot
+       route-exit blast fired by transitions.ts. The effect lives inside
+       the canvas the hero already owns: no third canvas, D-035 lesson 2
+       untouched. */
+    let scrollD = 0;
+    let blastD = 0;
+    let cx = 0;
+    let cy = 0;
+    const smoothstep = (a: number, b: number, x: number) => {
+      const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+      return t * t * (3 - 2 * t);
+    };
+
     const COUNT = () => (window.innerWidth < 768 ? 55 : 140);
 
     function make(atRandomX: boolean): P {
@@ -132,8 +161,8 @@
           ctx.lineTo(nx, ny);
           ctx.lineWidth = p.w;
           ctx.strokeStyle = p.signal
-            ? `rgba(255,77,0,${0.4 * taper})`
-            : `rgba(150,161,171,${0.22 * taper})`;
+            ? `rgba(${SIGNAL_RGB},${0.4 * taper})`
+            : `rgba(${STEEL_RGB},${0.22 * taper})`;
           ctx.stroke();
           x = nx;
           y = ny;
@@ -152,32 +181,65 @@
       ctx.clearRect(0, 0, W, H);
       paintStatic(window.innerWidth < 768 ? 70 : 150);
       particles = Array.from({ length: COUNT() }, () => make(true));
+      // Blast origin: pushed toward the schematic's side of the frame —
+      // close enough that the radial read is "the block let go", without
+      // paying for a per-resize rect measurement.
+      cx = W * 0.55;
+      cy = H * 0.5;
     }
 
     function frame() {
+      const d0 = Math.max(scrollD, blastD);
+      const d = d0 * d0; // ease-in: nothing happens until you really leave
+
       // Trail decay: erase the ground slightly instead of clearing outright,
-      // so the static field slowly gives way to the live one.
+      // so the static field slowly gives way to the live one. Low decay at
+      // blast onset lets the streaks smear long; near full dispersion it
+      // ramps up so the whole field — static ground included — evaporates.
       ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = 'rgba(0,0,0,0.012)';
+      ctx.fillStyle = `rgba(0,0,0,${0.012 + smoothstep(0.55, 1, d) * 0.07})`;
       ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = 'source-over';
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-        const [vx, vy] = vecAt(angleAt(p.x, p.y));
-        const nx = p.x + vx * 1.4;
-        const ny = p.y + vy * 1.4;
-        const a = Math.min(1, p.life / 45) * Math.min(1, (p.max - p.life) / 80);
+        if (p.life > p.max) {
+          // Parked while the field is blasted: the sky empties. Recycling
+          // resumes as the scrub comes back and the field re-forms.
+          if (d < 0.6) particles[i] = make(false);
+          continue;
+        }
+        const [fx, fy] = vecAt(angleAt(p.x, p.y));
+        let vx = fx;
+        let vy = fy;
+        let speed = 1.4;
+        if (d > 0) {
+          // Mix the flow vector toward a radial impulse from the blast
+          // origin; debris drifts slightly upward. Streak length falls out
+          // of speed alone — no extra draw cost.
+          const dx = p.x - cx;
+          const dy = p.y - cy;
+          const inv = 1 / (Math.hypot(dx, dy) + 24);
+          vx = fx * (1 - d) + dx * inv * 3.2 * d;
+          vy = fy * (1 - d) + (dy * inv * 3.2 - 0.4) * d;
+          speed = 1.4 + d * 9;
+        }
+        const nx = p.x + vx * speed;
+        const ny = p.y + vy * speed;
+        const a = Math.min(1, p.life / 45) * Math.min(1, (p.max - p.life) / 80) * (1 - 0.8 * d);
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(nx, ny);
         ctx.lineWidth = p.w;
-        ctx.strokeStyle = p.signal ? `rgba(255,77,0,${a * 0.5})` : `rgba(150,161,171,${a * 0.3})`;
+        ctx.strokeStyle = p.signal ? `rgba(${SIGNAL_RGB},${a * 0.5})` : `rgba(${STEEL_RGB},${a * 0.3})`;
         ctx.stroke();
         p.x = nx;
         p.y = ny;
         p.life++;
-        if (p.life > p.max || p.x > W + 50 || p.y < -50 || p.y > H + 50) particles[i] = make(false);
+        if (p.life > p.max || p.x > W + 50 || p.y < -50 || p.y > H + 50) {
+          if (d < 0.6) particles[i] = make(false);
+          else p.life = p.max + 1;
+        }
       }
     }
 
@@ -195,6 +257,45 @@
     resize();
     start();
 
+    /* Scroll-scrubbed dispersion: leaving the hero IS the transition. The
+       scrub reverses, so scrolling back re-forms the field; once it has
+       fully evaporated (peak > 0.5) the static ground is repainted softly
+       on return, because decay erased it as part of the effect. */
+    let peak = 0;
+    if (!motionOff) {
+      ScrollTrigger.create({
+        trigger: canvas.closest('section') ?? canvas,
+        start: 'top top',
+        end: 'bottom 35%',
+        scrub: 0.5,
+        onUpdate: (self) => {
+          scrollD = self.progress;
+          peak = Math.max(peak, scrollD);
+          if (scrollD < 0.04 && peak > 0.5) {
+            peak = 0;
+            paintStatic(30);
+          }
+        },
+      });
+    }
+
+    /* Route-exit blast, fired by transitions.ts just before the veil slides
+       across. power4.out: most of the motion lands in the first 150ms, the
+       sheet covers at ~450ms — the field is visibly torn apart, not gone.
+       One-way by design; the page underneath is being swapped away. */
+    const blastState = { v: 0 };
+    const onBlast = () => {
+      if (motionOff) return;
+      gsap.to(blastState, {
+        v: 1,
+        duration: 0.45,
+        ease: 'power4.out',
+        overwrite: true,
+        onUpdate: () => (blastD = blastState.v),
+      });
+    };
+    document.addEventListener('flowfield:blast', onBlast);
+
     // Webfonts change the hero's height; re-measure and repaint once settled.
     // Only relevant while the initial document is still loading — after a
     // ClientRouter swap the fonts are long since in.
@@ -209,6 +310,10 @@
     const onResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
+        // Mobile URL-bar show/hide fires resize with the width unchanged; a
+        // full repaint mid-scroll is a visible pop. The sub-pixel vertical
+        // stretch from skipping it is invisible on a noise field.
+        if (Math.abs(canvas!.getBoundingClientRect().width - W) < 1) return;
         stop();
         resize();
         start();
@@ -232,6 +337,10 @@
       window.removeEventListener('load', onLoad);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVis);
+      document.removeEventListener('flowfield:blast', onBlast);
+      // The blast tween is born in an event callback the page context never
+      // saw; the ScrollTrigger above IS context-owned and dies with it.
+      gsap.killTweensOf(blastState);
       io.disconnect();
     };
   });

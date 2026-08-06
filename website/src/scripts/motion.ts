@@ -121,7 +121,12 @@ function unmountPage(): void {
 /* In-page anchors route through Lenis so the easing stays consistent.
    One delegated listener, registered once — per-element listeners would
    have to be rebound after every swap. Bails to native behavior when Lenis
-   is off (reduced motion) or the link leaves the page. */
+   is off (reduced motion) or the link leaves the page.
+   CAPTURE PHASE, deliberately: the ClientRouter's own click listener has no
+   hash-link exclusion and registers first, so in the bubble phase it would
+   preventDefault every same-page anchor and this handler — Lenis easing,
+   the -80 offset, the focus handoff — would never run. In capture we run
+   first, and the router yields to defaultPrevented. */
 document.addEventListener('click', (e) => {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   if (!(e.target instanceof Element)) return;
@@ -143,19 +148,32 @@ document.addEventListener('click', (e) => {
   // -80 matches scroll-margin-top: 5rem, so smooth-scroll and reduced-motion
   // visitors land on the same pixel.
   lenis.scrollTo(target, { offset: -80 });
-});
+}, true);
 
 /* Mount wiring. With the ClientRouter present (its meta tag is in <head>),
-   astro:page-load fires on the initial load too, so it is the only mount
-   path needed. Without it, DOMContentLoaded fires after all module scripts
-   have executed — every onPage registration is in by then. */
-if (document.querySelector('meta[name="astro-view-transitions-enabled"]')) {
-  document.addEventListener('astro:page-load', mountPage);
-  document.addEventListener('astro:before-swap', unmountPage);
-} else if (document.readyState === 'complete') {
+   astro:page-load fires after every swap — but on the INITIAL load it fires
+   at window load, which on a slow connection is seconds after the page is
+   readable. So the first mount happens at DOMContentLoaded either way (all
+   module scripts have executed by then — every onPage registration is in),
+   guarded so the initial astro:page-load does not mount twice. */
+let mounted = false;
+function mountOnce(): void {
+  if (mounted) return;
+  mounted = true;
   mountPage();
+}
+
+if (document.querySelector('meta[name="astro-view-transitions-enabled"]')) {
+  document.addEventListener('astro:page-load', mountOnce);
+  document.addEventListener('astro:before-swap', () => {
+    unmountPage();
+    mounted = false;
+  });
+}
+if (document.readyState === 'complete') {
+  mountOnce();
 } else {
-  document.addEventListener('DOMContentLoaded', mountPage, { once: true });
+  document.addEventListener('DOMContentLoaded', mountOnce, { once: true });
 }
 
 /* ---------------------------------------------------------------------- */

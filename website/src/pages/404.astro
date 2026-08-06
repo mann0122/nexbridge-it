@@ -100,7 +100,9 @@ const t = useTranslations('de');
   never innerHTML — the path is attacker-controlled. Server-rendered fallback
   is an en dash, so the row degrades honestly without JS.
 */}
-<script is:inline>
+{/* data-astro-rerun: inline scripts run once under the ClientRouter unless
+    told otherwise, and this one must fill the path on every arrival. */}
+<script is:inline data-astro-rerun>
   (function () {
     var el = document.getElementById('nf-path');
     if (!el) return;

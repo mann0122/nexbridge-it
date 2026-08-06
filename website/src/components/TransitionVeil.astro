@@ -1,0 +1,125 @@
+---
+/**
+ * TransitionVeil — the route transition as a drafting-room operation (D-039).
+ *
+ * Not a fade: a fresh drawing sheet slides across the board. Graphite sheet
+ * with the engineering grid, a hairline frame that draws itself, and a
+ * Zeichnungskopf that stamps in with the target path, sheet number and date.
+ * The sheet enters from the left and exits to the right — the direction the
+ * site's flow-line travels. Choreographed by src/scripts/transitions.ts;
+ * this file is only the furniture.
+ *
+ * Content is numerals, pathnames, the brand name and an ISO date — zero
+ * translatable words by design, so no i18n keys and no copywriter gate.
+ * The sheet number is the veil's single signal element (D-003 ration).
+ *
+ * z-50: over the sticky Header (40), under Grain (60) and Cursor (70) —
+ * film grain and the reticle persist through the transition on purpose.
+ * Lives inside SiteOverlays' transition:persist wrapper: the veil MUST
+ * survive the swap it covers.
+ */
+import { SITE } from '../config/site';
+---
+
+<div id="transition-veil" class="veil" aria-hidden="true">
+  <div class="veil-sheet surface-grid" data-veil-sheet-layer>
+    <svg class="veil-frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <line class="veil-line" x1="0" y1="0" x2="100" y2="0"></line>
+      <line class="veil-line" x1="100" y1="0" x2="100" y2="100"></line>
+      <line class="veil-line" x1="100" y1="100" x2="0" y2="100"></line>
+      <line class="veil-line" x1="0" y1="100" x2="0" y2="0"></line>
+    </svg>
+    <div class="veil-block" data-veil-block>
+      <p class="type-annot veil-name">{SITE.name}.</p>
+      <p class="veil-path" data-veil-path>/</p>
+      <p class="type-annot veil-meta">
+        <span class="veil-sheet-no" data-veil-sheet>01 / 03</span>
+        <span data-veil-date>—</span>
+      </p>
+    </div>
+  </div>
+  {/* Language switch uses no sheet — one hairline scans down instead:
+      same drawing, new annotation layer. */}
+  <span class="veil-scan" data-veil-scan></span>
+</div>
+
+<style>
+  .veil {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .veil-sheet {
+    position: absolute;
+    inset: 0;
+    background: var(--color-graphite);
+    clip-path: inset(0% 100% 0% 0%);
+  }
+  .veil-frame {
+    position: absolute;
+    inset: 1rem;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    overflow: visible;
+  }
+  .veil-line {
+    stroke: var(--color-steel-soft);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+  .veil-block {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    min-width: 15rem;
+    border: 1px solid var(--color-steel-soft);
+    background: var(--color-graphite);
+  }
+  .veil-name {
+    padding: 0.5rem 0.75rem;
+    color: var(--color-steel);
+  }
+  .veil-path {
+    padding: 0.55rem 0.75rem;
+    border-top: 1px solid var(--color-steel-soft);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    color: var(--color-paper);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 24rem;
+  }
+  .veil-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid var(--color-steel-soft);
+    color: var(--color-steel);
+  }
+  .veil-sheet-no {
+    color: var(--color-signal);
+  }
+  .veil-scan {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--color-steel);
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .veil {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/transitions';
+</script>

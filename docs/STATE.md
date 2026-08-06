@@ -83,12 +83,10 @@ Ranked. Owner in brackets.
 
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
-- `FlowField.astro` hardcodes its two stroke colours as rgba literals instead of resolving them
-  from the `@theme` tokens the way `Ribbons.astro` does; one of them matches no token. Flagged
-  by `design-critic` at D-038; scheduled for the dispersion work that rewrites its frame loop.
 
 The three D-037 defects (second rAF clock, missing WebGL context-loss handling, duplicated
-Ribbons mount) are closed — D-038.
+Ribbons mount) are closed — D-038. The FlowField off-token stroke colours flagged at D-038
+are closed — D-040.
 
 ## Blocked / pending
 
@@ -110,10 +108,11 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 **Motion upgrade, founder-ordered, on `feat/motion-upgrade`** — route transitions
 (ClientRouter + a drafting-sheet veil), scroll-driven section seams, and the particles'
-calibrated return as a hero dispersion/blast, phased as D-038…D-042. D-038 (lifecycle,
-one frame clock, `SiteOverlays`) is done; the ClientRouter + veil phase is next. The founder
-accepted bundle growth and a Lighthouse mobile score below 95 in advance ("wow over budget");
-actual numbers get measured and logged at the end, not estimated.
+calibrated return as a hero dispersion/blast, phased as D-038…D-042. Done: D-038 (lifecycle,
+one frame clock, `SiteOverlays`), D-039 (ClientRouter + veil), D-040 (hero dispersion + blast).
+Next: the section seam system, then the gated WebGL dissolve experiment. The founder accepted
+bundle growth and a Lighthouse mobile score below 95 in advance ("wow over budget"); actual
+numbers get measured and logged at the end, not estimated.
 
 The repo move (D-019) is done — this file lives at the new path.
 

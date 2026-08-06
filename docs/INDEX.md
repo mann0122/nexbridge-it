@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-02 · 15 nodes · 36 decisions
+Content as of 2026-08-02 · 15 nodes · 37 decisions
 
 ## Map
 
@@ -42,6 +42,7 @@ graph LR
   offer --> delivery
   decisions -.-> state
   decisions -.-> brand
+  decisions -.-> decisions
   vision --> agent_system
   agent_system -.-> decisions
   delivery --> clients
@@ -140,6 +141,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-034 | 2026-08-02 | Wandlung: volumetric fill, a brain, 9000 particles | DECIDED | — |
 | D-035 | 2026-08-02 | Particle field removed from the site entirely | DECIDED | — |
 | D-036 | 2026-08-03 | Legal pages filled from the founder's documents | DECIDED | — |
+| D-037 | 2026-08-06 | Ribbons cursor trail; a second generative canvas is allowed | DECIDED | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 
@@ -147,4 +149,4 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 
 ---
 
-_15 nodes, 26 edges, 0 broken. Rebuild: `npm run kb`._
+_15 nodes, 27 edges, 0 broken. Rebuild: `npm run kb`._

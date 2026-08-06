@@ -14,11 +14,28 @@ import Footer from '../../components/Footer.astro';
 import Marquee from '../../components/Marquee.astro';
 import Grain from '../../components/Grain.astro';
 import Cursor from '../../components/Cursor.astro';
+import Ribbons from '../../components/Ribbons.astro';
 ---
 
 <Layout lang="en" path="/en/">
   <Grain />
   <Cursor />
+  {/* Keep in step with the German twin — same trail, same tuning (D-037). */}
+  <Ribbons
+    fixed
+    colors={['--color-signal']}
+    baseSpring={0.04}
+    baseFriction={0.9}
+    baseThickness={18}
+    opacity={0.45}
+    offsetFactor={0.05}
+    maxAge={600}
+    pointCount={40}
+    speedMultiplier={0.6}
+    enableFade
+    enableShaderEffect
+    effectAmplitude={2}
+  />
   <Header lang="en" path="/en/" />
   <main id="main">
     <Hero lang="en" />

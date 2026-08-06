@@ -538,6 +538,66 @@ fixed on the way: at 360px the single word "Datenschutzerklärung" renders ~412p
 whole page into horizontal scroll on its own; hyphenation now sits on the container so headings
 inherit it. Owner: founders (legal review), partner-b (implementation).
 
+## D-037 | 2026-08-06 | Ribbons cursor trail; a second generative canvas is allowed | DECIDED
+Founder asked for the react-bits `Ribbons` effect on the site and reaffirmed it after being shown
+[[decisions]] D-035. This **supersedes the "one is the limit" clause** in `DESIGN.md` — the page
+now carries two generative canvases, `FlowField` and `Ribbons`, and two is the new limit.
+
+Why this cleared a bar the particle stage never did, since D-035 exists precisely to stop the next
+attempt: the stage was a wordless abstract animation occupying 240svh that had to *justify* its
+space and never did. The trail occupies no layout space, costs no scroll, and is bound to the
+visitor's own hand rather than being asked to carry meaning. That is a narrower claim, and it is
+the only one being made. D-035's four lessons stand unedited; lesson 2 ("behind copy there is no
+setting both legible and harmless") is what forced the calibration below rather than being refuted.
+
+**Not vendored.** `npx shadcn@latest add @react-bits/Ribbons-JS-CSS` cannot run here — it demands
+a `components.json` and would scaffold React into an Astro site that has none. The registry source
+was ported by hand to `website/src/components/Ribbons.astro`: physics and both shaders are
+upstream's, everything around them is ours. Four changes worth knowing. Pointer tracking listens on
+`window` so the overlay stays `pointer-events: none` and cannot eat a click. Colours resolve from
+`@theme` at runtime, so a token edit still moves the ribbon and an unresolvable token yields *no*
+ribbon rather than an off-palette fallback. Fine pointers only, plus the `motionOff` gate, so touch
+devices create no WebGL context at all. And the rAF **stops once the ribbons settle** — at rest the
+points converge, the shader's `smoothstep(0, 0.02, dist)` zeroes the width, and the loop was
+rendering an invisible mesh; a parked cursor now costs nothing and the next mousemove restarts it.
+
+**Calibration is the decision, not a detail.** `design-critic` blocked the founder's original mount
+(two colours, 30px, full alpha, z-55) on four counts, all upheld: at full alpha the ribbon head
+*occluded* body copy rather than merely reducing contrast; `--color-graphite` as a second ribbon is
+invisible on graphite ground and a near-black smear on paper, reading as a bug; a permanent orange
+band broke the D-003 signal ration against the hero CTA; and z-55 painted over the sticky `Header`.
+Shipped: **one signal ribbon, 18px, 0.45 alpha, z-30**. Graphite copy over that wash on
+`--color-paper` computes to **9.6:1**. `opacity` now *defaults* to 0.45 in the component, so no
+future mount can ship an opaque band by omission. The signal ration in `DESIGN.md` is held by the
+trail being a wash and not an object — raise either number and it breaks both the ration and the
+copy underneath.
+
+**`qa-reviewer` returned NO-SHIP and was right.** ogl logs "unable to create webgl context" and
+then dereferences the null context on the next line, so the mount threw an uncaught `TypeError` on
+both homepages wherever WebGL is unavailable — GPU blocklists, hardware acceleration off,
+`webgl.disabled`, hardened privacy browsers. Reproduced, not theorised. Decoration may not put an
+error on the marketing page: `initRibbons` is now wrapped, and a failed chunk fetch is caught on
+the same contract. Also fixed from that gate: the `IntersectionObserver` stop was defeated by
+`updateMouse` calling `start()` unconditionally (latent, only in the unused section-fill mode), and
+a page loading in a background tab kept a stale frame clock.
+
+**Cost, and the part worth copying.** `ogl@1.0.11` — zero dependencies, no install scripts,
+Unlicense, bundled locally, so the zero-third-party-request GDPR asset holds. The library is
+behind a **dynamic import placed after the gates**, so mobile and reduced-motion visitors download
+none of it: first load is **~184 KB raw / 63 KB brotli** (from ~176), and ogl is a separate
+**50 KB / 12 KB brotli** chunk fetched only on a fine pointer with motion enabled. Note the trap —
+handing the imported namespace round as one object is opaque to Rollup and pulled all 129 KB of
+ogl in; destructuring at the import site restored tree-shaking and cut that to 50 KB. Measured
+Lighthouse before the deferral: desktop 100/100/100/100, mobile perf 95 — exactly at the bar with
+no headroom, which is what forced it. Owner: partner-b (implementation), founder (the call to
+override).
+
+Three items were deliberately not taken under a ship-now instruction and remain open: the
+component runs its own rAF instead of `gsap.ticker`, a second frame clock against D-030's
+one-engine rule; there is no `webglcontextlost`/`restored` handler, so a dead GPU process blanks
+the canvas with no recovery; and the mount config is duplicated verbatim in both `index.astro`
+files, which will drift — a `SiteOverlays` wrapper is the fix. None blocks; all three are cheap.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

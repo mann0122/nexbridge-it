@@ -83,6 +83,12 @@ Ranked. Owner in brackets.
 
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
+- `Ribbons.astro` runs its own rAF instead of `gsap.ticker` — a second frame clock alongside
+  Lenis/ScrollTrigger, against D-030's one-engine rule (D-037).
+- `Ribbons.astro` has no `webglcontextlost` / `webglcontextrestored` handler: if the GPU process
+  dies the canvas blanks and never recovers. Silent, not fatal (D-037).
+- The `Ribbons` mount config is duplicated verbatim in `index.astro` and `en/index.astro` and
+  will drift. A `SiteOverlays.astro` wrapping `Grain` + `Cursor` + `Ribbons` is the fix (D-037).
 
 ## Blocked / pending
 

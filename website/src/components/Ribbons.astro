@@ -1,0 +1,437 @@
+---
+/**
+ * Ribbons — pointer-driven ribbon trail on WebGL.
+ *
+ * Ported from react-bits `Ribbons-JS-CSS` (MIT) to this repo's idiom: no React,
+ * vanilla module script, tokens instead of hex. The physics and both shaders are
+ * the original; what changed is everything around them:
+ *
+ *   - pointer tracking listens on `window`, not the container, so the overlay can
+ *     stay `pointer-events: none` and never eat a click on the content beneath;
+ *   - colours resolve from `global.css` `@theme` at runtime — pass `--color-signal`,
+ *     not a hex, so the brand stays a single source;
+ *   - fine pointers only, and off under `prefers-reduced-motion` / `?snap`: no
+ *     canvas, no WebGL context, no RAF, no listeners. Same gate as Cursor.astro —
+ *     a cursor trail has nothing to trail on a touchscreen;
+ *   - the RAF stops once the ribbons settle. At rest every point converges, the
+ *     polyline collapses to zero width and the shader draws nothing anyway, so
+ *     idling costs a GPU frame per tick to render an invisible mesh. A still
+ *     cursor now costs nothing; the next mousemove restarts it;
+ *   - pauses off-screen and on a hidden tab, and re-measures via ResizeObserver
+ *     (the container can change size without the window doing so).
+ *
+ * Default is a section fill: the parent must be positioned with a real height.
+ * `fixed` makes it a viewport-wide cursor trail, layered under Grain (z-60) and
+ * the Cursor reticle (z-70) so the film grain still sits over everything.
+ */
+interface Props {
+  /** Ribbon colours, one per ribbon. `--color-*` resolves against the theme. */
+  colors?: string[];
+  /** Pull toward the pointer. Higher = tighter follow. */
+  baseSpring?: number;
+  /** Velocity damping. Higher = looser, longer overshoot. */
+  baseFriction?: number;
+  /** Ribbon width in px, before per-ribbon jitter. */
+  baseThickness?: number;
+  /** Lateral spread between ribbons. */
+  offsetFactor?: number;
+  /** Time in ms for the tail to catch up to the head. */
+  maxAge?: number;
+  /** Points per ribbon — the tail's resolution. */
+  pointCount?: number;
+  /** Scales how fast the tail follows. */
+  speedMultiplier?: number;
+  /** Fade the ribbon out along its length. */
+  enableFade?: boolean;
+  /** Sine wobble along the ribbon. */
+  enableShaderEffect?: boolean;
+  effectAmplitude?: number;
+  /** Ribbon alpha. Upstream pins the `uOpacity` uniform at 1; this exposes it,
+      which is what makes the trail survivable over body copy. Defaults to the
+      value D-037 verified as legible, so omitting it cannot ship an opaque
+      band — the safe value is the default, not the careful one. */
+  opacity?: number;
+  /** Viewport-wide overlay instead of filling the parent — cursor-trail mode. */
+  fixed?: boolean;
+  /** Extra classes on the container. */
+  class?: string;
+}
+
+const {
+  colors = ['--color-signal', '--color-steel-deep'],
+  baseSpring = 0.03,
+  baseFriction = 0.9,
+  baseThickness = 30,
+  offsetFactor = 0.05,
+  maxAge = 500,
+  pointCount = 50,
+  speedMultiplier = 0.6,
+  enableFade = false,
+  enableShaderEffect = false,
+  effectAmplitude = 2,
+  opacity = 0.45,
+  fixed = false,
+  class: className = '',
+} = Astro.props;
+
+/* Props cross into the bundled module script as data attributes. `define:vars`
+   would inline the script and kill the `ogl` import. */
+const config = JSON.stringify({
+  colors,
+  baseSpring,
+  baseFriction,
+  baseThickness,
+  offsetFactor,
+  maxAge,
+  pointCount,
+  speedMultiplier,
+  enableFade,
+  enableShaderEffect,
+  effectAmplitude,
+  opacity,
+});
+---
+
+<div class:list={['ribbons', { 'is-fixed': fixed }, className]} data-ribbons={config} aria-hidden="true"></div>
+
+<style>
+  .ribbons {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* The trail is decoration: it must never intercept a click or a hover. */
+    pointer-events: none;
+  }
+
+  /* Above content, below the sticky Header (40) and the skip link (50):
+     nothing decorative may paint over the navigation. Grain (60) and the
+     Cursor reticle (70) stay above it by the same logic. */
+  .ribbons.is-fixed {
+    position: fixed;
+    z-index: 30;
+  }
+
+  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
+    .ribbons {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /* Types only — erased at build, so importing them costs no bytes. The library
+     itself is fetched dynamically at the bottom of this file, after the gates. */
+  import type { Vec3 as Vec3T, Polyline as PolylineT } from 'ogl';
+  import { motionOff, fine } from '../scripts/motion';
+
+  /* Narrowed to the five exports actually used. A dynamic import handed round as
+     a whole namespace is opaque to Rollup and drags all of ogl (~129 KB) into the
+     chunk; destructuring at the import site keeps it tree-shaken. */
+  type OGL = Pick<typeof import('ogl'), 'Renderer' | 'Transform' | 'Vec3' | 'Color' | 'Polyline'>;
+
+  interface RibbonsConfig {
+    colors: string[];
+    baseSpring: number;
+    baseFriction: number;
+    baseThickness: number;
+    offsetFactor: number;
+    maxAge: number;
+    pointCount: number;
+    speedMultiplier: number;
+    enableFade: boolean;
+    enableShaderEffect: boolean;
+    effectAmplitude: number;
+    opacity: number;
+  }
+
+  /* Squared NDC spread below which the ribbon draws nothing: 1e-6 is a distance
+     of 0.001, fifty times under the shader's 0.02 visibility floor. Held for
+     SETTLE_FRAMES so a pointer pausing mid-flick does not stutter the loop. */
+  const SETTLE_EPSILON = 1e-6;
+  const SETTLE_FRAMES = 24;
+
+  /**
+   * `--color-signal` → the theme's value; anything else passes through.
+   * An unresolvable token yields '' and the ribbon is dropped by the caller —
+   * a missing token must produce no ribbon, never an off-palette fallback.
+   */
+  function resolveColor(value: string): string {
+    if (!value.startsWith('--')) return value;
+    return getComputedStyle(document.documentElement).getPropertyValue(value).trim();
+  }
+
+  const vertex = `
+    precision highp float;
+
+    attribute vec3 position;
+    attribute vec3 next;
+    attribute vec3 prev;
+    attribute vec2 uv;
+    attribute float side;
+
+    uniform vec2 uResolution;
+    uniform float uDPR;
+    uniform float uThickness;
+    uniform float uTime;
+    uniform float uEnableShaderEffect;
+    uniform float uEffectAmplitude;
+
+    varying vec2 vUV;
+
+    vec4 getPosition() {
+        vec4 current = vec4(position, 1.0);
+        vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
+        vec2 nextScreen = next.xy * aspect;
+        vec2 prevScreen = prev.xy * aspect;
+        vec2 tangent = normalize(nextScreen - prevScreen);
+        vec2 normal = vec2(-tangent.y, tangent.x);
+        normal /= aspect;
+        normal *= mix(1.0, 0.1, pow(abs(uv.y - 0.5) * 2.0, 2.0));
+        float dist = length(nextScreen - prevScreen);
+        normal *= smoothstep(0.0, 0.02, dist);
+        float pixelWidthRatio = 1.0 / (uResolution.y / uDPR);
+        float pixelWidth = current.w * pixelWidthRatio;
+        normal *= pixelWidth * uThickness;
+        current.xy -= normal * side;
+        if(uEnableShaderEffect > 0.5) {
+          current.xy += normal * sin(uTime + current.x * 10.0) * uEffectAmplitude;
+        }
+        return current;
+    }
+
+    void main() {
+        vUV = uv;
+        gl_Position = getPosition();
+    }
+  `;
+
+  const fragment = `
+    precision highp float;
+    uniform vec3 uColor;
+    uniform float uOpacity;
+    uniform float uEnableFade;
+    varying vec2 vUV;
+    void main() {
+        float fadeFactor = 1.0;
+        if(uEnableFade > 0.5) {
+            fadeFactor = 1.0 - smoothstep(0.0, 1.0, vUV.y);
+        }
+        gl_FragColor = vec4(uColor, uOpacity * fadeFactor);
+    }
+  `;
+
+  function initRibbons(ogl: OGL, container: HTMLElement, cfg: RibbonsConfig) {
+    const { Renderer, Transform, Vec3, Color, Polyline } = ogl;
+
+    const renderer = new Renderer({ dpr: Math.min(window.devicePixelRatio || 1, 2), alpha: true });
+    /* ogl logs and continues when the context cannot be created, then dereferences
+       null one line later. Browsers reach this for real — GPU blocklists, hardware
+       acceleration off, `webgl.disabled`, hardened privacy settings — and a
+       decorative trail must never put a TypeError on the marketing page. */
+    const gl = renderer.gl;
+    if (!gl) return;
+    gl.clearColor(0, 0, 0, 0);
+
+    gl.canvas.style.position = 'absolute';
+    gl.canvas.style.top = '0';
+    gl.canvas.style.left = '0';
+    gl.canvas.style.width = '100%';
+    gl.canvas.style.height = '100%';
+    container.appendChild(gl.canvas);
+
+    const scene = new Transform();
+
+    interface Line {
+      spring: number;
+      friction: number;
+      mouseVelocity: Vec3T;
+      mouseOffset: Vec3T;
+      points: Vec3T[];
+      polyline: PolylineT;
+    }
+    const lines: Line[] = [];
+
+    const palette = cfg.colors.map(resolveColor).filter(Boolean);
+    const center = (palette.length - 1) / 2;
+    palette.forEach((color, index) => {
+      const points = Array.from({ length: cfg.pointCount }, () => new Vec3());
+
+      const polyline = new Polyline(gl, {
+        points,
+        vertex,
+        fragment,
+        uniforms: {
+          uColor: { value: new Color(color) },
+          uThickness: { value: cfg.baseThickness + (Math.random() - 0.5) * 3 },
+          uOpacity: { value: cfg.opacity },
+          uTime: { value: 0.0 },
+          uEnableShaderEffect: { value: cfg.enableShaderEffect ? 1.0 : 0.0 },
+          uEffectAmplitude: { value: cfg.effectAmplitude },
+          uEnableFade: { value: cfg.enableFade ? 1.0 : 0.0 },
+        },
+      });
+      polyline.mesh.setParent(scene);
+
+      lines.push({
+        // Per-ribbon jitter, so the bundle never moves as one rigid object.
+        spring: cfg.baseSpring + (Math.random() - 0.5) * 0.05,
+        friction: cfg.baseFriction + (Math.random() - 0.5) * 0.05,
+        mouseVelocity: new Vec3(),
+        mouseOffset: new Vec3(
+          (index - center) * cfg.offsetFactor + (Math.random() - 0.5) * 0.01,
+          (Math.random() - 0.5) * 0.1,
+          0,
+        ),
+        points,
+        polyline,
+      });
+    });
+
+    function resize() {
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      lines.forEach((line) => line.polyline.resize());
+    }
+    resize();
+
+    /* Pointer lives on window: the container is pointer-events: none, so its own
+       listeners would never fire. Coordinates are still container-relative. */
+    const mouse = new Vec3();
+    let primed = false;
+    function updateMouse(e: MouseEvent) {
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      mouse.set((x / rect.width) * 2 - 1, (y / rect.height) * -2 + 1, 0);
+      /* Every point starts at Vec3(0,0,0) — the viewport centre. Without this,
+         the first mousemove whips a full-length ribbon across the hero from
+         the middle of the screen. Collapse the trail onto the pointer instead. */
+      if (!primed) {
+        primed = true;
+        for (const line of lines) for (const point of line.points) point.copy(mouse);
+      }
+      start();
+    }
+    window.addEventListener('mousemove', updateMouse, { passive: true });
+
+    const tmp = new Vec3();
+    let raf = 0;
+    let running = false;
+    let lastTime = performance.now();
+    let idleFrames = 0;
+
+    function frame() {
+      raf = requestAnimationFrame(frame);
+      const currentTime = performance.now();
+      const dt = currentTime - lastTime;
+      lastTime = currentTime;
+
+      lines.forEach((line) => {
+        // Head: a damped spring chasing the pointer.
+        tmp.copy(mouse).add(line.mouseOffset).sub(line.points[0]).multiply(line.spring);
+        line.mouseVelocity.add(tmp).multiply(line.friction);
+        line.points[0].add(line.mouseVelocity);
+
+        // Tail: each point eases toward the one ahead of it, framerate-independent.
+        for (let i = 1; i < line.points.length; i++) {
+          if (isFinite(cfg.maxAge) && cfg.maxAge > 0) {
+            const segmentDelay = cfg.maxAge / (line.points.length - 1);
+            const alpha = Math.min(1, (dt * cfg.speedMultiplier) / segmentDelay);
+            line.points[i].lerp(line.points[i - 1], alpha);
+          } else {
+            line.points[i].lerp(line.points[i - 1], 0.9);
+          }
+        }
+
+        const uniforms = line.polyline.mesh.program.uniforms;
+        if (uniforms.uTime) uniforms.uTime.value = currentTime * 0.001;
+        line.polyline.updateGeometry();
+      });
+
+      renderer.render({ scene });
+
+      /* Settle detection. A ribbon is only visible while its points are spread
+         apart — the shader's smoothstep(0, 0.02, dist) zeroes the width once
+         they converge. So "head still, tail caught up" means nothing is being
+         drawn, and the loop can stop until the pointer moves again. */
+      let motion = 0;
+      for (const line of lines) {
+        const tail = line.points[line.points.length - 1];
+        motion = Math.max(motion, line.mouseVelocity.squaredLen(), line.points[0].squaredDistance(tail));
+      }
+      if (motion < SETTLE_EPSILON) {
+        if (++idleFrames >= SETTLE_FRAMES) stop();
+      } else {
+        idleFrames = 0;
+      }
+    }
+
+    /* Tracked, because updateMouse also calls start(): without this an
+       off-screen instance would restart on every pointer move and never stop
+       again, defeating the observer below. */
+    let onScreen = true;
+
+    function start() {
+      if (running || !onScreen || document.hidden) return;
+      running = true;
+      idleFrames = 0;
+      lastTime = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      running = false;
+      cancelAnimationFrame(raf);
+    }
+
+    start();
+
+    new ResizeObserver(resize).observe(container);
+    new IntersectionObserver(
+      (entries) => {
+        onScreen = entries.some((e) => e.isIntersecting);
+        if (onScreen) start();
+        else stop();
+      },
+      { threshold: 0 },
+    ).observe(container);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stop();
+        return;
+      }
+      /* Reset the clock here, not only in start(): a page that *loaded* hidden
+         is already `running`, so start() early-returns and would otherwise
+         measure the first visible frame against a load-time timestamp. */
+      lastTime = performance.now();
+      start();
+    });
+  }
+
+  /* Gates first, library second. The dynamic import keeps ogl out of the initial
+     payload, so a phone or a reduced-motion visitor never downloads the ~55 KB
+     raw / 16 KB gz it would otherwise fetch, parse, and then not execute. */
+  if (!motionOff && fine) {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-ribbons]'));
+    if (nodes.length) {
+      import('ogl')
+        .then(({ Renderer, Transform, Vec3, Color, Polyline }) => {
+          const ogl: OGL = { Renderer, Transform, Vec3, Color, Polyline };
+          for (const el of nodes) {
+            try {
+              initRibbons(ogl, el, JSON.parse(el.dataset.ribbons!) as RibbonsConfig);
+            } catch {
+              /* ogl logs "unable to create webgl context" and then dereferences
+                 the null context on the next line, so this throws for real on
+                 GPU-blocklisted drivers, with hardware acceleration off, and
+                 under hardened privacy settings. Decoration must never put an
+                 error on the marketing page — leave the page exactly as it was. */
+            }
+          }
+        })
+        .catch(() => {
+          /* Chunk failed to load. Same contract: the site is unaffected. */
+        });
+    }
+  }
+</script>

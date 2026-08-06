@@ -73,9 +73,15 @@ prefers-reduced-motion, and `?snap` renders final states for static capture.
 
 **No pinned scroll sequence.** A morphing particle stage was built and removed across
 D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
-`FlowField` in the hero is the page's only generative canvas, and one is the limit.
+`FlowField` in the hero was the page's only generative canvas until D-037 admitted the `Ribbons`
+cursor trail. **Two now, and two is the limit.** The trail cleared a bar the stage never did: it
+is bound to the visitor's own hand instead of being asked to carry meaning, it costs no layout
+space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
 
-Budget: ~176 KB JS across the page, zero external asset requests.
+Budget: **~184 KB JS raw / ~63 KB brotli** on first load (was ~176 KB before D-037), plus a
+**50 KB raw / 12 KB brotli** `ogl` chunk fetched *only* once the cursor trail's gates pass — so
+phones and reduced-motion visitors never download it at all. Zero external asset requests.
+Measure before raising either number; both are checked, not estimated.
 
 ## Components (as they get built)
 
@@ -90,6 +96,11 @@ Budget: ~176 KB JS across the page, zero external asset requests.
 Purple/teal gradients · glassmorphism · 3D blobs · stock photos · Inter/DM Sans · gradient text
 · cards in cards · >1 signal element per viewport · eyebrow-on-every-section · icon-card grids
 · colored left-borders >1px · dark-with-neon-glow rendition (offset+blur shadows only, no halos).
+
+The signal ration counts *elements*. The `Ribbons` trail (D-037) is held under it by being a
+wash and not an object: 0.45 alpha at 18px, so it tints rather than competes, and the hero CTA
+stays the one signal element in its viewport. Raising either number breaks the ration and the
+copy underneath — that is the whole reason both are pinned in the mount, not left to defaults.
 
 ## Skill routing (D-031)
 

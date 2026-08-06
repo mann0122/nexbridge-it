@@ -86,6 +86,14 @@ back re-forms it. Route exits fire the same machinery as a 0.45s blast under the
 effect lives inside the canvas the hero already owns — no third canvas, no new library — and
 D-035's lessons still govern anything beyond it.
 
+**Section seams** (D-041): the eight homepage boundaries are drafting operations — seam rules
+that draw themselves along existing border lines (one numeral tick rides the first), ground-
+wipes confined to a 4.5rem seam band where graphite and paper trade places, the marquee
+conveyor coupling to scroll velocity, one ScrambleText teleprinter moment, differential
+parallax at one boundary. Three motifs recurring, not eight gimmicks; one boundary is quiet on
+purpose. All seam furniture is steel/line/graphite — no signal — built by JS so the no-JS page
+is unchanged. Scrubbed and reversible everywhere; still nothing pinned.
+
 **No pinned scroll sequence.** A morphing particle stage was built and removed across
 D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
 `FlowField` in the hero was the page's only generative canvas until D-037 admitted the `Ribbons`

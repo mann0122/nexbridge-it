@@ -109,8 +109,9 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 **Motion upgrade, founder-ordered, on `feat/motion-upgrade`** — route transitions
 (ClientRouter + a drafting-sheet veil), scroll-driven section seams, and the particles'
 calibrated return as a hero dispersion/blast, phased as D-038…D-042. Done: D-038 (lifecycle,
-one frame clock, `SiteOverlays`), D-039 (ClientRouter + veil), D-040 (hero dispersion + blast).
-Next: the section seam system, then the gated WebGL dissolve experiment. The founder accepted
+one frame clock, `SiteOverlays`), D-039 (ClientRouter + veil), D-040 (hero dispersion + blast),
+D-041 (section seams). Next: the gated WebGL dissolve experiment, then measurement (D-042).
+The founder accepted
 bundle growth and a Lighthouse mobile score below 95 in advance ("wow over budget"); actual
 numbers get measured and logged at the end, not estimated.
 

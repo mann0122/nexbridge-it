@@ -33,12 +33,13 @@ const formStrings = {
 };
 ---
 
-<script id="form-strings" type="application/json" set:html={JSON.stringify(formStrings)} is:inline></script>
-
 {/* The one place the page asks. The hero's converging schematic returns as a
     bookend, and the form replaces the old mailto: — a blank Outlook window is
     where enquiries went to die. */}
 <section id="kontakt" class="surface-grid border-t border-steel-soft">
+  {/* Inside the section on purpose: a loose child of <main> broke the seam
+      system's structure guard (D-041 gate finding). */}
+  <script id="form-strings" type="application/json" set:html={JSON.stringify(formStrings)} is:inline></script>
   <div class="mx-auto max-w-[1200px] px-6 py-24 md:py-32" data-reveal-scope>
     <div class="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-16">
       {/* left: the ask */}

@@ -697,6 +697,28 @@ token-true steel, marginally darker). Cost: ~1 KB. The particle *stage* stays de
 dispersion of an artwork that already existed, bound to the visitor's own scroll and exit.
 Owner: partner-b, on the founder's explicit instruction with D-035 on the table.
 
+## D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED
+The homepage's section boundaries become drafting operations (`website/src/scripts/seams.ts`):
+**seam rules** that draw themselves along the existing border lines (B1 Hero→Problems with a
+`01 → 02` numeral tick riding the tip, B2 Problems→Services, B7 Demo→Founders mirrored
+right→left, B3 both edges of the Marquee band), **ground-wipes** where the ground changes (B5
+the graphite recedes left→right behind a leading hairline confined to a 4.5rem seam band — never
+under copy, D-027 — and B8 the paper recedes right→left into the ask), and two accents: the
+marquee's **conveyor couples to scroll velocity** (WAAPI playbackRate, clamped 0.6–2.5, eased on
+the one ticker), and the founders' origin annotation **types itself in** — the site's single
+ScrambleText moment, teleprinter in mono. B2 adds differential parallax on the two reading
+scopes (−20/−40px) so the boundary reads as depth. B4 Marquee→Process is quiet on purpose:
+variety includes rest, and the scrubbed process line is that zone's star.
+
+**Pinning was considered and declined again** — everything is scrubbed and reversible,
+DESIGN.md's "no pinned scroll sequence" and D-031's reasoning stand. A system, not eight
+gimmicks: three motifs recur; every seam element is steel/line/graphite (zero signal, D-003
+ration untouched). All furniture is **built in JS**: it cannot exist without a script, so the
+no-JS page is byte-identical to the static one and `?snap` keeps rendering final states — where
+a seam rule replaces a CSS border, the border goes transparent in the same tick the overlay
+starts animating. The seams module is imported only by the two homepage scripts and bails
+anywhere `#kontakt` isn't the last section. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

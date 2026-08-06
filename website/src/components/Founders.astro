@@ -33,6 +33,9 @@ const founders = [1, 2].map((i) => ({
       }
     </div>
 
-    <p class="type-annot mt-12 text-steel-deep" data-reveal>{t('founders.origin')}</p>
+    {/* data-seam-scramble: targeted by the seam system's one teleprinter
+        moment (D-041) — an attribute, not a positional selector, so adding
+        annotations to this section cannot silently retarget it. */}
+    <p class="type-annot mt-12 text-steel-deep" data-reveal data-seam-scramble>{t('founders.origin')}</p>
   </div>
 </section>

@@ -598,6 +598,42 @@ one-engine rule; there is no `webglcontextlost`/`restored` handler, so a dead GP
 the canvas with no recovery; and the mount config is duplicated verbatim in both `index.astro`
 files, which will drift — a `SiteOverlays` wrapper is the fix. None blocks; all three are cheap.
 
+## D-038 | 2026-08-06 | Motion lifecycle: one frame clock, one overlay mount, page-scoped inits | DECIDED
+First commit of the founder-ordered motion upgrade (route transitions, scroll transitions, the
+particles' calibrated return — the umbrella decision is the founder's, given with D-035 on the
+table; the phases land as D-038…D-042). This one is the foundation and changes no animation
+values: it makes the motion system able to survive a client-side router before one exists.
+
+**The lifecycle.** `motion.ts` now runs an `onPage(init)` registry: module level registers,
+every page mount re-runs the inits inside one shared `gsap.context`, and unmount reverts the
+context, runs returned cleanups (intervals, document/window listeners, observers), and destroys
+Lenis. Lenis is per-page by decision — destroy before swap, recreate after — because Astro's
+router restores scroll synchronously during the swap and a surviving instance eases back toward
+the previous page's position (withastro #12725); a fresh instance is born synced. Without the
+ClientRouter, "mount" is simply `DOMContentLoaded`; the `astro:page-load` path is wired and
+dormant until D-039. Anchor clicks moved to one delegated listener that now also moves focus to
+the target — the per-element version scrolled the skip link without moving focus, which defeated
+it (WCAG 2.4.1, caught by `design-critic`). Scroll offset unified at 80px to match
+`scroll-margin-top`, so smooth-scroll and reduced-motion visitors land on the same pixel.
+
+**All three D-037 open items closed.** `FlowField` and `Ribbons` frames now come from
+`gsap.ticker` — D-030's one clock, no second rAF anywhere; Ribbons keeps its settle-stop by
+adding/removing the ticker callback, so a parked cursor still costs zero frames.
+`webglcontextlost/restored` handlers land: on restore the instance disposes and rebuilds, both
+paths under the decoration-never-errors contract. And the duplicated mount config is gone —
+`SiteOverlays.astro` (Grain + Cursor + Ribbons, `transition:persist`, display:contents) mounts
+once in `Layout`. Ribbons' default `colors` shrank to the single signal ribbon on the same
+safe-by-omission logic D-037 applied to `opacity`.
+
+**Consequence accepted: the overlays now render on all seven pages**, legal and 404 included,
+which also gives those pages Lenis and the motion chunk they never loaded. Required for
+`transition:persist` continuity (a persisted element must exist on both sides of every
+navigation), and `design-critic` judged it acceptable on brand grounds: the D-037 calibration
+was made for exactly this case — 9.6:1 over paper holds, the signal ration holds because the
+trail is a wash, reduced-motion and coarse-pointer visitors get none of it. Cost: first load
+~189 KB raw (from ~184), the lifecycle is the whole increase; ogl stays a deferred 50 KB chunk.
+Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

@@ -94,37 +94,50 @@ const links = [
 </header>
 
 <script>
-  const toggle = document.getElementById('menu-toggle');
-  const menu = document.getElementById('mobile-menu');
+  import { onPage } from '../scripts/motion';
 
-  function setMenu(open: boolean) {
+  onPage(() => {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
     if (!toggle || !menu) return;
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute(
-      'aria-label',
-      (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '',
-    );
-    menu.classList.toggle('hidden', !open);
-    document.body.style.overflow = open ? 'hidden' : '';
-    const spans = toggle.querySelectorAll('span');
-    spans[0]?.classList.toggle('translate-y-[3.5px]', open);
-    spans[0]?.classList.toggle('rotate-45', open);
-    spans[1]?.classList.toggle('-translate-y-[3.5px]', open);
-    spans[1]?.classList.toggle('-rotate-45', open);
-    if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
-  }
 
-  toggle?.addEventListener('click', () => {
-    setMenu(toggle.getAttribute('aria-expanded') !== 'true');
-  });
-
-  // Escape closes and returns focus to the toggle; anchor clicks close too.
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
-      setMenu(false);
-      toggle.focus();
+    function setMenu(open: boolean) {
+      if (!toggle || !menu) return;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute(
+        'aria-label',
+        (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '',
+      );
+      menu.classList.toggle('hidden', !open);
+      document.body.style.overflow = open ? 'hidden' : '';
+      const spans = toggle.querySelectorAll('span');
+      spans[0]?.classList.toggle('translate-y-[3.5px]', open);
+      spans[0]?.classList.toggle('rotate-45', open);
+      spans[1]?.classList.toggle('-translate-y-[3.5px]', open);
+      spans[1]?.classList.toggle('-rotate-45', open);
+      if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
     }
-  });
 
-  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+    toggle.addEventListener('click', () => {
+      setMenu(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Escape closes and returns focus to the toggle; anchor clicks close too.
+    const onKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setMenu(false);
+        toggle.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeydown);
+
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+    return () => {
+      document.removeEventListener('keydown', onKeydown);
+      // A page can be swapped away with the menu open; the scroll lock must
+      // not survive onto the next page.
+      document.body.style.overflow = '';
+    };
+  });
 </script>

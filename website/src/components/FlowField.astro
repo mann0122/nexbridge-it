@@ -7,10 +7,14 @@
  *
  * Two layers, deliberately:
  *   1. a full field painted SYNCHRONOUSLY on init — the artwork always exists,
- *      even where requestAnimationFrame is throttled (background tabs,
- *      headless capture, reduced-motion users);
+ *      even where the frame clock is throttled (background tabs, headless
+ *      capture, reduced-motion users);
  *   2. live particles animating on top when motion is allowed.
  * Sits behind the hero — atmosphere, never competition with the headline.
+ *
+ * Runs on gsap.ticker, not its own rAF — one frame clock per D-030 (D-038
+ * closed the gap D-037 logged). Mounted per page via onPage so the canvas
+ * is re-found and repainted after every ClientRouter swap.
  */
 ---
 
@@ -38,16 +42,16 @@
 </style>
 
 <script>
-  const canvas = document.getElementById('flow-field') as HTMLCanvasElement | null;
-  const reduced =
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-    new URLSearchParams(window.location.search).has('snap');
+  import { gsap, motionOff, onPage } from '../scripts/motion';
 
-  if (canvas) {
+  onPage(() => {
+    const canvas = document.getElementById('flow-field') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
     const ctx = canvas.getContext('2d')!;
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
 
-    /* ---- value noise (dependency-free, reseeded each load) -------------- */
+    /* ---- value noise (dependency-free, reseeded each mount) ------------- */
     const perm = new Uint8Array(512);
     const seed = Math.random() * 10000;
     for (let i = 0; i < 256; i++) perm[i] = i;
@@ -94,7 +98,6 @@
     let H = 0;
     let particles: P[] = [];
     let running = false;
-    let raf = 0;
 
     const COUNT = () => (window.innerWidth < 768 ? 55 : 140);
 
@@ -176,44 +179,60 @@
         p.life++;
         if (p.life > p.max || p.x > W + 50 || p.y < -50 || p.y > H + 50) particles[i] = make(false);
       }
-      raf = requestAnimationFrame(frame);
     }
 
     function start() {
-      if (running || reduced) return;
+      if (running || motionOff) return;
       running = true;
-      raf = requestAnimationFrame(frame);
+      gsap.ticker.add(frame);
     }
     function stop() {
+      if (!running) return;
       running = false;
-      cancelAnimationFrame(raf);
+      gsap.ticker.remove(frame);
     }
 
     resize();
     start();
 
     // Webfonts change the hero's height; re-measure and repaint once settled.
-    window.addEventListener('load', () => {
+    // Only relevant while the initial document is still loading — after a
+    // ClientRouter swap the fonts are long since in.
+    const onLoad = () => {
       stop();
       resize();
       start();
-    });
+    };
+    if (document.readyState !== 'complete') window.addEventListener('load', onLoad, { once: true });
 
     let resizeTimer = 0;
-    window.addEventListener('resize', () => {
+    const onResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
         stop();
         resize();
         start();
       }, 150);
-    });
+    };
+    window.addEventListener('resize', onResize);
 
     // Pause when off-screen or hidden — never the gate that decides whether
     // the field exists, only whether it keeps moving.
-    new IntersectionObserver((entries) => (entries.some((e) => e.isIntersecting) ? start() : stop()), {
-      threshold: 0,
-    }).observe(canvas);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-  }
+    const io = new IntersectionObserver(
+      (entries) => (entries.some((e) => e.isIntersecting) ? start() : stop()),
+      { threshold: 0 },
+    );
+    io.observe(canvas);
+    const onVis = () => (document.hidden ? stop() : start());
+    document.addEventListener('visibilitychange', onVis);
+
+    return () => {
+      stop();
+      clearTimeout(resizeTimer);
+      window.removeEventListener('load', onLoad);
+      window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', onVis);
+      io.disconnect();
+    };
+  });
 </script>

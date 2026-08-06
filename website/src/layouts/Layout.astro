@@ -5,6 +5,7 @@ import '../styles/global.css';
 import { SITE } from '../config/site';
 import { type Lang, useTranslations, altPath } from '../i18n/ui';
 import Analytics from '../components/Analytics.astro';
+import SiteOverlays from '../components/SiteOverlays.astro';
 
 interface Props {
   lang: Lang;
@@ -152,5 +153,6 @@ const structuredData = {
       >{t('a11y.skip')}</a
     >
     <slot />
+    <SiteOverlays />
   </body>
 </html>

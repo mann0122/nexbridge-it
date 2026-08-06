@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-08-01
+updated: 2026-08-06
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-019, D-022, D-023, D-025]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038]
 ---
 
 # Where things stand
@@ -15,7 +15,7 @@ decisions: [D-016, D-018, D-019, D-022, D-023, D-025]
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-08-01**
+Last reviewed: **2026-08-06**
 
 ## The venture in five lines
 
@@ -83,12 +83,12 @@ Ranked. Owner in brackets.
 
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
-- `Ribbons.astro` runs its own rAF instead of `gsap.ticker` — a second frame clock alongside
-  Lenis/ScrollTrigger, against D-030's one-engine rule (D-037).
-- `Ribbons.astro` has no `webglcontextlost` / `webglcontextrestored` handler: if the GPU process
-  dies the canvas blanks and never recovers. Silent, not fatal (D-037).
-- The `Ribbons` mount config is duplicated verbatim in `index.astro` and `en/index.astro` and
-  will drift. A `SiteOverlays.astro` wrapping `Grain` + `Cursor` + `Ribbons` is the fix (D-037).
+- `FlowField.astro` hardcodes its two stroke colours as rgba literals instead of resolving them
+  from the `@theme` tokens the way `Ribbons.astro` does; one of them matches no token. Flagged
+  by `design-critic` at D-038; scheduled for the dispersion work that rewrites its frame loop.
+
+The three D-037 defects (second rAF clock, missing WebGL context-loss handling, duplicated
+Ribbons mount) are closed — D-038.
 
 ## Blocked / pending
 
@@ -108,11 +108,16 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-**Repo move decided, not executed** (D-019) — target `C:\Users\manus\Projects\nexbridge-it`,
-runs via `move-nexbridge.ps1` from a separate PowerShell window. If you are reading this from the
-new path, the move is done and this section can go.
+**Motion upgrade, founder-ordered, on `feat/motion-upgrade`** — route transitions
+(ClientRouter + a drafting-sheet veil), scroll-driven section seams, and the particles'
+calibrated return as a hero dispersion/blast, phased as D-038…D-042. D-038 (lifecycle,
+one frame clock, `SiteOverlays`) is done; the ClientRouter + veil phase is next. The founder
+accepted bundle growth and a Lighthouse mobile score below 95 in advance ("wow over budget");
+actual numbers get measured and logged at the end, not estimated.
+
+The repo move (D-019) is done — this file lives at the new path.
 
 ## Next
 
-The founder has signalled that a libraries-and-design-principles brief is coming, which will land
-in `DESIGN.md`. Until then the sensible next moves are the open items above, in order.
+Finish the motion-upgrade phases in order, then the open items above. The founder has signalled
+that a libraries-and-design-principles brief is coming, which will land in `DESIGN.md`.

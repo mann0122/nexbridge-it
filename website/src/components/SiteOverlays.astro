@@ -1,0 +1,44 @@
+---
+/**
+ * The site's overlay layer, mounted once in Layout so every page carries the
+ * same atmosphere and the mount config exists in exactly one place — D-037
+ * shipped it duplicated across both index pages and logged that as a defect.
+ *
+ * Stacking, bottom to top: Ribbons (30) → Header (40) → skip link (50,
+ * shared with the TransitionVeil reserved for the router phase) → Grain (60)
+ * → Cursor (70). Everything here is
+ * decoration: aria-hidden, pointer-events: none, gated on fine pointers and
+ * prefers-reduced-motion by the components themselves.
+ *
+ * `transition:persist` keeps these nodes alive across ClientRouter swaps
+ * (D-038): the cursor trail and grain must not blink out mid-navigation.
+ * The wrapper is display:contents — it exists for persistence, not layout.
+ */
+import Grain from './Grain.astro';
+import Cursor from './Cursor.astro';
+import Ribbons from './Ribbons.astro';
+---
+
+<div id="site-overlays" style="display: contents" transition:persist="overlays">
+  <Grain />
+  <Cursor />
+  {/* Cursor trail (D-037). One signal ribbon, calibrated so it reads as a wash
+      rather than paint: graphite body copy over it on the paper sections
+      computes to 9.6:1. Thickness and alpha are the legibility budget — raising
+      either occludes text, which is what the gate blocked. */}
+  <Ribbons
+    fixed
+    colors={['--color-signal']}
+    baseSpring={0.04}
+    baseFriction={0.9}
+    baseThickness={18}
+    opacity={0.45}
+    offsetFactor={0.05}
+    maxAge={600}
+    pointCount={40}
+    speedMultiplier={0.6}
+    enableFade
+    enableShaderEffect
+    effectAmplitude={2}
+  />
+</div>

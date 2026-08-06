@@ -222,29 +222,29 @@ const formStrings = {
 </style>
 
 <script>
-  import { gsap, motionOff, drawOnScroll } from '../scripts/motion';
+  import { gsap, motionOff, drawOnScroll, onPage } from '../scripts/motion';
 
-  const svg = document.querySelector('#kontakt svg');
-  if (svg) {
-    drawOnScroll(svg, Array.from(svg.querySelectorAll<SVGPathElement>('.close-line')), { stagger: 0.12 });
-    // The arrowhead can't be drawn (it's a fill) — fade it in once its line
-    // has arrived, so the point never precedes the stroke.
-    const arrow = svg.querySelector('.close-arrow');
-    if (arrow) {
-      if (motionOff) gsap.set(arrow, { opacity: 1 });
-      else
-        gsap.to(arrow, {
-          opacity: 1,
-          duration: 0.3,
-          scrollTrigger: { trigger: svg, start: 'top 72%' },
-          delay: 1.15,
-        });
+  onPage(() => {
+    const svg = document.querySelector('#kontakt svg');
+    if (svg) {
+      drawOnScroll(svg, Array.from(svg.querySelectorAll<SVGPathElement>('.close-line')), { stagger: 0.12 });
+      // The arrowhead can't be drawn (it's a fill) — fade it in once its line
+      // has arrived, so the point never precedes the stroke.
+      const arrow = svg.querySelector('.close-arrow');
+      if (arrow) {
+        if (motionOff) gsap.set(arrow, { opacity: 1 });
+        else
+          gsap.to(arrow, {
+            opacity: 1,
+            duration: 0.3,
+            scrollTrigger: { trigger: svg, start: 'top 72%' },
+            delay: 1.15,
+          });
+      }
     }
-  }
 
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-
-  if (form) {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    if (!form) return;
     const status = document.getElementById('form-status')!;
     const label = form.querySelector('[data-submit-label]')!;
     const strings = JSON.parse(document.getElementById('form-strings')!.textContent!);
@@ -324,5 +324,5 @@ const formStrings = {
       status.classList.add('is-success');
       window.location.href = `mailto:${mail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
-  }
+  });
 </script>

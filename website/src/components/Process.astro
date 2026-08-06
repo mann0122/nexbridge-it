@@ -62,18 +62,19 @@ const phases = [1, 2, 3].map((i) => ({
 </section>
 
 <script>
-  import { gsap, motionOff, ScrollTrigger } from '../scripts/motion';
+  import { gsap, motionOff, ScrollTrigger, onPage } from '../scripts/motion';
 
-  const flow = document.getElementById('process-flow');
-  const line = document.getElementById('process-line');
-  const nodes = Array.from(document.querySelectorAll<HTMLElement>('.process-node'));
+  onPage(() => {
+    const flow = document.getElementById('process-flow');
+    const line = document.getElementById('process-line');
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.process-node'));
+    if (!flow || !line) return;
 
-  function setActive(node: HTMLElement, on: boolean) {
-    node.style.borderColor = on ? 'var(--color-signal)' : 'var(--color-steel)';
-    node.style.backgroundColor = on ? 'var(--color-signal)' : 'var(--color-graphite)';
-  }
+    function setActive(node: HTMLElement, on: boolean) {
+      node.style.borderColor = on ? 'var(--color-signal)' : 'var(--color-steel)';
+      node.style.backgroundColor = on ? 'var(--color-signal)' : 'var(--color-graphite)';
+    }
 
-  if (flow && line) {
     if (motionOff) {
       line.style.transform = 'scaleY(1)';
       nodes.forEach((node) => setActive(node, true));
@@ -93,5 +94,5 @@ const phases = [1, 2, 3].map((i) => ({
         });
       });
     }
-  }
+  });
 </script>

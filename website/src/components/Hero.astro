@@ -103,9 +103,13 @@ const base = lang === 'de' ? '' : '/en';
 </section>
 
 <script>
-  import { gsap, motionOff, SplitText, primeDraw, pulseAlong } from '../scripts/motion';
+  import { gsap, motionOff, SplitText, primeDraw, pulseAlong, onPage } from '../scripts/motion';
 
-  function animateSchematic(svg: SVGSVGElement, master: gsap.core.Timeline) {
+  function animateSchematic(
+    svg: SVGSVGElement,
+    master: gsap.core.Timeline,
+    pulses: Array<gsap.core.Tween | null>,
+  ) {
     const ins = Array.from(svg.querySelectorAll<SVGPathElement>('.flow-in'));
     const block = svg.querySelector<SVGRectElement>('.flow-block');
     const out = Array.from(svg.querySelectorAll<SVGPathElement>('.flow-out'));
@@ -128,17 +132,24 @@ const base = lang === 'de' ? '' : '/en';
 
     const main = svg.querySelector<SVGPathElement>('.flow-out-main');
     const dot = svg.querySelector<SVGCircleElement>('.flow-pulse');
-    if (main && dot) master.add(() => pulseAlong(main, dot, 0.4));
+    if (main && dot) master.add(() => pulses.push(pulseAlong(main, dot, 0.4)));
   }
 
-  if (!motionOff) {
+  onPage(() => {
+    if (motionOff) return;
     const h1 = document.getElementById('hero-h1');
+    if (!h1 && document.querySelectorAll('.hero-stage').length === 0) return;
+
     const stages = Array.from(document.querySelectorAll<HTMLElement>('.hero-stage'));
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    // The pulse tweens are born later, from a timeline callback the page
+    // context cannot capture — collected here so the cleanup can kill them.
+    const pulses: Array<gsap.core.Tween | null> = [];
+    let split: SplitText | null = null;
 
     // Headline assembles character by character out of blur.
     if (h1) {
-      const split = new SplitText(h1, { type: 'chars,words', charsClass: 'hero-char' });
+      split = new SplitText(h1, { type: 'chars,words', charsClass: 'hero-char' });
       gsap.set(split.chars, { opacity: 0, yPercent: 110, filter: 'blur(10px)' });
       tl.to(split.chars, {
         opacity: 1,
@@ -153,9 +164,14 @@ const base = lang === 'de' ? '' : '/en';
     tl.to(stages, { opacity: 1, y: 0, duration: 0.95, stagger: 0.1 }, 0.35);
 
     document.querySelectorAll<SVGSVGElement>('#flow-desktop, #flow-mobile').forEach((svg) => {
-      if (svg.getBoundingClientRect().width > 0) animateSchematic(svg, tl);
+      if (svg.getBoundingClientRect().width > 0) animateSchematic(svg, tl, pulses);
     });
-  }
+
+    return () => {
+      pulses.forEach((pulse) => pulse?.kill());
+      split?.revert();
+    };
+  });
 </script>
 
 <style>

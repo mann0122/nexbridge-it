@@ -1,5 +1,7 @@
 ---
 // English twin of / — same composition, dictionary-driven (see src/i18n/ui.ts).
+// Overlays and the motion lifecycle come from Layout/motion.ts, same as the
+// German page — there is nothing to keep in step here anymore (D-038).
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Hero from '../../components/Hero.astro';
@@ -12,30 +14,9 @@ import Story from '../../components/Story.astro';
 import Contact from '../../components/Contact.astro';
 import Footer from '../../components/Footer.astro';
 import Marquee from '../../components/Marquee.astro';
-import Grain from '../../components/Grain.astro';
-import Cursor from '../../components/Cursor.astro';
-import Ribbons from '../../components/Ribbons.astro';
 ---
 
 <Layout lang="en" path="/en/">
-  <Grain />
-  <Cursor />
-  {/* Keep in step with the German twin — same trail, same tuning (D-037). */}
-  <Ribbons
-    fixed
-    colors={['--color-signal']}
-    baseSpring={0.04}
-    baseFriction={0.9}
-    baseThickness={18}
-    opacity={0.45}
-    offsetFactor={0.05}
-    maxAge={600}
-    pointCount={40}
-    speedMultiplier={0.6}
-    enableFade
-    enableShaderEffect
-    effectAmplitude={2}
-  />
   <Header lang="en" path="/en/" />
   <main id="main">
     <Hero lang="en" />
@@ -50,13 +31,3 @@ import Ribbons from '../../components/Ribbons.astro';
   </main>
   <Footer lang="en" />
 </Layout>
-
-<script>
-  import { initSmoothScroll, revealGroup } from '../../scripts/motion';
-
-  initSmoothScroll();
-
-  document.querySelectorAll('[data-reveal-scope]').forEach((scope) => {
-    revealGroup(scope, Array.from(scope.querySelectorAll('[data-reveal]')));
-  });
-</script>

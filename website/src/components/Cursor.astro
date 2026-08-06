@@ -65,9 +65,16 @@
 </style>
 
 <script>
-  import { gsap, motionOff, fine } from '../scripts/motion';
+  import { gsap, motionOff, fine, onPage } from '../scripts/motion';
 
+  /* The reticle node lives in SiteOverlays and persists across ClientRouter
+     swaps, so its follow tweens and listeners are module-scope, bound once,
+     and deliberately OUTSIDE the page context — a page unmount must not
+     revert the cursor's position. Hover detection is delegated to document
+     (per-element listeners would die with every swapped page); only the
+     magnetic bindings are per-page, because their targets are. */
   const el = document.getElementById('cursor');
+  const INTERACTIVE = 'a, button, [role="button"]';
 
   if (el && fine && !motionOff) {
     const xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'expo.out' });
@@ -89,25 +96,31 @@
     });
 
     // Reticle opens over anything clickable.
-    document.querySelectorAll('a, button, [role="button"]').forEach((node) => {
-      node.addEventListener('mouseenter', () => el.classList.add('is-active'));
-      node.addEventListener('mouseleave', () => el.classList.remove('is-active'));
+    document.addEventListener('pointerover', (e) => {
+      if (e.target instanceof Element && e.target.closest(INTERACTIVE)) el.classList.add('is-active');
+    });
+    document.addEventListener('pointerout', (e) => {
+      if (!(e.target instanceof Element) || !e.target.closest(INTERACTIVE)) return;
+      const to = e.relatedTarget;
+      if (!(to instanceof Element) || !to.closest(INTERACTIVE)) el.classList.remove('is-active');
     });
 
     // Magnetic CTAs: the button leans toward the cursor, then springs back.
-    document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((btn) => {
-      const strength = Number(btn.dataset.magnetic) || 0.32;
-      const qx = gsap.quickTo(btn, 'x', { duration: 0.5, ease: 'expo.out' });
-      const qy = gsap.quickTo(btn, 'y', { duration: 0.5, ease: 'expo.out' });
+    onPage(() => {
+      document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((btn) => {
+        const strength = Number(btn.dataset.magnetic) || 0.32;
+        const qx = gsap.quickTo(btn, 'x', { duration: 0.5, ease: 'expo.out' });
+        const qy = gsap.quickTo(btn, 'y', { duration: 0.5, ease: 'expo.out' });
 
-      btn.addEventListener('mousemove', (e) => {
-        const r = btn.getBoundingClientRect();
-        qx((e.clientX - (r.left + r.width / 2)) * strength);
-        qy((e.clientY - (r.top + r.height / 2)) * strength);
-      });
-      btn.addEventListener('mouseleave', () => {
-        qx(0);
-        qy(0);
+        btn.addEventListener('mousemove', (e) => {
+          const r = btn.getBoundingClientRect();
+          qx((e.clientX - (r.left + r.width / 2)) * strength);
+          qy((e.clientY - (r.top + r.height / 2)) * strength);
+        });
+        btn.addEventListener('mouseleave', () => {
+          qx(0);
+          qy(0);
+        });
       });
     });
   }

@@ -13,10 +13,14 @@
  *   - fine pointers only, and off under `prefers-reduced-motion` / `?snap`: no
  *     canvas, no WebGL context, no RAF, no listeners. Same gate as Cursor.astro —
  *     a cursor trail has nothing to trail on a touchscreen;
- *   - the RAF stops once the ribbons settle. At rest every point converges, the
- *     polyline collapses to zero width and the shader draws nothing anyway, so
- *     idling costs a GPU frame per tick to render an invisible mesh. A still
- *     cursor now costs nothing; the next mousemove restarts it;
+ *   - frames come from gsap.ticker — one clock for the whole site (D-030,
+ *     closed by D-038) — and stop once the ribbons settle. At rest every point
+ *     converges, the polyline collapses to zero width and the shader draws
+ *     nothing anyway, so idling costs a GPU frame per tick to render an
+ *     invisible mesh. A still cursor now costs nothing; the next mousemove
+ *     restarts it;
+ *   - survives GPU context loss: on `webglcontextlost` it stops; on restore it
+ *     tears down and rebuilds. Decoration must never leave a dead canvas;
  *   - pauses off-screen and on a hidden tab, and re-measures via ResizeObserver
  *     (the container can change size without the window doing so).
  *
@@ -58,7 +62,10 @@ interface Props {
 }
 
 const {
-  colors = ['--color-signal', '--color-steel-deep'],
+  /* One signal ribbon by default — the D-037 gate blocked the two-colour
+     mount (a steel ribbon reads as a bug, not a wash), so like `opacity`
+     the safe value is the one you get by omission. */
+  colors = ['--color-signal'],
   baseSpring = 0.03,
   baseFriction = 0.9,
   baseThickness = 30,
@@ -123,7 +130,7 @@ const config = JSON.stringify({
   /* Types only — erased at build, so importing them costs no bytes. The library
      itself is fetched dynamically at the bottom of this file, after the gates. */
   import type { Vec3 as Vec3T, Polyline as PolylineT } from 'ogl';
-  import { motionOff, fine } from '../scripts/motion';
+  import { gsap, motionOff, fine } from '../scripts/motion';
 
   /* Narrowed to the five exports actually used. A dynamic import handed round as
      a whole namespace is opaque to Rollup and drags all of ogl (~129 KB) into the
@@ -315,13 +322,11 @@ const config = JSON.stringify({
     window.addEventListener('mousemove', updateMouse, { passive: true });
 
     const tmp = new Vec3();
-    let raf = 0;
     let running = false;
     let lastTime = performance.now();
     let idleFrames = 0;
 
     function frame() {
-      raf = requestAnimationFrame(frame);
       const currentTime = performance.now();
       const dt = currentTime - lastTime;
       lastTime = currentTime;
@@ -371,31 +376,37 @@ const config = JSON.stringify({
        again, defeating the observer below. */
     let onScreen = true;
 
+    /* Frames come from gsap.ticker (D-030's one clock), added and removed in
+       start()/stop() so the settle detection keeps its parked-cursor-costs-
+       nothing property — a permanent ticker callback would regress it. */
     function start() {
       if (running || !onScreen || document.hidden) return;
       running = true;
       idleFrames = 0;
       lastTime = performance.now();
-      raf = requestAnimationFrame(frame);
+      gsap.ticker.add(frame);
     }
     function stop() {
+      if (!running) return;
       running = false;
-      cancelAnimationFrame(raf);
+      gsap.ticker.remove(frame);
     }
 
     start();
 
-    new ResizeObserver(resize).observe(container);
-    new IntersectionObserver(
+    const ro = new ResizeObserver(resize);
+    ro.observe(container);
+    const io = new IntersectionObserver(
       (entries) => {
         onScreen = entries.some((e) => e.isIntersecting);
         if (onScreen) start();
         else stop();
       },
       { threshold: 0 },
-    ).observe(container);
+    );
+    io.observe(container);
 
-    document.addEventListener('visibilitychange', () => {
+    const onVisibility = () => {
       if (document.hidden) {
         stop();
         return;
@@ -405,6 +416,34 @@ const config = JSON.stringify({
          measure the first visible frame against a load-time timestamp. */
       lastTime = performance.now();
       start();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    function dispose() {
+      stop();
+      window.removeEventListener('mousemove', updateMouse);
+      document.removeEventListener('visibilitychange', onVisibility);
+      ro.disconnect();
+      io.disconnect();
+      gl.canvas.remove();
+    }
+
+    /* GPU context loss is real on long-lived tabs and driver resets. Prevent
+       the default so the browser may restore; the old GL resources are dead
+       either way, so a restore tears this instance down and builds a fresh
+       one. If restore never comes, dispose() has already left the page clean. */
+    gl.canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      stop();
+    });
+    gl.canvas.addEventListener('webglcontextrestored', () => {
+      dispose();
+      try {
+        initRibbons(ogl, container, cfg);
+      } catch {
+        /* Same contract as the initial mount: renderer creation throws on
+           real machines, and decoration never puts an error on the page. */
+      }
     });
   }
 

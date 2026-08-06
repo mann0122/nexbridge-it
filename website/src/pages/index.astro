@@ -13,6 +13,9 @@ four services (part-numbered) → the three-phase process (scroll-drawn flow)
 FIRST VIEWPORT: kicker, two-line display H1, subline, CTA pair; the working
 schematic draws itself and keeps pulsing.
 FORM: Signal-flow schematic (P&ID tradition), pinned by docs/02-brand.md.
+
+Overlays (Grain, Cursor, Ribbons) mount once in Layout via SiteOverlays;
+the motion lifecycle mounts itself from src/scripts/motion.ts (D-038).
 */
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
@@ -26,33 +29,9 @@ import Story from '../components/Story.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import Marquee from '../components/Marquee.astro';
-import Grain from '../components/Grain.astro';
-import Cursor from '../components/Cursor.astro';
-import Ribbons from '../components/Ribbons.astro';
 ---
 
 <Layout lang="de" path="/">
-  <Grain />
-  <Cursor />
-  {/* Cursor trail (D-037). One signal ribbon, calibrated so it reads as a wash
-      rather than paint: graphite body copy over it on the paper sections
-      computes to 9.6:1. Thickness and alpha are the legibility budget — raising
-      either occludes text, which is what the gate blocked. */}
-  <Ribbons
-    fixed
-    colors={['--color-signal']}
-    baseSpring={0.04}
-    baseFriction={0.9}
-    baseThickness={18}
-    opacity={0.45}
-    offsetFactor={0.05}
-    maxAge={600}
-    pointCount={40}
-    speedMultiplier={0.6}
-    enableFade
-    enableShaderEffect
-    effectAmplitude={2}
-  />
   <Header lang="de" path="/" />
   <main id="main">
     <Hero lang="de" />
@@ -67,14 +46,3 @@ import Ribbons from '../components/Ribbons.astro';
   </main>
   <Footer lang="de" />
 </Layout>
-
-<script>
-  // One global pass: smooth scroll, then every section's reveal group once.
-  import { initSmoothScroll, revealGroup } from '../scripts/motion';
-
-  initSmoothScroll();
-
-  document.querySelectorAll('[data-reveal-scope]').forEach((scope) => {
-    revealGroup(scope, Array.from(scope.querySelectorAll('[data-reveal]')));
-  });
-</script>

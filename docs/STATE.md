@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-06
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042]
 ---
 
 # Where things stand
@@ -106,18 +106,22 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-**Motion upgrade, founder-ordered, on `feat/motion-upgrade`** — route transitions
-(ClientRouter + a drafting-sheet veil), scroll-driven section seams, and the particles'
-calibrated return as a hero dispersion/blast, phased as D-038…D-042. Done: D-038 (lifecycle,
-one frame clock, `SiteOverlays`), D-039 (ClientRouter + veil), D-040 (hero dispersion + blast),
-D-041 (section seams). Next: the gated WebGL dissolve experiment, then measurement (D-042).
-The founder accepted
-bundle growth and a Lighthouse mobile score below 95 in advance ("wow over budget"); actual
-numbers get measured and logged at the end, not estimated.
+**Motion upgrade complete on `feat/motion-upgrade`, not yet merged to `main`** — D-038
+(lifecycle, one frame clock, `SiteOverlays`), D-039 (ClientRouter + drafting-sheet veil),
+D-040 (hero dispersion + route-exit blast), D-041 (section seams), D-042 (measured:
+212.8 KB raw / 72.7 KB brotli first load; Lighthouse desktop 100/100/100, mobile 95/100/100 —
+**the 95 floor held**, the founder's pre-accepted relaxation lapsed unused). Awaiting the
+founder's own scroll-through before merge.
+
+**The WebGL hero-erasure experiment sits unmerged on `feat/hero-dissolve-lab`** — verdict
+needs the founder's live side-by-side against the 2D blast plus a 4× throttle frame trace;
+kill criteria in `website/src/scripts/dissolve.ts`; default expectation is kill (D-042).
 
 The repo move (D-019) is done — this file lives at the new path.
 
 ## Next
 
-Finish the motion-upgrade phases in order, then the open items above. The founder has signalled
-that a libraries-and-design-principles brief is coming, which will land in `DESIGN.md`.
+Founder scroll-through of `feat/motion-upgrade` (dev server, plus reduced-motion and 360px
+passes), merge to `main`, deploy. Then the dissolve-lab verdict, then the open items above.
+The founder has signalled that a libraries-and-design-principles brief is coming, which will
+land in `DESIGN.md`.

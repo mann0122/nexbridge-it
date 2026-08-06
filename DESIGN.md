@@ -102,12 +102,12 @@ is bound to the visitor's own hand instead of being asked to carry meaning, it c
 space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
 D-040's dispersion is not a third canvas — it is the first canvas, dispersing.
 
-Budget: **under re-measure on `feat/motion-upgrade`** — D-038 put first load at ~189 KB raw
-(from the 184/63 D-037 measured); the router, veil and dispersion add on top, and D-042 will
-record the measured finals plus Lighthouse. The `ogl` chunk stays a deferred **50 KB raw /
-12 KB brotli**, fetched only once the cursor trail's gates pass — phones and reduced-motion
-visitors never download it. Zero external asset requests. The founder pre-accepted growth and
-a mobile Lighthouse below 95 ("wow over budget"); the numbers still get measured, not estimated.
+Budget (D-042, measured): **212.8 KB JS raw / 72.7 KB brotli** first load (was 184/63 at
+D-037; the ClientRouter runtime is 15.7 of the increase), plus the deferred **50 KB raw /
+12 KB brotli** `ogl` chunk fetched only once the cursor trail's gates pass — phones and
+reduced-motion visitors never download it. Zero external asset requests. Lighthouse: desktop
+100/100/100, **mobile 95/100/100 — the 95 floor held** with no headroom; the founder's
+pre-accepted relaxation lapsed unused. Measure before raising any of these numbers.
 
 ## Components (as they get built)
 
@@ -149,7 +149,7 @@ which is how `global.css` `@theme` is already built.
 
 **Audit.** `review-animations` and `find-animation-opportunities` (read-only, they propose, they
 do not edit). `web-perf` against the budget in the Motion section above — one budget, stated
-once — and the Lighthouse floor recorded there (95, relaxed for mobile by founder call at D-041).
+once — and the Lighthouse ≥ 95 floor, which held at D-042 with no headroom.
 
 **Reference only, never prescription.** `ui-ux-pro-max`, `brand`, `design` — large lookup
 databases. Consult for a pattern or a precedent; do not adopt their palettes, fonts or defaults.

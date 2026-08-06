@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-02
+updated: 2026-08-06
 depends_on: []
 decisions: []
 ---
@@ -718,6 +718,31 @@ no-JS page is byte-identical to the static one and `?snap` keeps rendering final
 a seam rule replaces a CSS border, the border goes transparent in the same tick the overlay
 starts animating. The seams module is imported only by the two homepage scripts and bails
 anywhere `#kontakt` isn't the last section. Owner: partner-b.
+
+## D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED
+The numbers, measured, not estimated (Lighthouse against `npm run preview`, homepage):
+
+| | before (D-037) | after (D-038…D-041) |
+|---|---|---|
+| First-load JS | 184 KB raw / 63 KB brotli | **212.8 KB raw / 72.7 KB brotli** |
+| Deferred `ogl` chunk | 50 / 12 | 50 / 12 (unchanged, still gated) |
+| Lighthouse desktop | 100 / 100 / 100 | **100 / 100 / 100** (LCP 0.6s, TBT 20ms, CLS 0.006) |
+| Lighthouse mobile | 95 perf | **95 / 100 / 100** (LCP 2.4s, TBT 80ms, CLS 0.01) |
+
+Of the +28.8 KB raw: the ClientRouter runtime is 15.7, the veil + transitions ~5, seams 4.2,
+dispersion + lifecycle the rest. **The founder pre-accepted a mobile score below 95 ("wow over
+budget"); it was not needed — the floor held at exactly 95**, same no-headroom bar D-037
+measured. The floor therefore stays at 95 and the pre-authorization lapses unused; anyone
+spending the headroom that does not exist reads this row first.
+
+**The WebGL hero-erasure experiment is built and NOT merged** — branch `feat/hero-dissolve-lab`
+(`dfdc2d5`): noise-threshold erosion of the FlowField texture with a radial push, replacing the
+2D blast only when the chunk preloaded at idle and a context creates; every bail path falls
+back to D-040's blast. On the lab branch the ogl chunk measures 55.1 KB raw (under its 65 KB
+kill line) and the module adds 6.8 KB. The verdict needs what a build cannot give: a live
+side-by-side against the 2D blast and a 4× CPU-throttle frame trace. Kill criteria are in the
+file header; per D-035 discipline the default expectation is kill — merging requires a D-entry
+that also raises the two-canvas cap. Owner: founder (the eyeball), partner-b (the trace).
 
 ## Template
 ```

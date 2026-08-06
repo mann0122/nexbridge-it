@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-06 · 15 nodes · 41 decisions
+Content as of 2026-08-06 · 15 nodes · 42 decisions
 
 ## Map
 
@@ -87,7 +87,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `brand` | Brand | knowledge | active | partner-b | 2026-08-01 | [docs/02-brand.md](02-brand.md) | `website-spec`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-08-02 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-08-06 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
@@ -143,9 +143,10 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-036 | 2026-08-03 | Legal pages filled from the founder's documents | DECIDED | `state` |
 | D-037 | 2026-08-06 | Ribbons cursor trail; a second generative canvas is allowed | DECIDED | `state` |
 | D-038 | 2026-08-06 | Motion lifecycle: one frame clock, one overlay mount, page-scoped inits | DECIDED | `state` |
-| D-039 | 2026-08-06 | ClientRouter + the drafting-sheet veil; navigation is a drawing change | DECIDED | — |
-| D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | — |
-| D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | — |
+| D-039 | 2026-08-06 | ClientRouter + the drafting-sheet veil; navigation is a drawing change | DECIDED | `state` |
+| D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | `state` |
+| D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | `state` |
+| D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

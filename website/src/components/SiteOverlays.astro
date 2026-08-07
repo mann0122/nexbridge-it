@@ -4,9 +4,10 @@
  * same atmosphere and the mount config exists in exactly one place — D-037
  * shipped it duplicated across both index pages and logged that as a defect.
  *
- * Stacking, bottom to top: Ribbons (30) → Header (40) → skip link (50,
- * shared with the TransitionVeil reserved for the router phase) → Grain (60)
- * → Cursor (70). Everything here is
+ * Stacking, bottom to top: Ribbons (30) → Header (40) → skip link /
+ * TransitionVeil (50) → arrow-burst (55, so the route-exit arrow shower
+ * falls OVER the drafting sheet, D-044) → Grain (60) → Cursor (70).
+ * Everything here is
  * decoration: aria-hidden, pointer-events: none, gated on fine pointers and
  * prefers-reduced-motion by the components themselves.
  *
@@ -24,6 +25,10 @@ import TransitionVeil from './TransitionVeil.astro';
   <Grain />
   <Cursor />
   <TransitionVeil />
+  {/* Route-exit arrow shower (D-044). Empty furniture: flowrail.ts spawns
+      pieces here because this wrapper persists through the swap they must
+      animate across. Fixed, above the veil sheet, below the grain. */}
+  <div id="arrow-burst" class="pointer-events-none fixed inset-0 z-[55]" aria-hidden="true"></div>
   {/* Cursor trail (D-037). One signal ribbon, calibrated so it reads as a wash
       rather than paint: graphite body copy over it on the paper sections
       computes to 9.6:1. Thickness and alpha are the legibility budget — raising

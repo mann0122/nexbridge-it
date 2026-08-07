@@ -20,9 +20,17 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
 import Lenis from 'lenis';
 
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, DrawSVGPlugin, SplitText, ScrambleTextPlugin);
+gsap.registerPlugin(
+  ScrollTrigger,
+  MotionPathPlugin,
+  DrawSVGPlugin,
+  SplitText,
+  ScrambleTextPlugin,
+  Physics2DPlugin,
+);
 
 export const motionOff =
   window.matchMedia('(prefers-reduced-motion: reduce)').matches ||

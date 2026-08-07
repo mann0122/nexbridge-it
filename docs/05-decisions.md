@@ -790,6 +790,44 @@ performance floor is now **≥ 94**, a11y/SEO stay ≥ 95 — CLAUDE.md's defini
 the same commit. Anyone tempted to spend further "headroom" reads D-042's warning first; it now
 applies at 94. Owner: founder (the call, twice), partner-b (port).
 
+## D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED
+Founder-described to the letter: the hero schematic's orange arrowhead detaches on the first
+scroll and rides the whole page — one signal line drawing behind it, down the hero DIN frame's
+own edge and then the right `px-6` gutter, inward circuit-trace jogs at the seams where the
+gutter affords them, plugging into the footer Zeichnungskopf. Fully scrubbed and reversible:
+scroll back and the signal returns to the schematic (a `visibility` handoff — one arrow
+exists, it detaches, it never duplicates). On route exit the rail retracts and the head
+**bursts into 18 (mobile) / 28 (desktop) same-species arrowheads** that fan up-and-out, fall
+under gravity — the first use of `Physics2DPlugin`, already free in GSAP 3.15, +1.6 KB — and
+vanish by ~1.2s. The pieces spawn 150ms after dispatch so they fall over the drafting sheet,
+not over live copy, into the persisted `#arrow-burst` container (z-55: above the veil sheet,
+below grain) whose children deliberately outlive the page context — they must animate across
+the swap. Spam cap + sweep timer bound every abuse path.
+
+**Three ration rulings, written down so the next audit needn't re-derive them.** (1) The rail
+is legal at stroke 2.5 because it *is* `flow-out-main` continued — not a new user of the
+action-line weight (D-043's letter holds). (2) The rail is the memorable device extended, and
+it **yields to 0.2 opacity** wherever a section owns its own signal — Process's scroll line
+(D-041's star) and Contact's CTA + closing schematic; Demo's annotation-grade sparkline is
+consciously not yielded to. (3) The burst amends D-039's "the sheet number is the veil's
+single signal element": during the shower the debris is the second, by founder order.
+
+**The gate earned its keep again.** `design-critic` proved the arrowhead crossed into the text
+column on the inner lane at container-flush widths (up to 6.5px at 1200px — the jog clamp
+budgeted the stroke but not the head), found the Contact viewport carrying three signal
+elements, and called the 0.75px rail-to-DIN-frame gap fringing. All fixed pre-commit: the
+clamp now budgets the head's half-height and drops jogs entirely below a 5px budget (the jogs
+are garnish, the never-under-text contract is not); Contact joined the yield list; the rail
+now rides exactly ON the frame edge (w−16). `qa-reviewer` traced the lifecycle clean —
+context-reverted scrub/dims, explicit listener cleanup, burst tweens correctly outside the
+page context — and confirmed the Physics2D API against the shipped plugin source.
+
+**Measured.** First load **218.6 KB raw / 74.5 KB brotli** (from 212.8/72.7 at D-042; the
+homepage-only seams+flowrail chunk is 8.4/2.9, Physics2D the rest); ogl still a deferred
+50/12. Lighthouse: desktop **100/100/100**, mobile **94/100/100** — exactly the ≥94 floor
+D-043 set, stable across runs (0.940 twice), CLS 0.009. Owner: partner-b, on the founder's
+explicit description.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

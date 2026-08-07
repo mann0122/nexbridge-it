@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-06 · 15 nodes · 43 decisions
+Content as of 2026-08-07 · 15 nodes · 44 decisions
 
 ## Map
 
@@ -92,7 +92,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
-| `state` | Where things stand | state | active | partner-b | 2026-08-06 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
+| `state` | Where things stand | state | active | partner-b | 2026-08-07 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
@@ -147,7 +147,8 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | `state` |
 | D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | `state` |
 | D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | `state` |
-| D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | — |
+| D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | `state` |
+| D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

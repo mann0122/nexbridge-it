@@ -94,6 +94,20 @@ parallax at one boundary. Three motifs recurring, not eight gimmicks; one bounda
 purpose. All seam furniture is steel/line/graphite — no signal — built by JS so the no-JS page
 is unchanged. Scrubbed and reversible everywhere; still nothing pinned.
 
+**Flowrail** (D-044): the schematic's exit arrow detaches on the first scroll and travels the
+whole document — one signal line at the action-line weight (2.5: legal here because the rail
+*is* `flow-out-main` continued, not a new user of the weight), riding the hero DIN frame's
+edge and then the right px-6 gutter, with inward circuit-trace jogs at the seams where the
+gutter affords them, plugging into the footer Zeichnungskopf. Fully scrubbed — scroll back and
+the signal returns to the schematic. The ration bends, not breaks: the rail is the flow-line —
+the one memorable device — extended, and it **yields to 0.2 opacity** wherever a section owns
+its own signal (Process's scroll line, Contact's CTA + closing schematic); Demo's sparkline is
+annotation-grade and is consciously not yielded to. On route exit the rail retracts and the
+arrowhead **bursts into 18–28 same-species arrowheads** that fall under Physics2D gravity over
+the drafting-sheet veil and vanish — this amends D-039's "the sheet number is the veil's single
+signal element": during the ~1.2s shower, the debris is the second, by design and founder
+order. JS-built; no-JS and `?snap` pages are byte-identical.
+
 **No pinned scroll sequence.** A morphing particle stage was built and removed across
 D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
 `FlowField` in the hero was the page's only generative canvas until D-037 admitted the `Ribbons`

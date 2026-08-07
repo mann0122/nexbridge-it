@@ -221,7 +221,7 @@ export const ui = {
   en: {
     'meta.title': 'NexBridge-IT — Processes that run themselves',
     'meta.description':
-      'Automation, AI agents, dashboards and custom software for Germany’s Mittelstand. Built in Germany, GDPR-first, documented for handover.',
+      'Automation, AI agents, dashboards and custom applications for Germany’s Mittelstand. Built in Germany, GDPR-first, documented for handover.',
     'a11y.skip': 'Skip to content',
     'a11y.menuOpen': 'Open menu',
     'a11y.menuClose': 'Close menu',
@@ -236,7 +236,7 @@ export const ui = {
     'nav.ueberUns': 'About',
     'nav.kontakt': 'Contact',
 
-    'hero.kicker': 'Automation · AI agents · Dashboards · Custom software',
+    'hero.kicker': 'Automation · AI agents · Dashboards · Custom applications',
     'hero.h1a': 'Processes that',
     'hero.h1b': 'run themselves.',
     'hero.sub':
@@ -287,7 +287,7 @@ export const ui = {
     'services.3.title': 'Dashboards',
     'services.3.note': 'Your key figures live on one screen — instead of twenty files.',
     'services.4.id': 'NB-04',
-    'services.4.title': 'Custom software',
+    'services.4.title': 'Custom applications',
     'services.4.note': 'When off-the-shelf doesn’t fit: tools built exactly for your workflow.',
 
     'process.kicker': 'Approach · Phase 1→3',

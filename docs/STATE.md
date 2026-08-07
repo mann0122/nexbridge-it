@@ -43,7 +43,8 @@ Any audit price other than 295 € is superseded — D-007's figures are history
 
 Live on **nexbridge-it.com** — domain registered to us, confirmed by the founder (D-025).
 Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-023).
-Bilingual from day one: German at `/`, English at `/en/`.
+Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
+drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
 **Six routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`.
 The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
@@ -84,10 +85,6 @@ Ranked. Owner in brackets.
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
 
-The three D-037 defects (second rAF clock, missing WebGL context-loss handling, duplicated
-Ribbons mount) are closed — D-038. The FlowField off-token stroke colours flagged at D-038
-are closed — D-040.
-
 ## Blocked / pending
 
 **D-005 — legal vehicle** is the only `PENDING` decision. **Do not raise it** — see D-008.
@@ -106,22 +103,15 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-**Motion upgrade complete on `feat/motion-upgrade`, not yet merged to `main`** — D-038
-(lifecycle, one frame clock, `SiteOverlays`), D-039 (ClientRouter + drafting-sheet veil),
-D-040 (hero dispersion + route-exit blast), D-041 (section seams), D-042 (measured:
-212.8 KB raw / 72.7 KB brotli first load; Lighthouse desktop 100/100/100, mobile 95/100/100 —
-**the 95 floor held**, the founder's pre-accepted relaxation lapsed unused). Awaiting the
-founder's own scroll-through before merge.
-
 **The WebGL hero-erasure experiment sits unmerged on `feat/hero-dissolve-lab`** — verdict
 needs the founder's live side-by-side against the 2D blast plus a 4× throttle frame trace;
 kill criteria in `website/src/scripts/dissolve.ts`; default expectation is kill (D-042).
+The motion upgrade itself (D-038…D-042) is merged and live on the founder's instruction of
+2026-08-07 — measured numbers are in D-042 and `DESIGN.md`.
 
 The repo move (D-019) is done — this file lives at the new path.
 
 ## Next
 
-Founder scroll-through of `feat/motion-upgrade` (dev server, plus reduced-motion and 360px
-passes), merge to `main`, deploy. Then the dissolve-lab verdict, then the open items above.
-The founder has signalled that a libraries-and-design-principles brief is coming, which will
-land in `DESIGN.md`.
+The dissolve-lab verdict, then the open items above. The founder has signalled that a
+libraries-and-design-principles brief is coming, which will land in `DESIGN.md`.

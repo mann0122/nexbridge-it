@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-07
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045]
 ---
 
 # Where things stand
@@ -103,17 +103,11 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-**The WebGL hero-erasure experiment sits unmerged on `feat/hero-dissolve-lab`** — verdict
-needs the founder's live side-by-side against the 2D blast plus a 4× throttle frame trace;
-kill criteria in `website/src/scripts/dissolve.ts`; default expectation is kill (D-042).
-The motion upgrade itself (D-038…D-042), the icon vocabulary (D-043) and the flowrail
-(D-044 — the exit arrow travels the page and bursts on route exit) are merged and live;
-measured numbers are in the respective D-entries and `DESIGN.md`. NOTE for the dissolve lab:
-it predates D-044 and its cancelable-blast wiring must be rebased before any verdict.
-
-The repo move (D-019) is done — this file lives at the new path.
+Nothing. The motion upgrade (D-038…D-042), the icon vocabulary (D-043) and the flowrail
+(D-044) are merged and live; the WebGL hero-dissolve experiment was killed on the founder's
+verdict (D-045) and its branch is deleted. `main` is the only long-lived branch.
 
 ## Next
 
-The dissolve-lab verdict, then the open items above. The founder has signalled that a
-libraries-and-design-principles brief is coming, which will land in `DESIGN.md`.
+The open items above, in order. The founder has signalled that a libraries-and-design-
+principles brief is coming, which will land in `DESIGN.md`.

@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-07 · 15 nodes · 44 decisions
+Content as of 2026-08-07 · 15 nodes · 45 decisions
 
 ## Map
 
@@ -149,6 +149,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | `state` |
 | D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | `state` |
 | D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | `state` |
+| D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

@@ -828,6 +828,26 @@ homepage-only seams+flowrail chunk is 8.4/2.9, Physics2D the rest); ogl still a 
 D-043 set, stable across runs (0.940 twice), CLS 0.009. Owner: partner-b, on the founder's
 explicit description.
 
+## D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED
+Founder verdict after a fair viewing — the lab branch got evaluation hotkeys that played the
+WebGL erasure alone, slowed to 1.8s, against the shipped 2D dispersion in the same seat:
+*"you are just making it invisible in the hero background... it is not masterpiece level."*
+That is D-042's default expectation arriving on schedule, and the D-026→D-035 lesson holding
+again: an effect that has to be slowed down and pointed at to be seen at all cannot justify
+itself in its real context, a ~0.4s route-exit window under the veil. Killed as prescribed:
+branch `feat/hero-dissolve-lab` deleted (tip `8422cd8`); nothing merges. For the record it
+would have carried: ogl chunk 50 → 55.1 KB raw with the extra imports, +6.8 KB module on
+first load, and a second WebGL context per navigation.
+
+**What survives is the point.** The two-canvas cap stands untouched. The `flowfield:blast`
+event stays plain (the cancelable wiring existed only on the lab branch). And the founder
+confirmed **D-044's flowrail as the keeper** — "the arrow thing is cool, keep it" — which is
+the pattern D-035 already taught: effects bound to a real object the visitor follows earn
+their place; treatments applied over the whole canvas do not. Also housekeeping: the merged
+`feat/motion-upgrade` and `feat/flowrail` branches and the stale `feat/wandlung-stage` are
+deleted; `main` is the only long-lived branch again. Owner: founder (verdict), partner-b
+(removal).
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

@@ -1,0 +1,43 @@
+---
+/**
+ * Layered network as a Schaltbild — part symbol for NB-02 KI-Agenten (D-043).
+ * Drawn in-house, not ported: design-critic replaced the lucide brain-circuit
+ * (the category's most saturated glyph, and this brand's own record calls the
+ * brain "the category rut", D-033) with the network vocabulary D-033 already
+ * established. Three ranks of node circles, 2-3-1; edges trimmed to the rims.
+ * On parent hover the edges redraw once, staggered left-to-right — the signal
+ * propagating through the net. Rest state is the complete drawing.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 16, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-net', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <circle cx="4" cy="7" r="1.6"></circle>
+  <circle cx="4" cy="17" r="1.6"></circle>
+  <circle cx="12" cy="4" r="1.6"></circle>
+  <circle cx="12" cy="12" r="1.6"></circle>
+  <circle cx="12" cy="20" r="1.6"></circle>
+  <circle cx="20" cy="12" r="1.6"></circle>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 0ms" d="M5.5 6.44 10.5 4.56"></path>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 0ms" d="M5.36 7.85 10.64 11.15"></path>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 40ms" d="M5.36 16.15 10.64 12.85"></path>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 40ms" d="M5.5 17.56 10.5 19.44"></path>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 120ms" d="M13.13 5.13 18.87 10.87"></path>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 120ms" d="M13.6 12 18.4 12"></path>
+  <path class="icn-net-e" pathLength="1" style="--icn-d: 120ms" d="M13.13 18.87 18.87 13.13"></path>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

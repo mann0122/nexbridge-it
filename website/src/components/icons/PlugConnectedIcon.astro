@@ -1,0 +1,38 @@
+---
+/**
+ * Plug connected — the founder-named icon (D-043; the one D-032 rejected, now
+ * admitted under drawing rules). itshover port, CSS-only, upstream's exact
+ * motion: on parent hover the two halves slide together (±2px) and the gap
+ * ticks fade — contact made; everything eases back on leave.
+ * The ticks belong to the lower group upstream, so they translate with it too.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 15, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-plug', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <g class="icn-plug-l">
+    <path d="M7 12l5 5l-1.5 1.5a3.536 3.536 0 1 1 -5 -5l1.5 -1.5z"></path>
+    <path d="M3 21l2.5 -2.5"></path>
+    <path class="icn-plug-leg" d="M10 11l-2 2"></path>
+    <path class="icn-plug-leg" d="M13 14l-2 2"></path>
+  </g>
+  <g class="icn-plug-u">
+    <path d="M17 12l-5 -5l1.5 -1.5a3.536 3.536 0 1 1 5 5l-1.5 1.5z"></path>
+    <path d="M18.5 5.5l2.5 -2.5"></path>
+  </g>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

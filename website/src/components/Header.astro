@@ -1,6 +1,7 @@
 ---
 import { SITE } from '../config/site';
 import { type Lang, useTranslations, altPath } from '../i18n/ui';
+import WorldIcon from './icons/WorldIcon.astro';
 
 interface Props {
   lang: Lang;
@@ -25,8 +26,11 @@ const links = [
 
 <header class="sticky top-0 z-40 border-b border-steel-soft bg-graphite">
   <div class="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6">
-    <a href={lang === 'de' ? '/' : '/en/'} class="type-wordmark text-[1.35rem]">
-      {SITE.name}<span class="text-signal">.</span>
+    <a href={lang === 'de' ? '/' : '/en/'} class="group type-wordmark text-[1.35rem]">
+      {SITE.name}<span
+        class="inline-block text-signal transition-transform duration-200 ease-out group-hover:-translate-y-[0.08em] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+        >.</span
+      >
     </a>
 
     <nav class="hidden items-center gap-8 md:flex" aria-label={t('a11y.mainNav')}>
@@ -41,9 +45,11 @@ const links = [
         hasAlternate && (
           <a
             href={switchHref}
-            class="type-annot ml-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
+            data-icon-hover
+            class="type-annot ml-2 inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
             aria-label={t('a11y.langSwitch')}
           >
+            <WorldIcon size={14} class="shrink-0" />
             {lang === 'de' ? 'DE → EN' : 'EN → DE'}
           </a>
         )
@@ -51,9 +57,17 @@ const links = [
     </nav>
 
     <div class="flex items-center gap-4 md:hidden">
+      {/* Parity with the desktop toggle (D-043): same icon, plus the hover
+          classes it never had. */}
       {
         hasAlternate && (
-          <a href={switchHref} class="type-annot border border-steel-soft px-2.5 py-1.5 text-steel" aria-label={t('a11y.langSwitch')}>
+          <a
+            href={switchHref}
+            data-icon-hover
+            class="type-annot inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
+            aria-label={t('a11y.langSwitch')}
+          >
+            <WorldIcon size={14} class="shrink-0" />
             {lang === 'de' ? 'EN' : 'DE'}
           </a>
         )

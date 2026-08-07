@@ -81,7 +81,8 @@ Three single sources in the website — never work around them:
 ## Working style
 - Small, reviewable commits. Conventional commits (`feat:`, `fix:`, `docs:`, `chore:`).
 - Definition of done: builds clean, lints clean, `npm run kb` clean, brand-check passes,
-  mobile 360px checked, Lighthouse ≥ 95 on performance/accessibility/SEO for website work.
+  mobile 360px checked, Lighthouse ≥ 95 on accessibility/SEO and desktop performance,
+  ≥ 94 on mobile performance (re-based by D-043) for website work.
 - Prefer boring, maintainable solutions. This repo must be understandable by one person at 2am.
 - Use subagents (`.claude/agents/`) for parallelizable, independent work. Only escalate to agent
   teams for genuinely interdependent parallel work.

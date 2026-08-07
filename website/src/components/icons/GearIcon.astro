@@ -1,0 +1,35 @@
+---
+/**
+ * Gear — part symbol for NB-01 Automatisierung. itshover port (D-043), CSS-only.
+ * On parent [data-icon-hover] hover the rotor indexes exactly one tooth (45° of
+ * an 8-tooth gear) — a mechanism advancing one step, not a spinner.
+ * 32-unit grid, so stroke 2 ≡ the house 1.5 @ 24 (DESIGN.md icon grammar).
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 20, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-gear', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 32 32"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-miterlimit="10"
+  aria-hidden="true"
+>
+  <g class="icn-gear-rotor">
+    <circle cx="16" cy="16" r="5"></circle>
+    <path
+      d="m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z"
+    ></path>
+  </g>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section): colocated is:global
+    blocks measurably cost the Lighthouse-95 floor — see the qa gate note there. */}

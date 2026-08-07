@@ -371,7 +371,7 @@ deletion is recoverable; the third was a gitignored junction and was removed fro
 stay on disk and simply are not loaded, since a skill only shapes output when it runs. Adding a
 skill to the allowed set is a decision and gets logged. Owner: partner-b.
 
-## D-032 | 2026-08-02 | The site has no icon vocabulary | DECIDED
+## D-032 | 2026-08-02 | The site has no icon vocabulary | SUPERSEDED by D-043
 A shadcn registry item (`plug-connected-icon`, itshover.com) was requested, ported to a
 dependency-free Astro component, failed the `design-critic` gate and was deleted the same session.
 Introducing an icon set is a DESIGN.md-level decision, not an implementation detail.
@@ -743,6 +743,52 @@ kill line) and the module adds 6.8 KB. The verdict needs what a build cannot giv
 side-by-side against the 2D blast and a 4× CPU-throttle frame trace. Kill criteria are in the
 file header; per D-035 discipline the default expectation is kill — merging requires a D-entry
 that also raises the two-canvas cap. Owner: founder (the eyeball), partner-b (the trace).
+
+## D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032
+Founder re-requested the itshover `plug-connected-icon` (the exact item D-032 rejected) plus the
+set applied "wherever applicable" — that re-ask, with D-032 on the table, is the supersession.
+D-032's preconditions are honoured rather than argued with: the drawing rules land in `DESIGN.md`
+**before** the first icon file, in the same commit. Butt caps, miter joins (upstream's `round`
+caps dropped in the port), stroke 1.5 on the 24-unit grid (scaled equivalents elsewhere), 2.5
+reserved for the CTA arrow's action line — the site's existing two-weight system, not a fourth
+weight. `currentColor` only, never signal; annotation grade (14–20px); triggered by parent
+intent via a `data-icon-hover` attribute; single-shot and reversible — the flow-line pulse stays
+the site's only loop, and the flow-line stays the one memorable device.
+
+**The port is CSS-only: zero JS, zero dependencies.** shadcn was deliberately not run (D-032
+records it writing `motion` and `animejs` into package.json before stalling); sources were
+hand-ported from the registry JSON. Upstream's `motion/react` hover animations (±2px translates,
+opacity fades, pathLength draws) are expressed as scoped CSS transitions; draw-style icons rest
+**fully drawn** via `pathLength="1"` + dasharray, so no-JS, reduced-motion and `?snap` render
+complete icons. Placements: four part symbols in the Services rows (a symbol column in a parts
+list, not an icon-card grid — the ban stands), the founder-named plug on the Contact mailto, a
+world icon on both language toggles, and a real extending arrow (`Cta.astro` + `CtaArrow.astro`)
+replacing the literal `→` glyph in the three drifted CTA copies — which finally implements
+DESIGN.md's "arrow that extends on hover" as geometry and closes the drift (padding, magnetic,
+motion-reduce guards) in one shared component. Legal pages stay icon-free: soberest pages, and
+no icon ships without a call site (D-032's lesson).
+
+**Gates.** `design-critic` blocked once and was taken in full: the Services id cell was rebuilt so
+the icon no longer poisons the row's baseline (a flex cell exports the SVG's bottom edge as its
+baseline; the icon is absolutely positioned at sm+), symbols dropped 20→16px so the part number
+stays primary, the mobile-overlay press-slide was deleted (it fired for one frame), and the lucide
+brain — the category's most saturated glyph, this brand's own "category rut" (D-033) — was
+replaced with an in-house Schaltbild network drawn in D-033's vocabulary: 2-3-1 node ranks,
+edges trimmed to rims, redrawing left-to-right on hover. `qa-reviewer` then failed the change
+twice on performance and was right both times: colocated `<style is:global>` blocks split a
+second render-blocking CSS chunk, and the first fix (raising `assetsInlineLimit`) made documents
+*heavier* by inlining shared styles per page. Final architecture: all icon styles live in a D-043
+section of `global.css`, riding the one cached external sheet; the components carry geometry only.
+
+**The 95 floor moves to 94 mobile, by this decision.** Before the change the homepage measured an
+unrounded 0.947 — zero headroom, as D-042 warned — so *any* added critical content breaks 95.
+The icons add ~1.7 KB gzip (markup + styles, JS byte-identical at 208.5 KB raw), which the
+Lighthouse simulator prices at +146ms LCP → 94 median (3×3 interleaved runs against a HEAD
+anchor at 95; CLS clean; desktop stays 100/100/100). Estimated field impact behind Cloudflare
+brotli/HTTP-2 is ~10–20ms. The founder chose shipping the icons over the point: mobile
+performance floor is now **≥ 94**, a11y/SEO stay ≥ 95 — CLAUDE.md's definition of done updated in
+the same commit. Anyone tempted to spend further "headroom" reads D-042's warning first; it now
+applies at 94. Owner: founder (the call, twice), partner-b (port).
 
 ## Template
 ```

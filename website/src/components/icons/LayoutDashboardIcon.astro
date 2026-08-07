@@ -1,0 +1,31 @@
+---
+/**
+ * Dashboard panels — part symbol for NB-03 Dashboards. itshover port (D-043),
+ * CSS-only. On parent hover the four panels rotate places clockwise (upstream's
+ * exact offsets) — a dashboard re-arranging itself — and settle back on leave.
+ * rx="1" sits inside the site's 2px corner-radius cap.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 20, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-dash', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <rect class="icn-dash-r1" width="7" height="9" x="3" y="3" rx="1"></rect>
+  <rect class="icn-dash-r2" width="7" height="5" x="14" y="3" rx="1"></rect>
+  <rect class="icn-dash-r3" width="7" height="9" x="14" y="12" rx="1"></rect>
+  <rect class="icn-dash-r4" width="7" height="5" x="3" y="16" rx="1"></rect>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

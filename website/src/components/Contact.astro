@@ -1,6 +1,8 @@
 ---
 import { type Lang, useTranslations } from '../i18n/ui';
 import { SITE } from '../config/site';
+import Cta from './Cta.astro';
+import PlugConnectedIcon from './icons/PlugConnectedIcon.astro';
 
 interface Props {
   lang: Lang;
@@ -141,17 +143,24 @@ const formStrings = {
           </div>
 
           <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <button
-              type="submit"
-              data-magnetic="0.25"
-              class="group inline-flex items-center gap-3 bg-signal px-7 py-4 font-semibold text-graphite"
-            >
+            <Cta type="submit" magnetic="0.25" size="lg">
               <span data-submit-label>{t('form.submit')}</span>
-              <span class="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5" aria-hidden="true">→</span>
-            </button>
+            </Cta>
             <p class="type-annot text-steel">
               {t('form.orMail')}
-              <a href={`mailto:${SITE.email}`} class="ml-1.5 text-paper underline underline-offset-4">{SITE.email}</a>
+              {/* The founder-named plug (D-043): contact made. Rests steel,
+                  joins the text's paper on hover like the nav links. */}
+              <a
+                href={`mailto:${SITE.email}`}
+                data-icon-hover
+                class="group link-draw ml-1.5 inline-flex items-center gap-1.5 text-paper"
+              >
+                <PlugConnectedIcon
+                  size={15}
+                  class="shrink-0 text-steel transition-colors duration-200 group-hover:text-paper motion-reduce:transition-none"
+                />
+                {SITE.email}
+              </a>
             </p>
           </div>
 
@@ -208,11 +217,12 @@ const formStrings = {
   .err.is-shown {
     display: block;
   }
+  /* Error state: the whole field is marked, not a side tab — DESIGN.md bans
+     colored left-borders >1px, and its own .err line below carries the alarm. */
   .field.has-error input[type='text'],
   .field.has-error input[type='email'],
   .field.has-error textarea {
-    border-left-width: 3px;
-    border-left-color: var(--color-signal);
+    border-color: var(--color-signal);
   }
   #form-status {
     color: var(--color-steel);

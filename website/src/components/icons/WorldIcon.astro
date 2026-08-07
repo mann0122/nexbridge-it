@@ -1,0 +1,31 @@
+---
+/**
+ * World — the language toggle's symbol. itshover port (D-043), CSS-only.
+ * The globe holds still; on parent hover the meridians redraw once, staggered —
+ * the map re-annotating itself, single-shot. Rest state is the complete drawing.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 14, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-world', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+  <path class="icn-world-m" pathLength="1" style="--icn-d: 0ms" d="M3.6 9h16.8"></path>
+  <path class="icn-world-m" pathLength="1" style="--icn-d: 40ms" d="M3.6 15h16.8"></path>
+  <path class="icn-world-m" pathLength="1" style="--icn-d: 80ms" d="M11.5 3a17 17 0 0 0 0 18"></path>
+  <path class="icn-world-m" pathLength="1" style="--icn-d: 120ms" d="M12.5 3a17 17 0 0 1 0 18"></path>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

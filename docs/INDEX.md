@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-06 · 15 nodes · 42 decisions
+Content as of 2026-08-06 · 15 nodes · 43 decisions
 
 ## Map
 
@@ -136,7 +136,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-029 | 2026-08-02 | Official venture email: nexbridge-it@mailbox.org | DECIDED | — |
 | D-030 | 2026-08-02 | GSAP is the only animation engine | DECIDED | — |
 | D-031 | 2026-08-02 | Design skills are allowlisted, not accumulated | DECIDED | — |
-| D-032 | 2026-08-02 | The site has no icon vocabulary | DECIDED | — |
+| ~~D-032~~ | 2026-08-02 | The site has no icon vocabulary | SUPERSEDED by D-043 | — |
 | D-033 | 2026-08-02 | Wandlung re-themed to the AI stack; solid pyramid mark | DECIDED | — |
 | D-034 | 2026-08-02 | Wandlung: volumetric fill, a brain, 9000 particles | DECIDED | — |
 | D-035 | 2026-08-02 | Particle field removed from the site entirely | DECIDED | — |
@@ -147,6 +147,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | `state` |
 | D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | `state` |
 | D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | `state` |
+| D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | — |
 
 ### ⏳ Pending — work that depends on these is blocked
 

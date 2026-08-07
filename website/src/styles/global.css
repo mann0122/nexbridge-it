@@ -165,6 +165,225 @@ section[id] {
   }
 }
 
+/* ---------------------------------------------------------------------
+   D-043 icon system. Geometry lives in src/components/icons/*.astro; the
+   styles live HERE, in the one cached external sheet, because colocated
+   <style is:global> blocks were measured costing the Lighthouse-95 floor:
+   they split into a second render-blocking chunk, and inlining that chunk
+   duplicated ~6 KB into every document (qa gate, 3×3 interleaved runs).
+   Trigger contract: a bare data-icon-hover attribute on the interactive
+   parent; every animation is single-shot on the .dim-row curve.
+   --------------------------------------------------------------------- */
+
+/* Gear (NB-01): the rotor indexes one tooth of eight. */
+.icn-gear-rotor {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  transition: transform 200ms ease;
+}
+[data-icon-hover]:hover .icn-gear-rotor,
+[data-icon-hover]:focus-visible .icn-gear-rotor {
+  transform: rotate(45deg);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Network Schaltbild (NB-02): edges redraw, signal propagating. */
+.icn-net-e {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+[data-icon-hover]:hover .icn-net-e,
+[data-icon-hover]:focus-visible .icn-net-e {
+  animation: icn-net-draw 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--icn-d, 0ms);
+}
+@keyframes icn-net-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Dashboard (NB-03): the four panels rotate places. */
+.icn-dash-r1,
+.icn-dash-r2,
+.icn-dash-r3,
+.icn-dash-r4 {
+  transition: transform 200ms ease;
+}
+[data-icon-hover]:hover .icn-dash-r1,
+[data-icon-hover]:focus-visible .icn-dash-r1 {
+  transform: translate(10px, 0);
+}
+[data-icon-hover]:hover .icn-dash-r2,
+[data-icon-hover]:focus-visible .icn-dash-r2 {
+  transform: translate(-1px, 12px);
+}
+[data-icon-hover]:hover .icn-dash-r3,
+[data-icon-hover]:focus-visible .icn-dash-r3 {
+  transform: translate(-10px, 0);
+}
+[data-icon-hover]:hover .icn-dash-r4,
+[data-icon-hover]:focus-visible .icn-dash-r4 {
+  transform: translate(1px, -12px);
+}
+[data-icon-hover]:hover .icn-dash-r1,
+[data-icon-hover]:hover .icn-dash-r2,
+[data-icon-hover]:hover .icn-dash-r3,
+[data-icon-hover]:hover .icn-dash-r4,
+[data-icon-hover]:focus-visible .icn-dash-r1,
+[data-icon-hover]:focus-visible .icn-dash-r2,
+[data-icon-hover]:focus-visible .icn-dash-r3,
+[data-icon-hover]:focus-visible .icn-dash-r4 {
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Code brackets (NB-04): the brackets spread. */
+.icn-code-l,
+.icn-code-r {
+  transition: transform 200ms ease;
+}
+[data-icon-hover]:hover .icn-code-l,
+[data-icon-hover]:focus-visible .icn-code-l {
+  transform: translateX(-1.5px);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-icon-hover]:hover .icn-code-r,
+[data-icon-hover]:focus-visible .icn-code-r {
+  transform: translateX(1.5px);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* World (language toggle): meridians redraw. */
+.icn-world-m {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+[data-icon-hover]:hover .icn-world-m,
+[data-icon-hover]:focus-visible .icn-world-m {
+  animation: icn-world-draw 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--icn-d, 0ms);
+}
+@keyframes icn-world-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Plug (Contact mailto): the halves connect, the gap ticks fade. */
+.icn-plug-l,
+.icn-plug-u {
+  transition: transform 200ms ease;
+}
+.icn-plug-leg {
+  transition: opacity 300ms ease;
+}
+[data-icon-hover]:hover .icn-plug-l,
+[data-icon-hover]:focus-visible .icn-plug-l {
+  transform: translate(2px, -2px);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-icon-hover]:hover .icn-plug-u,
+[data-icon-hover]:focus-visible .icn-plug-u {
+  transform: translate(-2px, 2px);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-icon-hover]:hover .icn-plug-leg,
+[data-icon-hover]:focus-visible .icn-plug-leg {
+  opacity: 0;
+}
+
+/* CTA arrow: the 2.5-weight shaft lengthens into the fixed head; both travel
+   4.2 units so the butt joint holds in either state. */
+.icn-cta-line {
+  transform: scaleX(0.6);
+  transform-origin: 4px 12px;
+  transition: transform 200ms ease;
+}
+.icn-cta-head {
+  transform: translateX(-4.2px);
+  transition: transform 200ms ease;
+}
+[data-icon-hover]:hover .icn-cta-line,
+[data-icon-hover]:focus-visible .icn-cta-line {
+  transform: scaleX(1);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-icon-hover]:hover .icn-cta-head,
+[data-icon-hover]:focus-visible .icn-cta-head {
+  transform: translateX(0);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Icons under reduced motion: nothing moves, everything rests complete.
+   The hover selectors are named so they cannot outrank the off-switch. */
+@media (prefers-reduced-motion: reduce) {
+  .icn-gear-rotor,
+  [data-icon-hover]:hover .icn-gear-rotor,
+  [data-icon-hover]:focus-visible .icn-gear-rotor,
+  .icn-dash-r1,
+  .icn-dash-r2,
+  .icn-dash-r3,
+  .icn-dash-r4,
+  [data-icon-hover]:hover .icn-dash-r1,
+  [data-icon-hover]:hover .icn-dash-r2,
+  [data-icon-hover]:hover .icn-dash-r3,
+  [data-icon-hover]:hover .icn-dash-r4,
+  [data-icon-hover]:focus-visible .icn-dash-r1,
+  [data-icon-hover]:focus-visible .icn-dash-r2,
+  [data-icon-hover]:focus-visible .icn-dash-r3,
+  [data-icon-hover]:focus-visible .icn-dash-r4,
+  .icn-code-l,
+  .icn-code-r,
+  [data-icon-hover]:hover .icn-code-l,
+  [data-icon-hover]:hover .icn-code-r,
+  [data-icon-hover]:focus-visible .icn-code-l,
+  [data-icon-hover]:focus-visible .icn-code-r,
+  .icn-plug-l,
+  .icn-plug-u,
+  [data-icon-hover]:hover .icn-plug-l,
+  [data-icon-hover]:hover .icn-plug-u,
+  [data-icon-hover]:focus-visible .icn-plug-l,
+  [data-icon-hover]:focus-visible .icn-plug-u {
+    transition: none;
+    transform: none;
+  }
+  .icn-plug-leg,
+  [data-icon-hover]:hover .icn-plug-leg,
+  [data-icon-hover]:focus-visible .icn-plug-leg {
+    transition: none;
+    opacity: 1;
+  }
+  [data-icon-hover]:hover .icn-net-e,
+  [data-icon-hover]:focus-visible .icn-net-e,
+  [data-icon-hover]:hover .icn-world-m,
+  [data-icon-hover]:focus-visible .icn-world-m {
+    animation: none;
+  }
+  /* The CTA arrow rests compact — still a complete arrow, it does not move. */
+  .icn-cta-line,
+  .icn-cta-head,
+  [data-icon-hover]:hover .icn-cta-line,
+  [data-icon-hover]:hover .icn-cta-head,
+  [data-icon-hover]:focus-visible .icn-cta-line,
+  [data-icon-hover]:focus-visible .icn-cta-head {
+    transition: none;
+  }
+  [data-icon-hover]:hover .icn-cta-line,
+  [data-icon-hover]:focus-visible .icn-cta-line {
+    transform: scaleX(0.6);
+  }
+  [data-icon-hover]:hover .icn-cta-head,
+  [data-icon-hover]:focus-visible .icn-cta-head {
+    transform: translateX(-4.2px);
+  }
+}
+
 /* Link underline that draws in from the left --------------------------- */
 .link-draw {
   background-image: linear-gradient(currentColor, currentColor);

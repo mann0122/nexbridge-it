@@ -2,6 +2,7 @@
 import { type Lang, useTranslations } from '../i18n/ui';
 import { SITE } from '../config/site';
 import FlowField from './FlowField.astro';
+import Cta from './Cta.astro';
 
 interface Props {
   lang: Lang;
@@ -37,15 +38,13 @@ const base = lang === 'de' ? '' : '/en';
     </p>
 
     <div class="hero-stage mt-10 flex flex-wrap items-center gap-4">
+      <Cta href={`${base}/#kontakt`}>{t('hero.ctaPrimary')}</Cta>
+      {/* Secondary per DESIGN.md: 1px steel border, paper text, the primary's
+          geometry — replacing the bare link-draw that undersold it (D-043). */}
       <a
-        href={`${base}/#kontakt`}
-        data-magnetic="0.3"
-        class="group inline-flex items-center gap-3 bg-signal px-6 py-3.5 font-semibold text-graphite"
+        href={`${base}/#leistungen`}
+        class="inline-flex items-center border border-steel-soft px-6 py-3.5 font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
       >
-        {t('hero.ctaPrimary')}
-        <span class="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5" aria-hidden="true">→</span>
-      </a>
-      <a href={`${base}/#leistungen`} class="link-draw inline-flex items-center px-2 py-3.5 text-paper">
         {t('hero.ctaSecondary')}
       </a>
     </div>

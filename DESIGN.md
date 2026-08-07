@@ -102,20 +102,52 @@ is bound to the visitor's own hand instead of being asked to carry meaning, it c
 space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
 D-040's dispersion is not a third canvas — it is the first canvas, dispersing.
 
-Budget (D-042, measured): **212.8 KB JS raw / 72.7 KB brotli** first load (was 184/63 at
-D-037; the ClientRouter runtime is 15.7 of the increase), plus the deferred **50 KB raw /
-12 KB brotli** `ogl` chunk fetched only once the cursor trail's gates pass — phones and
-reduced-motion visitors never download it. Zero external asset requests. Lighthouse: desktop
-100/100/100, **mobile 95/100/100 — the 95 floor held** with no headroom; the founder's
-pre-accepted relaxation lapsed unused. Measure before raising any of these numbers.
+Budget (D-042, re-based by D-043): **212.8 KB JS raw / 72.7 KB brotli** first load (unchanged
+by D-043 — the icons are zero JS), plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk
+fetched only once the cursor trail's gates pass. Homepage document ~54 KB raw / 11.4 KB gzip
+(icons added ~1.7 KB gzip of markup + styles). Zero external asset requests. Lighthouse:
+desktop 100/100/100, **mobile 94/100/100 — the performance floor is 94 since D-043** (the
+founder traded the point for the icon vocabulary; the page had an unrounded 0.947 before, i.e.
+zero headroom, exactly as D-042 warned). A11y/SEO floors stay 95. Measure before raising any
+of these numbers — D-042's warning about spending headroom that does not exist now applies
+at 94.
 
 ## Components (as they get built)
 
 - CTA: signal bg, graphite text, weight 600, square corners with 2px radius max, arrow that
-  extends on hover. Secondary: 1px steel border, paper text, same geometry.
+  extends on hover — real geometry since D-043: `Cta.astro` wraps the shell,
+  `icons/CtaArrow.astro` draws a 2.5-weight shaft that lengthens into a fixed filled head.
+  Secondary: 1px steel border, paper text, same geometry.
 - Nav: graphite, wordmark left, links center-right, language switch DE/EN as mono toggle,
   CTA right. Mobile: full-screen graphite overlay.
 - Focus states: 2px signal outline offset 2px, everywhere.
+
+### Icon grammar (D-043, supersedes D-032's zero-icon rule)
+
+One `.astro` file per icon in `website/src/components/icons/`, inline SVG, no JS, no deps.
+The rules D-032 demanded, now binding:
+
+- **Strokes**: butt caps, miter joins — never `round`, nothing else on the site rounds. Weight
+  1.5 on the 24-unit grid (2 on a 32 grid); **2.5 belongs to the CTA arrow's action line only**,
+  mirroring the flow-line's muted/action weight pair. No third weight, ever.
+- **Colour**: `stroke="currentColor"` and nothing else — steel-deep on paper, steel on graphite,
+  **never signal** (the ration counts elements; icons are not elements, they are annotations).
+- **Size**: annotation grade, 14–20px, inline in row/label grammar like part symbols on a
+  drawing. The icon-card-grid ban stands untouched.
+- **Trigger**: a bare `data-icon-hover` attribute on the interactive parent; CSS fires on its
+  `:hover` and `:focus-visible`. Never on hovering the SVG itself — the link is the hit area.
+- **Motion**: single-shot and reversible, 420ms `cubic-bezier(0.16,1,0.3,1)` in / 200ms ease
+  out (the `.dim-row` curve, so icon and dimension lines read as one event). No infinite loops —
+  the flow-line pulse remains the site's only loop. Every rule carries the
+  `prefers-reduced-motion: reduce` off-switch.
+- **Rest state is the complete drawing**: draw-on-hover icons use `pathLength="1"` + dasharray
+  and rest fully drawn, so no-JS, reduced-motion and `?snap` all render finished icons.
+- Styles live in the **D-043 icon system section of `global.css`**, namespaced `icn-<name>-*` —
+  one cached external sheet. Colocated `<style is:global>` blocks were tried first and measurably
+  cost the Lighthouse-95 floor: they split into a second render-blocking CSS chunk, and inlining
+  that chunk duplicated ~6 KB into every document (qa gate, interleaved runs). Geometry stays in
+  the component; motion lives with the other shared idioms.
+- **No icon without a call site** (D-032's lesson) — port on placement, never on speculation.
 
 ## Anti-patterns (hard bans from docs/02-brand.md + craft floor)
 

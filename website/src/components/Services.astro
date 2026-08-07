@@ -1,5 +1,9 @@
 ---
 import { type Lang, useTranslations } from '../i18n/ui';
+import GearIcon from './icons/GearIcon.astro';
+import NetworkIcon from './icons/NetworkIcon.astro';
+import LayoutDashboardIcon from './icons/LayoutDashboardIcon.astro';
+import CodeIcon from './icons/CodeIcon.astro';
 
 interface Props {
   lang: Lang;
@@ -8,10 +12,16 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+/* Part symbols (D-043): one per row, in service order — Automatisierung,
+   KI-Agenten, Dashboards, Individualsoftware. A symbol column in a parts
+   list, in the id cell's annotation grammar — not an icon-card grid. */
+const icons = [GearIcon, NetworkIcon, LayoutDashboardIcon, CodeIcon];
+
 const rows = [1, 2, 3, 4].map((i) => ({
   id: t(`services.${i}.id` as Parameters<typeof t>[0]),
   title: t(`services.${i}.title` as Parameters<typeof t>[0]),
   note: t(`services.${i}.note` as Parameters<typeof t>[0]),
+  Icon: icons[i - 1],
 }));
 ---
 
@@ -26,9 +36,15 @@ const rows = [1, 2, 3, 4].map((i) => ({
     <div class="mt-12 border-t border-line">
       {
         rows.map((row) => (
-          <div class="dim-row grid grid-cols-1 gap-2 border-b border-line py-7 sm:grid-cols-12 sm:items-baseline sm:gap-6" data-reveal>
+          <div class="dim-row grid grid-cols-1 gap-2 border-b border-line py-7 sm:grid-cols-12 sm:items-baseline sm:gap-6" data-icon-hover data-reveal>
             <span class="dim-tick" aria-hidden="true">{row.id}</span>
-            <span class="type-annot text-steel-deep sm:col-span-2">{row.id}</span>
+            {/* At sm+ the icon is absolutely positioned so the cell stays a plain
+                text box: a flex cell would export the SVG's bottom edge as the
+                row's baseline and float NB-0x ~6px off the title's baseline. */}
+            <span class="type-annot relative flex items-center gap-2.5 text-steel-deep sm:col-span-2 sm:block sm:pl-[1.625rem]">
+              <row.Icon size={16} class="shrink-0 sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2" />
+              {row.id}
+            </span>
             <h3 class="type-subhead text-2xl sm:col-span-4">{row.title}</h3>
             <p class="text-[0.95rem] leading-relaxed text-steel-deep sm:col-span-6">{row.note}</p>
           </div>

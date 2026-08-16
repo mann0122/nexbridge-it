@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-06
+updated: 2026-08-16
 depends_on: []
 decisions: []
 ---
@@ -847,6 +847,56 @@ their place; treatments applied over the whole canvas do not. Also housekeeping:
 `feat/motion-upgrade` and `feat/flowrail` branches and the stale `feat/wandlung-stage` are
 deleted; `main` is the only long-lived branch again. Owner: founder (verdict), partner-b
 (removal).
+
+## D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED
+Founder-described: the header wordmark's signal period lifts off, bounces across every
+letter, drops into the hero schematic and merges with the pulse that travels the signal
+line. Calibrated into the house register as a **measuring probe indexing the name** —
+constant hop height, constant 200ms rhythm (the founder rejected 120ms as too fast to
+watch), letters never move. Off the last glyph the dot **descends the hero copy in a
+staircase** — one bounce per text line (both H1 lines, the subline; founder-directed),
+stepping rightward toward the merge point — then one restrained contact tick, and the
+clone hands off to `.flow-pulse` and the normal loop runs. A **fading afterimage trails
+the dot** (founder-directed): ghost elements on the one frame clock, alpha from 0.32
+down, self-removing — an afterimage of the sanctioned element, not a second signal
+object, the same argument that holds the Ribbons wash under the ration (D-037). Single-shot, **once per browser page-load** (F5 replays; router
+remounts and DE↔EN twins decline). D-046 is taken on the unmerged logo-sting branch;
+numbering continues at 47 to avoid a collision at merge.
+
+**Ration accounting.** The in-flight dot replaces the resting period 1:1 (original at
+`opacity: 0` — not `visibility`, so the link keeps its accessible name); the element count
+never rises. The copy crossings stand **on their own accounting**, not on D-044 — the
+`design-critic` gate blocked that citation as inverted (D-044's debris is a logged *second*
+element, and a prior gate ordered it *off* live copy; this is the opposite case). What
+carries it: the sanctioned element in transit — the ration counts elements, not positions —
+~5px of ink against ≥40px display glyphs, contacts at line-box tops, under half a second
+per crossing, single-shot. No new loop: the sequence *ends in* the flow-line pulse, still
+the site's only one (D-043).
+
+**Gate findings taken in full.** `design-critic`: the precedent rewording above; a real
+bail gap — the mobile menu (fixed, z-40, scroll-locked) could open mid-flight and the
+scroll bail could never fire, so menu-open, resize and orientationchange now bail exactly
+like scroll; and the trail spawner now reads tween state instead of
+`getBoundingClientRect` (zero forced layout — the 94 floor has no headroom).
+`qa-reviewer`: traced every exit path to exactly one pulse, and failed the first bundle
+claim as stale — the measured numbers below replaced it.
+
+**Ownership contract.** `Hero.astro` now dispatches a cancelable `flowline:ready` when the
+schematic finishes drawing (the same idiom as `flowfield:blast`). `wordmark-drop.ts` claims
+it via `preventDefault` and then owns the first pulse; every exit path — merge, scroll
+bail, unmount — leaves exactly one pulse running. Unclaimed, Hero's old
+`pulseAlong(…, 0.4)` line runs to the letter. Guards before claiming, all checkable:
+`!motionOff`, not yet played, `scrollY < 8`, and the signal line's origin on stage
+(`getScreenCTM`-mapped) — a 360×740 phone skips honestly because the schematic sits below
+the fold. Letter rects come from `document.createRange()` — zero DOM mutation in the
+sticky header. The bounce starts only at `flowline:ready` because the dot must not land on
+a line that has not been drawn. Owner: partner-b, on the founder's description.
+
+**Measured** (qa gate, HEAD rebuilt in a scratch worktree for the before-numbers): the
+homepage motion chunk goes 8,591 → 13,076 B raw; total first-load delta **+4.6 KB raw /
++1.5 KB gzip** (≈ 223 KB raw first load from D-044's 218.6). An earlier +3 KB estimate
+predated the founder-directed staircase and trail and failed the gate as stale — these are
+the real numbers.
 
 ## Template
 ```

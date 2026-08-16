@@ -108,6 +108,18 @@ the drafting-sheet veil and vanish — this amends D-039's "the sheet number is 
 signal element": during the ~1.2s shower, the debris is the second, by design and founder
 order. JS-built; no-JS and `?snap` pages are byte-identical.
 
+**Wordmark drop** (D-047): once per page-load, after the schematic finishes drawing, the
+wordmark's signal period lifts off and indexes across the name — constant hop height,
+constant 200ms rhythm, a measuring probe, not a bouncing ball; the letters never move —
+then descends the hero copy in a staircase (one contact per text line, stepping rightward),
+lands on the signal line's origin and **becomes the first pulse**. A fading afterimage
+trails it (ghosts on the one ticker, alpha 0.32 → 0, self-removing). The flying dot
+replaces the resting period 1:1, so the ration's element count never rises, and the
+sequence *ends in* the flow-line pulse — still the site's only loop. Router remounts
+decline (F5 replays); scroll, resize, rotation or the mobile menu opening mid-flight bail
+cleanly to the normal pulse; small viewports where the merge point sits below the fold
+skip honestly. JS-built; no-JS and `?snap` pages unchanged.
+
 **No pinned scroll sequence.** A morphing particle stage was built and removed across
 D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
 `FlowField` in the hero was the page's only generative canvas until D-037 admitted the `Ribbons`
@@ -116,9 +128,10 @@ is bound to the visitor's own hand instead of being asked to carry meaning, it c
 space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
 D-040's dispersion is not a third canvas — it is the first canvas, dispersing.
 
-Budget (D-042, re-based by D-043): **212.8 KB JS raw / 72.7 KB brotli** first load (unchanged
-by D-043 — the icons are zero JS), plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk
-fetched only once the cursor trail's gates pass. Homepage document ~54 KB raw / 11.4 KB gzip
+Budget (D-042, re-based by D-043; D-044 measured 218.6 raw / 74.5 brotli; D-047 adds
++4.6 KB raw / +1.5 KB gzip in the homepage-only chunk): **~223 KB JS raw** first load,
+plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk fetched only once the cursor
+trail's gates pass. Homepage document ~54 KB raw / 11.4 KB gzip
 (icons added ~1.7 KB gzip of markup + styles). Zero external asset requests. Lighthouse:
 desktop 100/100/100, **mobile 94/100/100 — the performance floor is 94 since D-043** (the
 founder traded the point for the icon vocabulary; the page had an unrounded 0.947 before, i.e.

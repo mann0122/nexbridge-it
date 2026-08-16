@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-06
+updated: 2026-08-16
 depends_on: []
 decisions: []
 ---
@@ -847,6 +847,22 @@ their place; treatments applied over the whole canvas do not. Also housekeeping:
 `feat/motion-upgrade` and `feat/flowrail` branches and the stale `feat/wandlung-stage` are
 deleted; `main` is the only long-lived branch again. Owner: founder (verdict), partner-b
 (removal).
+
+## D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED
+The company has an animated logo (5s, silent, graphite drafting-sheet world). Choreography,
+founder-directed: the two muted process lines draw in and converge; the signal line rules
+itself right with a **filled arrowhead as its moving tip** (the CTA/flowrail arrow grammar —
+the lockup itself now ends in this arrowhead); the wordmark rises out of blur above the line;
+the signal period stamps last; `NB-001` teletypes into the corner; hold on the exact lockup.
+Two candidates were built: a deterministic code-rendered master (HTML/SVG stepped frame-by-
+frame in headless Chromium, ffmpeg-encoded) and a Seedance 2.0 generation locked to
+brand-true start/end keyframes rendered from the real system (Archivo, token hexes — the
+model never drew the logo itself). **The founder picked the Higgsfield version**; the code
+master is archived as an alternate. 1:1 and 9:16 cuts follow the same keyframe recipe. Scope
+note: `DESIGN.md`'s generated-imagery ban governs the website's drawn world; this sting is
+off-site brand collateral (video intros, social) on founder order — the site keeps drawing
+its logo in code. Assets: founder's Higgsfield library (16:9 job `a4582aac`) + delivered
+MP4s; ~270 credits total. Owner: founder (verdict), partner-b (build).
 
 ## Template
 ```

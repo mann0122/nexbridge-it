@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-07 · 15 nodes · 45 decisions
+Content as of 2026-08-16 · 15 nodes · 46 decisions
 
 ## Map
 
@@ -84,15 +84,15 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `design` | DESIGN.md (visual world) | artifact | active | partner-b | — | [DESIGN.md](../DESIGN.md) | — |
 | `vision` | Vision & operating model | knowledge | active | founders | 2026-07-27 | [docs/00-vision.md](00-vision.md) | `offer`, `brand`, `agent-system`, `state`, `product` |
 | `offer` | Offer & packages | knowledge | active | founders | 2026-07-31 | [docs/01-offer.md](01-offer.md) | `website-spec`, `delivery`, `state`, `product` |
-| `brand` | Brand | knowledge | active | partner-b | 2026-08-01 | [docs/02-brand.md](02-brand.md) | `website-spec`, `state`, `design`, `product` |
+| `brand` | Brand | knowledge | active | partner-b | 2026-08-16 | [docs/02-brand.md](02-brand.md) | `website-spec`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-08-06 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-08-16 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
-| `state` | Where things stand | state | active | partner-b | 2026-08-07 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
+| `state` | Where things stand | state | active | partner-b | 2026-08-16 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
@@ -150,6 +150,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | `state` |
 | D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | `state` |
 | D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | `state` |
+| D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED | `brand`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

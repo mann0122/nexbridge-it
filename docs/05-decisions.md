@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-16
+updated: 2026-08-23
 depends_on: []
 decisions: []
 ---
@@ -897,6 +897,25 @@ homepage motion chunk goes 8,591 → 13,076 B raw; total first-load delta **+4.6
 +1.5 KB gzip** (≈ 223 KB raw first load from D-044's 218.6). An earlier +3 KB estimate
 predated the founder-directed staircase and trail and failed the gate as stale — these are
 the real numbers.
+
+## D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED
+Founder asked for one company design file "with everything included" to feed external
+websites and tools. Shipped as `docs/07-brand-kit.md` — a self-contained kit (identity,
+colour + computed contrast, typography incl. the full heading scale and both mono
+grades, layout rhythm, components incl. the dataviz grammar, icon rules, flow-line
+snippets, motion, voice, bans, floors) written to be pasted outside the repo: repo
+jargon is either explained or excluded, and the header tells consumers to apply values
+exactly and invent nothing.
+
+**It is a derived artefact.** Sources of truth stay `global.css @theme`, `DESIGN.md`,
+[[brand]] and the component code; the kit is regenerated from them, never hand-edited —
+a hand-edited copy is a second design system, which is the drift D-020 exists to catch.
+Built by parallel source-extraction with file:line citations, then adversarially
+audited; the audit caught real errors before commit (service icons ship at a uniform
+16px — the 20px component defaults are overridden at every call site; a stale 3.03:1
+in a `Contact.astro` comment, corrected to the computed 3.10:1 in the same commit; axis
+order on padding values now labelled because the two rows disagreed silently).
+Owner: partner-b.
 
 ## Template
 ```

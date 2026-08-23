@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-08-07
+updated: 2026-08-16
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046]
 ---
 
 # Where things stand
@@ -15,7 +15,7 @@ decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-08-06**
+Last reviewed: **2026-08-16**
 
 ## The venture in five lines
 
@@ -58,6 +58,10 @@ Three single sources you must not work around:
 - Every user-visible string → `website/src/i18n/ui.ts` (type-enforced: EN cannot drift from DE)
 
 Details → [[website-spec]], visual world → `DESIGN.md`.
+
+An official **animated logo sting** exists since D-046 — Higgsfield-generated (16:9, plus 1:1
+and 9:16 cuts), resolving onto the brand lockup, which now ends in the CTA-grammar arrowhead.
+Off-site collateral only (video intros, social); the website keeps drawing its logo in code.
 
 ## Open items
 

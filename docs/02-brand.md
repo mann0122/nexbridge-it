@@ -4,9 +4,9 @@ title: Brand
 type: knowledge
 status: active
 owner: partner-b
-updated: 2026-08-01
+updated: 2026-08-16
 depends_on: [vision]
-decisions: [D-003, D-016, D-025]
+decisions: [D-003, D-016, D-025, D-046]
 cites_history: [D-001, D-014]
 ---
 
@@ -58,6 +58,10 @@ logo mark. This is the one memorable device — everything else stays quiet.
 2. Standalone mark: two muted lines converging into one signal line — the bridge,
    and the favicon (currently shipped in website/public/favicon.svg).
 3. Wordmark inside a thin-bordered plate for stamps/invoices.
+
+In the **animated lockup** (D-046) the flow-line terminates in the CTA-grammar filled
+arrowhead. The favicon/static mark stays butt-capped as shipped — porting the arrowhead to
+static marks is undecided; log a D-entry before doing it.
 
 ## Anti-patterns (design-critic enforces)
 Purple/teal gradients; glassmorphism; 3D blobs; stock photos of handshakes/laptops; Inter as

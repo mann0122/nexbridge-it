@@ -898,6 +898,39 @@ retired. `qa-reviewer` said SHIP: Lighthouse on the card page 96/100/100, homepa
 held at 94/100/100/100; the card page's SEO 63 is solely the deliberate noindex; the card JS
 chunk is 4,214 B. Owner: founder (verdict), partner-b (build).
 
+## D-047 | 2026-08-23 | Company mark adopted: the founder's arrowhead-contrail, engraved on the card plate; grain ceiling fixed | DECIDED
+**The mark.** The founder supplied a new company mark on 2026-08-23 — an arrowhead
+accelerating out of a contrail, drawn in exact brand tokens (signal wedges, paper contrail,
+on graphite) — and ordered it onto the NB-VK digital card. Provenance, on the record: a
+Recraft AI export, adopted as a founder-authored brand decision; C2PA metadata was stripped
+and the coordinates normalized to a clean 0-origin viewBox (`0 0 115 68`) at adoption.
+
+**Scope ruling (`design-critic`, this gate round).** A founder-supplied vector identity mark
+adopted as brand canon is INSIDE the allowed scope of DESIGN.md's generated-imagery ban — the
+ban targets generator output used as content or decoration, not the brand owner's own
+commissioned/authored mark. The ban stands untouched for content imagery.
+
+**Card-plate usage and the recolor law.** On the orange plate the mark renders engraved:
+wedges in graphite ink, contrail as a white-alpha 0.34 light-catch — the plate's
+one-ink + craft-alpha law from D-046. It replaces the flow-mark engraving in the `.card-mark`
+slot. This supersedes — narrowly — D-046's sentence about the flow-line schematic becoming
+the plate's static engraving: the flow-line stays the site-wide signature device per
+[[brand]]; the card plate now carries the company mark instead. Site-wide adoption of the
+mark (favicon, header) is NOT decided; the flow-line mark remains the favicon.
+
+**Texture calibration, round 2 (same commit).** Founder order: "more rough texture." The
+rough grain layer moves to baseFrequency 0.72 / 3 octaves / soft-light at 0.85; the brushed
+layer to 0.6. `design-critic` ruled these values the HARD CEILING: worst-case compound
+dark-cluster contrast ≈3.8:1 local passes only at these values — any further roughness must
+come from frequency/octave shaping, not opacity.
+
+**Consequences, open.** (a) The print masters in `print/visitenkarte/` still carry the old
+flow-mark vocabulary; digital plate and physical card must be reconciled before the
+DPMA-gated print run. (b) The DPMA trademark check (STATE open item 5, partner-a) should
+include the AI-generated-mark provenance question — copyright/registrability of AI-generated
+marks in DE/EU practice — asked once, with the Recraft origin on the table. Owner: founder
+(mark + verdicts), partner-b (integration).
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

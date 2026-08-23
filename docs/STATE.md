@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047]
 ---
 
 # Where things stand
@@ -55,8 +55,11 @@ and sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, 
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
 
-The physical card print masters live in `print/visitenkarte/` (NB-VK-01/02; their QR codes
-point at the card routes). Printing is gated on the DPMA trademark check — open item 5.
+The digital card plate carries the founder's company mark — the arrowhead-contrail (D-047) —
+engraved in the `.card-mark` slot. The physical card print masters live in
+`print/visitenkarte/` (NB-VK-01/02; their QR codes point at the card routes) and still carry
+the old flow-mark vocabulary; they must be reconciled with the digital plate before printing.
+Printing is gated on the DPMA trademark check — open item 5.
 
 Three single sources you must not work around:
 
@@ -83,6 +86,7 @@ Ranked. Owner in brackets.
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
 5. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
+   Should include the AI-generated-mark provenance question in one pass (D-047).
 6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
 7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
    choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
@@ -110,7 +114,8 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The business-card work — print masters plus the digital card-object redesign (D-046) — is
+The business-card work — print masters, the digital card-object redesign (D-046), and the
+company mark on the plate plus texture calibration (D-047) — is
 complete on worktree branch `claude/business-nfc-card-design-4d2727`, awaiting merge.
 Nothing else is in flight; `main` stays the only long-lived branch.
 

@@ -4,9 +4,9 @@ title: Brand
 type: knowledge
 status: active
 owner: partner-b
-updated: 2026-08-01
+updated: 2026-08-23
 depends_on: [vision]
-decisions: [D-003, D-016, D-025]
+decisions: [D-003, D-016, D-025, D-047]
 cites_history: [D-001, D-014]
 ---
 
@@ -58,6 +58,11 @@ logo mark. This is the one memorable device — everything else stays quiet.
 2. Standalone mark: two muted lines converging into one signal line — the bridge,
    and the favicon (currently shipped in website/public/favicon.svg).
 3. Wordmark inside a thin-bordered plate for stamps/invoices.
+4. The company mark (founder-supplied 2026-08-23, D-047): an arrowhead accelerating out of a
+   contrail, drawn in exact brand tokens — signal wedges, paper contrail, on graphite.
+   Currently used engraved on the NB-VK card plate only (graphite ink + white-alpha
+   light-catch per the plate's recolor law). Site-wide adoption (favicon, header) is not
+   decided — direction 2's flow-line mark remains the favicon.
 
 ## Anti-patterns (design-critic enforces)
 Purple/teal gradients; glassmorphism; 3D blobs; stock photos of handshakes/laptops; Inter as

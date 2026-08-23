@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-23 · 16 nodes · 49 decisions
+Content as of 2026-08-23 · 16 nodes · 50 decisions
 
 ## Map
 
@@ -38,6 +38,7 @@ graph LR
   brand --> design
   vision --> offer
   vision --> brand
+  brand -.-> state
   offer --> website_spec
   brand --> website_spec
   offer --> delivery
@@ -87,7 +88,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `design` | DESIGN.md (visual world) | artifact | active | partner-b | — | [DESIGN.md](../DESIGN.md) | — |
 | `vision` | Vision & operating model | knowledge | active | founders | 2026-07-27 | [docs/00-vision.md](00-vision.md) | `offer`, `brand`, `agent-system`, `state`, `product` |
 | `offer` | Offer & packages | knowledge | active | founders | 2026-07-31 | [docs/01-offer.md](01-offer.md) | `website-spec`, `delivery`, `state`, `product` |
-| `brand` | Brand | knowledge | active | partner-b | 2026-08-16 | [docs/02-brand.md](02-brand.md) | `website-spec`, `brand-kit`, `state`, `design`, `product` |
+| `brand` | Brand | knowledge | active | partner-b | 2026-08-23 | [docs/02-brand.md](02-brand.md) | `website-spec`, `brand-kit`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `brand-kit`, `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
 | `decisions` | Decision log | decision-log | active | founders | 2026-08-23 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
@@ -158,6 +159,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
 | D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
 | D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
+| D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED | `brand`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 
@@ -165,4 +167,4 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 
 ---
 
-_16 nodes, 29 edges, 0 broken. Rebuild: `npm run kb`._
+_16 nodes, 30 edges, 0 broken. Rebuild: `npm run kb`._

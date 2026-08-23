@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050]
 ---
 
 # Where things stand
@@ -66,9 +66,16 @@ Three single sources you must not work around:
 
 Details → [[website-spec]], visual world → `DESIGN.md`.
 
-An official **animated logo sting** exists since D-046 — Higgsfield-generated (16:9, plus 1:1
-and 9:16 cuts), resolving onto the brand lockup, which now ends in the CTA-grammar arrowhead.
-Off-site collateral only (video intros, social); the website keeps drawing its logo in code.
+The brand has a **logo mark** since D-050: the folded glider. It **ships** in the favicon, the
+`apple-touch-icon`, the `og.png` social card and the header lockup (from `sm` up — phones keep the
+wordmark alone), and goes live with the merge below. Canonical geometry sits in `website/public/logo-mark.svg`,
+`website/public/favicon.svg` and `website/src/components/Mark.astro`; they must not drift.
+The flow-line was *not* retired — it stays the motion signature (hero schematic, flowrail, seams).
+
+An official **animated wordmark sting** exists since D-046 — Higgsfield-generated (16:9, plus 1:1
+and 9:16 cuts), resolving onto the wordmark lockup, which ends in the CTA-grammar arrowhead.
+Off-site collateral only (video intros, social). It predates the mark, so it does not show the
+glider yet; the mark's own animation is drafted but **not chosen** (three takes exist).
 
 ## Open items
 
@@ -90,11 +97,25 @@ Ranked. Owner in brackets.
 6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
 7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
    choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
+8. **Mark animation not chosen** [founders] — the glider has no animated sting yet; three takes
+   exist and none is picked, and D-046's animated wordmark predates the mark, so it shows the
+   flow-line lockup rather than the glider and needs a refresh once one is chosen.
+9. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor CLAUDE.md and D-043
+   set. Measured across four consecutive runs during the D-050 gate; **pre-existing and unrelated
+   to the mark** (font loading). Ranked here, not higher, only because no traffic reaches the site
+   yet — it moves up the moment it does.
+10. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
+   mark needs a graphite chip on light material until a light-ground variant exists. Gates print.
 
 ### Known defects (technical, none blocking)
 
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
+- Below the `md` breakpoint the homepage h1 renders as „Prozesse, dievon selbst laufen." —
+  `Hero.astro` writes `Prozesse, die<br class="hidden md:block">von selbst laufen.`, so when the
+  break is hidden the two words collide. Pre-existing on `main`, found during the D-050 gate; the
+  fix is one space before the `<br>`, and it touches customer-facing German, so it goes through
+  `copywriter-de` on its own branch.
 
 ## Blocked / pending
 
@@ -114,9 +135,11 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. The business-card work — print masters plus the digital card-object redesign
-(D-049) — and the animated logo sting (D-046) are merged. `main` is the only long-lived
-branch.
+The **logo mark rollout (D-050)** sits on branch `claude/animated-company-logo-4f5bbc`,
+built and gated, **not yet merged to `main`** — favicon, apple-touch-icon, og.png, header lockup,
+`Mark.astro`, `npm run logo` and the doc updates land together. Everything else is merged: the
+business-card work — print masters plus the digital card-object redesign (D-049) — the animated
+wordmark sting (D-046) and the wordmark drop (D-047).
 
 ## Next
 

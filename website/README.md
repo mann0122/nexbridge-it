@@ -39,10 +39,11 @@ src/
   styles/global.css   @theme design tokens. Single source. No hex in components.
   i18n/ui.ts          Every user-visible string, DE + EN. Single source.
   layouts/            Layout.astro — head, JSON-LD, OG, hreflang, skip link
-  components/         15 components; the EN page reuses all of them
+  components/         22 components + icons/; the EN page reuses all of them
   pages/              The four routes above + 404
   scripts/motion.ts   GSAP + Lenis motion layer
-public/               favicon, og.png, robots.txt, GSC verification file
+public/               favicon.svg + logo-mark.svg + apple-touch-icon.png (the D-050
+                      mark), og.png, robots.txt, GSC verification file
 ```
 
 `ui.ts` is typed so the English block cannot drift from the German one — a missing key is a

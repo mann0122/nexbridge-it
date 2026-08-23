@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision]
-decisions: [D-003, D-016, D-025, D-047]
+decisions: [D-003, D-016, D-025, D-047, D-049]
 cites_history: [D-001, D-014]
 ---
 
@@ -60,8 +60,9 @@ logo mark. This is the one memorable device — everything else stays quiet.
 3. Wordmark inside a thin-bordered plate for stamps/invoices.
 4. The company mark (founder-supplied 2026-08-23, D-047): an arrowhead accelerating out of a
    contrail, drawn in exact brand tokens — signal wedges, paper contrail, on graphite.
-   Currently used engraved on the NB-VK card plate only (graphite ink + white-alpha
-   light-catch per the plate's recolor law). Site-wide adoption (favicon, header) is not
+   Currently used in two places: engraved on the NB-VK card plate (graphite ink + white-alpha
+   light-catch per the plate's recolor law), and in full brand colors on both graphite fronts
+   of the print masters (D-049). Site-wide adoption (favicon, header) is not
    decided — direction 2's flow-line mark remains the favicon.
 
 ## Anti-patterns (design-critic enforces)

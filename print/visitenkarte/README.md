@@ -9,7 +9,7 @@ print it to get the production PDF.
 
 | Page | Side | Content |
 |---|---|---|
-| 1 | Front | Wordmark + flow-line schematic (identical for both founders) |
+| 1 | Front | Wordmark + company mark (D-047, full brand colors; identical for both founders) |
 | 2 | Back | Zeichnungskopf — Peter Knopp (`NB-VK-01`), QR → `/karte/peter-knopp` |
 | 3 | Front | identical to page 1 |
 | 4 | Back | Zeichnungskopf — Manush Vaghani (`NB-VK-02`), QR → `/karte/manush-vaghani` |
@@ -32,8 +32,11 @@ The dashed line visible in the browser is a screen-only trim preview; it does no
 
 - Colours are the website's RGB tokens (graphite `#14171A`, paper `#F7F5F0`, signal `#FF4D00`,
   steel `#5B6770`/`#8B959E`). Ask the shop to convert to CMYK with a standard coated profile;
-  check a proof of the signal orange — it is the one colour worth approving on paper before the
-  full run.
+  check a proof of the signal orange — and specifically of the company mark on the front, now
+  the largest signal-orange area we print.
+- The mark's wedges and contrail are knockouts inside a full-bleed near-black solid — ask the
+  shop about trapping; expect slight wedge-tip rounding. Confirm the profile's total-ink limit
+  for the full-bleed graphite solid.
 - The smallest type is ~3.7 pt annotation text; that needs offset or high-resolution digital
   print, not low-end gang printing.
 - **NFC variant:** any card maker offering NFC PVC cards can produce these; an **NTAG213** chip

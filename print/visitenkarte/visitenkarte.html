@@ -5,9 +5,9 @@
 <title>NexBridge-IT — Visitenkarte (Druckvorlage)</title>
 <!--
   NexBridge-IT Visitenkarte — Druckvorlage / print master.
-  Concept: the card is a technical drawing of itself. The front is the process
-  schematic (three labeled inputs converge into the signal line); the back is
-  the Zeichnungskopf, with the card's own dimensions measured by DIN dimension
+  Concept: the card is a technical drawing of itself. The front carries the
+  wordmark and the company mark (D-047, full brand colors); the back is the
+  Zeichnungskopf, with the card's own dimensions measured by DIN dimension
   lines and the embedded NFC antenna drawn as concealed (dashed) geometry.
 
   Trim 85 x 55 mm, Beschnitt/bleed 3 mm rundum -> Seitenformat 91 x 61 mm.
@@ -115,12 +115,14 @@
     color: var(--steel);
   }
 
-  .front .schematic {
+  /* The company mark (D-047), full brand colors — the front's one signal
+     element (with the wordmark period, the sanctioned pair). */
+  .front .mark {
     position: absolute;
-    left: 12mm;
-    top: 29.5mm;
-    width: 79mm;
-    height: 19mm;
+    right: 11mm;
+    top: 27mm;
+    width: 32mm;
+    height: auto;
   }
 
   /* DIN title strip along the frame bottom */
@@ -361,26 +363,19 @@
   <div class="wordmark">NexBridge-IT<span class="dot">.</span></div>
   <div class="kicker mono">Automatisierung · KI-Agenten · Dashboards · Individualsoftware</div>
 
-  <!-- the working schematic: three labeled inputs converge into the signal
-       line, which leaves the card through the bleed — the process goes on. -->
-  <svg class="schematic" viewBox="0 0 79 19" aria-hidden="true">
-    <g fill="#5b6770">
-      <rect x="0" y="2.55" width="1.3" height="1.3"/>
-      <rect x="0" y="8.85" width="1.3" height="1.3"/>
-      <rect x="0" y="15.15" width="1.3" height="1.3"/>
+  <!-- The company mark (founder 2026-08-23, D-047): signal wedges, paper
+       contrail — the same mark engraved on the digital plate, here in full
+       color on the graphite front. -->
+  <svg class="mark" viewBox="0 0 115 68" fill="none" aria-hidden="true">
+    <g fill="#ff4d00">
+      <path d="M111.28 1.16C111.77 0.96 112.01 0.85 112.55 0.78 111.96 1.16 111.41 1.43 110.78 1.74 88.29 14.73 66.07 28.2 44.15 42.14 33.97 48.43 23.83 54.78 13.72 61.18 10.24 63.41 7.04 65.65 3.63 67.9L30.49 36.62 36.83 29.26C37.77 28.17 38.76 26.79 39.9 25.9 40.8 25.2 51.49 21.7 53.58 20.98L90.34 8.39C95.07 6.82 99.78 5.21 104.47 3.55 106.35 2.9 108.49 2.29 110.31 1.56L111.28 1.16z"/>
+      <path d="M113 0.22C112.49 0.53 111.92 0.64 111.34 0.8L110.71 0.94C108.86 1.53 106.63 2.09 104.72 2.64 101.61 3.53 98.5 4.45 95.4 5.38L55.65 17.29C49.87 18.98 44.11 20.71 38.36 22.48 33.92 18.63 28.52 13.99 23.93 10.42 26.55 9.9 31.02 9.55 33.82 9.24L51.01 7.25 111.23 0.35C111.42 0.3 112.73 0.24 113 0.22z"/>
+      <path d="M114.61 1.19L114.67 1.27C114.47 1.64 114.02 2.15 113.74 2.48 107.65 9.8 101.94 17.46 95.93 24.83L89.37 21.76C88.21 21.18 87.12 20.65 85.94 20.13 88.62 18.3 91.43 16.59 94.16 14.83L105.77 7.3C108.27 5.66 112.5 3.05 114.61 1.19z"/>
+      <path d="M1.41 10.33C4.95 9.16 8.81 8.1 12.41 6.97L21.76 4.13C22.64 3.86 27.35 2.27 27.99 2.42 33.01 3.59 38.29 5.63 43.35 6.52 38.69 7.2 32.79 7.52 28.03 7.94 19.29 8.75 10.55 9.62 1.82 10.56 1.48 10.63 0.55 10.71 0.16 10.75 0.62 10.56 0.93 10.47 1.41 10.33z"/>
     </g>
-    <g fill="none" stroke="#5b6770" stroke-width="0.35" stroke-linecap="butt">
-      <path d="M1.3 3.2 H26 C36 3.2, 33 9.5, 41.5 9.5"/>
-      <path d="M1.3 9.5 H41.5"/>
-      <path d="M1.3 15.8 H26 C36 15.8, 33 9.5, 41.5 9.5"/>
+    <g fill="#f7f5f0">
+      <path d="M83.23 21.63C86.52 22.79 89.77 24.08 93.07 25.23 93.63 25.43 94.25 25.65 94.8 25.88 88.37 29.1 81.34 32.21 74.79 35.31L27.96 57.28 15.28 63.25C13.16 64.25 10.83 65.29 8.75 66.33L8.64 66.13C12.39 64.16 16.57 61.63 20.25 59.5 29.4 54.15 38.51 48.72 47.57 43.2L71.22 28.97C75.15 26.6 79.38 24.11 83.23 21.63z"/>
     </g>
-    <path d="M41.2 9.5 H79" fill="none" stroke="#ff4d00" stroke-width="0.6" stroke-linecap="butt"/>
-    <g fill="#8b959e" font-family="Fragment Mono" font-size="1.4" letter-spacing="0.1">
-      <text x="2.6" y="2.15">MANUELLE ABLÄUFE</text>
-      <text x="2.6" y="8.45">VERSTREUTE DATEN</text>
-      <text x="2.6" y="14.75">WIEDERKEHRENDE AUFGABEN</text>
-    </g>
-    <text x="70.5" y="8.3" fill="#f7f5f0" font-family="Fragment Mono" font-size="1.4" letter-spacing="0.1" text-anchor="end">LÄUFT VON SELBST</text>
   </svg>
 
   <div class="strip">
@@ -464,24 +459,19 @@
   </svg>
   <div class="wordmark">NexBridge-IT<span class="dot">.</span></div>
   <div class="kicker mono">Automatisierung · KI-Agenten · Dashboards · Individualsoftware</div>
-  <svg class="schematic" viewBox="0 0 79 19" aria-hidden="true">
-    <g fill="#5b6770">
-      <rect x="0" y="2.55" width="1.3" height="1.3"/>
-      <rect x="0" y="8.85" width="1.3" height="1.3"/>
-      <rect x="0" y="15.15" width="1.3" height="1.3"/>
+  <!-- The company mark (founder 2026-08-23, D-047): signal wedges, paper
+       contrail — the same mark engraved on the digital plate, here in full
+       color on the graphite front. -->
+  <svg class="mark" viewBox="0 0 115 68" fill="none" aria-hidden="true">
+    <g fill="#ff4d00">
+      <path d="M111.28 1.16C111.77 0.96 112.01 0.85 112.55 0.78 111.96 1.16 111.41 1.43 110.78 1.74 88.29 14.73 66.07 28.2 44.15 42.14 33.97 48.43 23.83 54.78 13.72 61.18 10.24 63.41 7.04 65.65 3.63 67.9L30.49 36.62 36.83 29.26C37.77 28.17 38.76 26.79 39.9 25.9 40.8 25.2 51.49 21.7 53.58 20.98L90.34 8.39C95.07 6.82 99.78 5.21 104.47 3.55 106.35 2.9 108.49 2.29 110.31 1.56L111.28 1.16z"/>
+      <path d="M113 0.22C112.49 0.53 111.92 0.64 111.34 0.8L110.71 0.94C108.86 1.53 106.63 2.09 104.72 2.64 101.61 3.53 98.5 4.45 95.4 5.38L55.65 17.29C49.87 18.98 44.11 20.71 38.36 22.48 33.92 18.63 28.52 13.99 23.93 10.42 26.55 9.9 31.02 9.55 33.82 9.24L51.01 7.25 111.23 0.35C111.42 0.3 112.73 0.24 113 0.22z"/>
+      <path d="M114.61 1.19L114.67 1.27C114.47 1.64 114.02 2.15 113.74 2.48 107.65 9.8 101.94 17.46 95.93 24.83L89.37 21.76C88.21 21.18 87.12 20.65 85.94 20.13 88.62 18.3 91.43 16.59 94.16 14.83L105.77 7.3C108.27 5.66 112.5 3.05 114.61 1.19z"/>
+      <path d="M1.41 10.33C4.95 9.16 8.81 8.1 12.41 6.97L21.76 4.13C22.64 3.86 27.35 2.27 27.99 2.42 33.01 3.59 38.29 5.63 43.35 6.52 38.69 7.2 32.79 7.52 28.03 7.94 19.29 8.75 10.55 9.62 1.82 10.56 1.48 10.63 0.55 10.71 0.16 10.75 0.62 10.56 0.93 10.47 1.41 10.33z"/>
     </g>
-    <g fill="none" stroke="#5b6770" stroke-width="0.35" stroke-linecap="butt">
-      <path d="M1.3 3.2 H26 C36 3.2, 33 9.5, 41.5 9.5"/>
-      <path d="M1.3 9.5 H41.5"/>
-      <path d="M1.3 15.8 H26 C36 15.8, 33 9.5, 41.5 9.5"/>
+    <g fill="#f7f5f0">
+      <path d="M83.23 21.63C86.52 22.79 89.77 24.08 93.07 25.23 93.63 25.43 94.25 25.65 94.8 25.88 88.37 29.1 81.34 32.21 74.79 35.31L27.96 57.28 15.28 63.25C13.16 64.25 10.83 65.29 8.75 66.33L8.64 66.13C12.39 64.16 16.57 61.63 20.25 59.5 29.4 54.15 38.51 48.72 47.57 43.2L71.22 28.97C75.15 26.6 79.38 24.11 83.23 21.63z"/>
     </g>
-    <path d="M41.2 9.5 H79" fill="none" stroke="#ff4d00" stroke-width="0.6" stroke-linecap="butt"/>
-    <g fill="#8b959e" font-family="Fragment Mono" font-size="1.4" letter-spacing="0.1">
-      <text x="2.6" y="2.15">MANUELLE ABLÄUFE</text>
-      <text x="2.6" y="8.45">VERSTREUTE DATEN</text>
-      <text x="2.6" y="14.75">WIEDERKEHRENDE AUFGABEN</text>
-    </g>
-    <text x="70.5" y="8.3" fill="#f7f5f0" font-family="Fragment Mono" font-size="1.4" letter-spacing="0.1" text-anchor="end">LÄUFT VON SELBST</text>
   </svg>
   <div class="strip">
     <div class="cell"><span class="clbl mono">Benennung</span><span class="cval">Visitenkarte</span></div>
@@ -516,7 +506,7 @@
         <div class="name">Manush Vaghani</div>
         <div class="role">Technik &amp; Umsetzung</div>
         <div class="rows">
-          <div class="row"><span class="lbl mono">Tel.</span><span class="val">+49 173 9044077</span></div>
+          <div class="row"><span class="lbl mono">Tel.</span><span class="val">+49 176 85919025</span></div>
           <div class="row"><span class="lbl mono">Mail</span><span class="val">nexbridge-it@mailbox.org</span></div>
           <div class="row"><span class="lbl mono">Web</span><span class="val">nexbridge-it.com</span></div>
         </div>

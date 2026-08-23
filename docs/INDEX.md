@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-23 · 15 nodes · 48 decisions
+Content as of 2026-08-23 · 15 nodes · 49 decisions
 
 ## Map
 
@@ -153,6 +153,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-046 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
 | D-047 | 2026-08-23 | Company mark adopted: the founder's arrowhead-contrail, engraved on the card plate; grain ceiling fixed | DECIDED | `brand`, `state` |
 | D-048 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED | `state` |
+| D-049 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED | `brand`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

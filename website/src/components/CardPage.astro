@@ -54,12 +54,13 @@ const vcfHref = `/karte/${person.slug}.vcf`;
 /* Every row is a real link. The address row points at the Impressum — the
    in-world home of the address, and no third-party map request. */
 const rows = [
-  // Display grouping matches the printed card (+49 173 9044077); the raw
-  // Impressum spelling (01739044077) stays untouched in site.ts.
+  // Per-person number from cards.ts (falls back to the venture line there).
+  // Display grouping matches the printed card; the raw Impressum spelling
+  // (01739044077) stays untouched in site.ts.
   {
-    href: `tel:${SITE.phoneE164}`,
+    href: `tel:${person.phoneE164}`,
     label: t('card.row.phone'),
-    value: SITE.phoneE164.replace(/^(\+49)(\d{3})(\d+)$/, '$1 $2 $3'),
+    value: person.phoneE164.replace(/^(\+49)(\d{3})(\d+)$/, '$1 $2 $3'),
     Icon: PhoneIcon,
   },
   { href: `mailto:${SITE.email}`, label: t('card.row.email'), value: SITE.email, Icon: MailIcon },
@@ -105,6 +106,9 @@ const rows = [
             )}
             data-icon-hover
           >
+            {/* Live gradient (founder order): the coloration + light pools
+                drift across the plate; the grain above stays surface-fixed. */}
+            <span class="card-drift" aria-hidden="true"></span>
             <div class="card-face">
               <div class="card-el flex items-start justify-between gap-4">
                 {/* Engraved monochrome wordmark — the period is graphite

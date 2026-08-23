@@ -958,6 +958,20 @@ deeper crush, no opacity increase.
 engraved mark (D-047) all stand as shipped. Owner: founder (references + verdict), partner-b
 (build).
 
+## D-049 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED
+The company mark (D-047) now renders full-color — signal wedges #FF4D00, paper contrail
+#F7F5F0 — on both graphite fronts of the print masters (`print/visitenkarte/visitenkarte.html`),
+replacing the labeled three-input process schematic. The front does one job: identity. The
+kicker still names the four services; the QR/NFC destination carries the full pitch. Ration
+arithmetic unchanged: wordmark lockup + one accent element per side (`design-critic`, this
+gate round). This closes D-047's open consequence (a): digital plate and print card now carry
+the same mark. The schematic retires from print entirely — deliberately NOT to be reinstated
+as a micro-element on the back, which is at density capacity (`design-critic` ruling, same
+round). The sub-resolvable contrail sliver (~0.7 × 0.06 mm) was deleted from the print vector.
+Production notes (knockout/trapping, total-ink, proof the mark region) added to
+`print/visitenkarte/README.md`. Printing remains DPMA-gated (STATE open item 5). Owner:
+founder (task), partner-b (build).
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

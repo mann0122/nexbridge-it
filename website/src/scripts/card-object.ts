@@ -53,6 +53,8 @@ export function mountCardObject(card: HTMLElement, scene: HTMLElement): CardObje
   const rx = gsap.quickTo(tilt, 'rotationX', { duration: 0.45, ease: 'expo.out' });
   const ry = gsap.quickTo(tilt, 'rotationY', { duration: 0.45, ease: 'expo.out' });
   const sheenX = sheen ? gsap.quickTo(sheen, 'x', { duration: 0.45, ease: 'expo.out' }) : null;
+  /* The reflection glints while the plate is tilted, back to 0.08 at rest. */
+  const sheenO = sheen ? gsap.quickTo(sheen, 'opacity', { duration: 0.45, ease: 'expo.out' }) : null;
   const shadowX = shadow ? gsap.quickTo(shadow, 'x', { duration: 0.45, ease: 'expo.out' }) : null;
   const shadowY = shadow ? gsap.quickTo(shadow, 'y', { duration: 0.45, ease: 'expo.out' }) : null;
 
@@ -60,6 +62,7 @@ export function mountCardObject(card: HTMLElement, scene: HTMLElement): CardObje
     rx(0);
     ry(0);
     sheenX?.(0);
+    sheenO?.(0.08);
     shadowX?.(0);
     shadowY?.(shadowRestY);
   };
@@ -74,6 +77,7 @@ export function mountCardObject(card: HTMLElement, scene: HTMLElement): CardObje
     ry(nx * TILT_FINE);
     rx(-ny * TILT_FINE);
     sheenX?.(nx * -26);
+    sheenO?.(0.2);
     shadowX?.(nx * -14);
     shadowY?.(shadowRestY + ny * -10);
   };
@@ -110,6 +114,7 @@ export function mountCardObject(card: HTMLElement, scene: HTMLElement): CardObje
     const n = gsap.utils.clamp(-1, 1, dx / (rect.width / 2));
     ry(n * TILT_TOUCH);
     sheenX?.(n * -26);
+    sheenO?.(0.2);
     shadowX?.(n * -14);
   };
   const onUp = (e: PointerEvent) => {
@@ -138,17 +143,17 @@ export function mountCardObject(card: HTMLElement, scene: HTMLElement): CardObje
   card.addEventListener('pointercancel', onUp, { passive: true });
   card.addEventListener('click', onClick);
 
-  /* The one idle loop: every 9s a quiet 2.4s sheen pass at 0.10 peak,
-     returning to the parked 0.08 — the CSS rest state. Created paused,
-     synchronously (context-owned); started by the entrance timeline's
-     final beat via handle.idle(). */
+  /* The one idle loop: every 6.5s a 2.4s sheen pass at 0.16 peak (founder:
+     the card should shine), returning to the parked 0.08 — the CSS rest
+     state. Created paused, synchronously (context-owned); started by the
+     entrance timeline's final beat via handle.idle(). */
   let loop: gsap.core.Timeline | null = null;
   if (sheen) {
     loop = gsap.timeline({ paused: true, repeat: -1 });
     loop
-      .set(sheen, { xPercent: -120, opacity: 0.1 }, 6.6)
-      .to(sheen, { xPercent: 120, duration: 2.4, ease: 'power2.inOut' }, 6.6)
-      .set(sheen, { opacity: 0.08 }, 9);
+      .set(sheen, { xPercent: -120, opacity: 0.16 }, 4.1)
+      .to(sheen, { xPercent: 120, duration: 2.4, ease: 'power2.inOut' }, 4.1)
+      .set(sheen, { opacity: 0.08 }, 6.5);
   }
 
   return {

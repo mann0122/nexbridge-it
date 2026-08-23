@@ -14,7 +14,7 @@
  * second-rank actions, one annotation line.
  *
  * Motion: entrance rise-and-settle with a one-time sheen sweep; the page's
- * ONE idle loop is the 9s sheen drift (the flow pulse died with the old
+ * ONE idle loop is the 6.5s sheen drift (the flow pulse died with the old
  * schematic skin — reassignment logged in D-046). Pointer tilt on fine
  * pointers, horizontal drag tilt on touch, no gyroscope. The sheen's
  * parked state is the CSS default, so no-JS, ?snap and reduced-motion all
@@ -307,7 +307,7 @@ const rows = [
 
     /* 2 — one-time sheen sweep while the plate settles, then re-park */
     if (sheen) {
-      tl.set(sheen, { xPercent: -120, opacity: 0.3 }, 0.7)
+      tl.set(sheen, { xPercent: -120, opacity: 0.38 }, 0.7)
         .to(sheen, { xPercent: 120, duration: 1.0, ease: 'power2.inOut' }, 0.7)
         .set(sheen, { opacity: 0.08 }, 1.7);
     }

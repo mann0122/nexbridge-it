@@ -68,7 +68,7 @@ Details → [[website-spec]], visual world → `DESIGN.md`.
 
 The brand has a **logo mark** since D-050: the folded glider. It **ships** in the favicon, the
 `apple-touch-icon`, the `og.png` social card and the header lockup (from `sm` up — phones keep the
-wordmark alone), and goes live with the merge below. Canonical geometry sits in `website/public/logo-mark.svg`,
+wordmark alone), and is live on nexbridge-it.com. Canonical geometry sits in `website/public/logo-mark.svg`,
 `website/public/favicon.svg` and `website/src/components/Mark.astro`; they must not drift.
 The flow-line was *not* retired — it stays the motion signature (hero schematic, flowrail, seams).
 
@@ -135,11 +135,10 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The **logo mark rollout (D-050)** sits on branch `claude/animated-company-logo-4f5bbc`,
-built and gated, **not yet merged to `main`** — favicon, apple-touch-icon, og.png, header lockup,
-`Mark.astro`, `npm run logo` and the doc updates land together. Everything else is merged: the
-business-card work — print masters plus the digital card-object redesign (D-049) — the animated
-wordmark sting (D-046) and the wordmark drop (D-047).
+Nothing. The logo mark (D-050) is merged and deployed — favicon, apple-touch-icon, og.png,
+header lockup, `Mark.astro` and `npm run logo` are live on nexbridge-it.com. The business-card
+work (D-049), the animated wordmark sting (D-046) and the wordmark drop (D-047) were already
+merged. `main` is the only long-lived branch.
 
 ## Next
 

@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-08-16
+updated: 2026-08-23
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049]
 ---
 
 # Where things stand
@@ -15,7 +15,7 @@ decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-08-16**
+Last reviewed: **2026-08-23**
 
 ## The venture in five lines
 
@@ -46,10 +46,17 @@ Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-02
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
-**Six routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`.
-The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
+**Twelve pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
+`/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`) plus the NB-VK digital
+business cards (D-049) — `/karte`, `/karte/peter-knopp`, `/karte/manush-vaghani`, their EN
+mirrors under `/en/card/`, and static `/karte/<slug>.vcf` endpoints. Card routes are noindex
+and sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, `#vorgehen`,
+`#ueber-uns`, `#kontakt` are homepage anchors, not
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
+
+The physical card print masters live in `print/visitenkarte/` (NB-VK-01/02; their QR codes
+point at the card routes). Printing is gated on the DPMA trademark check — open item 5.
 
 Three single sources you must not work around:
 
@@ -107,9 +114,9 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. The motion upgrade (D-038…D-042), the icon vocabulary (D-043) and the flowrail
-(D-044) are merged and live; the WebGL hero-dissolve experiment was killed on the founder's
-verdict (D-045) and its branch is deleted. `main` is the only long-lived branch.
+Nothing. The business-card work — print masters plus the digital card-object redesign
+(D-049) — and the animated logo sting (D-046) are merged. `main` is the only long-lived
+branch.
 
 ## Next
 

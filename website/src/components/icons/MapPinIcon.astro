@@ -1,0 +1,29 @@
+---
+/**
+ * Map pin — part symbol for the card pages' address row (D-043 grammar;
+ * first call site is CardPage). The pin outline holds still; on parent
+ * hover the site marker redraws once — the location surveyed, single-shot.
+ * Rest state is the complete drawing.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 16, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-pin', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path>
+  <path class="icn-pin-c" pathLength="1" d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

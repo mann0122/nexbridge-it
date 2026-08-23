@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-23 · 16 nodes · 48 decisions
+Content as of 2026-08-23 · 16 nodes · 49 decisions
 
 ## Map
 
@@ -96,7 +96,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
-| `state` | Where things stand | state | active | partner-b | 2026-08-16 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
+| `state` | Where things stand | state | active | partner-b | 2026-08-23 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
@@ -157,6 +157,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED | `brand`, `state` |
 | D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
 | D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
+| D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

@@ -1,0 +1,18 @@
+---
+/**
+ * German card pages — /karte/<slug>. Slugs are FIXED: printed NFC/QR cards
+ * point at them. All content lives in CardPage; this file only routes.
+ */
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import CardPage from '../../components/CardPage.astro';
+import { CARDS } from '../../config/cards';
+
+export const getStaticPaths = (() =>
+  CARDS.map((person) => ({ params: { person: person.slug }, props: { person } }))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { person } = Astro.props as Props;
+---
+
+<CardPage lang="de" person={person} />

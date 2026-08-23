@@ -8,6 +8,12 @@
   --color-graphite-2: #1b1f23;
   --color-paper: #f7f5f0;
   --color-signal: #ff4d00;
+  /* D-049 card-object gradient stops — graphite ink stays AA on both:
+     signal-soft 6.3:1, signal-deep 4.7:1 vs #14171A. groove is the engraved
+     non-text line color on the card face — never used for text. */
+  --color-signal-soft: #ff6a26;
+  --color-signal-deep: #ee4700;
+  --color-groove: #d13f00;
   --color-steel: #8b959e; /* secondary text on graphite — AA against #14171A */
   --color-steel-deep: #5b6770; /* brand steel: borders, muted lines, text on paper */
   --color-steel-soft: #39424a; /* hairlines on graphite */
@@ -298,6 +304,62 @@ section[id] {
   opacity: 0;
 }
 
+/* Phone (card rows, NB-VK): the ring waves redraw, staggered — the line
+   ringing. */
+.icn-phone-w {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+[data-icon-hover]:hover .icn-phone-w,
+[data-icon-hover]:focus-visible .icn-phone-w {
+  animation: icn-phone-draw 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--icn-d, 0ms);
+}
+@keyframes icn-phone-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Mail (card rows): the flap redraws — the letter sealed. */
+.icn-mail-f {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+[data-icon-hover]:hover .icn-mail-f,
+[data-icon-hover]:focus-visible .icn-mail-f {
+  animation: icn-mail-draw 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes icn-mail-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Map pin (card rows): the site marker redraws — the location surveyed. */
+.icn-pin-c {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+[data-icon-hover]:hover .icn-pin-c,
+[data-icon-hover]:focus-visible .icn-pin-c {
+  animation: icn-pin-draw 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes icn-pin-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* CTA arrow: the 2.5-weight shaft lengthens into the fixed head; both travel
    4.2 units so the butt joint holds in either state. */
 .icn-cta-line {
@@ -362,7 +424,13 @@ section[id] {
   [data-icon-hover]:hover .icn-net-e,
   [data-icon-hover]:focus-visible .icn-net-e,
   [data-icon-hover]:hover .icn-world-m,
-  [data-icon-hover]:focus-visible .icn-world-m {
+  [data-icon-hover]:focus-visible .icn-world-m,
+  [data-icon-hover]:hover .icn-phone-w,
+  [data-icon-hover]:focus-visible .icn-phone-w,
+  [data-icon-hover]:hover .icn-mail-f,
+  [data-icon-hover]:focus-visible .icn-mail-f,
+  [data-icon-hover]:hover .icn-pin-c,
+  [data-icon-hover]:focus-visible .icn-pin-c {
     animation: none;
   }
   /* The CTA arrow rests compact — still a complete arrow, it does not move. */
@@ -401,4 +469,218 @@ section[id] {
   .link-draw {
     transition: none;
   }
+}
+
+/* ---------------------------------------------------------------------
+   D-049 card object (NB-VK routes). The digital business card is one
+   signal-orange anodized plate on the graphite stage — the viewport's ONE
+   signal element, and itself the save-vCard action. Styles live HERE, in
+   the one cached external sheet, for the same measured Lighthouse reason
+   as the icon system above. The sheen's parked state (translateX(120%),
+   opacity 0.08) is the CSS DEFAULT: no-JS, ?snap and reduced-motion all
+   rest on the finished still-life by construction — card-object.ts only
+   ever moves it, never builds it.
+   --------------------------------------------------------------------- */
+
+/* Scene: physical 85:55 plate, 312×202 in the 360 viewport. From sm up it
+   overhangs the text column by 30px per side (460×298 at the column cap) —
+   an object on the stage, not a block in the column. The scene is the
+   container cqw units resolve against: 3.5cqw ≈ the physical R3 corner. */
+.card-scene {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 85 / 55;
+  perspective: 900px;
+}
+@media (min-width: 40rem) {
+  .card-scene {
+    width: calc(100% + 60px);
+    margin-inline: -30px;
+  }
+}
+
+/* Floor shadow: its own element so press/tilt never collide with the card's
+   transforms. Offset + blur only, zero orange — no halos (DESIGN.md law). */
+.card-shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: 3.5cqw;
+  background: rgb(0 0 0 / 0.55);
+  filter: blur(22px);
+  transform: translateY(20px) scale(0.94);
+  pointer-events: none;
+  transition:
+    opacity 200ms ease,
+    filter 120ms ease-out,
+    background-color 120ms ease-out;
+}
+/* Press: the plate moves toward its floor, so the shadow sharpens and
+   darkens. Blur/alpha only — the tilt script owns this element's transform. */
+.card-scene:active .card-shadow {
+  filter: blur(14px);
+  background: rgb(0 0 0 / 0.7);
+}
+
+/* Tilt target: card-object.ts rotates this wrapper, not the <a>, so the
+   CSS :active press scale on the link composes instead of fighting. */
+.card-tilt {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* The plate itself — the vCard link. Machined edge: 1px groove border plus
+   four inset hairlines (light catches the top/left arris, shade sits in the
+   bottom/right). touch-action pan-y keeps vertical scroll native while the
+   horizontal touch-drag tilt receives its pointermoves uncancelled. */
+.card-obj {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 3.5cqw;
+  overflow: hidden;
+  border: 1px solid var(--color-groove);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.32),
+    inset 1px 0 0 rgb(255 255 255 / 0.14),
+    inset 0 -1px 0 rgb(0 0 0 / 0.28),
+    inset -1px 0 0 rgb(0 0 0 / 0.16);
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 200ms ease;
+}
+.card-obj:active {
+  transform: scale(0.985);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-obj,
+  .card-shadow {
+    transition: none;
+  }
+}
+
+/* Signal-plate surface, in .surface-paper's precedent shape: ground + ink +
+   selection flip. The focus ring is PAPER on this one element — the global
+   signal ring is invisible on its own color, graphite is invisible on the
+   stage (scoped amendment, logged in D-049). */
+.surface-signal-obj {
+  background: linear-gradient(
+    135deg,
+    var(--color-signal-soft),
+    var(--color-signal) 55%,
+    var(--color-signal-deep)
+  );
+  color: var(--color-graphite);
+}
+.surface-signal-obj ::selection {
+  background: var(--color-graphite);
+  color: var(--color-paper);
+}
+.surface-signal-obj:focus-visible {
+  outline: 2px solid var(--color-paper);
+  outline-offset: 2px;
+}
+
+/* Brushed anisotropy (under the grain): horizontally stretched turbulence
+   reads as the brushing pass on anodized aluminium. The repeating-gradient
+   line is the fallback if the data-URI ever fails to decode. */
+.card-obj::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgb(255 255 255 / 0.06) 0 1px,
+    transparent 1px 3px
+  );
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='160'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.5' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='160' filter='url(%23b)'/%3E%3C/svg%3E");
+  background-size: 320px 160px;
+  mix-blend-mode: soft-light;
+  opacity: 0.35;
+}
+
+/* Rough metal grain: the site's feTurbulence vocabulary at card scale. */
+.card-obj::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23r)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/* The engraving: all ink graphite with a letterpress light catch below. */
+.card-face {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 5.5cqw 6.5cqw;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.16);
+}
+.card-wordmark {
+  font-size: clamp(0.95rem, 4.8cqw, 1.35rem);
+}
+.card-name {
+  margin-top: auto;
+  font-size: clamp(1.625rem, 8.2cqw, 2.375rem);
+}
+.card-role {
+  margin-top: clamp(0.3rem, 1.6cqw, 0.5rem);
+}
+.card-actions {
+  margin-top: clamp(0.8rem, 5cqw, 1.5rem);
+}
+.card-save {
+  font-size: clamp(0.9rem, 4.6cqw, 1.125rem);
+}
+.card-mark {
+  position: absolute;
+  right: 6.5cqw;
+  top: 24%; /* clears the name's ascenders down to a 320px viewport */
+  width: 19cqw;
+  height: auto;
+}
+/* Below ~300px cards the name sits at its font floor, stops scaling with the
+   plate, and long names wrap to two lines — the engraving yields entirely so
+   ink never collides with ink. */
+@container (max-width: 290px) {
+  .card-mark {
+    display: none;
+  }
+}
+.card-nfc {
+  width: clamp(18px, 6.5cqw, 28px);
+  height: auto;
+}
+
+/* Sheen: the light strip that sells lacquered metal. Topmost, above the
+   ink. PARKED off the right edge at rest — this default IS the no-JS and
+   reduced-motion state; the entrance sweep and the 9s idle drift are the
+   only things that ever move it (the card page's one loop, D-049). */
+.card-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgb(255 255 255 / 0.9) 50%,
+    transparent 60%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.08;
+  transform: translateX(120%);
+  will-change: transform, opacity;
 }

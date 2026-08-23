@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050]
 ---
 
 # Where things stand
@@ -46,10 +46,17 @@ Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-02
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
-**Six routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`.
-The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
+**Twelve pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
+`/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`) plus the NB-VK digital
+business cards (D-049) — `/karte`, `/karte/peter-knopp`, `/karte/manush-vaghani`, their EN
+mirrors under `/en/card/`, and static `/karte/<slug>.vcf` endpoints. Card routes are noindex
+and sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, `#vorgehen`,
+`#ueber-uns`, `#kontakt` are homepage anchors, not
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
+
+The physical card print masters live in `print/visitenkarte/` (NB-VK-01/02; their QR codes
+point at the card routes). Printing is gated on the DPMA trademark check — open item 5.
 
 Three single sources you must not work around:
 
@@ -59,7 +66,7 @@ Three single sources you must not work around:
 
 Details → [[website-spec]], visual world → `DESIGN.md`.
 
-The brand has a **logo mark** since D-047: the folded glider. It **ships** in the favicon, the
+The brand has a **logo mark** since D-050: the folded glider. It **ships** in the favicon, the
 `apple-touch-icon`, the `og.png` social card and the header lockup (from `sm` up — phones keep the
 wordmark alone), and goes live with the merge below. Canonical geometry sits in `website/public/logo-mark.svg`,
 `website/public/favicon.svg` and `website/src/components/Mark.astro`; they must not drift.
@@ -94,7 +101,7 @@ Ranked. Owner in brackets.
    exist and none is picked, and D-046's animated wordmark predates the mark, so it shows the
    flow-line lockup rather than the glider and needs a refresh once one is chosen.
 9. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor CLAUDE.md and D-043
-   set. Measured across four consecutive runs during the D-047 gate; **pre-existing and unrelated
+   set. Measured across four consecutive runs during the D-050 gate; **pre-existing and unrelated
    to the mark** (font loading). Ranked here, not higher, only because no traffic reaches the site
    yet — it moves up the moment it does.
 10. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
@@ -106,7 +113,7 @@ Ranked. Owner in brackets.
   an English visitor at `/en/tippfehler` gets the German page.
 - Below the `md` breakpoint the homepage h1 renders as „Prozesse, dievon selbst laufen." —
   `Hero.astro` writes `Prozesse, die<br class="hidden md:block">von selbst laufen.`, so when the
-  break is hidden the two words collide. Pre-existing on `main`, found during the D-047 gate; the
+  break is hidden the two words collide. Pre-existing on `main`, found during the D-050 gate; the
   fix is one space before the `<br>`, and it touches customer-facing German, so it goes through
   `copywriter-de` on its own branch.
 
@@ -128,11 +135,11 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The **logo mark rollout (D-047)** sits on branch `claude/animated-company-logo-4f5bbc`,
+The **logo mark rollout (D-050)** sits on branch `claude/animated-company-logo-4f5bbc`,
 built and gated, **not yet merged to `main`** — favicon, apple-touch-icon, og.png, header lockup,
-`Mark.astro`, `npm run logo` and the doc updates land together. The motion upgrade (D-038…D-042), the
-icon vocabulary (D-043) and the flowrail (D-044) are merged and live; the WebGL hero-dissolve
-experiment was killed on the founder's verdict (D-045) and its branch is deleted.
+`Mark.astro`, `npm run logo` and the doc updates land together. Everything else is merged: the
+business-card work — print masters plus the digital card-object redesign (D-049) — the animated
+wordmark sting (D-046) and the wordmark drop (D-047).
 
 ## Next
 

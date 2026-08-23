@@ -42,7 +42,7 @@ src/
   components/         22 components + icons/; the EN page reuses all of them
   pages/              The four routes above + 404
   scripts/motion.ts   GSAP + Lenis motion layer
-public/               favicon.svg + logo-mark.svg + apple-touch-icon.png (the D-047
+public/               favicon.svg + logo-mark.svg + apple-touch-icon.png (the D-050
                       mark), og.png, robots.txt, GSC verification file
 ```
 

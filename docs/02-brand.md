@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision]
-decisions: [D-003, D-016, D-025, D-046, D-047]
+decisions: [D-003, D-016, D-025, D-046, D-050]
 cites_history: [D-001, D-014]
 ---
 
@@ -52,12 +52,12 @@ graphite text (AA for large/bold text).
 The **flow-line**: 2 muted process lines + 1 accent line converging/branching, animated on scroll
 (draws left→right, respects prefers-reduced-motion). Appears in the hero schematic, the flowrail
 (D-044) and the CTA arrow (D-043); the D-041 section seams share its left→right grammar but
-carry no signal — they are drafting rules, not the flow-line. Since D-047 it is no longer the logo: the flow-line is the brand's *behaviour*, the mark
+carry no signal — they are drafting rules, not the flow-line. Since D-050 it is no longer the logo: the flow-line is the brand's *behaviour*, the mark
 is the brand's *object*. This is still the one memorable on-page device — everything else stays quiet.
 
 ## Logo directions
 
-**The mark (D-047): the folded glider.** A flat sheet folded into something that flies by itself.
+**The mark (D-050): the folded glider.** A flat sheet folded into something that flies by itself.
 Two colours only — signal `#FF4D00` body, paper `#F7F5F0` underside — flat vector, butt-clean
 edges, ratio 1.692:1, no background. Canonical files, which must never drift apart:
 
@@ -76,7 +76,7 @@ Lockups:
 1. **Primary lockup** — mark + wordmark `NexBridge-IT` + signal period, mark left, centred on the
    wordmark's line box, gap ≈ 0.5× the mark's height. Shipped in the site header from `sm` up;
    below that the wordmark stands alone — a composition choice with the measurement behind it in
-   D-047, not a law of nature.
+   D-050, not a law of nature.
 2. **Mark alone** — avatar, app icon, stamp, and the browser tab. Below ~20px the folded underside
    closes up; the 16px tab icon is a knowing exception, because a tab icon is a recognition cue,
    not a reproduction. Everything we control stays at 20px or above.

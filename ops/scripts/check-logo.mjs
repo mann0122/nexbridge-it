@@ -1,5 +1,5 @@
 /**
- * D-047 drift guard. The mark's geometry is duplicated across three vector
+ * D-050 drift guard. The mark's geometry is duplicated across three vector
  * sources on purpose (a public asset, a favicon with its own ground, and an
  * Astro component using tokens). Duplication only stays honest if something
  * fails when it drifts — that something is this script.

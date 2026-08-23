@@ -131,7 +131,19 @@ const base = lang === 'de' ? '' : '/en';
 
     const main = svg.querySelector<SVGPathElement>('.flow-out-main');
     const dot = svg.querySelector<SVGCircleElement>('.flow-pulse');
-    if (main && dot) master.add(() => pulses.push(pulseAlong(main, dot, 0.4)));
+    if (main && dot)
+      master.add(() => {
+        // The wordmark drop (D-047) may claim the first pulse: if the
+        // cancelable claim is prevented, that module starts — and owns —
+        // the loop at its merge moment. Unclaimed (module absent, guards
+        // failed, already played this page-load), this is the old behavior
+        // to the letter.
+        const claim = new CustomEvent('flowline:ready', {
+          cancelable: true,
+          detail: { path: main, dot },
+        });
+        if (document.dispatchEvent(claim)) pulses.push(pulseAlong(main, dot, 0.4));
+      });
   }
 
   onPage(() => {

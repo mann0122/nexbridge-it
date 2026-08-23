@@ -1,0 +1,18 @@
+---
+/**
+ * English card mirrors — /en/card/<slug>. Same component, same fixed slugs;
+ * only the language differs.
+ */
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import CardPage from '../../../components/CardPage.astro';
+import { CARDS } from '../../../config/cards';
+
+export const getStaticPaths = (() =>
+  CARDS.map((person) => ({ params: { person: person.slug }, props: { person } }))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { person } = Astro.props as Props;
+---
+
+<CardPage lang="en" person={person} />

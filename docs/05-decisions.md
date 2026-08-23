@@ -864,7 +864,128 @@ off-site brand collateral (video intros, social) on founder order — the site k
 its logo in code. Assets: founder's Higgsfield library (16:9 job `a4582aac`) + delivered
 MP4s; ~270 credits total. Owner: founder (verdict), partner-b (build).
 
-## D-047 | 2026-08-23 | Official logo mark: the folded glider | DECIDED
+## D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED
+Founder-described: the header wordmark's signal period lifts off, bounces across every
+letter, drops into the hero schematic and merges with the pulse that travels the signal
+line. Calibrated into the house register as a **measuring probe indexing the name** —
+constant hop height, constant 200ms rhythm (the founder rejected 120ms as too fast to
+watch), letters never move. Off the last glyph the dot **descends the hero copy in a
+staircase** — one bounce per text line (both H1 lines, the subline; founder-directed),
+stepping rightward toward the merge point — then one restrained contact tick, and the
+clone hands off to `.flow-pulse` and the normal loop runs. A **fading afterimage trails
+the dot** (founder-directed): ghost elements on the one frame clock, alpha from 0.32
+down, self-removing — an afterimage of the sanctioned element, not a second signal
+object, the same argument that holds the Ribbons wash under the ration (D-037). Single-shot, **once per browser page-load** (F5 replays; router
+remounts and DE↔EN twins decline). D-046 is taken on the unmerged logo-sting branch;
+numbering continues at 47 to avoid a collision at merge.
+
+**Ration accounting.** The in-flight dot replaces the resting period 1:1 (original at
+`opacity: 0` — not `visibility`, so the link keeps its accessible name); the element count
+never rises. The copy crossings stand **on their own accounting**, not on D-044 — the
+`design-critic` gate blocked that citation as inverted (D-044's debris is a logged *second*
+element, and a prior gate ordered it *off* live copy; this is the opposite case). What
+carries it: the sanctioned element in transit — the ration counts elements, not positions —
+~5px of ink against ≥40px display glyphs, contacts at line-box tops, under half a second
+per crossing, single-shot. No new loop: the sequence *ends in* the flow-line pulse, still
+the site's only one (D-043).
+
+**Gate findings taken in full.** `design-critic`: the precedent rewording above; a real
+bail gap — the mobile menu (fixed, z-40, scroll-locked) could open mid-flight and the
+scroll bail could never fire, so menu-open, resize and orientationchange now bail exactly
+like scroll; and the trail spawner now reads tween state instead of
+`getBoundingClientRect` (zero forced layout — the 94 floor has no headroom).
+`qa-reviewer`: traced every exit path to exactly one pulse, and failed the first bundle
+claim as stale — the measured numbers below replaced it.
+
+**Ownership contract.** `Hero.astro` now dispatches a cancelable `flowline:ready` when the
+schematic finishes drawing (the same idiom as `flowfield:blast`). `wordmark-drop.ts` claims
+it via `preventDefault` and then owns the first pulse; every exit path — merge, scroll
+bail, unmount — leaves exactly one pulse running. Unclaimed, Hero's old
+`pulseAlong(…, 0.4)` line runs to the letter. Guards before claiming, all checkable:
+`!motionOff`, not yet played, `scrollY < 8`, and the signal line's origin on stage
+(`getScreenCTM`-mapped) — a 360×740 phone skips honestly because the schematic sits below
+the fold. Letter rects come from `document.createRange()` — zero DOM mutation in the
+sticky header. The bounce starts only at `flowline:ready` because the dot must not land on
+a line that has not been drawn. Owner: partner-b, on the founder's description.
+
+**Measured** (qa gate, HEAD rebuilt in a scratch worktree for the before-numbers): the
+homepage motion chunk goes 8,591 → 13,076 B raw; total first-load delta **+4.6 KB raw /
++1.5 KB gzip** (≈ 223 KB raw first load from D-044's 218.6). An earlier +3 KB estimate
+predated the founder-directed staircase and trail and failed the gate as stale — these are
+the real numbers.
+
+## D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED
+Founder asked for one company design file "with everything included" to feed external
+websites and tools. Shipped as `docs/07-brand-kit.md` — a self-contained kit (identity,
+colour + computed contrast, typography incl. the full heading scale and both mono
+grades, layout rhythm, components incl. the dataviz grammar, icon rules, flow-line
+snippets, motion, voice, bans, floors) written to be pasted outside the repo: repo
+jargon is either explained or excluded, and the header tells consumers to apply values
+exactly and invent nothing.
+
+**It is a derived artefact.** Sources of truth stay `global.css @theme`, `DESIGN.md`,
+[[brand]] and the component code; the kit is regenerated from them, never hand-edited —
+a hand-edited copy is a second design system, which is the drift D-020 exists to catch.
+Built by parallel source-extraction with file:line citations, then adversarially
+audited; the audit caught real errors before commit (service icons ship at a uniform
+16px — the 20px component defaults are overridden at every call site; a stale 3.03:1
+in a `Contact.astro` comment, corrected to the computed 3.10:1 in the same commit; axis
+order on padding values now labelled because the two rows disagreed silently).
+Owner: partner-b.
+
+## D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED
+*(Renumbered at merge from the D-046 its branch carried — that number was already held by
+the animated-logo decision above.)*
+**The routes, previously unlogged.** `/karte/peter-knopp`, `/karte/manush-vaghani`, `/karte/`
+(the Kartenverzeichnis), EN mirrors at `/en/card/*`, plus static vCard endpoints at
+`/karte/<slug>.vcf` — vCard 3.0, every value from the `site.ts`/`cards.ts`/`ui.ts` single
+sources, nothing invented. All card routes are noindex and sitemap-excluded: handouts, not
+landing pages. They joined the veil's sheet register (05/06), and `public/_headers` pins
+`text/vcard` so phones open the file as a contact. The physical print masters live in
+`print/visitenkarte/` (NB-VK-01/02, QR → these routes); printing stays gated on the DPMA
+trademark check — STATE open item 5.
+
+**The founder ruling.** The first shipped skin — DIN frame, self-measuring dimension line,
+NFC-antenna concealed geometry, Zeichnungskopf header — was rejected by the founder for the
+card surface: *"AI agency, not manufacturing"*. Redesigned to the product-shot composition the
+founder chose: one signal-orange machined-metal card object ("Das Objekt") on the graphite
+stage. **The ration ruling:** the card object is the viewport's ONE signal element, at CTA
+grade (all ink on it graphite), with the save action folded INTO the plate — the whole card is
+the vCard link. The page ground stays graphite; D-003 and the per-viewport ration stand
+unchanged. The alternative — a signal page ground — was analyzed as a D-003 supersession and
+NOT taken.
+
+**New tokens, contrast computed.** `--color-signal-soft` #FF6A26 (graphite on it: 6.29:1) and
+`--color-signal-deep` #EE4700 (4.74:1 — #E04300 was rejected at 4.26:1, an AA failure);
+`--color-groove` #D13F00 (3.79:1) never carries text — engraving strokes and the card border
+only. The existing graphite-on-signal 5.4:1 row is unchanged. **A narrow material sanction:**
+opaque CSS/SVG-drawn metal (feTurbulence roughness 1.15/2-octave overlay, brushed anisotropy
+0.012/0.5 soft-light, 135° signal-family gradient, inset arris hairlines, offset/blur floor
+shadow, zero halo) is sanctioned for the card object ONLY — not a site-wide material. The
+glassmorphism ban is untouched (the plate is opaque); white/black craft alphas were ruled
+acceptable as monochrome luminance modulation (`design-critic`, this gate round).
+
+**Loop reassignment.** The card routes' single idle loop is the sheen drift (9s period, 2.4s
+pass, 0.10 peak); the flow-line pulse does not exist on these routes — its schematic became a
+static engraving. Homepage accounting is unchanged. Tilt: pointer ±6°, touch-drag ±8°, no
+gyroscope (the iOS permission prompt was rejected); reduced-motion/`?snap`/no-JS rest at the
+complete still-life by CSS default. **Scoped amendments, logged so future audits don't file
+them as defects:** the focus ring on the card object is paper (signal is invisible on itself,
+graphite invisible on the stage — the 2px signal ring law stands everywhere else); the
+wordmark period renders graphite ON the plate (monochrome engraving); the second-rank stage
+actions (Anrufen/E-Mail/Teilen) deliberately carry `border-steel-soft`, demoted below the
+house secondary-CTA grade because the plate outranks everything; the engraving yields
+(`display: none`) below 290px container width so ink never collides with two-line names.
+
+**Gates.** `design-critic` ran a FIX-FIRST round — three should-fixes (NFC glyph round
+linecaps → butt caps per D-043; flow-mark/name clearance at narrow widths; a shadow
+inline-opacity killing the press response), all fixed and re-verified. `copywriter-de` passed
+the new key `card.a11y.vcard` („vCard herunterladen"); `card.tb.no` and `card.antenna`
+retired. `qa-reviewer` said SHIP: Lighthouse on the card page 96/100/100, homepage floors
+held at 94/100/100/100; the card page's SEO 63 is solely the deliberate noindex; the card JS
+chunk is 4,214 B. Owner: founder (verdict), partner-b (build).
+
+## D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED
 NexBridge-IT has a standalone mark for the first time. The founder rejected the drafting-office
 square mark ("gives me the vibe of a manufacturing company — we are an AI agency") and then, from
 24 vector concepts generated across two Recraft V4.1 rounds, picked the **folded paper glider**:
@@ -923,6 +1044,7 @@ ration's named exception; it now has a mark inside it. The wording in `DESIGN.md
 Still open, deliberately: the mark has no chosen animation yet (three takes exist, none picked),
 D-046's animated wordmark sting predates the mark and will need a refresh, and the DPMA check in
 [[state]] still gates any printing or first public post. Owner: founder (choice), partner-b (build).
+
 
 ## Template
 ```

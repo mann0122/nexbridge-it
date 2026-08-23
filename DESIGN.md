@@ -25,7 +25,7 @@ way an engineer would.
   header, the specced CTA and the signature schematic line are the two named exceptions.
   Consequence, written down so it is not re-litigated: **a signal CTA in the nav is now blocked** —
   it would put a second permanent signal element in the sticky bar. Widened from "logo period" by
-  D-047, when the logo gained a mark.
+  D-050, when the logo gained a mark.
 - `steel #8B959E` — secondary TEXT on graphite (brand steel was 3.1:1 — fails AA; this passes 5.9:1)
 - `steel-deep #5B6770` — brand steel: borders, muted diagram lines, secondary text on paper
 - `steel-soft #39424A` — hairlines on graphite
@@ -113,6 +113,18 @@ the drafting-sheet veil and vanish — this amends D-039's "the sheet number is 
 signal element": during the ~1.2s shower, the debris is the second, by design and founder
 order. JS-built; no-JS and `?snap` pages are byte-identical.
 
+**Wordmark drop** (D-047): once per page-load, after the schematic finishes drawing, the
+wordmark's signal period lifts off and indexes across the name — constant hop height,
+constant 200ms rhythm, a measuring probe, not a bouncing ball; the letters never move —
+then descends the hero copy in a staircase (one contact per text line, stepping rightward),
+lands on the signal line's origin and **becomes the first pulse**. A fading afterimage
+trails it (ghosts on the one ticker, alpha 0.32 → 0, self-removing). The flying dot
+replaces the resting period 1:1, so the ration's element count never rises, and the
+sequence *ends in* the flow-line pulse — still the site's only loop. Router remounts
+decline (F5 replays); scroll, resize, rotation or the mobile menu opening mid-flight bail
+cleanly to the normal pulse; small viewports where the merge point sits below the fold
+skip honestly. JS-built; no-JS and `?snap` pages unchanged.
+
 **No pinned scroll sequence.** A morphing particle stage was built and removed across
 D-026 → D-035; the reasoning is in the log and is worth reading before proposing another one.
 `FlowField` in the hero was the page's only generative canvas until D-037 admitted the `Ribbons`
@@ -121,23 +133,24 @@ is bound to the visitor's own hand instead of being asked to carry meaning, it c
 space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
 D-040's dispersion is not a third canvas — it is the first canvas, dispersing.
 
-Budget (D-042, re-based by D-043 and D-044): **218.6 KB JS raw / 74.4 KB brotli** first load,
-plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk fetched only once the cursor trail's
-gates pass. **D-047 leaves JS untouched** — the mark is markup, not a script. Homepage document
-**56.6 KB raw / 12.5 KB gzip** (56,632 / 12,453 bytes), re-measured for D-047 against the same
-page with the mark stripped out: **54.2 KB raw / 11.4 KB gzip**. So the mark costs **2.46 KB raw /
-1.04 KB gzip per document**, after rounding its path coordinates to one decimal — no visible
-change, 15% smaller. It ships on every route including mobile, where CSS hides it: the price of
-one geometry with no extra request, paid knowingly. Zero external asset requests. Lighthouse:
-desktop 100/100/100; **mobile measured 89–90 in the D-047 gate, below the 94 floor D-043 set**
-— pre-existing and unrelated to the mark (font loading), tracked as an open item in [[state]]
-rather than silently absorbed. The floor stays 94 (the founder traded the point for the icon
-vocabulary; the page had an unrounded 0.947 before, i.e. zero headroom, exactly as D-042
-warned). A11y/SEO floors stay 95. Measure before raising any
+Budget (D-042, re-based by D-043, D-044 and D-047): **224.3 KB JS raw / 76.3 KB brotli** first
+load, plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk fetched only once the cursor
+trail's gates pass. **D-050 leaves JS untouched** — the mark is markup, not a script. Homepage
+document **56.6 KB raw / 12.5 KB gzip** (56,634 / 12,474 bytes), re-measured for D-050
+against the same page with the mark stripped out: **54.2 KB raw / 11.4 KB gzip**. So the
+mark costs **2.48 KB raw / 1.06 KB gzip per document**, after rounding its path coordinates
+to one decimal — no visible change, 15% smaller. It ships on every route including mobile, where
+CSS hides it: the price of one geometry with no extra request, paid knowingly. Zero external asset
+requests. Lighthouse: desktop 100/100/100, **mobile 94/100/100 — the performance floor is 94 since
+D-043** (the founder traded the point for the icon vocabulary; the page had an unrounded 0.947
+before, i.e. zero headroom, exactly as D-042 warned). A11y/SEO floors stay 95. During the D-050
+gate a preview build measured mobile **89–90** on the pre-merge tree — font loading, not the mark —
+which is why it is an open item in [[state]] rather than a silent regression; re-measure on the
+merged tree before treating the 94 as held. Measure before raising any
 of these numbers — D-042's warning about spending headroom that does not exist now applies
 at 94.
 
-## The mark (D-047)
+## The mark (D-050)
 
 The **folded glider** — a flat sheet folded into something that flies by itself. Two colours
 (signal body, paper underside), flat vector, 1.692:1, no background. It is the brand's *object*;
@@ -166,7 +179,7 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   costs more than it buys. Revisit it with the header, not with the logo.
 - The mark is drawn geometry in the repo, so the generated-imagery ban below is untouched: that
   ban governs illustrative and photographic content on the page, not the logo. The mark's origin
-  (a vector model, then hand-cleaned) is recorded in D-047 rather than hidden.
+  (a vector model, then hand-cleaned) is recorded in D-050 rather than hidden.
 
 ## Components (as they get built)
 
@@ -176,7 +189,7 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   Secondary: 1px steel border, paper text, same geometry.
 - Nav: graphite, **logo lockup** left (mark + wordmark + period, mark from `sm` up), links
   center-right, language switch DE/EN as mono toggle. A signal CTA in the nav is blocked by the
-  ration — see the token note above (D-047). Mobile: full-screen graphite overlay.
+  ration — see the token note above (D-050). Mobile: full-screen graphite overlay.
 - Focus states: 2px signal outline offset 2px, everywhere.
 
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
@@ -194,7 +207,7 @@ The rules D-032 demanded, now binding:
 - **Trigger**: a bare `data-icon-hover` attribute on the interactive parent; CSS fires on its
   `:hover` and `:focus-visible`. Never on hovering the SVG itself — the link is the hit area.
 - **The one exemption**: the single filled, signal-coloured SVG in the UI is
-  `components/Mark.astro`, the brand mark (D-047). Nothing under `components/icons/` may be filled
+  `components/Mark.astro`, the brand mark (D-050). Nothing under `components/icons/` may be filled
   or signal-coloured, at any size, for any reason.
 - **Motion**: single-shot and reversible, 420ms `cubic-bezier(0.16,1,0.3,1)` in / 200ms ease
   out (the `.dim-row` curve, so icon and dimension lines read as one event). No infinite loops —

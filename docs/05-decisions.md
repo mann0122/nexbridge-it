@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-06
+updated: 2026-08-23
 depends_on: []
 decisions: []
 ---
@@ -847,6 +847,56 @@ their place; treatments applied over the whole canvas do not. Also housekeeping:
 `feat/motion-upgrade` and `feat/flowrail` branches and the stale `feat/wandlung-stage` are
 deleted; `main` is the only long-lived branch again. Owner: founder (verdict), partner-b
 (removal).
+
+## D-046 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED
+**The routes, previously unlogged.** `/karte/peter-knopp`, `/karte/manush-vaghani`, `/karte/`
+(the Kartenverzeichnis), EN mirrors at `/en/card/*`, plus static vCard endpoints at
+`/karte/<slug>.vcf` — vCard 3.0, every value from the `site.ts`/`cards.ts`/`ui.ts` single
+sources, nothing invented. All card routes are noindex and sitemap-excluded: handouts, not
+landing pages. They joined the veil's sheet register (05/06), and `public/_headers` pins
+`text/vcard` so phones open the file as a contact. The physical print masters live in
+`print/visitenkarte/` (NB-VK-01/02, QR → these routes); printing stays gated on the DPMA
+trademark check — STATE open item 5.
+
+**The founder ruling.** The first shipped skin — DIN frame, self-measuring dimension line,
+NFC-antenna concealed geometry, Zeichnungskopf header — was rejected by the founder for the
+card surface: *"AI agency, not manufacturing"*. Redesigned to the product-shot composition the
+founder chose: one signal-orange machined-metal card object ("Das Objekt") on the graphite
+stage. **The ration ruling:** the card object is the viewport's ONE signal element, at CTA
+grade (all ink on it graphite), with the save action folded INTO the plate — the whole card is
+the vCard link. The page ground stays graphite; D-003 and the per-viewport ration stand
+unchanged. The alternative — a signal page ground — was analyzed as a D-003 supersession and
+NOT taken.
+
+**New tokens, contrast computed.** `--color-signal-soft` #FF6A26 (graphite on it: 6.29:1) and
+`--color-signal-deep` #EE4700 (4.74:1 — #E04300 was rejected at 4.26:1, an AA failure);
+`--color-groove` #D13F00 (3.79:1) never carries text — engraving strokes and the card border
+only. The existing graphite-on-signal 5.4:1 row is unchanged. **A narrow material sanction:**
+opaque CSS/SVG-drawn metal (feTurbulence roughness 1.15/2-octave overlay, brushed anisotropy
+0.012/0.5 soft-light, 135° signal-family gradient, inset arris hairlines, offset/blur floor
+shadow, zero halo) is sanctioned for the card object ONLY — not a site-wide material. The
+glassmorphism ban is untouched (the plate is opaque); white/black craft alphas were ruled
+acceptable as monochrome luminance modulation (`design-critic`, this gate round).
+
+**Loop reassignment.** The card routes' single idle loop is the sheen drift (9s period, 2.4s
+pass, 0.10 peak); the flow-line pulse does not exist on these routes — its schematic became a
+static engraving. Homepage accounting is unchanged. Tilt: pointer ±6°, touch-drag ±8°, no
+gyroscope (the iOS permission prompt was rejected); reduced-motion/`?snap`/no-JS rest at the
+complete still-life by CSS default. **Scoped amendments, logged so future audits don't file
+them as defects:** the focus ring on the card object is paper (signal is invisible on itself,
+graphite invisible on the stage — the 2px signal ring law stands everywhere else); the
+wordmark period renders graphite ON the plate (monochrome engraving); the second-rank stage
+actions (Anrufen/E-Mail/Teilen) deliberately carry `border-steel-soft`, demoted below the
+house secondary-CTA grade because the plate outranks everything; the engraving yields
+(`display: none`) below 290px container width so ink never collides with two-line names.
+
+**Gates.** `design-critic` ran a FIX-FIRST round — three should-fixes (NFC glyph round
+linecaps → butt caps per D-043; flow-mark/name clearance at narrow widths; a shadow
+inline-opacity killing the press response), all fixed and re-verified. `copywriter-de` passed
+the new key `card.a11y.vcard` („vCard herunterladen"); `card.tb.no` and `card.antenna`
+retired. `qa-reviewer` said SHIP: Lighthouse on the card page 96/100/100, homepage floors
+held at 94/100/100/100; the card page's SEO 63 is solely the deliberate noindex; the card JS
+chunk is 4,214 B. Owner: founder (verdict), partner-b (build).
 
 ## Template
 ```

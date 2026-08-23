@@ -1,0 +1,31 @@
+---
+/**
+ * Card-route header — one quiet 56px wordmark bar (D-046): the stage
+ * belongs to the card object, so the header carries nothing but the way
+ * home. Deliberately NOT Header.astro: its nav links are homepage anchors
+ * that do not exist here. The DE↔EN toggle lives in CardFooter next to the
+ * legal links.
+ */
+import { SITE } from '../config/site';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<header class="border-b border-steel-soft bg-graphite">
+  <div class="mx-auto flex h-14 max-w-[1200px] items-center px-6">
+    <a
+      href={lang === 'de' ? '/' : '/en/'}
+      class="group type-wordmark inline-flex min-h-11 items-center text-[1.1rem] text-paper sm:text-[1.35rem]"
+    >
+      {SITE.name}<span
+        class="inline-block text-signal transition-transform duration-200 ease-out group-hover:-translate-y-[0.08em] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+        >.</span
+      >
+    </a>
+  </div>
+</header>

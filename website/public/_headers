@@ -1,0 +1,13 @@
+# Cloudflare static-asset Worker headers (wrangler.jsonc serves ./dist).
+#
+# The vCard endpoints must be served as text/vcard so iOS/Android open them
+# as a contact instead of downloading an unknown file — the asset server
+# derives MIME types from extension and does not know .vcf. Explicit paths,
+# one per card (the slugs are fixed: printed NFC/QR cards point at them;
+# see src/config/cards.ts).
+
+/karte/peter-knopp.vcf
+  Content-Type: text/vcard; charset=utf-8
+
+/karte/manush-vaghani.vcf
+  Content-Type: text/vcard; charset=utf-8

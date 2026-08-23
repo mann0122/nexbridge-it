@@ -931,6 +931,33 @@ include the AI-generated-mark provenance question — copyright/registrability o
 marks in DE/EU practice — asked once, with the Recraft origin on the table. Owner: founder
 (mark + verdicts), partner-b (integration).
 
+## D-048 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED
+**Material change (founder reference-driven, two photographic references supplied).** The card
+plate's material reads sandblasted signal-orange anodized, no longer brushed-anodized. The
+brushed-anisotropy layer is removed; the texture is now exactly two layers in
+`website/src/styles/global.css` (`.card-obj::before/::after`): LIGHT POOLS (feTurbulence
+0.007 / 2 octaves, GaussianBlur 6, contrast slope 1.5, final table floor [0.5, 0.6, 1],
+soft-light, opacity 1, 560px tile) and SANDBLAST GLITTER (feTurbulence 1.4 / 2 octaves, crush
+slope 2.1 intercept −0.55, soft-light 0.85, 200px tile). This narrowly supersedes D-047's
+texture-calibration paragraph — its pinned rough-grain/brushed values are dead layers now.
+D-047's mark adoption and scope rulings stand.
+
+**The light-only pools law (`design-critic`, this gate round).** The pools tile floors at
+exactly 0.5 — soft-light neutral — so the layer can only brighten. Pools are glyph-scale-plus:
+a darkening pool would BE the effective text ground, not a local perturbation; light-only
+keeps every verified flat contrast row (D-046) the binding worst case. The gate initially
+caught a 0.46 floor (−2% darkening, deep stop 4.74→4.61) and it was corrected to 0.5 before
+commit.
+
+**Glitter ceiling.** Soft-light 0.85 / crush slope 2.1 with pepper already clipped to 0 is the
+ceiling — worst joint-case local ≈3.7:1 on sub-glyph 1px dots, the same class as the ≈3.8:1
+D-047 accepted. Future roughness must come from frequency/octave/table-floor shaping only: no
+deeper crush, no opacity increase.
+
+**Unchanged.** Standing specular, arris hairlines, floor shadow, sheen loop (6.5s), and the
+engraved mark (D-047) all stand as shipped. Owner: founder (references + verdict), partner-b
+(build).
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

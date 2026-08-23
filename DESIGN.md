@@ -19,8 +19,13 @@ way an engineer would.
 - `graphite #14171A` — primary ground (hero, nav, closing sections)
 - `graphite-2 #1B1F23` — raised panels on graphite (cards never nest)
 - `paper #F7F5F0` — long-form ground (site flips to paper for reading sections); text on graphite
-- `signal #FF4D00` — THE accent. Rationed: one signal element per viewport (logo period +
-  specced CTA + the signature schematic line are the deliberate exceptions on the hero).
+- `signal #FF4D00` — THE accent. Rationed: one signal element per viewport. The **sticky logo
+  lockup is a standing exception counted out of the ration site-wide** — it is the logo, it rides
+  every route, and per-section signal budgets are counted *below* the header. On the hero, below the
+  header, the specced CTA and the signature schematic line are the two named exceptions.
+  Consequence, written down so it is not re-litigated: **a signal CTA in the nav is now blocked** —
+  it would put a second permanent signal element in the sticky bar. Widened from "logo period" by
+  D-047, when the logo gained a mark.
 - `steel #8B959E` — secondary TEXT on graphite (brand steel was 3.1:1 — fails AA; this passes 5.9:1)
 - `steel-deep #5B6770` — brand steel: borders, muted diagram lines, secondary text on paper
 - `steel-soft #39424A` — hairlines on graphite
@@ -116,15 +121,52 @@ is bound to the visitor's own hand instead of being asked to carry meaning, it c
 space, and it is rationed to a wash rather than an object. Read D-035 before proposing a third.
 D-040's dispersion is not a third canvas — it is the first canvas, dispersing.
 
-Budget (D-042, re-based by D-043): **212.8 KB JS raw / 72.7 KB brotli** first load (unchanged
-by D-043 — the icons are zero JS), plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk
-fetched only once the cursor trail's gates pass. Homepage document ~54 KB raw / 11.4 KB gzip
-(icons added ~1.7 KB gzip of markup + styles). Zero external asset requests. Lighthouse:
-desktop 100/100/100, **mobile 94/100/100 — the performance floor is 94 since D-043** (the
-founder traded the point for the icon vocabulary; the page had an unrounded 0.947 before, i.e.
-zero headroom, exactly as D-042 warned). A11y/SEO floors stay 95. Measure before raising any
+Budget (D-042, re-based by D-043 and D-044): **218.6 KB JS raw / 74.4 KB brotli** first load,
+plus the deferred **50 KB raw / 12 KB brotli** `ogl` chunk fetched only once the cursor trail's
+gates pass. **D-047 leaves JS untouched** — the mark is markup, not a script. Homepage document
+**56.6 KB raw / 12.5 KB gzip** (56,632 / 12,453 bytes), re-measured for D-047 against the same
+page with the mark stripped out: **54.2 KB raw / 11.4 KB gzip**. So the mark costs **2.46 KB raw /
+1.04 KB gzip per document**, after rounding its path coordinates to one decimal — no visible
+change, 15% smaller. It ships on every route including mobile, where CSS hides it: the price of
+one geometry with no extra request, paid knowingly. Zero external asset requests. Lighthouse:
+desktop 100/100/100; **mobile measured 89–90 in the D-047 gate, below the 94 floor D-043 set**
+— pre-existing and unrelated to the mark (font loading), tracked as an open item in [[state]]
+rather than silently absorbed. The floor stays 94 (the founder traded the point for the icon
+vocabulary; the page had an unrounded 0.947 before, i.e. zero headroom, exactly as D-042
+warned). A11y/SEO floors stay 95. Measure before raising any
 of these numbers — D-042's warning about spending headroom that does not exist now applies
 at 94.
+
+## The mark (D-047)
+
+The **folded glider** — a flat sheet folded into something that flies by itself. Two colours
+(signal body, paper underside), flat vector, 1.692:1, no background. It is the brand's *object*;
+the flow-line is the brand's *behaviour*, and neither replaces the other.
+
+- **Three vector sources** carry the geometry — `public/logo-mark.svg`, `public/favicon.svg`,
+  `src/components/Mark.astro` — and their path data must stay byte-identical. **Two rasters are
+  rendered from them** and must be re-exported whenever the geometry changes:
+  `public/apple-touch-icon.png` (180x180) and `public/og.png` (1200x630). `npm run logo` enforces
+  the identical-paths rule and fails on drift; run it beside `npm run kb`.
+- **Ground: dark only, for now.** The underside facet is `paper`, so on a paper ground it stops
+  reading as a fold and the mark drops to one colour. Until an on-light cut is decided, place the
+  mark on graphite — on paper, put it in a graphite chip. Open item, not an oversight.
+- **Below 20px the fold closes up.** The browser tab is exactly that case and is not ours to
+  choose: at 16px the mark reads as an orange dart with a paper sliver. Accepted deliberately — a
+  tab icon is a recognition cue, not a reproduction. Anything we *do* control stays 20px or more.
+- `Mark.astro` is a **brand element, not an icon**: it is filled, it is signal-coloured, and it
+  therefore sits outside the D-043 icon contract (currentColor + strokes + never signal), which
+  continues to govern annotation icons only. That is why it lives at components root.
+- In the header it appears from `sm` up, at 20px — the floor above, held — inside the lockup link; it lifts and drifts
+  right on hover **and on focus-visible** beside the period's lift — one gesture in two parts,
+  both off under `prefers-reduced-motion`. It is centred on the wordmark's line box.
+- Below 640px the header renders exactly as it did before the mark. That is a **composition
+  choice, not physics**: measured at 360px the lockup leaves 2.9px of slack, which is not a
+  margin, and the alternative — shrinking the wordmark of a company nobody has heard of yet —
+  costs more than it buys. Revisit it with the header, not with the logo.
+- The mark is drawn geometry in the repo, so the generated-imagery ban below is untouched: that
+  ban governs illustrative and photographic content on the page, not the logo. The mark's origin
+  (a vector model, then hand-cleaned) is recorded in D-047 rather than hidden.
 
 ## Components (as they get built)
 
@@ -132,8 +174,9 @@ at 94.
   extends on hover — real geometry since D-043: `Cta.astro` wraps the shell,
   `icons/CtaArrow.astro` draws a 2.5-weight shaft that lengthens into a fixed filled head.
   Secondary: 1px steel border, paper text, same geometry.
-- Nav: graphite, wordmark left, links center-right, language switch DE/EN as mono toggle,
-  CTA right. Mobile: full-screen graphite overlay.
+- Nav: graphite, **logo lockup** left (mark + wordmark + period, mark from `sm` up), links
+  center-right, language switch DE/EN as mono toggle. A signal CTA in the nav is blocked by the
+  ration — see the token note above (D-047). Mobile: full-screen graphite overlay.
 - Focus states: 2px signal outline offset 2px, everywhere.
 
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
@@ -150,6 +193,9 @@ The rules D-032 demanded, now binding:
   drawing. The icon-card-grid ban stands untouched.
 - **Trigger**: a bare `data-icon-hover` attribute on the interactive parent; CSS fires on its
   `:hover` and `:focus-visible`. Never on hovering the SVG itself — the link is the hit area.
+- **The one exemption**: the single filled, signal-coloured SVG in the UI is
+  `components/Mark.astro`, the brand mark (D-047). Nothing under `components/icons/` may be filled
+  or signal-coloured, at any size, for any reason.
 - **Motion**: single-shot and reversible, 420ms `cubic-bezier(0.16,1,0.3,1)` in / 200ms ease
   out (the `.dim-row` curve, so icon and dimension lines read as one event). No infinite loops —
   the flow-line pulse remains the site's only loop. Every rule carries the
@@ -170,8 +216,8 @@ Purple/teal gradients · glassmorphism · 3D blobs · stock photos · Inter/DM S
 · colored left-borders >1px · dark-with-neon-glow rendition (offset+blur shadows only, no halos).
 
 The signal ration counts *elements*. The `Ribbons` trail (D-037) is held under it by being a
-wash and not an object: 0.45 alpha at 18px, so it tints rather than competes, and the hero CTA
-stays the one signal element in its viewport. Raising either number breaks the ration and the
+wash and not an object: 0.45 alpha at 18px, so it tints rather than competes: it adds no countable
+element, and the hero's budget is still the two named exceptions in the token note above. Raising either number breaks the ration and the
 copy underneath — that is the whole reason both are pinned in the mount, not left to defaults.
 
 ## Skill routing (D-031)

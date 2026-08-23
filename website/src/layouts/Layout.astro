@@ -45,7 +45,10 @@ const structuredData = {
       '@id': `${SITE.url}/#organization`,
       name: SITE.name,
       url: SITE.url,
-      logo: new URL('/favicon.svg', SITE.url).href,
+      // Google's Organization.logo wants a real logo image, not the 32-unit tab
+      // icon: apple-touch-icon.png is the 180x180 raster rendered from the D-047
+      // mark. `image` stays on the og card.
+      logo: new URL('/apple-touch-icon.png', SITE.url).href,
       image: new URL('/og.png', SITE.url).href,
       description: t('meta.description'),
       email: SITE.email,
@@ -107,6 +110,7 @@ const structuredData = {
     <title>{metaTitle}</title>
     <meta name="description" content={metaDescription} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {/* A 404 is served under every wrong URL — a canonical there would point
         search engines at an error page as though it were the real content. */}
     {!noindex && <link rel="canonical" href={canonical} />}

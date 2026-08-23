@@ -597,7 +597,10 @@ section[id] {
 
 /* Live gradient drift (founder order, D-054): the burnt-orange coloration
    and its light pools ride one oversized layer that wanders across the
-   plate — transform-only (compositor), seamless pools tile. The glint
+   plate — transform-only (compositor). ONE non-repeating instance: a
+   repeating tile shows its seam as a moving line, because the pools' blur
+   samples past the tile edge. The card keeps its own gradient and standing
+   specular underneath; this layer only moves LIGHT over them. The glint
    layer above stays surface-fixed: on real metal the light moves, the
    grain does not. Reduced-motion rests still.
    The pools tile floors at 0.15 and blends `overlay`, so it DARKENS as
@@ -610,15 +613,10 @@ section[id] {
   z-index: 1;
   pointer-events: none;
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560'%3E%3Cfilter id='p' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeGaussianBlur stdDeviation='9'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.15 0.45 1'/%3E%3CfeFuncG type='table' tableValues='0.15 0.45 1'/%3E%3CfeFuncB type='table' tableValues='0.15 0.45 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='560' height='560' filter='url(%23p)'/%3E%3C/svg%3E"),
-    linear-gradient(
-      135deg,
-      var(--color-signal-soft),
-      var(--color-signal) 55%,
-      var(--color-signal-deep)
-    );
-  background-size: 560px 560px, 100% 100%;
-  background-blend-mode: overlay, normal;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560'%3E%3Cfilter id='p' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeGaussianBlur stdDeviation='9'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.15 0.45 1'/%3E%3CfeFuncG type='table' tableValues='0.15 0.45 1'/%3E%3CfeFuncB type='table' tableValues='0.15 0.45 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='560' height='560' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  mix-blend-mode: overlay;
   will-change: transform;
   animation: card-drift 26s ease-in-out infinite alternate;
 }

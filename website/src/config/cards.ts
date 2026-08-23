@@ -22,6 +22,11 @@ export interface CardPerson {
   roleKey: UiKey;
   /** Drawing number carried by the Zeichnungskopf. */
   partNo: string;
+  /**
+   * Personal mobile in E.164 — founder-supplied. Falls back to the venture
+   * line (SITE.phoneE164) when a person has no own number on file.
+   */
+  phoneE164: string;
 }
 
 /** Register designation for the card series — stamps the index page's title block. */
@@ -50,6 +55,7 @@ export const CARDS: readonly CardPerson[] = [
     ...splitName(partnerA),
     roleKey: 'card.1.role',
     partNo: 'NB-VK-01',
+    phoneE164: SITE.phoneE164, // venture line (Impressum) — no personal number on file
   },
   {
     slug: 'manush-vaghani',
@@ -57,5 +63,6 @@ export const CARDS: readonly CardPerson[] = [
     ...splitName(partnerB),
     roleKey: 'card.2.role',
     partNo: 'NB-VK-02',
+    phoneE164: '+4917685919025', // founder-supplied, D-054
   },
 ];

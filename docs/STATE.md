@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054]
 ---
 
 # Where things stand
@@ -55,8 +55,18 @@ and sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, 
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
 
-The physical card print masters live in `print/visitenkarte/` (NB-VK-01/02; their QR codes
-point at the card routes). Printing is gated on the DPMA trademark check — open item 5.
+The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
+the same URL the printed QR codes encode, and never a vCard record (D-054). The digital plate
+carries the company mark (D-050) engraved in one ink in the `.card-mark` slot (D-051), and the
+print masters in `print/visitenkarte/` (NB-VK-01/02) now carry the same mark in full brand
+colours on both fronts (D-053) — digital and physical are reconciled. Printing is gated on the
+DPMA trademark check — open item 5.
+
+The plate's material is a founder override (D-054): full-range metallic, a live 26s drift that
+rests under `prefers-reduced-motion`, and the house texture laws (light-only pools, crush and
+opacity ceilings, AA discipline for small ink) suspended **on that surface only** — small ink on
+the plate can fall below 4.5:1 in the darkest pools. A knowing, logged trade; the site's contrast
+law stands everywhere else. Each card carries its own phone number (`cards.ts` `phoneE164`).
 
 Three single sources you must not work around:
 
@@ -94,6 +104,8 @@ Ranked. Owner in brackets.
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
 5. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
+   Should include the generated-mark provenance question in one pass (origin recorded in D-050,
+   consequence logged in D-051).
 6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
 7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
    choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
@@ -106,6 +118,10 @@ Ranked. Owner in brackets.
    yet — it moves up the moment it does.
 10. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
    mark needs a graphite chip on light material until a light-ground variant exists. Gates print.
+11. **The card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo`
+   checks the three canonical vector sources only; the card plate and the print master carry
+   their own 0-origin copy, and the plate's copy still has one sub-resolvable path the canonical
+   mark does not. `TBD:` guard them or replace them — see D-051, before the next card round.
 
 ### Known defects (technical, none blocking)
 
@@ -116,6 +132,11 @@ Ranked. Owner in brackets.
   break is hidden the two words collide. Pre-existing on `main`, found during the D-050 gate; the
   fix is one space before the `<br>`, and it touches customer-facing German, so it goes through
   `copywriter-de` on its own branch.
+- One card page dials two numbers. The „Tel." row and the .vcf follow the person
+  (`cards.ts` `phoneE164`, D-054), but the second-rank „Anrufen" button in
+  `website/src/components/CardPage.astro:208` still reads `SITE.phoneE164`, so on Manush
+  Vaghani's card it calls the venture line. One-line fix, not taken here because this pass is a
+  merge reconciliation.
 
 ## Blocked / pending
 
@@ -135,10 +156,12 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. The logo mark (D-050) is merged and deployed — favicon, apple-touch-icon, og.png,
-header lockup, `Mark.astro` and `npm run logo` are live on nexbridge-it.com. The business-card
-work (D-049), the animated wordmark sting (D-046) and the wordmark drop (D-047) were already
-merged. `main` is the only long-lived branch.
+Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark
+(D-050) — favicon, apple-touch-icon, og.png, header lockup, `Mark.astro` and `npm run logo` —
+the animated wordmark sting (D-046), the wordmark drop (D-047), and the complete NB-VK card
+system: the digital cards (D-049), the mark engraved on the card plate (D-051), the plate
+recomposition (D-052), the mark on the print fronts (D-053) and the founder's full-metallic
+override with per-person phone numbers and the NFC hosting decision (D-054).
 
 ## Next
 

@@ -5,7 +5,7 @@
  * has just tapped a card with their phone, so 360px is the primary viewport.
  *
  * The concept (D-049): the page is a product photograph of the card that
- * was just tapped — one precision-machined signal-orange anodized plate on
+ * was just tapped — one precision-machined sandblasted signal-orange anodized plate on
  * a graphite void, complete from the first frame. The plate itself IS the
  * save action: the whole card is the vCard link, the house CTA grammar
  * scaled up to an object. It counts as the viewport's ONE signal element;
@@ -14,7 +14,7 @@
  * second-rank actions, one annotation line.
  *
  * Motion: entrance rise-and-settle with a one-time sheen sweep; the page's
- * ONE idle loop is the 9s sheen drift (the flow pulse died with the old
+ * ONE idle loop is the 6.5s sheen drift (the flow pulse died with the old
  * schematic skin — reassignment logged in D-049). Pointer tilt on fine
  * pointers, horizontal drag tilt on touch, no gyroscope. The sheen's
  * parked state is the CSS default, so no-JS, ?snap and reduced-motion all
@@ -54,12 +54,13 @@ const vcfHref = `/karte/${person.slug}.vcf`;
 /* Every row is a real link. The address row points at the Impressum — the
    in-world home of the address, and no third-party map request. */
 const rows = [
-  // Display grouping matches the printed card (+49 173 9044077); the raw
-  // Impressum spelling (01739044077) stays untouched in site.ts.
+  // Per-person number from cards.ts (falls back to the venture line there).
+  // Display grouping matches the printed card; the raw Impressum spelling
+  // (01739044077) stays untouched in site.ts.
   {
-    href: `tel:${SITE.phoneE164}`,
+    href: `tel:${person.phoneE164}`,
     label: t('card.row.phone'),
-    value: SITE.phoneE164.replace(/^(\+49)(\d{3})(\d+)$/, '$1 $2 $3'),
+    value: person.phoneE164.replace(/^(\+49)(\d{3})(\d+)$/, '$1 $2 $3'),
     Icon: PhoneIcon,
   },
   { href: `mailto:${SITE.email}`, label: t('card.row.email'), value: SITE.email, Icon: MailIcon },
@@ -105,6 +106,9 @@ const rows = [
             )}
             data-icon-hover
           >
+            {/* Live gradient (founder order): the coloration + light pools
+                drift across the plate; the grain above stays surface-fixed. */}
+            <span class="card-drift" aria-hidden="true"></span>
             <div class="card-face">
               <div class="card-el flex items-start justify-between gap-4">
                 {/* Engraved monochrome wordmark — the period is graphite
@@ -113,20 +117,40 @@ const rows = [
                 <span class="type-annot">{person.partNo}</span>
               </div>
 
-              {/* Engraved flow mark: groove inputs into the graphite output
-                  line — the brand schematic as a stamp, not a diagram. */}
-              <svg class="card-el card-mark" viewBox="0 0 96 64" fill="none" aria-hidden="true">
-                <path
-                  d="M0 8 H36 C52 8, 56 32, 68 32"
-                  stroke="var(--color-groove)"
-                  stroke-width="1.5"></path>
-                <path d="M0 32 H68" stroke="var(--color-groove)" stroke-width="1.5"></path>
-                <path
-                  d="M0 56 H36 C52 56, 56 32, 68 32"
-                  stroke="var(--color-groove)"
-                  stroke-width="1.5"></path>
-                <path d="M68 32 H88" stroke="var(--color-graphite)" stroke-width="2.5"></path>
-                <path d="M96 32 L86 27 V37 Z" fill="var(--color-graphite)"></path>
+              {/* The company mark (D-050, the folded glider), engraved: the
+                  plate carries one ink, so the signal body becomes graphite
+                  and the paper underside becomes the letterpress light catch
+                  (D-051 — the one sanctioned recolour of the mark). Same
+                  geometry as public/logo-mark.svg, normalized to a 0-origin
+                  viewBox; not covered by `npm run logo`. */}
+              <svg
+                class="card-el card-mark"
+                viewBox="0 0 115 68"
+                fill="none"
+                aria-hidden="true"
+              >
+                <g fill="var(--color-graphite)">
+                  <path
+                    d="M111.28 1.16C111.77 0.96 112.01 0.85 112.55 0.78 111.96 1.16 111.41 1.43 110.78 1.74 88.29 14.73 66.07 28.2 44.15 42.14 33.97 48.43 23.83 54.78 13.72 61.18 10.24 63.41 7.04 65.65 3.63 67.9L30.49 36.62 36.83 29.26C37.77 28.17 38.76 26.79 39.9 25.9 40.8 25.2 51.49 21.7 53.58 20.98L90.34 8.39C95.07 6.82 99.78 5.21 104.47 3.55 106.35 2.9 108.49 2.29 110.31 1.56L111.28 1.16z"
+                  ></path>
+                  <path
+                    d="M113 0.22C112.49 0.53 111.92 0.64 111.34 0.8L110.71 0.94C108.86 1.53 106.63 2.09 104.72 2.64 101.61 3.53 98.5 4.45 95.4 5.38L55.65 17.29C49.87 18.98 44.11 20.71 38.36 22.48 33.92 18.63 28.52 13.99 23.93 10.42 26.55 9.9 31.02 9.55 33.82 9.24L51.01 7.25 111.23 0.35C111.42 0.3 112.73 0.24 113 0.22z"
+                  ></path>
+                  <path
+                    d="M114.61 1.19L114.67 1.27C114.47 1.64 114.02 2.15 113.74 2.48 107.65 9.8 101.94 17.46 95.93 24.83L89.37 21.76C88.21 21.18 87.12 20.65 85.94 20.13 88.62 18.3 91.43 16.59 94.16 14.83L105.77 7.3C108.27 5.66 112.5 3.05 114.61 1.19z"
+                  ></path>
+                  <path
+                    d="M1.41 10.33C4.95 9.16 8.81 8.1 12.41 6.97L21.76 4.13C22.64 3.86 27.35 2.27 27.99 2.42 33.01 3.59 38.29 5.63 43.35 6.52 38.69 7.2 32.79 7.52 28.03 7.94 19.29 8.75 10.55 9.62 1.82 10.56 1.48 10.63 0.55 10.71 0.16 10.75 0.62 10.56 0.93 10.47 1.41 10.33z"
+                  ></path>
+                </g>
+                <g fill="rgb(255 255 255 / 0.34)">
+                  <path
+                    d="M83.23 21.63C86.52 22.79 89.77 24.08 93.07 25.23 93.63 25.43 94.25 25.65 94.8 25.88 88.37 29.1 81.34 32.21 74.79 35.31L27.96 57.28 15.28 63.25C13.16 64.25 10.83 65.29 8.75 66.33L8.64 66.13C12.39 64.16 16.57 61.63 20.25 59.5 29.4 54.15 38.51 48.72 47.57 43.2L71.22 28.97C75.15 26.6 79.38 24.11 83.23 21.63z"
+                  ></path>
+                  <path
+                    d="M8.75 66.33C8.49 66.48 6.48 67.47 6.34 67.46 6.32 67.23 8.38 66.24 8.64 66.13L8.75 66.33z"
+                  ></path>
+                </g>
               </svg>
 
               <h1 id="card-name" class="type-display card-name">
@@ -307,7 +331,7 @@ const rows = [
 
     /* 2 — one-time sheen sweep while the plate settles, then re-park */
     if (sheen) {
-      tl.set(sheen, { xPercent: -120, opacity: 0.3 }, 0.7)
+      tl.set(sheen, { xPercent: -120, opacity: 0.38 }, 0.7)
         .to(sheen, { xPercent: 120, duration: 1.0, ease: 'power2.inOut' }, 0.7)
         .set(sheen, { opacity: 0.08 }, 1.7);
     }

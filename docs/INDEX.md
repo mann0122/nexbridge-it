@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-23 · 16 nodes · 50 decisions
+Content as of 2026-08-23 · 16 nodes · 54 decisions
 
 ## Map
 
@@ -159,7 +159,11 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
 | D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
 | D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
-| D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED | `brand`, `state` |
+| D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED | `brand`, `brand-kit`, `state` |
+| D-051 | 2026-08-23 | The mark engraved on the NB-VK card plate: one-ink cut, 0-origin coordinates, grain ceiling | DECIDED | `brand`, `state` |
+| D-052 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED | `state` |
+| D-053 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED | `brand`, `state` |
+| D-054 | 2026-08-23 | Card plate goes full metallic on founder override; house texture laws suspended on this surface | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

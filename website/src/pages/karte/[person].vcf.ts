@@ -29,7 +29,7 @@ export const GET: APIRoute<{ card: CardPerson }> = ({ props }) => {
     `FN:${esc(card.name)}`,
     `ORG:${esc(SITE.name)}`,
     `TITLE:${esc(t(card.roleKey))}`,
-    `TEL;TYPE=CELL,VOICE:${SITE.phoneE164}`,
+    `TEL;TYPE=CELL,VOICE:${card.phoneE164}`,
     `EMAIL;TYPE=INTERNET,WORK:${SITE.email}`,
     `URL:${SITE.url}`,
     /* ADR order: PO box; extended; street; locality; region; postal; country */

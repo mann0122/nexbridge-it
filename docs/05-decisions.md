@@ -1045,6 +1045,137 @@ Still open, deliberately: the mark has no chosen animation yet (three takes exis
 D-046's animated wordmark sting predates the mark and will need a refresh, and the DPMA check in
 [[state]] still gates any printing or first public post. Owner: founder (choice), partner-b (build).
 
+## D-051 | 2026-08-23 | The mark engraved on the NB-VK card plate: one-ink cut, 0-origin coordinates, grain ceiling | DECIDED
+*(Renumbered at merge from the D-047 its branch carried — that number is held by the wordmark
+drop above. Reframed in the same pass: the branch entry was written as if it adopted the company
+mark. It does not, and it never could — adoption is D-050's ruling and this entry defers to it.)*
+
+**What this entry is not.** It does not adopt a mark, and it does not rule on the scope of
+`DESIGN.md`'s generated-imagery ban. D-050 settles both — the mark's provenance and the finding
+that a brand owner's own vector identity mark is not what that ban governs (`DESIGN.md`, "The
+mark"). Cited here, not repeated. What follows is only how the adopted mark renders on the NB-VK
+card plate.
+
+**Two names, one geometry.** The card branch called it "the founder's arrowhead-contrail"; D-050
+calls it the folded glider. It is the same artwork. Every path drawn on the plate in
+`website/src/components/CardPage.astro` maps onto the canonical geometry in
+`website/public/logo-mark.svg` by exactly X = 10x + 446, Y = 10y + 680 — same shapes, same
+1.69:1 box, a different normalization. The card carries the coordinates cleaned to a 0-origin
+`viewBox 0 0 115 68`; the canonical sources carry `0 0 1145.06 676.8` plus a placement transform.
+
+**The engraved cut — the one sanctioned exception to "never recolour".** On the orange plate the
+mark is engraved rather than printed: the glider's body renders in graphite ink and its paper
+underside becomes a white-alpha 0.34 light-catch, because the plate's law is one ink plus craft
+alphas (D-049). [[brand]]'s never-recolour rule stands everywhere else; this exception exists on
+the card surface only. The cut replaces the flow-mark engraving in the `.card-mark` slot, which
+narrowly supersedes D-049's sentence about the flow-line schematic becoming the plate's static
+engraving. The flow-line is untouched as the site's motion signature.
+
+**Drift exposure, recorded rather than assumed away.** `npm run logo`
+(`ops/scripts/check-logo.mjs`) guards exactly three canonical vector sources; the card-plate copy
+and the print copies (D-053) are not among them, so nothing fails if they drift. They already
+differ in one respect: the plate copy carries the sub-resolvable contrail sliver as a sixth path,
+which the canonical five-path mark does not have and which D-053 deleted from the print vector.
+`TBD:` whether the two card copies come under the drift guard or are replaced by the canonical
+geometry — partner-b, before the next card round.
+
+**Grain ceiling (the reasoning, kept; the values, superseded twice since).** Founder order in this
+round, "more rough texture": the rough-grain layer went to baseFrequency 0.72 / 3 octaves /
+soft-light 0.85 and the brushed layer to 0.6, and `design-critic` ruled those values the hard
+ceiling — worst-case compound dark-cluster contrast ≈3.8:1 passed only there, so further roughness
+had to come from frequency and octave shaping, never from opacity. Those layers were replaced by
+D-052; the ceiling itself was suspended on this surface by founder order in D-054.
+
+**Consequences.** (a) Print and digital had to be reconciled before any print run — closed by
+D-053. (b) The DPMA trademark check (STATE open item 5, partner-a) should carry the
+generated-mark provenance question — copyright and registrability of a generator-drawn mark in
+DE/EU practice — asked once, with the origin recorded in D-050 on the table. Owner: founder
+(verdicts), partner-b (build).
+
+## D-052 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED
+*(Renumbered at merge from the D-048 its branch carried — that number is held by the portable
+brand kit above.)*
+**Material change (founder reference-driven, two photographic references supplied).** The card
+plate's material reads sandblasted signal-orange anodized, no longer brushed-anodized. The
+brushed-anisotropy layer is removed; the texture is now exactly two layers in
+`website/src/styles/global.css` (`.card-obj::before/::after`): LIGHT POOLS (feTurbulence
+0.007 / 2 octaves, GaussianBlur 6, contrast slope 1.5, final table floor [0.5, 0.6, 1],
+soft-light, opacity 1, 560px tile) and SANDBLAST GLITTER (feTurbulence 1.4 / 2 octaves, crush
+slope 2.1 intercept −0.55, soft-light 0.85, 200px tile). This narrowly supersedes D-051's
+texture-calibration paragraph — its pinned rough-grain/brushed values are dead layers now.
+D-051's engraved cut of the mark stands.
+
+**The light-only pools law (`design-critic`, this gate round).** The pools tile floors at
+exactly 0.5 — soft-light neutral — so the layer can only brighten. Pools are glyph-scale-plus:
+a darkening pool would BE the effective text ground, not a local perturbation; light-only
+keeps every verified flat contrast row (D-049) the binding worst case. The gate initially
+caught a 0.46 floor (−2% darkening, deep stop 4.74→4.61) and it was corrected to 0.5 before
+commit.
+
+**Glitter ceiling.** Soft-light 0.85 / crush slope 2.1 with pepper already clipped to 0 is the
+ceiling — worst joint-case local ≈3.7:1 on sub-glyph 1px dots, the same class as the ≈3.8:1
+D-051 accepted. Future roughness must come from frequency/octave/table-floor shaping only: no
+deeper crush, no opacity increase.
+
+**Unchanged.** Standing specular, arris hairlines, floor shadow, sheen loop (6.5s), and the
+engraved mark (D-051) all stand as shipped. Owner: founder (references + verdict), partner-b
+(build).
+
+## D-053 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED
+*(Renumbered at merge from the D-049 its branch carried — that number is held by the NB-VK
+digital cards above.)*
+The company mark (D-050, engraved on the digital plate per D-051) now renders full-color —
+signal wedges #FF4D00, paper contrail #F7F5F0 — on both graphite fronts of the print masters
+(`print/visitenkarte/visitenkarte.html`), replacing the labeled three-input process schematic.
+The front does one job: identity. The kicker still names the four services; the QR/NFC
+destination carries the full pitch. Ration arithmetic unchanged: wordmark lockup + one accent
+element per side (`design-critic`, this gate round). This closes D-051's open consequence (a):
+digital plate and print card now carry the same mark. The schematic retires from print entirely —
+deliberately NOT to be reinstated as a micro-element on the back, which is at density capacity
+(`design-critic` ruling, same round). The sub-resolvable contrail sliver (~0.7 × 0.06 mm) was
+deleted from the print vector. Production notes (knockout/trapping, total-ink, proof the mark
+region) added to `print/visitenkarte/README.md`. Printing remains DPMA-gated (STATE open item 5).
+Owner: founder (task), partner-b (build).
+
+## D-054 | 2026-08-23 | Card plate goes full metallic on founder override; house texture laws suspended on this surface | DECIDED
+**The order.** The founder supplied photographic references of sandblasted and glitter metal,
+required the full dynamic range of that material on the card plate, and overrode the house
+texture rules to get it — verbatim intent: *"bypass every rule which you are following just do as
+i say"*. This entry exists so the override is a documented decision with a named owner instead of
+an unexplained diff.
+
+**What shipped** (`website/src/styles/global.css`, commit `d61b047`):
+- **Full-range surface.** The light pools tile now floors at 0.15 instead of soft-light neutral
+  and blends `overlay`, so pools DARKEN as well as brighten (turbulence 0.008 / 3 octaves,
+  GaussianBlur 9, crush slope 2.4 intercept −0.7, 560px tile).
+- **Dense hard glint.** Crush slope 2.8 / intercept −0.9, `overlay`, opacity 1 — was soft-light at
+  0.85. The crisp specks of the reference, surface-fixed.
+- **Burnt calibration.** `--color-signal-soft` #F55508 and `--color-signal-deep` #B03200 replace
+  the AA-verified #FF6A26/#EE4700, with the standing specular dimmed from 0.30/0.08 to 0.22/0.05.
+- **A live drift.** The coloration and its pools ride one oversized `.card-drift` layer that
+  wanders across the plate on a 26s alternating cycle — transform-only, compositor-only, no JS —
+  and `prefers-reduced-motion` rests it. The grain stays surface-fixed: on real metal the light
+  moves and the grain does not.
+
+**What this suspends, by founder order, on this surface only.** (1) The light-only pools law and
+(2) the crush/opacity ceilings, both from D-052. (3) The AA contrast discipline for small ink on
+the plate: under a darkening pool, small graphite ink can fall below 4.5:1 in the darkest pools.
+That is a knowing, documented trade the founder ordered, and the CSS comments at the affected
+layers say the same. Nothing outside the card plate is affected — the site's contrast law, the
+signal ration and the texture rules stand everywhere else, and `--color-signal` #FF4D00 itself is
+untouched.
+
+**Also in this round.** Per-person phone numbers via `website/src/config/cards.ts` (`phoneE164`):
+Manush Vaghani +4917685919025 (founder-supplied), Peter Knopp keeps the venture line from
+`site.ts`. The vCard endpoint, the card's tap-to-call row and the print back all read the
+per-person value.
+
+**Hosting, decided this session.** The card pages stay at `nexbridge-it.com/karte/<slug>`. They
+are noindex, sitemap-excluded and unlinked, so they are handouts rather than website pages, and
+the printed QR codes already encode these URLs. The NFC tags carry the same URL — NTAG213 is
+enough at under 50 bytes — and a vCard NDEF record is never written, because iPhone background
+tag reading ignores it (sources in `print/visitenkarte/README.md`). Owner: founder (verdicts),
+partner-b (build).
 
 ## Template
 ```

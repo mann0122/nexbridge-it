@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-08-23
 depends_on: [vision]
-decisions: [D-003, D-016, D-025, D-046, D-050]
+decisions: [D-003, D-016, D-025, D-046, D-050, D-051, D-053]
 cites_history: [D-001, D-014]
 ---
 
@@ -91,11 +91,25 @@ Lockups:
 and the mark drops to one colour. On light material, place it in a graphite chip. An on-light cut
 (underside in graphite or steel-deep) is `TBD:` — decide it before any print run.
 
+**On the NB-VK business cards.** Two sanctioned uses, both card-surface only:
+
+- **Engraved cut (D-051)** — on the signal-orange card plate the mark is engraved, not printed:
+  the body renders in graphite ink and the paper underside becomes a white-alpha 0.34 light-catch,
+  because the plate carries one ink plus craft alphas (D-049). This is the **only** exception to
+  the never-recolour rule below.
+- **Print fronts (D-053)** — full brand colours on both graphite fronts of the print masters,
+  replacing the old process schematic. The front does one job: identity.
+
+Both card copies express the same geometry in a 0-origin `viewBox 0 0 115 68` instead of the
+canonical box, and `npm run logo` does not guard them — see D-051's open `TBD:` before the next
+card round.
+
 Clear space: one mark-height on every side **when the mark sits in someone else's layout**. Our own
 containers have their own artboards: inside the lockup the gap is 0.5×, and square icon containers
-hold the mark at ~90% width, optically centred. Never recolour, outline, rotate, mirror, skew, add
-effects or a drop shadow, re-stack the facets, place it on a busy ground, or rebuild it from a
-raster — always use the vector sources above.
+hold the mark at ~90% width, optically centred. Never recolour (the engraved card cut above is the
+single logged exception), outline, rotate, mirror, skew, add effects or a drop shadow, re-stack the
+facets, place it on a busy ground, or rebuild it from a raster — always use the vector sources
+above.
 
 `TBD:` DPMA check still gates printing and the first public post (see [[state]]).
 

@@ -1,5 +1,5 @@
 /**
- * The card-object interaction (D-046): pointer tilt, touch tilt, and the
+ * The card-object interaction (D-049): pointer tilt, touch tilt, and the
  * card page's ONE idle loop — the sheen drift. Called from CardPage's
  * onPage init, synchronously, so every tween and the loop timeline are
  * owned by the page's gsap.context and revert on route swap — no manual

@@ -63,6 +63,6 @@ export const CARDS: readonly CardPerson[] = [
     ...splitName(partnerB),
     roleKey: 'card.2.role',
     partNo: 'NB-VK-02',
-    phoneE164: '+4917685919025', // founder-supplied, 2026-08-23
+    phoneE164: '+4917685919025', // founder-supplied, D-054
   },
 ];

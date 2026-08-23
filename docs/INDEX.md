@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-08-23 · 15 nodes · 49 decisions
+Content as of 2026-08-23 · 16 nodes · 54 decisions
 
 ## Map
 
@@ -23,6 +23,7 @@ graph LR
   delivery["delivery"]
   decisions["decisions"]
   agent_system["agent-system"]
+  brand_kit["brand-kit"]
   clients["clients"]
   research_skills["research-skills"]
   research_domains["research-domains"]
@@ -37,6 +38,7 @@ graph LR
   brand --> design
   vision --> offer
   vision --> brand
+  brand -.-> state
   offer --> website_spec
   brand --> website_spec
   offer --> delivery
@@ -45,6 +47,8 @@ graph LR
   decisions -.-> decisions
   vision --> agent_system
   agent_system -.-> decisions
+  brand --> brand_kit
+  website_spec --> brand_kit
   delivery --> clients
   clients -.-> state
   research_domains -.-> state
@@ -84,11 +88,12 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `design` | DESIGN.md (visual world) | artifact | active | partner-b | — | [DESIGN.md](../DESIGN.md) | — |
 | `vision` | Vision & operating model | knowledge | active | founders | 2026-07-27 | [docs/00-vision.md](00-vision.md) | `offer`, `brand`, `agent-system`, `state`, `product` |
 | `offer` | Offer & packages | knowledge | active | founders | 2026-07-31 | [docs/01-offer.md](01-offer.md) | `website-spec`, `delivery`, `state`, `product` |
-| `brand` | Brand | knowledge | active | partner-b | 2026-08-23 | [docs/02-brand.md](02-brand.md) | `website-spec`, `state`, `design`, `product` |
-| `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `state` |
+| `brand` | Brand | knowledge | active | partner-b | 2026-08-23 | [docs/02-brand.md](02-brand.md) | `website-spec`, `brand-kit`, `state`, `design`, `product` |
+| `website-spec` | Website spec | spec | active | partner-b | 2026-08-01 | [docs/03-website-spec.md](03-website-spec.md) | `brand-kit`, `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
 | `decisions` | Decision log | decision-log | active | founders | 2026-08-23 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
+| `brand-kit` | Brand kit (portable, single file) | knowledge | active | partner-b | 2026-08-23 | [docs/07-brand-kit.md](07-brand-kit.md) | — |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
@@ -96,7 +101,7 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
-**knowledge**: `agent-system`, `brand`, `offer`, `vision` · **spec**: `website-spec` · **playbook**: `delivery` · **research**: `research-domains`, `research-skills` · **client**: `clients`
+**knowledge**: `agent-system`, `brand`, `brand-kit`, `offer`, `vision` · **spec**: `website-spec` · **playbook**: `delivery` · **research**: `research-domains`, `research-skills` · **client**: `clients`
 
 ## Decisions
 
@@ -107,7 +112,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 |---|---|---|---|---|
 | ~~D-001~~ | 2026-07-26 | Name: Klarfluss | SUPERSEDED by D-016 | — |
 | D-002 | 2026-07-26 | Stack: Astro 5 + Tailwind + MDX, Cloudflare Pages, Plausible | DECIDED | `website-spec` |
-| D-003 | 2026-07-26 | Palette: A — Signal | DECIDED | `brand` |
+| D-003 | 2026-07-26 | Palette: A — Signal | DECIDED | `brand`, `brand-kit` |
 | D-004 | 2026-07-26 | Scope v1 | DECIDED | `vision` |
 | D-005 | 2026-07-26 | Legal vehicle | PENDING | — |
 | ~~D-006~~ | 2026-07-26 | Domain: klarfluss.eu | SUPERSEDED by D-016 | — |
@@ -120,7 +125,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-013 | 2026-07-26 | Contact: real form, mailto only as fallback | DECIDED | `website-spec` |
 | ~~D-014~~ | 2026-07-26 | Name: NextBridge | SUPERSEDED by D-016 (one day later) | — |
 | D-015 | 2026-07-26 | Published preview on Cloudflare Pages | DECIDED | — |
-| D-016 | 2026-07-27 | Name: NexBridge-IT · Domain: nexbridge-it.de | DECIDED | `brand`, `research-domains`, `state` |
+| D-016 | 2026-07-27 | Name: NexBridge-IT · Domain: nexbridge-it.de | DECIDED | `brand`, `brand-kit`, `research-domains`, `state` |
 | D-017 | 2026-07-27 | Open to AI crawlers; SEO baseline shipped | DECIDED | `website-spec` |
 | D-018 | 2026-07-27 | Pricing: one public price only | DECIDED — supersedes D-007 | `offer`, `state` |
 | D-019 | 2026-08-01 | Repo lives at C:\Users\manus\Projects\nexbridge-it | DECIDED | — |
@@ -134,7 +139,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-027 | 2026-08-02 | Particle field reverted from the homepage; needs its own layout | DECIDED | — |
 | D-028 | 2026-08-02 | Wandlung: the particle field gets its own pinned stage | DECIDED | — |
 | D-029 | 2026-08-02 | Official venture email: nexbridge-it@mailbox.org | DECIDED | — |
-| D-030 | 2026-08-02 | GSAP is the only animation engine | DECIDED | — |
+| D-030 | 2026-08-02 | GSAP is the only animation engine | DECIDED | `brand-kit` |
 | D-031 | 2026-08-02 | Design skills are allowlisted, not accumulated | DECIDED | — |
 | ~~D-032~~ | 2026-08-02 | The site has no icon vocabulary | SUPERSEDED by D-043 | — |
 | D-033 | 2026-08-02 | Wandlung re-themed to the AI stack; solid pyramid mark | DECIDED | — |
@@ -147,13 +152,18 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | `state` |
 | D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | `state` |
 | D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | `state` |
-| D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | `state` |
+| D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | `brand-kit`, `state` |
 | D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | `state` |
 | D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | `state` |
-| D-046 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
-| D-047 | 2026-08-23 | Company mark adopted: the founder's arrowhead-contrail, engraved on the card plate; grain ceiling fixed | DECIDED | `brand`, `state` |
-| D-048 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED | `state` |
-| D-049 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED | `brand`, `state` |
+| D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED | `brand`, `state` |
+| D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
+| D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
+| D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
+| D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED | `brand`, `brand-kit`, `state` |
+| D-051 | 2026-08-23 | The mark engraved on the NB-VK card plate: one-ink cut, 0-origin coordinates, grain ceiling | DECIDED | `brand`, `state` |
+| D-052 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED | `state` |
+| D-053 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED | `brand`, `state` |
+| D-054 | 2026-08-23 | Card plate goes full metallic on founder override; house texture laws suspended on this surface | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 
@@ -161,4 +171,4 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 
 ---
 
-_15 nodes, 27 edges, 0 broken. Rebuild: `npm run kb`._
+_16 nodes, 30 edges, 0 broken. Rebuild: `npm run kb`._

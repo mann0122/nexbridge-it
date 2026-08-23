@@ -8,7 +8,7 @@
   --color-graphite-2: #1b1f23;
   --color-paper: #f7f5f0;
   --color-signal: #ff4d00;
-  /* Card-object gradient stops — darkened on founder order (2026-08-23,
+  /* Card-object gradient stops — darkened on founder order (D-054,
      rules-bypass directive; original AA-verified stops were #FF6A26/#EE4700).
      groove is the engraved non-text line color — never used for text. */
   --color-signal-soft: #f55508;
@@ -472,7 +472,7 @@ section[id] {
 }
 
 /* ---------------------------------------------------------------------
-   D-046 card object (NB-VK routes). The digital business card is one
+   D-049 card object (NB-VK routes). The digital business card is one
    signal-orange anodized plate on the graphite stage — the viewport's ONE
    signal element, and itself the save-vCard action. Styles live HERE, in
    the one cached external sheet, for the same measured Lighthouse reason
@@ -566,7 +566,7 @@ section[id] {
 /* Signal-plate surface, in .surface-paper's precedent shape: ground + ink +
    selection flip. The focus ring is PAPER on this one element — the global
    signal ring is invisible on its own color, graphite is invisible on the
-   stage (scoped amendment, logged in D-046). */
+   stage (scoped amendment, logged in D-049). */
 .surface-signal-obj {
   /* Standing specular from the upper-left key light — the lacquer shines at
      rest (founder order). White alpha brightens the ground, so graphite ink
@@ -595,11 +595,15 @@ section[id] {
   outline-offset: 2px;
 }
 
-/* Live gradient drift (founder order, 2026-08-23): the burnt-orange
-   coloration and its light pools ride one oversized layer that wanders
-   across the plate — transform-only (compositor), seamless pools tile.
-   The glint layer above stays surface-fixed: on real metal the light
-   moves, the grain does not. Reduced-motion rests still. */
+/* Live gradient drift (founder order, D-054): the burnt-orange coloration
+   and its light pools ride one oversized layer that wanders across the
+   plate — transform-only (compositor), seamless pools tile. The glint
+   layer above stays surface-fixed: on real metal the light moves, the
+   grain does not. Reduced-motion rests still.
+   The pools tile floors at 0.15 and blends `overlay`, so it DARKENS as
+   well as brightens: D-052's light-only pools law is suspended here by
+   founder order, and small graphite ink can fall below 4.5:1 inside the
+   darkest pools. Knowing trade, card plate only — see D-054. */
 .card-drift {
   position: absolute;
   inset: -60%;
@@ -635,9 +639,9 @@ section[id] {
   }
 }
 
-/* Metallic glint (founder override, 2026-08-23): dense hard salt-and-
-   pepper sparkle, overlay 0.9 — the crisp specks of the reference.
-   D-048 crush/opacity ceilings suspended by the same order. */
+/* Metallic glint (founder override, D-054): dense hard salt-and-pepper
+   sparkle, `overlay` at opacity 1 — the crisp specks of the reference.
+   D-052's crush and opacity ceilings are suspended by the same order. */
 .card-obj::after {
   content: '';
   position: absolute;
@@ -699,7 +703,7 @@ section[id] {
 /* Sheen: the light strip that sells lacquered metal. Topmost, above the
    ink. PARKED off the right edge at rest — this default IS the no-JS and
    reduced-motion state; the entrance sweep and the 6.5s idle drift are the
-   only things that ever move it (the card page's one loop, D-046). */
+   only things that ever move it (the card page's one loop, D-049). */
 .card-sheen {
   position: absolute;
   inset: 0;

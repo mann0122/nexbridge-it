@@ -2,6 +2,7 @@
 import { SITE } from '../config/site';
 import { type Lang, useTranslations, altPath } from '../i18n/ui';
 import WorldIcon from './icons/WorldIcon.astro';
+import Mark from './Mark.astro';
 
 interface Props {
   lang: Lang;
@@ -26,9 +27,21 @@ const links = [
 
 <header class="sticky top-0 z-40 border-b border-steel-soft bg-graphite">
   <div class="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6">
+    {/* The logo lockup: mark + wordmark + period read as one brand element —
+        the signal exception the ration has always granted the logo (D-050).
+        The mark is inline, not a flex item, on purpose: `wordmark-drop.ts`
+        (D-047) finds the name as a direct child text node of this link, and a
+        wrapper element would silently kill the period's drop. The mark takes
+        off on hover and focus, the period lifts — one gesture, two parts, both
+        off under reduced motion. */}
     <a href={lang === 'de' ? '/' : '/en/'} class="group type-wordmark text-[1.35rem]">
+      <Mark
+        height={20}
+        class="mr-2.5 hidden align-[-0.1em] transition-transform duration-300 ease-out group-hover:-translate-y-[1px] group-hover:translate-x-[2px] group-focus-visible:-translate-y-[1px] group-focus-visible:translate-x-[2px] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-x-0 motion-reduce:group-focus-visible:translate-y-0 sm:inline-block"
+      />
       {SITE.name}<span
-        class="inline-block text-signal transition-transform duration-200 ease-out group-hover:-translate-y-[0.08em] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+        data-wordmark-dot
+        class="inline-block text-signal transition-transform duration-200 ease-out group-hover:-translate-y-[0.08em] group-focus-visible:-translate-y-[0.08em] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-y-0"
         >.</span
       >
     </a>

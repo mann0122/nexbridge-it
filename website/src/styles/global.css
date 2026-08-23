@@ -643,20 +643,31 @@ section[id] {
   }
 }
 
-/* Metallic glint (founder override, D-054): dense hard salt-and-pepper
-   sparkle at soft-light 0.9 — the crisp specks of the reference. Soft-light,
-   not overlay: overlay on an animation layer renders differently in Safari.
-   D-052's crush and opacity ceilings are suspended by the same order. */
+/* Metallic grit + sparkle (founder override, D-054). The speckle is baked
+   into the tile's ALPHA channel and composited with PLAIN ALPHA — no
+   mix-blend-mode anywhere on this plate. Safari drops blending for layers
+   inside a 3D-transformed ancestor (the tilt wrapper) and falls back to
+   normal compositing, which painted raw grey noise over the orange and
+   bleached the card to concrete on iPhone. Alpha is engine-independent. */
+.card-obj::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'200' height%3D'200'%3E%3Cfilter id%3D's' color-interpolation-filters%3D'sRGB'%3E%3CfeTurbulence type%3D'fractalNoise' baseFrequency%3D'0.95' numOctaves%3D'3' seed%3D'3' stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix type%3D'matrix' values%3D'0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 1 0 0 0 -0.46'%2F%3E%3C%2Ffilter%3E%3Crect width%3D'200' height%3D'200' filter%3D'url(%23s)'%2F%3E%3C%2Fsvg%3E");
+  background-size: 200px 200px;
+  opacity: 0.95;
+}
 .card-obj::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23s)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'200' height%3D'200'%3E%3Cfilter id%3D's' color-interpolation-filters%3D'sRGB'%3E%3CfeTurbulence type%3D'fractalNoise' baseFrequency%3D'0.95' numOctaves%3D'3' seed%3D'8' stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix type%3D'matrix' values%3D'0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 -0.50'%2F%3E%3C%2Ffilter%3E%3Crect width%3D'200' height%3D'200' filter%3D'url(%23s)'%2F%3E%3C%2Fsvg%3E");
   background-size: 200px 200px;
-  mix-blend-mode: soft-light;
-  opacity: 0.9;
+  opacity: 0.62;
 }
 
 /* The engraving: all ink graphite with a letterpress light catch below. */
@@ -717,10 +728,9 @@ section[id] {
   background: linear-gradient(
     105deg,
     transparent 40%,
-    rgb(255 255 255 / 0.9) 50%,
+    rgb(255 255 255 / 0.55) 50%,
     transparent 60%
   );
-  mix-blend-mode: soft-light;
   opacity: 0.08;
   transform: translateX(120%);
   will-change: transform, opacity;

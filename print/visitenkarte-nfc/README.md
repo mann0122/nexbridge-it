@@ -30,10 +30,12 @@ graphics **on**. 4-page vector PDF, fonts embedded.
 ## Print-shop notes
 
 - Colours are the site's RGB tokens; shop converts to CMYK (coated profile).
-- **Machine proof of the back is mandatory**: the metallic ground is two soft radial light
-  pools over a near-black ramp — banding/posterization risk on CMYK-over-PVC, and the pools
-  may flatten. Fallback is pre-decided: flat graphite `#14171A` back (the design survives —
-  glider + wordmark carry it). Proof the signal orange of the mark and wordmark too.
+- **Machine proof of both sides is mandatory** (D-055): both grounds are gradients — the back
+  two soft radial pools over a near-black ramp, the front a pastel-peach metallic ramp with a
+  white key-light pool — banding/posterization risk on CMYK-over-PVC, and the pools may
+  flatten. Fallbacks are pre-decided: flat graphite `#14171A` back (the design survives —
+  glider + wordmark carry it) and a flat light-orange front. Proof the signal orange of the
+  mark and wordmark too.
 - Smallest type is 1.5 mm (~4.3 pt) mono annotations — requires retransfer or ≥600 dpi
   direct-to-card print; ask which process they use.
 - The dashed antenna drawing on the front margin is design, not a die line — say so if the

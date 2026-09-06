@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-23
+updated: 2026-09-06
 depends_on: []
 decisions: []
 ---
@@ -1176,6 +1176,41 @@ the printed QR codes already encode these URLs. The NFC tags carry the same URL 
 enough at under 50 bytes — and a vCard NDEF record is never written, because iPhone background
 tag reading ignores it (sources in `print/visitenkarte/README.md`). Owner: founder (verdicts),
 partner-b (build).
+
+## D-055 | 2026-09-06 | The CR80 NFC card is final: design D back, pastel metallic front | DECIDED
+**Sign-off.** The physical NFC card is FINAL by founder sign-off (2026-09-06): CR80 format —
+trim 85.6 × 54 mm, corner radius ~3.18 mm, bleed 3 mm — production master
+`print/visitenkarte-nfc/nfc-cr80.html` + its `README.md`, built in commit `d1c3a25`. It
+supersedes the 85 × 55 paper master (`print/visitenkarte/visitenkarte.html`, D-053) as the
+**active physical carrier**; the paper master is retained for a possible later paper run.
+
+**Back — founder-picked "design D".** The glider mark at 34 mm plus the signal-orange wordmark
+with a PAPER period on the dark metallic ground (two radial pools over a graphite ramp). This
+sanctions two founder overrides, **CR80 back only**: (1) the wordmark-period inversion —
+`02-brand.md` defines a signal period on the wordmark; here the period is paper, rhyming with
+the mark's paper facet — and (2) a second signal element on one side (mark + wordmark), beyond
+the prior card exceptions (D-049/D-053 held the ration at wordmark lockup + one accent element
+per side).
+
+**Front — Zeichnungskopf on light pastel-peach metallic.** The contact side sits on a light
+pastel-peach metallic ramp — the founder iterated from paper-white through orange to pastel:
+`#fff0e3 → #ffd9b8 → #ffc79c`, with a white key-light pool. Every ink on it is a graphite
+alpha grade (the wordmark keeps its signal period); phone numbers are per person (D-054); the
+QR encodes `/karte/<slug>`; the concealed-antenna drawing (dashed coil +
+`NFC-ANTENNE · VERDECKT`) now sits on the card that physically contains the coil; and there is
+NO revision date on the plate by founder order — the part numbers NB-VK-01/02 stay. The
+gradient stops are new non-token values, print-surface only, logged here.
+
+**Revision.** `CARD_REVISION` is unified to `09/2026` across the digital plate, the paper
+master and the repo config (`website/src/config/cards.ts`); the NFC plate itself carries no
+date, per the same order.
+
+**Production gates** (in `print/visitenkarte-nfc/README.md`): a machine proof of BOTH sides is
+mandatory — gradient banding/posterization risk on CMYK-over-PVC — with fallbacks pre-decided:
+flat graphite back / flat light-orange front. The 1.5 mm type floor requires retransfer or
+≥600 dpi direct-to-card print. The DPMA trademark check (STATE open item 5) still precedes any
+printing. The NTAG write-and-lock procedure is referenced (`print/visitenkarte/README.md`).
+Owner: founder (design + sign-off), partner-b (build).
 
 ## Template
 ```

@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-08-23
+updated: 2026-09-06
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055]
 ---
 
 # Where things stand
@@ -15,7 +15,7 @@ decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-08-23**
+Last reviewed: **2026-09-06**
 
 ## The venture in five lines
 
@@ -56,11 +56,15 @@ pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
 
 The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
-the same URL the printed QR codes encode, and never a vCard record (D-054). The digital plate
-carries the company mark (D-050) engraved in one ink in the `.card-mark` slot (D-051), and the
-print masters in `print/visitenkarte/` (NB-VK-01/02) now carry the same mark in full brand
-colours on both fronts (D-053) — digital and physical are reconciled. Printing is gated on the
-DPMA trademark check — open item 5.
+the same URL the printed QR codes encode, and never a vCard record (D-054). The **physical
+carrier is final** (D-055): the CR80 NFC card, master `print/visitenkarte-nfc/nfc-cr80.html`
+(NB-VK-01/02) — founder-picked design D on the back (glider 34 mm + signal wordmark with paper
+period on the dark metallic ground) and the Zeichnungskopf contact side on a light pastel-peach
+metallic ramp, with no revision date on the plate. The 85 × 55 paper master
+(`print/visitenkarte/`, D-053) is retained but superseded as the active physical carrier. The
+digital plate carries the company mark (D-050) engraved in one ink in the `.card-mark` slot
+(D-051); card revision is unified at 09/2026 (`cards.ts` `CARD_REVISION`). Printing is gated
+on the DPMA trademark check — open item 5 — plus the mandatory both-sides machine proof (D-055).
 
 The plate's material is a founder override (D-054): full-range metallic, a live 26s drift that
 rests under `prefers-reduced-motion`, and the house texture laws (light-only pools, crush and
@@ -117,11 +121,14 @@ Ranked. Owner in brackets.
    to the mark** (font loading). Ranked here, not higher, only because no traffic reaches the site
    yet — it moves up the moment it does.
 10. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
-   mark needs a graphite chip on light material until a light-ground variant exists. Gates print.
+   mark needs a graphite chip on light material until a light-ground variant exists. Does not
+   gate the CR80 card (D-055), whose mark sits on the dark back only; gates any future
+   light-ground application.
 11. **The card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo`
-   checks the three canonical vector sources only; the card plate and the print master carry
-   their own 0-origin copy, and the plate's copy still has one sub-resolvable path the canonical
-   mark does not. `TBD:` guard them or replace them — see D-051, before the next card round.
+   checks the three canonical vector sources only; the card plate and both print masters
+   (paper, and CR80 per D-055) carry their own 0-origin copy, and the plate's copy still has
+   one sub-resolvable path the canonical mark does not. `TBD:` guard them or replace them —
+   see D-051, before the next card change.
 
 ### Known defects (technical, none blocking)
 
@@ -160,8 +167,9 @@ Nothing. Everything is merged into `main`, the only long-lived branch: the logo 
 (D-050) — favicon, apple-touch-icon, og.png, header lockup, `Mark.astro` and `npm run logo` —
 the animated wordmark sting (D-046), the wordmark drop (D-047), and the complete NB-VK card
 system: the digital cards (D-049), the mark engraved on the card plate (D-051), the plate
-recomposition (D-052), the mark on the print fronts (D-053) and the founder's full-metallic
-override with per-person phone numbers and the NFC hosting decision (D-054).
+recomposition (D-052), the mark on the print fronts (D-053), the founder's full-metallic
+override with per-person phone numbers and the NFC hosting decision (D-054), and the final
+CR80 NFC masters (D-055).
 
 ## Next
 

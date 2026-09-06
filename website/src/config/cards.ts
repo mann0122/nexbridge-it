@@ -38,7 +38,7 @@ export const CARD_REGISTER = 'NB-VK';
  * SITE.legalRevision: a Datenschutz/Impressum text bump must not restamp
  * cards that are already printed.
  */
-export const CARD_REVISION = '08/2026';
+export const CARD_REVISION = '09/2026';
 
 /** "Peter Knopp" → given/family for the vCard N field. */
 function splitName(full: string): { givenName: string; familyName: string } {

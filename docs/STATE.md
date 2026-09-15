@@ -4,9 +4,10 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-09-06
+updated: 2026-09-15
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060]
+cites_history: [D-007]
 ---
 
 # Where things stand
@@ -15,7 +16,7 @@ decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-09-06**
+Last reviewed: **2026-09-15**
 
 ## The venture in five lines
 
@@ -46,14 +47,27 @@ Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-02
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
-**Twelve pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
-`/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`) plus the NB-VK digital
-business cards (D-049) — `/karte`, `/karte/peter-knopp`, `/karte/manush-vaghani`, their EN
-mirrors under `/en/card/`, and static `/karte/<slug>.vcf` endpoints. Card routes are noindex
-and sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, `#vorgehen`,
-`#ueber-uns`, `#kontakt` are homepage anchors, not
-pages — temporary, "until dedicated subpages exist"
-(`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
+**Fourteen pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
+`/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`), the gated teaser page
+(`/teaser`, `/en/teaser` — D-056), plus the NB-VK digital business cards (D-049) — `/karte`,
+`/karte/peter-knopp`, `/karte/manush-vaghani`, their EN mirrors under `/en/card/`, and static
+`/karte/<slug>.vcf` endpoints. Card routes are noindex and sitemap-excluded: handouts, not
+landing pages. The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage
+anchors, not pages — temporary, "until dedicated subpages exist"
+(`website/src/components/Header.astro:19`). The spec sitemap lists them as planned pages.
+`Teaser` is the exception: a real page, and the first one in the nav (D-057).
+
+`/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-056) — a
+blurred silent loop on hover, the full film after a code. **Both films are in the repo**
+(D-059): `website/public/teaser/` carries the two code-named films, the posters and the
+preview loops, built by `ops/teaser-assets.bat` / `npm run teaser:assets` from the founder's
+source films in the gitignored `ops/teaser-src/`. Teaser 1 is the Rathaus film (NBIT1, 2:10,
+fitted to 720p for the 25 MiB cap), Teaser 2 the general film (NBG1, 1:20, 1080p). The codes
+are in no file; the founders hold them. Rotating a code means re-running the script, which
+retires the old file.
+The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
+`sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
+which appear nowhere until a correct code derives them, not about `/teaser` itself.
 
 The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
 the same URL the printed QR codes encode, and never a vCard record (D-054). The **physical
@@ -72,11 +86,15 @@ opacity ceilings, AA discipline for small ink) suspended **on that surface only*
 the plate can fall below 4.5:1 in the darkest pools. A knowing, logged trade; the site's contrast
 law stands everywhere else. Each card carries its own phone number (`cards.ts` `phoneE164`).
 
-Three single sources you must not work around:
+Four single sources you must not work around:
 
 - Brand name and URLs → `website/src/config/site.ts`
 - Design tokens → `website/src/styles/global.css` `@theme`
-- Every user-visible string → `website/src/i18n/ui.ts` (type-enforced: EN cannot drift from DE)
+- Every user-visible string → `website/src/i18n/ui.ts`. EN cannot drift from DE — but only
+  because of the `AssertKeys` guard at the foot of that file, and only when someone runs
+  `npm --prefix website run check`. The `satisfies` line alone never enforced it (D-058).
+- Teaser asset identity → `website/src/config/teasers.ts` (D-057; file identity only, no
+  strings, no codes)
 
 Details → [[website-spec]], visual world → `DESIGN.md`.
 
@@ -96,11 +114,15 @@ glider yet; the mark's own animation is drafted but **not chosen** (three takes 
 Ranked. Owner in brackets.
 
 1. **Legal pages need a lawyer's read** [founders] — both are filled with the founder's own
-   documents (D-036) and no longer block traffic. Three points were left for a professional
+   documents (D-036) and no longer block traffic. Four points were left for a professional
    rather than guessed at: the Drittland section now that Cloudflare is named, whether the
-   Cloudflare AVV is actually accepted in the account, and the Impressum naming two
-   Geschäftsführer alongside "Einzelunternehmer". The English versions are convenience
-   translations and are unreviewed.
+   Cloudflare AVV is actually accepted in the account, the Impressum naming two
+   Geschäftsführer alongside "Einzelunternehmer", and — new with D-056 — whether §8
+   *"Cookies und ähnliche Technologien"* (`website/src/i18n/legal.ts:144`) has to name the
+   teaser's `sessionStorage` entry. Its text currently denies cookies only, which stays
+   literally true; the heading covers similar technologies, and § 25 TDDDG is a lawyer's
+   call, not ours. `TBD:` legal review — no one here may draft that sentence (CLAUDE.md
+   rule 4). The English versions are convenience translations and are unreviewed.
 2. **Analytics not installed** [partner-b] — `plausibleDomain` and `cfAnalyticsToken` in
    `site.ts` are both empty; the site makes zero third-party requests. D-013 flags this as
    do-before-driving-traffic.
@@ -139,11 +161,9 @@ Ranked. Owner in brackets.
   break is hidden the two words collide. Pre-existing on `main`, found during the D-050 gate; the
   fix is one space before the `<br>`, and it touches customer-facing German, so it goes through
   `copywriter-de` on its own branch.
-- One card page dials two numbers. The „Tel." row and the .vcf follow the person
-  (`cards.ts` `phoneE164`, D-054), but the second-rank „Anrufen" button in
-  `website/src/components/CardPage.astro:208` still reads `SITE.phoneE164`, so on Manush
-  Vaghani's card it calls the venture line. One-line fix, not taken here because this pass is a
-  merge reconciliation.
+- `npm --prefix website run check` reports four `'heroArrow' is possibly null` errors in
+  `website/src/scripts/flowrail.ts` (D-044). Pre-existing, not runtime bugs — but they are why
+  `check` is not yet wired into `build` (D-058). Clear them, then gate the build on it.
 
 ## Blocked / pending
 
@@ -163,13 +183,13 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark
-(D-050) — favicon, apple-touch-icon, og.png, header lockup, `Mark.astro` and `npm run logo` —
-the animated wordmark sting (D-046), the wordmark drop (D-047), and the complete NB-VK card
-system: the digital cards (D-049), the mark engraved on the card plate (D-051), the plate
-recomposition (D-052), the mark on the print fronts (D-053), the founder's full-metallic
-override with per-person phone numbers and the NFC hosting decision (D-054), and the final
-CR80 NFC masters (D-055).
+Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark (D-050),
+the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
+(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-060). The teaser was
+built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
+renumbered to D-056…D-058 when `main` was merged in. **The live site does not show the teaser
+yet**: the deploy is manual (`npx wrangler deploy` from `website/`, D-022) and has not been
+run since the merge — nexbridge-it.com is still the D-055 state until it is.
 
 ## Next
 

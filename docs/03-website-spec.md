@@ -4,9 +4,9 @@ title: Website spec
 type: spec
 status: active
 owner: partner-b
-updated: 2026-08-01
+updated: 2026-09-15
 depends_on: [offer, brand]
-decisions: [D-002, D-010, D-013, D-017, D-022, D-023]
+decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-056, D-057]
 ---
 
 # 03 — Website Spec (nexbridge-it.com)
@@ -33,6 +33,9 @@ in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
 - `/ueber-uns`
 - `/kontakt` (form + direct email + optional booking link)
 - `/impressum`, `/datenschutz` (required; footer-linked from every page)
+- `/teaser` (+ `/en/teaser`) — two advertisement films behind a 4-digit courtesy gate,
+  nav-linked. **Built** (on nexbridge-it.com after the next `wrangler deploy`, D-022), unlike the
+  four entries above it, which are still homepage anchors. Films are self-hosted so the zero-third-party-request property holds (D-056).
 - Later: `/cases/<slug>` (MDX per reference case)
 
 ## Homepage sections (order)
@@ -51,7 +54,8 @@ See [[brand]] voice. Every section: claim → concrete example → number where 
 No section may ship with lorem ipsum; use `TBD:`-marked realistic drafts via copywriter-de.
 
 ## Quality bar (qa-reviewer enforces)
-Lighthouse ≥95 (perf/a11y/SEO), WCAG AA contrast, works at 360px, semantic HTML with `lang="de"`,
+Lighthouse ≥95 (a11y/SEO/desktop perf) and ≥94 mobile perf (re-based by D-043 — this line said
+≥95 across the board until 2026-09-15), WCAG AA contrast, works at 360px, semantic HTML with `lang="de"`,
 meta title+description per page, OG image, sitemap.xml + robots.txt, all images with dimensions +
 lazy loading, prefers-reduced-motion respected, no console errors, no third-party requests except
 Plausible + form provider.

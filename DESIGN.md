@@ -191,6 +191,19 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   center-right, language switch DE/EN as mono toggle. A signal CTA in the nav is blocked by the
   ration — see the token note above (D-050). Mobile: full-screen graphite overlay.
 - Focus states: 2px signal outline offset 2px, everywhere.
+- Teaser card (D-056): an uninked drawing sheet — 16:9 image area over a Zeichnungskopf that
+  carries the name, the part number and a status field with the lock mark. The silent preview
+  loop sits *inside* the image area under `blur(14px) grayscale(1) contrast(0.95)` and a 0.62
+  graphite scrim: motion reads, content does not. The title block is **solid** graphite, never a scrim
+  over the film — a translucent band would hand its contrast to whatever frame was showing.
+  All furniture is steel: two cards share a viewport, so neither may spend the signal. The
+  card is a `<button>`; the unlock `<dialog>` is shared by both, and its submit CTA is that
+  viewport's one signal element — so the error line is **steel**, not signal and not a signal
+  rule. A 1px signal rule was tried and failed the gate: the ban on coloured left-borders
+  wider than 1px is about the alert-tab *shape*, and passing it buys no exemption from the
+  ration, which is a separate rule whose only sanctioned relief is being a wash rather than
+  an object. The plate is `grayscale(1)` for the same reason — partial saturation still puts
+  a full-card field of unchosen colour in the viewport, and an uninked sheet is not in colour.
 
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
 

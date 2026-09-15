@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-09-06
+updated: 2026-09-15
 depends_on: []
 decisions: []
 ---
@@ -1211,6 +1211,116 @@ flat graphite back / flat light-orange front. The 1.5 mm type floor requires ret
 ≥600 dpi direct-to-card print. The DPMA trademark check (STATE open item 5) still precedes any
 printing. The NTAG write-and-lock procedure is referenced (`print/visitenkarte/README.md`).
 Owner: founder (design + sign-off), partner-b (build).
+
+## D-056 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED
+Founder asked for the two advertisement films on the site, visible as a hovering glimpse but
+watchable only after a code. Shipped as `/teaser` + `/en/teaser`: a card per film showing a
+silent 320px loop under a blur and a graphite scrim, and a `<dialog>` taking four digits.
+Named **Teaser 1** and **Teaser 2** on the founder's instruction. Separate code per film,
+also the founder's choice.
+
+**The gate is a courtesy gate, not access control, and must never be described as
+protection.** Four digits is 10,000 combinations; anyone willing to write a loop gets in, and
+anyone who unlocks it legitimately can read the URL out of devtools and pass it on. What it
+buys is real but narrow: the films are not linked, not indexed, and not casually shareable.
+Nothing confidential belongs behind it. The upgrade path, declined this session as
+disproportionate, is R2 + a Worker route validating against a Cloudflare secret.
+
+**No password and no film path are stored anywhere.** The URL is *derived* from the typed
+code — `sha256(code + ':' + teaserId)` sliced to 16 hex, plus `.mp4`.
+`ops/scripts/build-teaser-assets.mjs` names the output file by the same derivation, so a
+correct code computes a URL that exists and a wrong one computes a 404 — the 404 *is* the
+validation. Verified against the built site: `dist/` contains the two preview paths and the
+derivation code, and no film filename. Rotating a code renames the film, and the script
+sweeps the old name so a retired code stops working instead of quietly still opening it.
+
+**Self-hosted, and that is the point.** `i18n/legal.ts` tells visitors *"Es werden keine
+Karten, Videos, Social-Media-Elemente oder sonstigen Inhalte Dritter geladen."* Self-hosted
+video is not *Inhalte Dritter*, so the sentence stays true and the zero-third-party-request
+property (D-013) survives. YouTube, Vimeo or Cloudflare Stream would each falsify a legal
+page and force a lawyer round — that, not bandwidth, is why they were refused.
+
+**Costs accepted.** `sessionStorage` remembers an unlock for the session — the first browser
+storage on the site; strictly functional, non-tracking, no consent implied. Films are
+committed to the repo, so repo size grows by their weight; the script errors above the 25 MiB
+Cloudflare per-file cap rather than letting a deploy fail. The cards carry no description of
+what the films show: nobody has watched them in a build session and CLAUDE.md rule 1 forbids
+inventing it. Owner: partner-b; codes and films: founders.
+
+## D-057 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
+Teaser asset identity (id, part number, source-film name) lives in
+`website/src/config/teasers.ts`, joining `site.ts`, `global.css @theme` and `ui.ts` as a
+thing not to work around. It holds file identity only — every string stayed in `ui.ts`, and
+the codes and film paths are deliberately absent (D-056). A fourth config module beat
+bloating `site.ts`, which is brand identity and says so.
+
+The nav gained `Teaser` — the first entry pointing at a **page** rather than a homepage
+anchor, so `Header.astro`'s "anchors until dedicated subpages exist" comment (D-010) is now
+partly overtaken. Desktop nav spacing dropped to `gap-6` at `md` and returns to `gap-8` at
+`lg`: five links plus the language toggle do not fit at 768px on the old spacing. Owner:
+partner-b.
+
+## D-058 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
+The `qa-reviewer` gate on D-056 found that a guarantee the repo advertises was not real.
+`website/CLAUDE.md` says the EN block of `ui.ts` "cannot silently drift from the German one —
+a missing key is a compile error". It was not: `satisfies Record<Lang, Record<string, string>>`
+only requires string keys, `UiKey` derives from the German block alone, and `t()` falls back to
+German for a missing key. Nothing typechecked anyway — `astro build` does not, and no lint or
+typecheck script existed.
+
+**It had already fired.** While the teaser page was being built, `teaser.hintUnlocked` existed
+in `de` and not in `en`; the build passed clean and the English page shipped the German string.
+It was caught by eye, not by tooling.
+
+Two changes: `AssertKeys` type assertions at the end of `ui.ts` fail the moment either block
+gains or loses a key the other lacks (verified by deleting a key — it errors, naming it), and
+`npm --prefix website run check` runs `astro check`, with `@astrojs/check` + `typescript` added
+as devDependencies. Types only, no runtime cost.
+
+**Deliberately not done:** `check` is NOT wired into `build`. It currently reports four
+pre-existing `'heroArrow' is possibly null` errors in `scripts/flowrail.ts` (D-044), which are
+not this change's to fix, and a build that fails on unrelated code would just get bypassed.
+Clearing those and then gating the build on `check` is the follow-up. Owner: partner-b.
+
+## D-059 | 2026-09-15 | The two teaser films are in the repo; the build fits the 25 MiB cap itself | DECIDED
+The founder's first run of `ops/teaser-assets.bat` (D-056) failed twice over. npm 11 no longer
+runs a dependency's install script unless `package.json` `allowScripts` names it, so
+`ffmpeg-static` never downloaded its binary; and the Rathaus film — 130 s of 1080p — came out
+over Cloudflare's 25 MiB per-file cap at crf 23, where the script's only advice was to edit
+ffmpeg flags by hand. Neither was visible from the cloud session that wrote the script: it had
+no films and no npm 11.
+
+**Two changes.** `allowScripts: { "ffmpeg-static": true }` in the root `package.json`,
+unpinned because the `^5.2.0` range would outgrow a pinned entry silently. And the film is
+still encoded quality-first (crf 23 at source resolution), but if that lands over the cap it
+is re-encoded two-pass at the bitrate 22 MiB leaves after 128 kb/s of audio, scaled to
+1280 px — 720p holds at that bitrate where 1080p falls apart in the gradients. Refusal is now
+the last resort: only a film so long that the budget drops under 300 kb/s is rejected, with
+"shorten the film" as the message. D-056's "the script errors above the cap" stands for that
+case only.
+
+**Measured.** Teaser 1 (Rathaus, NBIT1, 2:10): fitted, 22.1 MiB at 1280×720, 1284 kb/s.
+Teaser 2 (general, NBG1, 1:20): never needed it — 23.7 MiB at 1080p crf 23. Both films, both
+posters and both preview loops are committed under `website/public/teaser/`; the repo grows by
+about 46 MiB. The codes were chosen by the founder and handed over in the build session; they
+are in no file. The unlock, wrong-code, session-memory and EN paths were exercised in a browser
+against the built site before commit. Owner: partner-b; codes: founders.
+
+## D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED
+D-057 said `gap-6` made five links plus the language toggle fit at 768 px. Measured on the
+built site during the D-059 gate, it does not on a classic scrollbar: the DE header needs
+~717 px of content width and a 768 px Windows viewport leaves 705 px, so from 768 to 779 px
+"Über uns" and "DE → EN" broke over two lines and the lockup dropped its signal period onto a
+second line under the mark — the brand element D-050 describes, broken, on every page in that
+band (a half-snapped window on a 1920 × 1080 display at 125 % lands exactly there). Overlay
+scrollbars had hidden it in the cloud build. Introduced by the fifth link, not pre-existing.
+
+Two changes to `Header.astro`: the desktop toggle wears the mobile bar's short label
+(`EN` / `DE`) from `md` and its full `DE → EN` from `lg`, which returns ~47 px; and the lockup,
+the links and the toggle are `whitespace-nowrap`, so a future sixth link overflows visibly
+instead of failing quietly. Same gate also moved the dialog's submit onto `Cta.astro` (it was
+a fourth hand-rolled copy, against D-043), dropped a doubled hairline under the header on
+`/teaser`, and put the scrim and backdrop on the graphite token. Owner: partner-b.
 
 ## Template
 ```

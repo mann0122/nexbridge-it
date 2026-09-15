@@ -1,0 +1,239 @@
+---
+/**
+ * Teaser cards + the shared unlock dialog (D-056).
+ *
+ * A locked teaser is an uninked drawing sheet: hairline DIN frame, a
+ * Zeichnungskopf carrying the name, the part number and a status field. The
+ * silent preview loop plays *inside* the frame under a graphite scrim, a blur
+ * and a greyscale filter, so motion reads but nothing in the film is legible
+ * or in colour — the point of a teaser is that you can tell something is there.
+ *
+ * All furniture is steel, never signal: two cards sit in one viewport and the
+ * ration counts elements (DESIGN.md). The only signal here is the focus ring.
+ *
+ * The card is a <button>, so keyboard and screen-reader behaviour come from
+ * the platform. One <dialog> serves both cards — one focus trap, one <video>
+ * to tear down on route change.
+ *
+ * Nothing here names the full films' URLs. They are derived from the typed
+ * code in scripts/teaser.ts and exist in the DOM only after a correct one.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { type Lang, useTranslations } from '../i18n/ui';
+import { TEASERS, previewSrc, posterSrc } from '../config/teasers';
+import LockIcon from './icons/LockIcon.astro';
+import Cta from './Cta.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+/**
+ * Whether the generated assets are actually in this build.
+ *
+ * Checked here, at build time, rather than by letting the browser discover it:
+ * `preload="none"` does not suppress the poster fetch, so emitting the markup
+ * unconditionally costs two 404s and two console errors on every view while the
+ * films are missing — and the honest "Film folgt" state would appear only after
+ * a hover, on the hovered card alone, because it hung off the <video> error
+ * event. A card with no film now says so on first paint and is not clickable.
+ */
+/* Resolved from cwd (the Astro project root in both dev and build), NOT from
+   import.meta.url: Vite rewrites that during the build, so the lookup silently
+   missed and every card rendered "Film folgt" even with the films in place.
+   A missing public/ means the resolution is wrong rather than the assets — so
+   fail the build loudly instead of quietly mislabelling both cards. */
+const publicDir = path.resolve(process.cwd(), 'public');
+if (!fs.existsSync(publicDir)) {
+  throw new Error(
+    `[TeaserGrid] cannot find website/public from cwd "${process.cwd()}". ` +
+      'Teaser asset detection would report every film as missing — refusing to build.',
+  );
+}
+const assetDir = path.join(publicDir, 'teaser');
+const hasAssets = (id: string) =>
+  fs.existsSync(path.join(assetDir, `${id}-poster.webp`)) &&
+  fs.existsSync(path.join(assetDir, `${id}-preview.mp4`));
+
+const cards = TEASERS.map((teaser, i) => ({
+  ...teaser,
+  name: t(`teaser.${i + 1}.name` as Parameters<typeof t>[0]),
+  preview: previewSrc(teaser.id),
+  poster: posterSrc(teaser.id),
+  ready: hasAssets(teaser.id),
+}));
+---
+
+{/* No border-t: the sticky header already draws that hairline, and a second
+    one directly beneath it made the /teaser seam 2px where every other page
+    has 1px. */}
+<section
+  id="teaser"
+  class="surface-grid bg-graphite"
+  data-teaser-scope
+  data-label-locked={t('teaser.locked')}
+  data-label-unlocked={t('teaser.unlocked')}
+  data-label-pending={t('teaser.pending')}
+  data-label-hint={t('teaser.hint')}
+  data-label-checking={t('teaser.dialog.checking')}
+  data-label-error={t('teaser.dialog.error')}
+>
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel" data-reveal>{t('teaser.kicker')}</p>
+    {/* Subpage H1 grade (ImpressumBody.astro), not the homepage section-h2 clamp. */}
+    <h1 class="type-display mt-4 max-w-[20ch] text-[clamp(2rem,4vw,3.2rem)] text-paper" data-reveal>
+      {t('teaser.title')}
+    </h1>
+    <p class="mt-6 max-w-[58ch] text-lg leading-relaxed text-steel" data-reveal>{t('teaser.intro')}</p>
+
+    {/* Sans, not type-annot: a sentence is not a label, and Fragment Mono is
+        never worn as costume (DESIGN.md). */}
+    <noscript>
+      <p class="mt-8 max-w-[58ch] border border-steel-soft px-4 py-3 text-[0.9375rem] leading-relaxed text-steel">
+        {t('teaser.noJs')}
+      </p>
+    </noscript>
+
+    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+      {
+        cards.map((card) => (
+          <button
+            type="button"
+            class="teaser-card group"
+            data-teaser={card.id}
+            data-teaser-name={card.name}
+            data-teaser-part={`${t('teaser.field.part')} ${card.partNo}`}
+            data-label-hint-unlocked={t('teaser.hintUnlocked')}
+            data-icon-hover
+            disabled={!card.ready}
+            aria-haspopup={card.ready ? 'dialog' : undefined}
+          >
+            {/* Image area. aria-hidden: the loop is decoration, and it is
+                deliberately unreadable — there is nothing here to announce. */}
+            <span class="teaser-frame">
+              {card.ready && (
+                <video
+                  class="teaser-preview"
+                  data-teaser-preview
+                  src={card.preview}
+                  poster={card.poster}
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  tabindex="-1"
+                  aria-hidden="true"
+                />
+              )}
+              {/* No surface-grid here: the section already rules the ground,
+                  and a second 48px grid starting at the card's own origin puts
+                  three misregistered rulings in one viewport. A drawing has
+                  one. The registration marks are the plate's own furniture. */}
+              <span class="teaser-scrim" aria-hidden="true" />
+              <span class="teaser-regmarks" aria-hidden="true" />
+            </span>
+
+            {/* Zeichnungskopf: solid graphite, so every label keeps its
+                contrast no matter what frame the film is showing. */}
+            <span class="teaser-head">
+              <span class="teaser-head-name type-subhead text-xl text-paper md:text-2xl">{card.name}</span>
+
+              {/* Both fields carry their label — a title block does not name one
+                  and leave the other bare.   keeps label and value together. */}
+              <span class="teaser-head-fields">
+                <span class="type-annot text-steel">
+                  {t('teaser.field.part')}&#160;{card.partNo}
+                </span>
+                <span class="type-annot inline-flex items-center gap-2 text-steel">
+                  {t('teaser.field.status')}
+                  <LockIcon size={16} class="shrink-0" />
+                  <span data-teaser-status>
+                    {card.ready ? t('teaser.locked') : t('teaser.pending')}
+                  </span>
+                </span>
+              </span>
+
+              {/* No arrow: the whole card is the button, and a 2.5-weight action
+                  line beside the lock's 1.5 puts two weights in one row with no
+                  difference in meaning. */}
+              <span class="teaser-head-hint type-annot text-steel" data-teaser-hint>
+                {card.ready ? t('teaser.hint') : ''}
+              </span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+{/* One dialog, both cards. Native <dialog> gives the focus trap, the backdrop
+    and Esc for free — and returns focus to the card that opened it. */}
+<dialog class="teaser-dialog" data-teaser-dialog aria-labelledby="teaser-dialog-name">
+  <div class="teaser-dialog-sheet">
+    <div class="teaser-dialog-bar">
+      <p class="type-annot text-steel">
+        <span data-teaser-dialog-part>{TEASERS[0].partNo}</span>
+      </p>
+      <button type="button" class="teaser-dialog-close type-annot" data-teaser-close>
+        {t('teaser.dialog.close')}
+      </button>
+    </div>
+
+    <h2 id="teaser-dialog-name" class="type-subhead text-2xl text-paper" data-teaser-dialog-name>
+      {TEASERS[0].partNo}
+    </h2>
+
+    {/* Step 1 — the code. */}
+    <form class="teaser-code" data-teaser-form novalidate>
+      <p class="mt-3 max-w-[46ch] text-[0.95rem] leading-relaxed text-steel">
+        {t('teaser.dialog.intro')}
+      </p>
+
+      <fieldset class="teaser-digits">
+        <legend class="type-annot mb-3 text-steel">{t('teaser.dialog.label')}</legend>
+        {
+          [0, 1, 2, 3].map((i) => (
+            <input
+              class="teaser-digit"
+              data-teaser-digit
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="1"
+              autocomplete="off"
+              aria-label={`${t('a11y.teaserDigit')} ${i + 1}`}
+            />
+          ))
+        }
+      </fieldset>
+
+      {/* role=alert so the failure is announced, not just shown. Sans at the
+          house .err grade — this is the one sentence a failing visitor must
+          read, and 11px mono is not a reading face. */}
+      <p class="teaser-error" data-teaser-error role="alert" hidden></p>
+
+      {/* The house CTA (D-043: one component, not a fourth drifted copy). It is
+          this viewport's one signal element. scripts/teaser.ts finds it as the
+          form's submit button — Cta.astro forwards no data attributes. */}
+      <Cta type="submit" class="mt-6 disabled:opacity-60">
+        <span data-teaser-submit-label>{t('teaser.dialog.submit')}</span>
+      </Cta>
+    </form>
+
+    {/* Step 2 — the film. src is set by JS at unlock time and blanked on close;
+        it is never rendered into the document. */}
+    <div class="teaser-player" data-teaser-player hidden>
+      <video data-teaser-full controls playsinline preload="none" aria-label={t('a11y.teaserPlayer')}
+      ></video>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import '../scripts/teaser';
+</script>

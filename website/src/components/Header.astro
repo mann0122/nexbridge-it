@@ -17,9 +17,12 @@ const base = lang === 'de' ? '' : '/en';
 const switchHref = altPath(lang, path);
 
 // Anchors into the landing page until dedicated subpages exist (D-010 scope).
+// Teaser is the exception and the first real route in here (D-057) — it is a
+// page, not an anchor, so it carries no `#`.
 const links = [
   { href: `${base}/#leistungen`, label: t('nav.leistungen') },
   { href: `${base}/#vorgehen`, label: t('nav.vorgehen') },
+  { href: `${base}/teaser`, label: t('nav.teaser') },
   { href: `${base}/#ueber-uns`, label: t('nav.ueberUns') },
   { href: `${base}/#kontakt`, label: t('nav.kontakt') },
 ];
@@ -34,7 +37,7 @@ const links = [
         wrapper element would silently kill the period's drop. The mark takes
         off on hover and focus, the period lifts — one gesture, two parts, both
         off under reduced motion. */}
-    <a href={lang === 'de' ? '/' : '/en/'} class="group type-wordmark text-[1.35rem]">
+    <a href={lang === 'de' ? '/' : '/en/'} class="group type-wordmark whitespace-nowrap text-[1.35rem]">
       <Mark
         height={20}
         class="mr-2.5 hidden align-[-0.1em] transition-transform duration-300 ease-out group-hover:-translate-y-[1px] group-hover:translate-x-[2px] group-focus-visible:-translate-y-[1px] group-focus-visible:translate-x-[2px] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-x-0 motion-reduce:group-focus-visible:translate-y-0 sm:inline-block"
@@ -46,10 +49,19 @@ const links = [
       >
     </a>
 
-    <nav class="hidden items-center gap-8 md:flex" aria-label={t('a11y.mainNav')}>
+    {/* md is tight: five links (D-057) plus the toggle need ~717px of the
+        705px a 768px viewport leaves behind a classic scrollbar, so the toggle
+        wears its short label until lg and the gap drops to 6 (D-060). Nothing
+        here may wrap — a lockup broken over two lines with the period stranded
+        is not the brand element D-050 describes — so nowrap makes a future
+        sixth link overflow visibly instead of failing quietly. */}
+    <nav class="hidden items-center gap-6 md:flex lg:gap-8" aria-label={t('a11y.mainNav')}>
       {
         links.map((link) => (
-          <a href={link.href} class="link-draw text-[0.9375rem] text-steel transition-colors hover:text-paper">
+          <a
+            href={link.href}
+            class="link-draw text-[0.9375rem] whitespace-nowrap text-steel transition-colors hover:text-paper"
+          >
             {link.label}
           </a>
         ))
@@ -59,11 +71,12 @@ const links = [
           <a
             href={switchHref}
             data-icon-hover
-            class="type-annot ml-2 inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
+            class="type-annot ml-2 inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 whitespace-nowrap text-steel transition-colors hover:border-steel hover:text-paper"
             aria-label={t('a11y.langSwitch')}
           >
             <WorldIcon size={14} class="shrink-0" />
-            {lang === 'de' ? 'DE → EN' : 'EN → DE'}
+            <span class="lg:hidden">{lang === 'de' ? 'EN' : 'DE'}</span>
+            <span class="hidden lg:inline">{lang === 'de' ? 'DE → EN' : 'EN → DE'}</span>
           </a>
         )
       }

@@ -193,8 +193,8 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
 - Focus states: 2px signal outline offset 2px, everywhere.
 - Teaser card (D-056): an uninked drawing sheet — 16:9 image area over a Zeichnungskopf that
   carries the name, the part number and a status field with the lock mark. The silent preview
-  loop sits *inside* the image area under `blur(14px) grayscale(1) contrast(0.95)` and a 0.62
-  graphite scrim: motion reads, content does not. The title block is **solid** graphite, never a scrim
+  loop sits *inside* the image area under `blur(14px) grayscale(1) contrast(0.95)` and a 0.74
+  graphite scrim (tuned against the real posters, D-061): motion reads, content does not. The title block is **solid** graphite, never a scrim
   over the film — a translucent band would hand its contrast to whatever frame was showing.
   All furniture is steel: two cards share a viewport, so neither may spend the signal. The
   card is a `<button>`; the unlock `<dialog>` is shared by both, and its submit CTA is that

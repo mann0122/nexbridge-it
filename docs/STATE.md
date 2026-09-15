@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-15
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061]
 cites_history: [D-007]
 ---
 
@@ -185,7 +185,7 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark (D-050),
 the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
-(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-060). The teaser was
+(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-061). The teaser was
 built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
 renumbered to D-056…D-058 when `main` was merged in. **The live site does not show the teaser
 yet**: the deploy is manual (`npx wrangler deploy` from `website/`, D-022) and has not been

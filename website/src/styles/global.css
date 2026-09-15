@@ -540,26 +540,36 @@ section[id] {
 .teaser-scrim {
   position: absolute;
   inset: 0;
-  /* Graphite from the token, not a literal: the scrim must follow the theme. */
-  background-color: color-mix(in srgb, var(--color-graphite) 62%, transparent);
+  /* Graphite from the token, not a literal: the scrim must follow the theme.
+     74%, tuned against the real posters (D-061): the Rathaus poster averages
+     Y 168 and the night-yard poster Y 64, so at the old 62% the light plate
+     landed at Y ~77 — brighter than any hairline — while the dark one sat at
+     ~38. At 74% they measure Y 56 and 32 in the browser: both below the
+     steel-soft hairline (Y 64), both above the card's own graphite-2 ground
+     (Y 30) that the plate actually sits on. The band that satisfies both is
+     71–81%; the numbers and the trade are in D-061. */
+  background-color: color-mix(in srgb, var(--color-graphite) 74%, transparent);
 }
 
 /* Registration marks: the plate's own drawing furniture, so the image area
    reads as an unreleased print rather than a blurred video. Four corner
-   crosses in steel-soft, drawn with gradients — no extra elements, no assets. */
+   crosses drawn with gradients — no extra elements, no assets. Steel-deep, not
+   steel-soft: the hairline tone (Y 64) vanished on a plate at Y 56 (1.07:1),
+   steel-deep (Y 100) sits at 1.9:1 and 2.8:1 on the two plates — furniture
+   grade, still under the Zeichnungskopf's text ink (D-061). */
 .teaser-regmarks {
   position: absolute;
   inset: 0.75rem;
   pointer-events: none;
   background-image:
-    linear-gradient(to right, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to left, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to right, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to top, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to left, var(--color-steel-soft) 1px, transparent 1px),
-    linear-gradient(to top, var(--color-steel-soft) 1px, transparent 1px);
+    linear-gradient(to right, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to left, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to right, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to top, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to left, var(--color-steel-deep) 1px, transparent 1px),
+    linear-gradient(to top, var(--color-steel-deep) 1px, transparent 1px);
   background-size:
     14px 1px, 1px 14px,
     14px 1px, 1px 14px,

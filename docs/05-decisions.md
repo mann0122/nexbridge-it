@@ -1322,6 +1322,28 @@ instead of failing quietly. Same gate also moved the dialog's submit onto `Cta.a
 a fourth hand-rolled copy, against D-043), dropped a doubled hairline under the header on
 `/teaser`, and put the scrim and backdrop on the graphite token. Owner: partner-b.
 
+## D-061 | 2026-09-15 | Teaser scrim 0.62 → 0.74, tuned against the real posters | DECIDED
+The 0.62 scrim was set with no films in the build (D-056). With the real posters it produced
+two plates in different keys: the Rathaus poster averages Y 168 (paper-cutout daylight), the
+night-yard poster Y 64, so the light plate landed at Y ≈ 77 — brighter than any hairline on the
+page and the largest bright surface in the viewport — while the dark one sat at ≈ 38. A locked
+sheet is uninked; it must not be the brightest thing on the page.
+
+One number: the scrim goes to **0.74** of graphite. Measured on the built page (canvas
+composite of poster × filter × scrim): plates land at Y 56 and Y 32. The two bounds are the
+plate's real neighbours — the steel-soft hairline that frames it (Y 64) above, and the card's
+own graphite-2 ground (Y 30, not the section's graphite at Y 22) below. Light plate under 64
+needs the scrim above 71 %; dark plate over 30 needs it under 81 %. That window is 34 Y wide and
+the two posters are 104 apart, so no single value gives both plates a margin: at 74 % card 1
+sits 8 under the hairline and card 2 rests 2 over its ground, held apart from it by the hairline
+and its own internal contrast (its lit window peaks near Y 80). The cards are one grade of
+sheet, not one tone — a 24 Y gap where there was 39. The law stays a single scrim for all
+cards: a per-film value would be a config knob in the way of the next film. A future poster
+averaging under Y 45 would sink into graphite-2 at this value — re-measure then, do not add a
+knob. Same entry: the registration marks move from steel-soft to steel-deep — the hairline
+tone was 1.07:1 on the lighter plate, i.e. invisible, since before this change; steel-deep
+reads at 1.9:1 and 2.8:1, furniture grade under the head's text ink. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

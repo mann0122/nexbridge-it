@@ -213,7 +213,7 @@ export const ui = {
     'teaser.meta.description':
       'Zwei Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
     'teaser.kicker': 'Filme · Zugang mit Code',
-    'teaser.title': 'Zwei Filme, auf Anfrage.',
+    'teaser.title': 'Zwei Filme.',
     /* "Diese beiden Filme zeigen wir nicht öffentlich" was false: the page, the
        cards and the blurred loops are public — only the full films are not. */
     'teaser.intro':
@@ -479,7 +479,7 @@ export const ui = {
     'teaser.meta.description':
       'Two films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
     'teaser.kicker': 'Films · access by code',
-    'teaser.title': 'Two films, on request.',
+    'teaser.title': 'Two films.',
     'teaser.intro':
       'We do not show the full films publicly. You get the four-digit code from us — in conversation or by email.',
     'teaser.1.name': 'Teaser 1',

@@ -16,5 +16,8 @@
   },
   "devDependencies": {
     "ffmpeg-static": "^5.2.0"
+  },
+  "allowScripts": {
+    "ffmpeg-static": true
   }
 }

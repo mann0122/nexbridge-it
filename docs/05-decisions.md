@@ -952,7 +952,7 @@ Cloudflare per-file cap rather than letting a deploy fail. The cards carry no de
 what the films show: nobody has watched them in a build session and CLAUDE.md rule 1 forbids
 inventing it. Owner: partner-b; codes and films: founders.
 
-## D-050 | 2026-09-15 | `config/teasers.ts` as asset manifest; /teaser is the first real nav route | DECIDED
+## D-050 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
 Teaser asset identity (id, part number, source-film name) lives in
 `website/src/config/teasers.ts`, joining `site.ts`, `global.css @theme` and `ui.ts` as a
 thing not to work around. It holds file identity only — every string stayed in `ui.ts`, and
@@ -964,6 +964,28 @@ anchor, so `Header.astro`'s "anchors until dedicated subpages exist" comment (D-
 partly overtaken. Desktop nav spacing dropped to `gap-6` at `md` and returns to `gap-8` at
 `lg`: five links plus the language toggle do not fit at 768px on the old spacing. Owner:
 partner-b.
+
+## D-051 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
+The `qa-reviewer` gate on D-049 found that a guarantee the repo advertises was not real.
+`website/CLAUDE.md` says the EN block of `ui.ts` "cannot silently drift from the German one —
+a missing key is a compile error". It was not: `satisfies Record<Lang, Record<string, string>>`
+only requires string keys, `UiKey` derives from the German block alone, and `t()` falls back to
+German for a missing key. Nothing typechecked anyway — `astro build` does not, and no lint or
+typecheck script existed.
+
+**It had already fired.** While the teaser page was being built, `teaser.hintUnlocked` existed
+in `de` and not in `en`; the build passed clean and the English page shipped the German string.
+It was caught by eye, not by tooling.
+
+Two changes: `AssertKeys` type assertions at the end of `ui.ts` fail the moment either block
+gains or loses a key the other lacks (verified by deleting a key — it errors, naming it), and
+`npm --prefix website run check` runs `astro check`, with `@astrojs/check` + `typescript` added
+as devDependencies. Types only, no runtime cost.
+
+**Deliberately not done:** `check` is NOT wired into `build`. It currently reports four
+pre-existing `'heroArrow' is possibly null` errors in `scripts/flowrail.ts` (D-044), which are
+not this change's to fix, and a build that fails on unrelated code would just get bypassed.
+Clearing those and then gating the build on `check` is the follow-up. Owner: partner-b.
 
 ## Template
 ```

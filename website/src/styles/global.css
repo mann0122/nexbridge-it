@@ -320,15 +320,19 @@ section[id] {
   transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Lock (NB-T01/T02 status): the shackle lifts out of the body. The body and
-   the pin never move, so the drawing stays readable mid-transition. */
+/* Lock (NB-T01/T02 status): the shackle lifts out of the body. The body never
+   moves, so the drawing stays readable mid-transition. 3 units of travel, not
+   1.5 — at a 16px render 1.5 units is 1.0 CSS px, which does not read as a
+   lock opening. A card whose film is already unlocked rests lifted: the mark
+   must not stay shut next to a status reading "freigegeben". */
 .icn-lock-shackle {
   transform: translateY(0);
   transition: transform 200ms ease;
 }
 [data-icon-hover]:hover .icn-lock-shackle,
-[data-icon-hover]:focus-visible .icn-lock-shackle {
-  transform: translateY(-1.5px);
+[data-icon-hover]:focus-visible .icn-lock-shackle,
+[data-teaser-unlocked] .icn-lock-shackle {
+  transform: translateY(-3px);
   transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -397,6 +401,13 @@ section[id] {
   [data-icon-hover]:focus-visible .icn-cta-head {
     transform: translateX(-4.2px);
   }
+  /* An unlocked lock is a STATE, not motion — it stays open here, it just
+     stops animating. Declared after the group above so it outranks its
+     `transform: none`. */
+  [data-teaser-unlocked] .icn-lock-shackle {
+    transition: none;
+    transform: translateY(-3px);
+  }
 }
 
 /* ---------------------------------------------------------------------
@@ -422,6 +433,16 @@ section[id] {
   border-color: var(--color-steel);
 }
 
+/* No film in this build: the card states that and stops pretending to be a
+   control. Not greyed out — the Zeichnungskopf still reads at full contrast,
+   it simply has nothing to open. */
+.teaser-card:disabled {
+  cursor: default;
+}
+.teaser-card:disabled:hover {
+  border-color: var(--color-steel-soft);
+}
+
 /* Image area. The aspect box is fixed, so a missing asset reserves exactly
    the same space as a present one — no reflow when the films land. */
 .teaser-frame {
@@ -433,17 +454,18 @@ section[id] {
 }
 
 /* The teaser property itself: motion reads, nothing is legible.
-   Saturation is pulled hard on purpose — a full-colour blurred rectangle is
-   the loudest thing on a graphite page and would beat the one signal element
-   it sits next to. Desaturated, it reads as an unreleased plate instead.
-   The scale-up hides the soft edge blur leaves behind. */
+   FULLY desaturated, not merely muted. Partial saturation still passes
+   arbitrary hue through at full-plate scale — the largest element in the
+   viewport in a colour nobody chose, against a one-accent-colour brand. An
+   uninked sheet cannot be in colour, so the filter now says what the intent
+   says. The scale-up hides the soft edge blur leaves behind. */
 .teaser-preview {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: blur(14px) saturate(0.35) contrast(0.95);
+  filter: blur(14px) grayscale(1) contrast(0.95);
   transform: scale(1.18);
 }
 
@@ -451,6 +473,35 @@ section[id] {
   position: absolute;
   inset: 0;
   background-color: rgb(20 23 26 / 0.62);
+}
+
+/* Registration marks: the plate's own drawing furniture, so the image area
+   reads as an unreleased print rather than a blurred video. Four corner
+   crosses in steel-soft, drawn with gradients — no extra elements, no assets. */
+.teaser-regmarks {
+  position: absolute;
+  inset: 0.75rem;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to left, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to right, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to top, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to left, var(--color-steel-soft) 1px, transparent 1px),
+    linear-gradient(to top, var(--color-steel-soft) 1px, transparent 1px);
+  background-size:
+    14px 1px, 1px 14px,
+    14px 1px, 1px 14px,
+    14px 1px, 1px 14px,
+    14px 1px, 1px 14px;
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+  background-repeat: no-repeat;
 }
 
 /* Zeichnungskopf ------------------------------------------------------- */
@@ -477,9 +528,14 @@ section[id] {
 }
 
 /* Dialog --------------------------------------------------------------- */
+/* margin:auto is restated because Tailwind preflight zeroes margins on every
+   element, which overrides the UA rule that centres a modal <dialog> and
+   parks the sheet in the top-left corner. */
 .teaser-dialog {
   width: min(56rem, calc(100vw - 2rem));
   max-width: none;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
   padding: 0;
   border: 1px solid var(--color-steel-soft);
   background: var(--color-graphite);
@@ -500,7 +556,10 @@ section[id] {
   border-bottom: 1px solid var(--color-steel-soft);
   margin-bottom: 1.25rem;
 }
+/* Negative margin buys the 24px target (SC 2.5.8) without moving the label. */
 .teaser-dialog-close {
+  padding: 0.5rem 0.25rem;
+  margin: -0.5rem -0.25rem;
   color: var(--color-steel);
   transition: color 200ms ease;
 }
@@ -523,6 +582,11 @@ section[id] {
   float: left;
   width: 100%;
 }
+/* Border is steel-deep on the dialog's graphite ground (3.10:1) so the field
+   boundary itself meets SC 1.4.11 — same field as Contact.astro. steel-soft
+   on graphite-2 was 1.62:1: an empty box whose only identification as a
+   control was invisible. The fill must stay transparent; steel-deep on
+   graphite-2 is only 2.86:1 and would still fail. */
 .teaser-digit {
   width: 3rem;
   height: 3.5rem;
@@ -530,24 +594,28 @@ section[id] {
   font-family: var(--font-mono);
   font-size: 1.25rem;
   color: var(--color-paper);
-  background: var(--color-graphite-2);
-  border: 1px solid var(--color-steel-soft);
+  background: transparent;
+  border: 1px solid var(--color-steel-deep);
   transition: border-color 200ms ease;
 }
 .teaser-digit:hover {
   border-color: var(--color-steel);
 }
-/* Paper text, not signal: the submit CTA is already this viewport's one signal
-   element, and the ration counts elements. The 1px signal rule is a hairline
-   annotation — DESIGN.md bans coloured left-borders *wider* than 1px. */
+/* Steel rule, not signal. The earlier 1px signal rule leaned on the ban being
+   about border *thickness* — but ">1 signal element per viewport" is a
+   separate rule, and the only sanctioned way under it is to be a wash rather
+   than an object. A 1px hard-edged full-signal rule is the opposite of a
+   wash, and the submit CTA already spends this viewport's signal.
+   The failure is unmissable without colour anyway: role="alert", 1.5rem of
+   air above the fields, and focus jumps back to the first digit. */
 .teaser-error {
   margin-top: 1rem;
   padding: 0.625rem 0.875rem;
-  border-left: 1px solid var(--color-signal);
+  border-left: 1px solid var(--color-steel);
   background: var(--color-graphite-2);
   color: var(--color-paper);
-  text-transform: none;
-  letter-spacing: 0.02em;
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }
 .teaser-submit {
   display: inline-flex;

@@ -4,9 +4,9 @@ title: Website spec
 type: spec
 status: active
 owner: partner-b
-updated: 2026-08-01
+updated: 2026-09-15
 depends_on: [offer, brand]
-decisions: [D-002, D-010, D-013, D-017, D-022, D-023]
+decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-049, D-050]
 ---
 
 # 03 — Website Spec (nexbridge-it.com)
@@ -54,7 +54,8 @@ See [[brand]] voice. Every section: claim → concrete example → number where 
 No section may ship with lorem ipsum; use `TBD:`-marked realistic drafts via copywriter-de.
 
 ## Quality bar (qa-reviewer enforces)
-Lighthouse ≥95 (perf/a11y/SEO), WCAG AA contrast, works at 360px, semantic HTML with `lang="de"`,
+Lighthouse ≥95 (a11y/SEO/desktop perf) and ≥94 mobile perf (re-based by D-043 — this line said
+≥95 across the board until 2026-09-15), WCAG AA contrast, works at 360px, semantic HTML with `lang="de"`,
 meta title+description per page, OG image, sitemap.xml + robots.txt, all images with dimensions +
 lazy loading, prefers-reduced-motion respected, no console errors, no third-party requests except
 Plausible + form provider.

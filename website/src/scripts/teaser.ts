@@ -59,9 +59,12 @@ function recall(id: string): string | null {
 }
 
 onPage(({ lenis }) => {
-  const scope = document.querySelector<HTMLElement>('[data-teaser-scope]');
-  const dialog = document.querySelector<HTMLDialogElement>('[data-teaser-dialog]');
-  if (!scope || !dialog) return; // every other page
+  const foundScope = document.querySelector<HTMLElement>('[data-teaser-scope]');
+  const foundDialog = document.querySelector<HTMLDialogElement>('[data-teaser-dialog]');
+  if (!foundScope || !foundDialog) return; // every other page
+  // Rebound after the guard so the non-null type reaches the handlers below.
+  const scope = foundScope;
+  const dialog = foundDialog;
 
   const labels = {
     locked: scope.dataset.labelLocked ?? '',
@@ -71,18 +74,47 @@ onPage(({ lenis }) => {
     error: scope.dataset.labelError ?? '',
   };
 
+  /** A card whose film is open this session: status, lock and hint all move. */
+  function markUnlocked(card: HTMLButtonElement): void {
+    card.dataset.teaserUnlocked = 'true';
+    const status = card.querySelector<HTMLElement>('[data-teaser-status]');
+    const hint = card.querySelector<HTMLElement>('[data-teaser-hint]');
+    if (status && labels.unlocked) status.textContent = labels.unlocked;
+    // Leaving "Code eingeben" on a card that now opens straight into the film
+    // is a lie about what the next click does.
+    const unlockedHint = card.dataset.labelHintUnlocked;
+    if (hint && unlockedHint) hint.textContent = unlockedHint;
+  }
+
   const cards = Array.from(scope.querySelectorAll<HTMLButtonElement>('[data-teaser]'));
-  const form = dialog.querySelector<HTMLFormElement>('[data-teaser-form]');
   const digits = Array.from(dialog.querySelectorAll<HTMLInputElement>('[data-teaser-digit]'));
-  const errorBox = dialog.querySelector<HTMLElement>('[data-teaser-error]');
-  const player = dialog.querySelector<HTMLElement>('[data-teaser-player]');
-  const film = dialog.querySelector<HTMLVideoElement>('[data-teaser-full]');
+  const found = {
+    form: dialog.querySelector<HTMLFormElement>('[data-teaser-form]'),
+    errorBox: dialog.querySelector<HTMLElement>('[data-teaser-error]'),
+    player: dialog.querySelector<HTMLElement>('[data-teaser-player]'),
+    film: dialog.querySelector<HTMLVideoElement>('[data-teaser-full]'),
+    submit: dialog.querySelector<HTMLButtonElement>('[data-teaser-submit]'),
+    submitLabel: dialog.querySelector<HTMLElement>('[data-teaser-submit-label]'),
+  };
+  if (
+    !found.form ||
+    !found.errorBox ||
+    !found.player ||
+    !found.film ||
+    !found.submit ||
+    !found.submitLabel
+  ) {
+    return;
+  }
+  /* Re-bound through one object *after* the guard so the non-null types
+     survive into the handlers below. A bare `const x = querySelector(...)`
+     widens back to `| null` inside a hoisted function — TS cannot prove the
+     guard ran before the call — which is what `astro check` caught. */
+  const { form, errorBox, player, film, submit, submitLabel } = found;
+
   const dialogName = dialog.querySelector<HTMLElement>('[data-teaser-dialog-name]');
   const dialogPart = dialog.querySelector<HTMLElement>('[data-teaser-dialog-part]');
-  const submit = dialog.querySelector<HTMLButtonElement>('[data-teaser-submit]');
-  const submitLabel = dialog.querySelector<HTMLElement>('[data-teaser-submit-label]');
   const closeBtn = dialog.querySelector<HTMLButtonElement>('[data-teaser-close]');
-  if (!form || !errorBox || !player || !film || !submit || !submitLabel) return;
 
   const submitIdle = submitLabel.textContent ?? '';
   let activeId: string | null = null;
@@ -93,8 +125,8 @@ onPage(({ lenis }) => {
   /* ------------------------------------------------------------------ */
 
   const previews = new Map<HTMLButtonElement, HTMLVideoElement>();
-  /** Status field per teaser id, so unlocking does not re-query the DOM. */
-  const statusFields = new Map<string, HTMLElement>();
+  /** Card per teaser id, so unlocking does not re-query the DOM. */
+  const cardsById = new Map<string, HTMLButtonElement>();
 
   for (const card of cards) {
     const preview = card.querySelector<HTMLVideoElement>('[data-teaser-preview]');
@@ -102,7 +134,7 @@ onPage(({ lenis }) => {
     const id = card.dataset.teaser ?? '';
     if (!preview) continue;
     previews.set(card, preview);
-    if (status && id) statusFields.set(id, status);
+    if (id) cardsById.set(id, card);
 
     // Assets land after this code does. Until they do, say so on the card
     // rather than showing an empty frame with a confident "locked".
@@ -124,9 +156,7 @@ onPage(({ lenis }) => {
     });
 
     // A code already entered this session skips straight past the gate.
-    if (id && recall(id) && status && labels.unlocked) {
-      status.textContent = labels.unlocked;
-    }
+    if (id && recall(id)) markUnlocked(card);
   }
 
   function play(video: HTMLVideoElement): void {
@@ -150,14 +180,21 @@ onPage(({ lenis }) => {
         card.addEventListener('blur', () => rewind(preview));
       }
     } else {
-      // No hover to work with: the card previews while it is on screen.
+      /* No hover to work with, so the card previews itself when it scrolls
+         into view — ONCE, not on a loop. An indefinite auto-started animation
+         is the SC 2.2.2 case with no pause control to offer, and two blurred
+         videos looping forever is also the mobile-perf case on a floor with no
+         headroom. One pass, then the card rests on its first frame. */
       observer = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            const preview = previews.get(entry.target as HTMLButtonElement);
-            if (!preview) continue;
-            if (entry.isIntersecting) play(preview);
-            else rewind(preview);
+            const card = entry.target as HTMLButtonElement;
+            const preview = previews.get(card);
+            if (!preview || !entry.isIntersecting) continue;
+            preview.loop = false;
+            preview.addEventListener('ended', () => rewind(preview), { once: true });
+            play(preview);
+            observer?.unobserve(card); // one pass per page view
           }
         },
         { threshold: 0.5 },
@@ -170,9 +207,11 @@ onPage(({ lenis }) => {
   /* Dialog                                                              */
   /* ------------------------------------------------------------------ */
 
+  /* Unhide before writing: a live region mutated while still `hidden` is
+     announced unreliably by NVDA and JAWS. */
   function showError(message: string): void {
-    errorBox.textContent = message;
     errorBox.hidden = false;
+    errorBox.textContent = message;
   }
 
   function clearError(): void {
@@ -191,6 +230,10 @@ onPage(({ lenis }) => {
     film.src = src;
     form.hidden = true;
     player.hidden = false;
+    // The submit button was holding focus and has just been hidden. Without
+    // this, focus falls to <body> inside an open modal and a keyboard or
+    // screen-reader user is given no sign the film replaced the form.
+    film.focus();
   }
 
   function openDialog(card: HTMLButtonElement): void {
@@ -304,8 +347,8 @@ onPage(({ lenis }) => {
 
       if (src && found) {
         remember(activeId, src);
-        const status = statusFields.get(activeId);
-        if (status && labels.unlocked) status.textContent = labels.unlocked;
+        const card = cardsById.get(activeId);
+        if (card) markUnlocked(card);
         mountFilm(src);
         film.play().catch(() => {});
       } else {
@@ -331,6 +374,7 @@ onPage(({ lenis }) => {
     for (const preview of previews.values()) preview.pause();
     film.pause();
     film.removeAttribute('src');
+    film.load(); // same teardown as closeDialog — drops the buffered stream
     if (dialog.open) dialog.close();
     // A route can be swapped with the dialog open; neither the scroll lock
     // nor a stopped Lenis may survive onto the next page.

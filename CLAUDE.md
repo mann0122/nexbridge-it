@@ -73,10 +73,12 @@ Plausible analytics (specced, not yet installed), contact form via a GDPR-compat
 Node LTS. TypeScript strict where applicable. `website/package.json` is authoritative for
 versions — D-002's "Astro 5, Cloudflare Pages" is history, not state.
 
-Three single sources in the website — never work around them:
+Four single sources in the website — never work around them:
 - Brand name and URLs → `website/src/config/site.ts`
 - Design tokens → `website/src/styles/global.css` `@theme`
 - Every user-visible string → `website/src/i18n/ui.ts`
+- Teaser asset identity → `website/src/config/teasers.ts` (D-050; file identity only — no
+  strings, and never the codes or the film paths)
 
 ## Working style
 - Small, reviewable commits. Conventional commits (`feat:`, `fix:`, `docs:`, `chore:`).

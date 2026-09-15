@@ -55,6 +55,12 @@ const fail = (msg) => {
 };
 
 function ffmpegBin() {
+  // Escape hatch for anyone whose ffmpeg-static download was blocked.
+  const override = process.env.FFMPEG_BINARY;
+  if (override) {
+    if (fs.existsSync(override)) return override;
+    fail(`FFMPEG_BINARY is set to "${override}", which does not exist.`);
+  }
   try {
     const require = createRequire(import.meta.url);
     const bin = require('ffmpeg-static');
@@ -62,7 +68,12 @@ function ffmpegBin() {
   } catch {
     /* fall through to the friendlier message below */
   }
-  return fail('ffmpeg-static is not installed. Run `npm install` in the repo root first.');
+  return fail(
+    'No ffmpeg binary from ffmpeg-static.\n' +
+      '  If you have run `npm install` in the repo root, the package is there but its\n' +
+      '  postinstall download was blocked (proxy or offline). Re-run the install with\n' +
+      '  network access, or set FFMPEG_BINARY to an ffmpeg you already have.',
+  );
 }
 
 function run(bin, args, label) {
@@ -98,6 +109,15 @@ function findSource(base) {
 
 const ffmpeg = ffmpegBin();
 
+/* Codes first: forgetting one is the commonest mistake by far, and checking
+   the directory ahead of it answered "ops/teaser-src/ does not exist" to a
+   founder whose real problem was an unset variable. */
+for (const teaser of TEASERS) {
+  const code = (process.env[teaser.codeEnv] ?? '').trim();
+  if (!code) fail(`${teaser.codeEnv} is not set. Every teaser needs its own 4-digit code.`);
+  if (!/^\d{4}$/.test(code)) fail(`${teaser.codeEnv} must be exactly 4 digits — got "${code}".`);
+}
+
 if (!fs.existsSync(SRC_DIR)) {
   fail(
     `${rel(SRC_DIR)}/ does not exist.\n` +
@@ -110,9 +130,6 @@ if (!fs.existsSync(SRC_DIR)) {
 // with one film renamed and the other not is worse than a clean refusal.
 const jobs = TEASERS.map((teaser) => {
   const code = (process.env[teaser.codeEnv] ?? '').trim();
-  if (!code) fail(`${teaser.codeEnv} is not set. Every teaser needs its own 4-digit code.`);
-  if (!/^\d{4}$/.test(code)) fail(`${teaser.codeEnv} must be exactly 4 digits — got "${code}".`);
-
   const source = findSource(teaser.source);
   if (!source) {
     fail(
@@ -172,9 +189,17 @@ for (const job of jobs) {
   const size = fs.statSync(filmPath).size;
   const mib = (size / 1024 / 1024).toFixed(1);
   if (size > MAX_BYTES) {
+    /* Remove the oversize file before refusing. Failing with it still on disk
+       left an undeployable film in public/ AND skipped the sweep below, so the
+       previously retired code kept working — the opposite of what a refusal
+       should leave behind. The earlier films stay as they were: no sweep has
+       run, so whatever worked before this run still works. */
+    fs.unlinkSync(filmPath);
     fail(
-      `${job.film} is ${mib} MiB. Cloudflare static assets cap a single file at 25 MiB, ` +
-        `so this would fail the deploy.\n  Shorten the film or re-run with a higher -crf.`,
+      `${job.film} came out at ${mib} MiB. Cloudflare static assets cap a single file at ` +
+        `25 MiB, so this would fail the deploy.\n` +
+        `  Nothing was swept — the previously generated films and their codes still work.\n` +
+        `  Shorten the film or re-run with a higher -crf.`,
     );
   }
 
@@ -191,7 +216,9 @@ const keep = new Set([
   ...jobs.map((j) => `${j.id}-preview.mp4`),
   ...jobs.map((j) => `${j.id}-poster.webp`),
 ]);
-const stale = fs.readdirSync(OUT_DIR).filter((f) => !keep.has(f));
+/* Dotfiles are exempt: public/teaser/ cannot exist in git while empty, so a
+   .gitkeep is the natural way to carry it — and the sweep used to eat it. */
+const stale = fs.readdirSync(OUT_DIR).filter((f) => !f.startsWith('.') && !keep.has(f));
 for (const f of stale) {
   fs.unlinkSync(path.join(OUT_DIR, f));
   console.log(`removed stale ${f}`);

@@ -18,6 +18,8 @@
  * Nothing here names the full films' URLs. They are derived from the typed
  * code in scripts/teaser.ts and exist in the DOM only after a correct one.
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import { type Lang, useTranslations } from '../i18n/ui';
 import { TEASERS, previewSrc, posterSrc } from '../config/teasers';
 import LockIcon from './icons/LockIcon.astro';
@@ -30,11 +32,39 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+/**
+ * Whether the generated assets are actually in this build.
+ *
+ * Checked here, at build time, rather than by letting the browser discover it:
+ * `preload="none"` does not suppress the poster fetch, so emitting the markup
+ * unconditionally costs two 404s and two console errors on every view while the
+ * films are missing — and the honest "Film folgt" state would appear only after
+ * a hover, on the hovered card alone, because it hung off the <video> error
+ * event. A card with no film now says so on first paint and is not clickable.
+ */
+/* Resolved from cwd (the Astro project root in both dev and build), NOT from
+   import.meta.url: Vite rewrites that during the build, so the lookup silently
+   missed and every card rendered "Film folgt" even with the films in place.
+   A missing public/ means the resolution is wrong rather than the assets — so
+   fail the build loudly instead of quietly mislabelling both cards. */
+const publicDir = path.resolve(process.cwd(), 'public');
+if (!fs.existsSync(publicDir)) {
+  throw new Error(
+    `[TeaserGrid] cannot find website/public from cwd "${process.cwd()}". ` +
+      'Teaser asset detection would report every film as missing — refusing to build.',
+  );
+}
+const assetDir = path.join(publicDir, 'teaser');
+const hasAssets = (id: string) =>
+  fs.existsSync(path.join(assetDir, `${id}-poster.webp`)) &&
+  fs.existsSync(path.join(assetDir, `${id}-preview.mp4`));
+
 const cards = TEASERS.map((teaser, i) => ({
   ...teaser,
   name: t(`teaser.${i + 1}.name` as Parameters<typeof t>[0]),
   preview: previewSrc(teaser.id),
   poster: posterSrc(teaser.id),
+  ready: hasAssets(teaser.id),
 }));
 ---
 
@@ -51,13 +81,18 @@ const cards = TEASERS.map((teaser, i) => ({
 >
   <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
     <p class="type-annot text-steel" data-reveal>{t('teaser.kicker')}</p>
-    <h1 class="type-display mt-4 max-w-[20ch] text-[clamp(1.9rem,3.6vw,3rem)] text-paper" data-reveal>
+    {/* Subpage H1 grade (ImpressumBody.astro), not the homepage section-h2 clamp. */}
+    <h1 class="type-display mt-4 max-w-[20ch] text-[clamp(2rem,4vw,3.2rem)] text-paper" data-reveal>
       {t('teaser.title')}
     </h1>
-    <p class="mt-6 max-w-[58ch] leading-relaxed text-steel" data-reveal>{t('teaser.intro')}</p>
+    <p class="mt-6 max-w-[58ch] text-lg leading-relaxed text-steel" data-reveal>{t('teaser.intro')}</p>
 
+    {/* Sans, not type-annot: a sentence is not a label, and Fragment Mono is
+        never worn as costume (DESIGN.md). */}
     <noscript>
-      <p class="type-annot mt-8 border border-steel-soft px-4 py-3 text-steel">{t('teaser.noJs')}</p>
+      <p class="mt-8 max-w-[58ch] border border-steel-soft px-4 py-3 text-[0.9375rem] leading-relaxed text-steel">
+        {t('teaser.noJs')}
+      </p>
     </noscript>
 
     <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
@@ -68,26 +103,35 @@ const cards = TEASERS.map((teaser, i) => ({
             class="teaser-card group"
             data-teaser={card.id}
             data-teaser-name={card.name}
-            data-teaser-part={`${t('teaser.field.part')} ${card.partNo}`}
+            data-teaser-part={`${t('teaser.field.part')} ${card.partNo}`}
+            data-label-hint-unlocked={t('teaser.hintUnlocked')}
             data-icon-hover
-            aria-haspopup="dialog"
+            disabled={!card.ready}
+            aria-haspopup={card.ready ? 'dialog' : undefined}
           >
             {/* Image area. aria-hidden: the loop is decoration, and it is
                 deliberately unreadable — there is nothing here to announce. */}
             <span class="teaser-frame">
-              <video
-                class="teaser-preview"
-                data-teaser-preview
-                src={card.preview}
-                poster={card.poster}
-                muted
-                loop
-                playsinline
-                preload="none"
-                tabindex="-1"
-                aria-hidden="true"
-              />
-              <span class="teaser-scrim surface-grid" aria-hidden="true" />
+              {card.ready && (
+                <video
+                  class="teaser-preview"
+                  data-teaser-preview
+                  src={card.preview}
+                  poster={card.poster}
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  tabindex="-1"
+                  aria-hidden="true"
+                />
+              )}
+              {/* No surface-grid here: the section already rules the ground,
+                  and a second 48px grid starting at the card's own origin puts
+                  three misregistered rulings in one viewport. A drawing has
+                  one. The registration marks are the plate's own furniture. */}
+              <span class="teaser-scrim" aria-hidden="true" />
+              <span class="teaser-regmarks" aria-hidden="true" />
             </span>
 
             {/* Zeichnungskopf: solid graphite, so every label keeps its
@@ -95,19 +139,26 @@ const cards = TEASERS.map((teaser, i) => ({
             <span class="teaser-head">
               <span class="teaser-head-name type-subhead text-xl text-paper md:text-2xl">{card.name}</span>
 
+              {/* Both fields carry their label — a title block does not name one
+                  and leave the other bare.   keeps label and value together. */}
               <span class="teaser-head-fields">
                 <span class="type-annot text-steel">
-                  {t('teaser.field.part')} {card.partNo}
+                  {t('teaser.field.part')}&#160;{card.partNo}
                 </span>
                 <span class="type-annot inline-flex items-center gap-2 text-steel">
+                  {t('teaser.field.status')}
                   <LockIcon size={16} class="shrink-0" />
-                  <span data-teaser-status>{t('teaser.locked')}</span>
+                  <span data-teaser-status>
+                    {card.ready ? t('teaser.locked') : t('teaser.pending')}
+                  </span>
                 </span>
               </span>
 
-              <span class="teaser-head-hint type-annot text-steel">
-                {t('teaser.hint')}
-                <CtaArrow size={16} class="shrink-0" />
+              {/* No arrow: the whole card is the button, and a 2.5-weight action
+                  line beside the lock's 1.5 puts two weights in one row with no
+                  difference in meaning. */}
+              <span class="teaser-head-hint type-annot text-steel" data-teaser-hint>
+                {card.ready ? t('teaser.hint') : ''}
               </span>
             </span>
           </button>
@@ -158,8 +209,10 @@ const cards = TEASERS.map((teaser, i) => ({
         }
       </fieldset>
 
-      {/* role=alert so the failure is announced, not just shown. */}
-      <p class="teaser-error type-annot" data-teaser-error role="alert" hidden></p>
+      {/* role=alert so the failure is announced, not just shown. Sans at the
+          house .err grade — this is the one sentence a failing visitor must
+          read, and 11px mono is not a reading face. */}
+      <p class="teaser-error" data-teaser-error role="alert" hidden></p>
 
       <button type="submit" class="teaser-submit" data-icon-hover data-teaser-submit>
         <span data-teaser-submit-label>{t('teaser.dialog.submit')}</span>

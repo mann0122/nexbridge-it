@@ -155,8 +155,12 @@ at 94.
   over the film — a translucent band would hand its contrast to whatever frame was showing.
   All furniture is steel: two cards share a viewport, so neither may spend the signal. The
   card is a `<button>`; the unlock `<dialog>` is shared by both, and its submit CTA is that
-  viewport's one signal element (which is why the error line is paper on a 1px signal rule,
-  not signal text).
+  viewport's one signal element — so the error line is **steel**, not signal and not a signal
+  rule. A 1px signal rule was tried and failed the gate: the ban on coloured left-borders
+  wider than 1px is about the alert-tab *shape*, and passing it buys no exemption from the
+  ration, which is a separate rule whose only sanctioned relief is being a wash rather than
+  an object. The plate is `grayscale(1)` for the same reason — partial saturation still puts
+  a full-card field of unchosen colour in the viewport, and an uninked sheet is not in colour.
 
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
 

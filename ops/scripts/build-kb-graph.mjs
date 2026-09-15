@@ -190,10 +190,26 @@ for (const ext of EXTERNAL_NODES) {
 }
 
 const log = [...nodes.values()].find((n) => n.type === 'decision-log');
-const decisions = log
-  ? parseDecisions(stripCode(fs.readFileSync(path.join(ROOT, log.file), 'utf8')))
-  : new Map();
+const logRaw = log ? fs.readFileSync(path.join(ROOT, log.file), 'utf8') : '';
+const decisions = log ? parseDecisions(stripCode(logRaw)) : new Map();
 if (!log) errors.push('No doc with `type: decision-log` found — expected docs/05-decisions.md');
+
+/**
+ * Headers are parsed *after* inline code is stripped, so a backtick in a
+ * decision header silently deletes words from the title in INDEX.md — D-050
+ * first rendered as "as asset manifest; …" with its subject gone, and the build
+ * stayed green. A quietly wrong generated file is the exact rot this script
+ * exists to prevent, so this fails instead. The log's own template is plain;
+ * `D-0XX` in it does not match, and neither does anything inside a fence.
+ */
+for (const line of logRaw.split('\n')) {
+  if (/^##\s+D-\d{3}\b/.test(line) && line.includes('`')) {
+    errors.push(
+      `${log.file}: decision header contains inline code, which the index strips — `
+      + `the title would lose words. Write it plain: ${line.trim()}`,
+    );
+  }
+}
 
 // ─── validate edges ─────────────────────────────────────────────────────────
 const feeds = new Map([...nodes.keys()].map((id) => [id, []]));

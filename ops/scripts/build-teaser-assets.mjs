@@ -28,6 +28,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import os from 'node:os';
 import { createRequire } from 'node:module';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -39,6 +40,8 @@ const HASH_CHARS = 16;
 /** Cloudflare static assets reject anything larger — a hard deploy failure. */
 const MAX_BYTES = 25 * 1024 * 1024;
 const WARN_BYTES = 20 * 1024 * 1024;
+/** What the encoder aims at. The gap absorbs container and muxing overhead. */
+const TARGET_BYTES = 22 * 1024 * 1024;
 
 /** Must match TEASERS in website/src/config/teasers.ts. */
 const TEASERS = [
@@ -88,6 +91,68 @@ function run(bin, args, label) {
 /** Same derivation as resolveFilm() in website/src/scripts/teaser.ts. */
 function filmName(code, id) {
   return `${crypto.createHash('sha256').update(`${code}:${id}`).digest('hex').slice(0, HASH_CHARS)}.mp4`;
+}
+
+/**
+ * Source duration in seconds, parsed out of ffmpeg's own banner.
+ * ffmpeg-static ships no ffprobe, so `ffmpeg -i` (which exits non-zero with no
+ * output file, by design) is the probe we have.
+ */
+function probeDuration(bin, file) {
+  const out = spawnSync(bin, ['-i', file], { encoding: 'utf8' }).stderr ?? '';
+  const m = out.match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/);
+  if (!m) fail(`Could not read the duration of ${rel(file)} — is it a video file?`);
+  return Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+}
+
+/**
+ * Encode the full film to a size that actually fits.
+ *
+ * Quality-based encoding (a fixed -crf) cannot promise a file size: the same
+ * setting gives 3 MiB for a short film and 34 MiB for a long one, which is
+ * exactly how the first version blew the 25 MiB Cloudflare cap. So the target
+ * is the budget, and the bitrate is derived from it:
+ *
+ *     video bitrate = (budget × 8 / duration) − audio bitrate
+ *
+ * Two passes, because one-pass VBR overshoots on exactly the material that is
+ * already tight. Long films get scaled down as well — below roughly 1.2 Mbit/s
+ * a 1080p picture is worse than a clean 720p one at the same size.
+ */
+function encodeFilm(bin, source, dest, label) {
+  const duration = probeDuration(bin, source);
+  const audioKbps = 96;
+  const budgetBits = TARGET_BYTES * 8;
+  const videoKbps = Math.floor(budgetBits / duration / 1000) - audioKbps;
+
+  if (videoKbps < 200) {
+    fail(
+      `${label} is ${Math.round(duration)}s long. Fitting it under ${(MAX_BYTES / 1024 / 1024) | 0} MiB ` +
+        `would need ${videoKbps} kbit/s, which would look broken.\n` +
+        `  Cut the film down, or move the films to Cloudflare R2 and drop the size cap.`,
+    );
+  }
+
+  // Keep the picture only as large as the bitrate can carry.
+  const scale = videoKbps < 1200 ? 'scale=-2:720' : videoKbps < 2500 ? 'scale=-2:1080' : null;
+  const logFile = path.join(os.tmpdir(), `nb-teaser-${path.basename(dest, '.mp4')}`);
+  const nullSink = process.platform === 'win32' ? 'NUL' : '/dev/null';
+  const common = ['-c:v', 'libx264', '-b:v', `${videoKbps}k`, '-preset', 'medium', '-pix_fmt', 'yuv420p'];
+  if (scale) common.push('-vf', scale);
+
+  console.log(
+    `  ${Math.round(duration)}s → ${videoKbps} kbit/s${scale ? `, ${scale.split(':')[1]}p` : ''} (2 passes)`,
+  );
+
+  run(bin, ['-y', '-i', source, ...common, '-pass', '1', '-passlogfile', logFile, '-an', '-f', 'mp4', nullSink],
+    `${label} (pass 1)`);
+  run(bin, ['-y', '-i', source, ...common, '-pass', '2', '-passlogfile', logFile,
+    '-c:a', 'aac', '-b:a', `${audioKbps}k`, '-movflags', '+faststart', dest], `${label} (pass 2)`);
+
+  // Two-pass logs are scratch; leaving them in tmp is untidy, not harmful.
+  for (const f of [`${logFile}-0.log`, `${logFile}-0.log.mbtree`]) {
+    if (fs.existsSync(f)) fs.unlinkSync(f);
+  }
 }
 
 function findSource(base) {
@@ -159,14 +224,10 @@ for (const job of jobs) {
   const previewPath = path.join(OUT_DIR, `${job.id}-preview.mp4`);
   const posterPath = path.join(OUT_DIR, `${job.id}-poster.webp`);
 
-  // Full film. faststart moves the index to the front so the browser can start
-  // playing before the whole file has arrived.
-  run(
-    ffmpeg,
-    ['-y', '-i', job.source, '-c:v', 'libx264', '-crf', '23', '-preset', 'slow',
-      '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', filmPath],
-    `${job.id} film`,
-  );
+  // Full film, encoded to fit the cap rather than to a fixed quality.
+  // faststart moves the index to the front so the browser can start playing
+  // before the whole file has arrived.
+  encodeFilm(ffmpeg, job.source, filmPath, `${job.id} film`);
 
   // Hover loop: 6s, 320px wide, silent. It is shown blurred under a scrim, so
   // the low resolution costs nothing visually and leaks nothing if taken.

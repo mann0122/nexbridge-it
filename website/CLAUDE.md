@@ -33,7 +33,12 @@ npm run preview  # serve the build
 `scripts/flowrail.ts`. Clear those first, then gate the build on it.
 
 Deployed as a Cloudflare static-asset Worker (`wrangler.jsonc`), not Pages — D-022. Custom domains
-are attached in the Cloudflare dashboard, not via `routes`.
+are attached in the Cloudflare dashboard, not via `routes`. One script exists, `worker/index.js`,
+and only files under `/teaser/` go through it (`run_worker_first`; it acts on the `.mp4`s and
+passes the posters through): it serves the videos as `206` slices via the Cache API because the
+asset store ignores `Range` and Safari will not play without it (D-062). Everything else is a
+plain asset. `worker/` is excluded from `astro check`. Deploy check after any change there:
+`curl -sI -H "Range: bytes=0-1" <film url>` must say `206` and carry `x-nb-video`.
 
 ## Rules that bite
 

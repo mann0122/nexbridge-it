@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-09-15 · 16 nodes · 61 decisions
+Content as of 2026-09-15 · 16 nodes · 62 decisions
 
 ## Map
 
@@ -171,6 +171,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-059 | 2026-09-15 | The two teaser films are in the repo; the build fits the 25 MiB cap itself | DECIDED | `state` |
 | D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED | `state` |
 | D-061 | 2026-09-15 | Teaser scrim 0.62 → 0.74, tuned against the real posters | DECIDED | `state` |
+| D-062 | 2026-09-15 | The teaser videos are served by a Worker script as 206 — Safari needs Range | DECIDED | `website-spec`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

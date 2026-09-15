@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-15
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062]
 cites_history: [D-007]
 ---
 
@@ -43,7 +43,9 @@ Any audit price other than 295 € is superseded — D-007's figures are history
 ## Website state
 
 Live on **nexbridge-it.com** — domain registered to us, confirmed by the founder (D-025).
-Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-023).
+Deployed as a Cloudflare static-asset Worker (D-022) with one script, `website/worker/index.js`,
+that serves only the teaser videos — as `206` slices, which Safari needs (D-062). Astro 7 +
+Tailwind 4 (D-023).
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
@@ -185,11 +187,12 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark (D-050),
 the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
-(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-061). The teaser was
+(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-062). The teaser was
 built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
-renumbered to D-056…D-058 when `main` was merged in. **The live site does not show the teaser
-yet**: the deploy is manual (`npx wrangler deploy` from `website/`, D-022) and has not been
-run since the merge — nexbridge-it.com is still the D-055 state until it is.
+renumbered to D-056…D-058 when `main` was merged in. **Deployed**: nexbridge-it.com serves the
+teaser page and both films since 2026-09-15 (deploys are manual — `npx wrangler deploy` from
+`website/`, D-022). Not yet seen on a real Safari — the first founder with an iPhone should
+open `/teaser`, enter a code and confirm the film plays (D-062).
 
 ## Next
 

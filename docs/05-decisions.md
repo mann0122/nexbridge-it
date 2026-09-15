@@ -1344,6 +1344,48 @@ knob. Same entry: the registration marks move from steel-soft to steel-deep — 
 tone was 1.07:1 on the lighter plate, i.e. invisible, since before this change; steel-deep
 reads at 1.9:1 and 2.8:1, furniture grade under the head's text ink. Owner: partner-b.
 
+## D-062 | 2026-09-15 | The teaser videos are served by a Worker script as 206 — Safari needs Range | DECIDED
+Checked against the live site right after the D-061 deploy: the static-asset server answers a
+`Range: bytes=0-1` request for a film with the whole file as a `200`, no `Accept-Ranges`, no
+`Content-Range` — on a cache HIT as well as a MISS. Chrome and Firefox play a `200` stream
+progressively; Safari on iOS and macOS probes a `<video>` source with exactly that request and
+refuses to play without a `206`. So both films and both preview loops were silent on every
+iPhone, and nothing in the build or the gates could have seen it: the Astro preview server
+slices ranges, the asset store does not.
+
+**The site gains its first Worker script**, `website/worker/index.js`, and stays a static-asset
+Worker for everything else: `run_worker_first: ["/teaser/*", "!/teaser", "!/teaser/"]` sends
+only the teaser files through it; the page and every other route remain scriptless assets.
+For `.mp4` GET/HEAD it uses the Cache API, which slices a cached `200` into a `206` by itself
+when the request carries a Range — a documented behaviour that needs a `Content-Length`. The
+asset store streams its body without one, so the cold request per data centre reads the film
+whole (≤ 25 MiB, the asset cap), stores it for a day, and every request after that — ranged,
+full or the gate's HEAD probe — is answered from the cache. A wrong-code URL returns the
+store's own 404 untouched, so D-056's "the 404 is the validation" holds. Each response carries
+`x-nb-video: cache | store | store-as-is | store-uncached`, which is the whole debugging story.
+Verified locally under `wrangler dev`: `206` with correct `Content-Range` on cold and warm
+requests, a 1000-byte slice byte-identical to the file, HEAD `200`, wrong code `404`, the page
+and the posters untouched. Then deployed (version 690862d6) and verified on the live site with
+the same calls: cold `Range: bytes=0-1` on each film → `206`, `Content-Range: bytes 0-1/23136929`
+and `/24801544`, `x-nb-video: store`, 1.8 s; warm slice → `206` from cache in 0.2 s and
+byte-identical to the file; both preview loops `206`; HEAD `200`; wrong code `404`; the page and
+the posters carry no `x-nb-video`. `wrangler tail` during those requests: every outcome `ok`;
+cold requests cost 20–36 ms CPU (the whole-file read), warm ones 1–2 ms.
+
+**Costs.** Free-plan Workers requests are metered (100 000/day) and, unlike static assets, a
+request over the limit gets a `429` instead of the asset — the teaser's few viewers are far
+from it, but it is the first metered surface on the site. The cold read also runs over the
+Free plan's nominal 10 ms CPU per request (measured 20–36 ms); Cloudflare tolerates occasional
+overruns and every measured outcome was `ok`, and a cold read happens once per film per data
+centre per day. If `wrangler tail` ever shows `exceededCpu` on a teaser request, the fix is
+Workers Paid (30 s CPU) — a founder call — not a bigger script: the only script-side
+alternative is a public size manifest, which would leak the film names and defeat the gate. D-022's deploy target had no `main`
+at all; it now has one script for one path. `PRODUCT.md` and the spec keep "static-asset
+Worker" because it still is one. Declined: R2 (needs billing enabled on the account, changes the founders' build
+step), HLS (a player library), and moving the films off-site (D-056's legal-page reason).
+Not verified on a real Safari — nobody here has one; the mechanism Safari documents as
+required is what was verified. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

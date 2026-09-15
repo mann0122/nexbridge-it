@@ -6,6 +6,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nexbridge-it-site",
   "compatibility_date": "2026-07-01",
+  // The one script on the site: serves the teaser videos as 206 Partial
+  // Content, which Safari/iOS require before they will play a <video>. The
+  // asset store alone answers Range requests with the whole file (D-062).
+  "main": "./worker/index.js",
   // Custom domains (nexbridge-it.com + www) are attached in the Cloudflare
   // DASHBOARD, not here: the wrangler OAuth token has no dns_records:write,
   // so declaring them as `routes` makes every deploy fail on the DNS step.
@@ -15,6 +19,11 @@
     // Astro emits /impressum/index.html; the footer links to /impressum.
     // Without this, that link 404s.
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "binding": "ASSETS",
+    // Only files under /teaser/ go through the script (it acts on the .mp4s
+    // and passes the two posters through); the page itself and every other
+    // route stay pure static assets (free, unlimited, no script).
+    "run_worker_first": ["/teaser/*", "!/teaser", "!/teaser/"]
   }
 }

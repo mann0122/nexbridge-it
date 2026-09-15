@@ -20,10 +20,18 @@
  * combinations. Nothing confidential belongs behind it.
  *
  * ffmpeg comes from ffmpeg-static (a root devDependency) so there is nothing
- * to install by hand on Windows.
+ * to install by hand on Windows. npm 11 blocks its postinstall download unless
+ * package.json's `allowScripts` names it — it does; do not remove that entry.
+ *
+ * Size: Cloudflare static assets refuse a single file over 25 MiB. The film is
+ * encoded quality-first (crf 23 at source resolution); if that lands over the
+ * cap it is re-encoded two-pass at the bitrate the cap allows, 1280px wide, so
+ * a 130-second 1080p film fits without anyone hand-tuning ffmpeg flags. Only a
+ * film so long that even that budget falls under 300 kb/s is refused.
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -39,6 +47,15 @@ const HASH_CHARS = 16;
 /** Cloudflare static assets reject anything larger — a hard deploy failure. */
 const MAX_BYTES = 25 * 1024 * 1024;
 const WARN_BYTES = 20 * 1024 * 1024;
+/** What the fitted encode aims for: 12% under the cap, since two-pass ABR
+    lands within a few percent of its target and the container adds a little. */
+const FIT_TARGET_BYTES = 22 * 1024 * 1024;
+const AUDIO_KBPS = 128;
+/** Below this the film is no longer watchable at any resolution — shorten it. */
+const MIN_VIDEO_KBPS = 300;
+/** Width the fitted encode scales to. At the bitrate a 25 MiB cap leaves for
+    two minutes of film, 720p holds up and 1080p falls apart in the gradients. */
+const FIT_WIDTH = 1280;
 
 /** Must match TEASERS in website/src/config/teasers.ts. */
 const TEASERS = [
@@ -83,6 +100,48 @@ function run(bin, args, label) {
     const why = (result.stderr ?? '').trim().split('\n').slice(-3).join('\n  ');
     fail(`ffmpeg failed while building ${label}:\n  ${why}`);
   }
+}
+
+/** Length of a film in seconds. ffmpeg-static ships no ffprobe, so this reads
+    the `Duration:` line ffmpeg prints on its way to complaining that no output
+    was given. */
+function durationSeconds(bin, source) {
+  const result = spawnSync(bin, ['-i', source], { stdio: ['ignore', 'ignore', 'pipe'], encoding: 'utf8' });
+  const m = /Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/.exec(result.stderr ?? '');
+  if (!m) fail(`Could not read the duration of ${rel(source)} — is it a video file?`);
+  return Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+}
+
+/**
+ * Re-encode a film to land under the cap: two-pass at the bitrate the target
+ * size leaves after audio, scaled to FIT_WIDTH. Returns the video bitrate used
+ * so the log can say what happened to the film.
+ */
+function encodeToFit(bin, source, out, seconds, label) {
+  const videoKbps = Math.floor((FIT_TARGET_BYTES * 8) / 1000 / seconds) - AUDIO_KBPS;
+  if (videoKbps < MIN_VIDEO_KBPS) {
+    fail(
+      `${label}: ${Math.round(seconds)} s is too long for the 25 MiB cap — the budget would be ` +
+        `${videoKbps} kb/s of video, and under ${MIN_VIDEO_KBPS} nothing is watchable. Shorten the film.`,
+    );
+  }
+  const passlog = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'nb-teaser-')), 'x264');
+  const video = ['-vf', `scale='min(${FIT_WIDTH},iw)':-2`, '-c:v', 'libx264', '-b:v', `${videoKbps}k`,
+    '-maxrate', `${Math.round(videoKbps * 1.5)}k`, '-bufsize', `${videoKbps * 3}k`,
+    '-preset', 'slow', '-pix_fmt', 'yuv420p', '-passlogfile', passlog];
+  const nul = process.platform === 'win32' ? 'NUL' : '/dev/null';
+  try {
+    run(bin, ['-y', '-i', source, ...video, '-pass', '1', '-an', '-f', 'mp4', nul], `${label} (pass 1)`);
+    run(
+      bin,
+      ['-y', '-i', source, ...video, '-pass', '2', '-c:a', 'aac', '-b:a', `${AUDIO_KBPS}k`,
+        '-movflags', '+faststart', out],
+      `${label} (pass 2)`,
+    );
+  } finally {
+    fs.rmSync(path.dirname(passlog), { recursive: true, force: true });
+  }
+  return videoKbps;
 }
 
 /** Same derivation as resolveFilm() in website/src/scripts/teaser.ts. */
@@ -159,14 +218,23 @@ for (const job of jobs) {
   const previewPath = path.join(OUT_DIR, `${job.id}-preview.mp4`);
   const posterPath = path.join(OUT_DIR, `${job.id}-poster.webp`);
 
-  // Full film. faststart moves the index to the front so the browser can start
-  // playing before the whole file has arrived.
+  // Full film, quality first. faststart moves the index to the front so the
+  // browser can start playing before the whole file has arrived.
   run(
     ffmpeg,
     ['-y', '-i', job.source, '-c:v', 'libx264', '-crf', '23', '-preset', 'slow',
-      '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', filmPath],
+      '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', `${AUDIO_KBPS}k`, '-movflags', '+faststart', filmPath],
     `${job.id} film`,
   );
+
+  // Over the cap at crf 23 — the first real film was, at 130 s of 1080p — so
+  // trade resolution for size rather than fail and send someone to ffmpeg.
+  let fitted = null;
+  if (fs.statSync(filmPath).size > MAX_BYTES) {
+    const seconds = durationSeconds(ffmpeg, job.source);
+    console.log(`  crf 23 is over 25 MiB — re-encoding to fit (${Math.round(seconds)} s, ${FIT_WIDTH}px, two-pass)`);
+    fitted = encodeToFit(ffmpeg, job.source, filmPath, seconds, `${job.id} film`);
+  }
 
   // Hover loop: 6s, 320px wide, silent. It is shown blurred under a scrim, so
   // the low resolution costs nothing visually and leaks nothing if taken.
@@ -196,14 +264,15 @@ for (const job of jobs) {
        run, so whatever worked before this run still works. */
     fs.unlinkSync(filmPath);
     fail(
-      `${job.film} came out at ${mib} MiB. Cloudflare static assets cap a single file at ` +
-        `25 MiB, so this would fail the deploy.\n` +
+      `${job.film} came out at ${mib} MiB even after the fitted encode. Cloudflare static ` +
+        `assets cap a single file at 25 MiB, so this would fail the deploy.\n` +
         `  Nothing was swept — the previously generated films and their codes still work.\n` +
-        `  Shorten the film or re-run with a higher -crf.`,
+        `  Shorten the film, or lower FIT_TARGET_BYTES in this script.`,
     );
   }
 
-  console.log(`  film     ${job.film}  (${mib} MiB)${size > WARN_BYTES ? '  ⚠ close to the 25 MiB cap' : ''}`);
+  const how = fitted ? `, fitted: ${FIT_WIDTH}px two-pass at ${fitted} kb/s` : '';
+  console.log(`  film     ${job.film}  (${mib} MiB${how})${size > WARN_BYTES ? '  ⚠ close to the 25 MiB cap' : ''}`);
   console.log(`  preview  ${path.basename(previewPath)}`);
   console.log(`  poster   ${path.basename(posterPath)}\n`);
 }

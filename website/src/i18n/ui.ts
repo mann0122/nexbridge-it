@@ -245,6 +245,29 @@ export const ui = {
     'a11y.teaserPlayer': 'Vollständiger Film',
 
     /*
+     * Digital business cards (/karte/<slug> — the NB-VK register). All German
+     * card copy is DRAFT for the copywriter-de gate; names, numbers and the
+     * address come from site.ts via config/cards.ts, never from here.
+     */
+    'card.meta.description': 'Digitale Visitenkarte. Kontakt speichern, anrufen oder direkt schreiben.',
+    'card.1.role': 'Vertrieb & Partnerschaften',
+    'card.2.role': 'Technik & Umsetzung',
+    'card.row.phone': 'Telefon',
+    'card.row.email': 'E-Mail',
+    'card.row.web': 'Website',
+    'card.row.address': 'Anschrift',
+    'card.save': 'Kontakt speichern',
+    'card.call': 'Anrufen',
+    'card.mail': 'E-Mail schreiben',
+    'card.share': 'Karte teilen',
+    'card.shareCopied': 'Link kopiert',
+    'card.a11y.vcard': 'vCard herunterladen',
+    'cardIndex.meta.title': 'Kartenverzeichnis – NexBridge-IT',
+    'cardIndex.meta.description': 'Verzeichnis der digitalen Visitenkarten von NexBridge-IT.',
+    'cardIndex.kicker': 'Verzeichnis · NB-VK',
+    'cardIndex.title': 'Kartenverzeichnis',
+
+    /*
      * The `en` twins of these keys are required by the type constraint but are
      * never rendered: 404.astro is German-only, because Cloudflare serves one
      * dist/404.html for every unmatched path — English included. Keep them
@@ -478,6 +501,24 @@ export const ui = {
     'a11y.teaserDigit': 'Digit',
     'a11y.teaserPlayer': 'Full film',
 
+    'card.meta.description': 'Digital business card. Save the contact, call or write directly.',
+    'card.1.role': 'Sales & Partnerships',
+    'card.2.role': 'Engineering & Delivery',
+    'card.row.phone': 'Phone',
+    'card.row.email': 'Email',
+    'card.row.web': 'Website',
+    'card.row.address': 'Address',
+    'card.save': 'Save contact',
+    'card.call': 'Call',
+    'card.mail': 'Write an email',
+    'card.share': 'Share card',
+    'card.shareCopied': 'Link copied',
+    'card.a11y.vcard': 'download vCard',
+    'cardIndex.meta.title': 'Card index — NexBridge-IT',
+    'cardIndex.meta.description': 'Directory of NexBridge-IT’s digital business cards.',
+    'cardIndex.kicker': 'Index · NB-VK',
+    'cardIndex.title': 'Card index',
+
     'notFound.meta.title': 'Page not found — NexBridge-IT',
     'notFound.meta.description': 'This page does not exist. Head back to the home page.',
     'notFound.heading': 'This page does not exist.',
@@ -515,9 +556,16 @@ export function useTranslations(lang: Lang) {
   };
 }
 
-/** Path of the same page in the other language (only `/` ↔ `/en/` for now). */
+/**
+ * Path of the same page in the other language. Mostly `/x` ↔ `/en/x`;
+ * `/karte/*` ↔ `/en/card/*` is the one translated segment pair — both slugs
+ * are fixed because printed QR codes point at them.
+ */
 export function altPath(lang: Lang, path: string): string {
-  if (lang === 'de') return path === '/' ? '/en/' : `/en${path}`;
-  const stripped = path.replace(/^\/en\/?/, '/');
+  if (lang === 'de') {
+    if (path === '/') return '/en/';
+    return `/en${path.replace(/^\/karte(?=\/|$)/, '/card')}`;
+  }
+  const stripped = path.replace(/^\/en\/?/, '/').replace(/^\/card(?=\/|$)/, '/karte');
   return stripped === '' ? '/' : stripped;
 }

@@ -1,0 +1,386 @@
+---
+/**
+ * Digital business card (NB-VK) — the page behind the printed NFC/QR cards.
+ * One component for DE (/karte/<slug>) and EN (/en/card/<slug>); the visitor
+ * has just tapped a card with their phone, so 360px is the primary viewport.
+ *
+ * The concept (D-049): the page is a product photograph of the card that
+ * was just tapped — one precision-machined sandblasted signal-orange anodized plate on
+ * a graphite void, complete from the first frame. The plate itself IS the
+ * save action: the whole card is the vCard link, the house CTA grammar
+ * scaled up to an object. It counts as the viewport's ONE signal element;
+ * every line of ink on it is graphite (5.4:1 on mid-signal, better on the
+ * soft stop). Below the object the stage stays quiet: contact rows,
+ * second-rank actions, one annotation line.
+ *
+ * Motion: entrance rise-and-settle with a one-time sheen sweep; the page's
+ * ONE idle loop is the 6.5s sheen drift (the flow pulse died with the old
+ * schematic skin — reassignment logged in D-049). Pointer tilt on fine
+ * pointers, horizontal drag tilt on touch, no gyroscope. The sheen's
+ * parked state is the CSS default, so no-JS, ?snap and reduced-motion all
+ * rest on the finished still-life by construction.
+ *
+ * noindex: cards are handouts, not landing pages. They are also excluded
+ * from the sitemap (astro.config.mjs) and carry no hreflang alternates —
+ * the DE↔EN toggle in CardFooter still maps the twin paths.
+ */
+import Layout from '../layouts/Layout.astro';
+import CardHeader from './CardHeader.astro';
+import CardFooter from './CardFooter.astro';
+import CtaArrow from './icons/CtaArrow.astro';
+import PhoneIcon from './icons/PhoneIcon.astro';
+import MailIcon from './icons/MailIcon.astro';
+import WorldIcon from './icons/WorldIcon.astro';
+import MapPinIcon from './icons/MapPinIcon.astro';
+import { SITE } from '../config/site';
+import { CARD_REVISION } from '../config/cards';
+import { type Lang, useTranslations } from '../i18n/ui';
+import type { CardPerson } from '../config/cards';
+
+interface Props {
+  lang: Lang;
+  person: CardPerson;
+}
+
+const { lang, person } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'de' ? '' : '/en';
+const path = lang === 'de' ? `/karte/${person.slug}` : `/en/card/${person.slug}`;
+/* Meta titles join with – (DE) / — (EN), matching the ui.ts house style. */
+const title = `${person.name} ${lang === 'de' ? '–' : '—'} ${SITE.name}`;
+/* One vCard per person, shared by both languages — contact data has no language. */
+const vcfHref = `/karte/${person.slug}.vcf`;
+
+/* Every row is a real link. The address row points at the Impressum — the
+   in-world home of the address, and no third-party map request. */
+const rows = [
+  // Per-person number from cards.ts (falls back to the venture line there).
+  // Display grouping matches the printed card; the raw Impressum spelling
+  // (01739044077) stays untouched in site.ts.
+  {
+    href: `tel:${person.phoneE164}`,
+    label: t('card.row.phone'),
+    value: person.phoneE164.replace(/^(\+49)(\d{3})(\d+)$/, '$1 $2 $3'),
+    Icon: PhoneIcon,
+  },
+  { href: `mailto:${SITE.email}`, label: t('card.row.email'), value: SITE.email, Icon: MailIcon },
+  {
+    href: SITE.url,
+    label: t('card.row.web'),
+    value: SITE.url.replace(/^https:\/\//, ''),
+    Icon: WorldIcon,
+  },
+  {
+    href: `${base}/impressum`,
+    label: t('card.row.address'),
+    value: `${SITE.street}, ${SITE.zip} ${SITE.city}`,
+    Icon: MapPinIcon,
+  },
+];
+---
+
+<Layout
+  lang={lang}
+  path={path}
+  title={title}
+  description={t('card.meta.description')}
+  hasAlternate={false}
+  noindex
+>
+  <CardHeader lang={lang} />
+
+  <main id="main" class="relative">
+    <div class="relative mx-auto w-full max-w-[26rem] px-6 pb-16 pt-10 sm:max-w-[28rem]">
+      {/* The object: shadow and tilt wrapper are separate layers so press,
+          tilt and floor shadow never fight over one transform. The whole
+          plate is the vCard link — tap the card, save the contact. */}
+      <div class="card-scene">
+        <div class="card-shadow" aria-hidden="true"></div>
+        <div class="card-tilt">
+          <a
+            id="card-obj"
+            href={vcfHref}
+            class="card-obj surface-signal-obj"
+            aria-label={[t('card.save'), person.name, t('card.a11y.vcard')].join(
+              lang === 'de' ? ' – ' : ' — ',
+            )}
+            data-icon-hover
+          >
+            {/* Live gradient (founder order): the coloration + light pools
+                drift across the plate; the grain above stays surface-fixed. */}
+            <span class="card-drift" aria-hidden="true"></span>
+            <div class="card-face">
+              <div class="card-el flex items-start justify-between gap-4">
+                {/* Engraved monochrome wordmark — the period is graphite
+                    here, not signal: ink on the plate is one color (D-049). */}
+                <span class="type-wordmark card-wordmark">{SITE.name}.</span>
+                <span class="type-annot">{person.partNo}</span>
+              </div>
+
+              {/* The company mark (D-050, the folded glider), engraved: the
+                  plate carries one ink, so the signal body becomes graphite
+                  and the paper underside becomes the letterpress light catch
+                  (D-051 — the one sanctioned recolour of the mark). Same
+                  geometry as public/logo-mark.svg, normalized to a 0-origin
+                  viewBox; not covered by `npm run logo`. */}
+              <svg
+                class="card-el card-mark"
+                viewBox="0 0 115 68"
+                fill="none"
+                aria-hidden="true"
+              >
+                <g fill="var(--color-graphite)">
+                  <path
+                    d="M111.28 1.16C111.77 0.96 112.01 0.85 112.55 0.78 111.96 1.16 111.41 1.43 110.78 1.74 88.29 14.73 66.07 28.2 44.15 42.14 33.97 48.43 23.83 54.78 13.72 61.18 10.24 63.41 7.04 65.65 3.63 67.9L30.49 36.62 36.83 29.26C37.77 28.17 38.76 26.79 39.9 25.9 40.8 25.2 51.49 21.7 53.58 20.98L90.34 8.39C95.07 6.82 99.78 5.21 104.47 3.55 106.35 2.9 108.49 2.29 110.31 1.56L111.28 1.16z"
+                  ></path>
+                  <path
+                    d="M113 0.22C112.49 0.53 111.92 0.64 111.34 0.8L110.71 0.94C108.86 1.53 106.63 2.09 104.72 2.64 101.61 3.53 98.5 4.45 95.4 5.38L55.65 17.29C49.87 18.98 44.11 20.71 38.36 22.48 33.92 18.63 28.52 13.99 23.93 10.42 26.55 9.9 31.02 9.55 33.82 9.24L51.01 7.25 111.23 0.35C111.42 0.3 112.73 0.24 113 0.22z"
+                  ></path>
+                  <path
+                    d="M114.61 1.19L114.67 1.27C114.47 1.64 114.02 2.15 113.74 2.48 107.65 9.8 101.94 17.46 95.93 24.83L89.37 21.76C88.21 21.18 87.12 20.65 85.94 20.13 88.62 18.3 91.43 16.59 94.16 14.83L105.77 7.3C108.27 5.66 112.5 3.05 114.61 1.19z"
+                  ></path>
+                  <path
+                    d="M1.41 10.33C4.95 9.16 8.81 8.1 12.41 6.97L21.76 4.13C22.64 3.86 27.35 2.27 27.99 2.42 33.01 3.59 38.29 5.63 43.35 6.52 38.69 7.2 32.79 7.52 28.03 7.94 19.29 8.75 10.55 9.62 1.82 10.56 1.48 10.63 0.55 10.71 0.16 10.75 0.62 10.56 0.93 10.47 1.41 10.33z"
+                  ></path>
+                </g>
+                <g fill="rgb(255 255 255 / 0.34)">
+                  <path
+                    d="M83.23 21.63C86.52 22.79 89.77 24.08 93.07 25.23 93.63 25.43 94.25 25.65 94.8 25.88 88.37 29.1 81.34 32.21 74.79 35.31L27.96 57.28 15.28 63.25C13.16 64.25 10.83 65.29 8.75 66.33L8.64 66.13C12.39 64.16 16.57 61.63 20.25 59.5 29.4 54.15 38.51 48.72 47.57 43.2L71.22 28.97C75.15 26.6 79.38 24.11 83.23 21.63z"
+                  ></path>
+                  <path
+                    d="M8.75 66.33C8.49 66.48 6.48 67.47 6.34 67.46 6.32 67.23 8.38 66.24 8.64 66.13L8.75 66.33z"
+                  ></path>
+                </g>
+              </svg>
+
+              <h1 id="card-name" class="type-display card-name">
+                {person.name}
+              </h1>
+
+              <div class="card-el card-actions flex items-end justify-between gap-4">
+                <span class="card-save inline-flex items-center gap-2 font-semibold">
+                  {t('card.save')}
+                  <CtaArrow size={18} />
+                </span>
+                {/* NFC wave glyph — how this page opened. */}
+                <svg class="card-nfc" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M7 8 a7.5 7.5 0 0 1 0 8"
+                    stroke="var(--color-graphite)"
+                    stroke-width="1.5"></path>
+                  <path
+                    d="M11 5.5 a11.5 11.5 0 0 1 0 13"
+                    stroke="var(--color-graphite)"
+                    stroke-width="1.5"></path>
+                  <path
+                    d="M15 3 a15.5 15.5 0 0 1 0 18"
+                    stroke="var(--color-graphite)"
+                    stroke-width="1.5"></path>
+                </svg>
+              </div>
+            </div>
+            <span class="card-sheen" aria-hidden="true"></span>
+          </a>
+        </div>
+      </div>
+
+      {/* Contact: annotated rows — mono labels, Archivo values, every one a link */}
+      <div class="mt-10 border-t border-steel-soft">
+        {
+          rows.map((row) => (
+            <a
+              href={row.href}
+              class="card-row dim-row flex items-center gap-4 border-b border-steel-soft py-3.5"
+              data-icon-hover
+            >
+              <row.Icon size={16} class="shrink-0 text-steel" />
+              <span class="min-w-0 flex-1">
+                <span class="type-annot block text-steel">{row.label}</span>
+                <span class="mt-0.5 block truncate text-[0.95rem] text-paper">{row.value}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      {/* Saving is the card itself; call/mail/share stand second rank */}
+      <div class="card-stage mt-6 flex flex-wrap gap-3">
+        <a
+          href={`tel:${person.phoneE164}`}
+          class="inline-flex min-h-11 items-center border border-steel-soft px-4 text-[0.9375rem] font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
+          >{t('card.call')}</a
+        >
+        <a
+          href={`mailto:${SITE.email}`}
+          class="inline-flex min-h-11 items-center border border-steel-soft px-4 text-[0.9375rem] font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
+          >{t('card.mail')}</a
+        >
+        {/* Ships hidden: a share button without JS is a dead control. The
+            script reveals it once navigator.share or the clipboard exists. */}
+        <button
+          id="card-share"
+          hidden
+          data-label-copied={t('card.shareCopied')}
+          class="inline-flex min-h-11 items-center border border-steel-soft px-4 text-[0.9375rem] font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
+        >
+          <span aria-live="polite">{t('card.share')}</span>
+        </button>
+      </div>
+
+      {/* The one annotation the stage allows itself: part number and stand. */}
+      <p class="card-stage type-annot mt-8 text-steel">
+        {person.partNo} · {t('tb.rev.label')} {CARD_REVISION}
+      </p>
+    </div>
+  </main>
+
+  <CardFooter lang={lang} path={path} />
+</Layout>
+
+<script>
+  import { gsap, motionOff, SplitText, onPage } from '../scripts/motion';
+  import { mountCardObject } from '../scripts/card-object';
+
+  onPage(() => {
+    /* Cheap bail on every non-card page — inits run on all mounts (D-038).
+       The sentinel is the server-rendered h1, so the share wiring below can
+       never be skipped by a missing decoration (D-049). */
+    const h1 = document.getElementById('card-name');
+    if (!h1) return;
+
+    /* Share: capability-gated, NOT motion-gated — must work under ?snap and
+       reduced motion. Web Share API first; clipboard copy as the fallback. */
+    const share = document.querySelector<HTMLButtonElement>('#card-share');
+    const shareLabel = share?.querySelector('span') ?? null;
+    if (share && (navigator.share || navigator.clipboard)) {
+      share.hidden = false;
+      const restLabel = shareLabel?.textContent ?? '';
+      share.addEventListener('click', async () => {
+        const url = window.location.href;
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: document.title, url });
+          } else {
+            await navigator.clipboard.writeText(url);
+            if (shareLabel) {
+              shareLabel.textContent = share.dataset.labelCopied ?? restLabel;
+              window.setTimeout(() => {
+                shareLabel.textContent = restLabel;
+              }, 2000);
+            }
+          }
+        } catch {
+          /* The visitor dismissed the share sheet — nothing to do. */
+        }
+      });
+    }
+
+    /* The object: tilt + idle loop live in card-object.ts. Under motionOff
+       the handle is inert and the CSS defaults already show the finished
+       still-life — nothing here builds furniture (D-049). */
+    const card = document.getElementById('card-obj');
+    const scene = card?.closest<HTMLElement>('.card-scene') ?? null;
+    const handle = card && scene ? mountCardObject(card, scene) : null;
+
+    /* Reality moves: re-cache the tilt geometry when the webfont lands or
+       the viewport changes. */
+    let resizeT = 0;
+    const refit = () => handle?.refit();
+    const onResize = () => {
+      window.clearTimeout(resizeT);
+      resizeT = window.setTimeout(refit, 200);
+    };
+    window.addEventListener('resize', onResize);
+    document.fonts?.ready.then(refit);
+    const unlisten = () => {
+      window.removeEventListener('resize', onResize);
+      window.clearTimeout(resizeT);
+    };
+
+    if (motionOff) return unlisten;
+
+    /* Load sequence per DESIGN.md: the plate rises and settles under a
+       one-time sheen sweep → the name rises out of blur → the rest of the
+       engraving fades up → contact rows stagger → second-rank actions and
+       the annotation land → the sheen starts drifting (the page's ONE
+       loop). Markup ships visible; everything is hidden here, right before
+       animating. */
+    const sheen = card?.querySelector<HTMLElement>('.card-sheen') ?? null;
+    const shadow = scene?.querySelector<HTMLElement>('.card-shadow') ?? null;
+    const tiltEl = scene?.querySelector<HTMLElement>('.card-tilt') ?? null;
+    const faceEls = Array.from(document.querySelectorAll<HTMLElement>('.card-el'));
+    const stages = Array.from(document.querySelectorAll<HTMLElement>('.card-stage'));
+    const rowEls = Array.from(document.querySelectorAll<HTMLElement>('.card-row'));
+
+    let split: SplitText | null = null;
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+
+    /* 1 — the object arrives: rises and settles, the floor shadow catches up */
+    if (scene && tiltEl) {
+      gsap.set(scene, { opacity: 0, y: 56 });
+      gsap.set(tiltEl, { rotationX: 10 });
+      if (shadow) gsap.set(shadow, { opacity: 0 });
+      tl.to(scene, { opacity: 1, y: 0, duration: 1.05 }, 0).to(
+        tiltEl,
+        { rotationX: 0, duration: 1.05 },
+        0,
+      );
+      if (shadow) tl.to(shadow, { opacity: 1, duration: 0.9, clearProps: 'opacity' }, 0.15);
+    }
+
+    /* 2 — one-time sheen sweep while the plate settles, then re-park */
+    if (sheen) {
+      tl.set(sheen, { xPercent: -120, opacity: 0.38 }, 0.7)
+        .to(sheen, { xPercent: 120, duration: 1.0, ease: 'power2.inOut' }, 0.7)
+        .set(sheen, { opacity: 0.08 }, 1.7);
+    }
+
+    /* 3 — the name rises out of blur, character by character */
+    split = new SplitText(h1, { type: 'chars,words', charsClass: 'card-char' });
+    gsap.set(split.chars, { opacity: 0, yPercent: 110, filter: 'blur(10px)' });
+    tl.to(
+      split.chars,
+      { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: 1, stagger: 0.022 },
+      0.5,
+    );
+
+    /* 3b — the rest of the engraving fades up */
+    if (faceEls.length) {
+      gsap.set(faceEls, { opacity: 0 });
+      tl.to(faceEls, { opacity: 1, duration: 0.85, stagger: 0.08 }, 0.7);
+    }
+
+    /* 4 — contact rows land on the dim-row curve */
+    if (rowEls.length) {
+      gsap.set(rowEls, { opacity: 0, y: 18 });
+      tl.to(rowEls, { opacity: 1, y: 0, duration: 0.8, stagger: 0.085 }, 0.85);
+    }
+
+    /* 5 — second-rank actions and the annotation line */
+    if (stages.length) {
+      gsap.set(stages, { opacity: 0, y: 22 });
+      tl.to(stages, { opacity: 1, y: 0, duration: 0.85, stagger: 0.1 }, 1.05);
+    }
+
+    /* 6 — the still-life is complete; the sheen drift takes over */
+    tl.add(() => handle?.idle(), 1.9);
+
+    return () => {
+      unlisten();
+      handle?.destroy();
+      split?.revert();
+    };
+  });
+</script>
+
+<style>
+  /* SplitText needs the chars to clip cleanly while they rise */
+  :global(.card-char) {
+    display: inline-block;
+    will-change: transform, filter;
+  }
+  #card-name {
+    overflow: hidden;
+    padding-bottom: 0.08em;
+  }
+</style>

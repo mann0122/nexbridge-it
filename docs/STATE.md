@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-15
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-056, D-057, D-058]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058]
 cites_history: [D-007]
 ---
 
@@ -47,11 +47,14 @@ Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-02
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
-**Eight routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`,
-`/en/datenschutz`, `/teaser`, `/en/teaser`.
-The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
-pages — temporary, "until dedicated subpages exist"
-(`website/src/components/Header.astro:18`). The spec sitemap lists them as planned pages.
+**Fourteen pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
+`/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`), the gated teaser page
+(`/teaser`, `/en/teaser` — D-056), plus the NB-VK digital business cards (D-049) — `/karte`,
+`/karte/peter-knopp`, `/karte/manush-vaghani`, their EN mirrors under `/en/card/`, and static
+`/karte/<slug>.vcf` endpoints. Card routes are noindex and sitemap-excluded: handouts, not
+landing pages. The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage
+anchors, not pages — temporary, "until dedicated subpages exist"
+(`website/src/components/Header.astro:19`). The spec sitemap lists them as planned pages.
 `Teaser` is the exception: a real page, and the first one in the nav (D-057).
 
 `/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-056) — a
@@ -61,6 +64,23 @@ drawing sheets reading "Film folgt", and the site builds and deploys normally.
 The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
 `sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
 which appear nowhere until a correct code derives them, not about `/teaser` itself.
+
+The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
+the same URL the printed QR codes encode, and never a vCard record (D-054). The **physical
+carrier is final** (D-055): the CR80 NFC card, master `print/visitenkarte-nfc/nfc-cr80.html`
+(NB-VK-01/02) — founder-picked design D on the back (glider 34 mm + signal wordmark with paper
+period on the dark metallic ground) and the Zeichnungskopf contact side on a light pastel-peach
+metallic ramp, with no revision date on the plate. The 85 × 55 paper master
+(`print/visitenkarte/`, D-053) is retained but superseded as the active physical carrier. The
+digital plate carries the company mark (D-050) engraved in one ink in the `.card-mark` slot
+(D-051); card revision is unified at 09/2026 (`cards.ts` `CARD_REVISION`). Printing is gated
+on the DPMA trademark check — open item 6 — plus the mandatory both-sides machine proof (D-055).
+
+The plate's material is a founder override (D-054): full-range metallic, a live 26s drift that
+rests under `prefers-reduced-motion`, and the house texture laws (light-only pools, crush and
+opacity ceilings, AA discipline for small ink) suspended **on that surface only** — small ink on
+the plate can fall below 4.5:1 in the darkest pools. A knowing, logged trade; the site's contrast
+law stands everywhere else. Each card carries its own phone number (`cards.ts` `phoneE164`).
 
 Four single sources you must not work around:
 
@@ -73,6 +93,17 @@ Four single sources you must not work around:
   strings, no codes)
 
 Details → [[website-spec]], visual world → `DESIGN.md`.
+
+The brand has a **logo mark** since D-050: the folded glider. It **ships** in the favicon, the
+`apple-touch-icon`, the `og.png` social card and the header lockup (from `sm` up — phones keep the
+wordmark alone), and is live on nexbridge-it.com. Canonical geometry sits in `website/public/logo-mark.svg`,
+`website/public/favicon.svg` and `website/src/components/Mark.astro`; they must not drift.
+The flow-line was *not* retired — it stays the motion signature (hero schematic, flowrail, seams).
+
+An official **animated wordmark sting** exists since D-046 — Higgsfield-generated (16:9, plus 1:1
+and 9:16 cuts), resolving onto the wordmark lockup, which ends in the CTA-grammar arrowhead.
+Off-site collateral only (video intros, social). It predates the mark, so it does not show the
+glider yet; the mark's own animation is drafted but **not chosen** (three takes exist).
 
 ## Open items
 
@@ -101,14 +132,37 @@ Ranked. Owner in brackets.
    shell and in the conversations where they are handed out. Rotating a code means re-running
    the script; it retires the old file. See D-056.
 6. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
+   Should include the generated-mark provenance question in one pass (origin recorded in D-050,
+   consequence logged in D-051).
 7. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
 8. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
    choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
+9. **Mark animation not chosen** [founders] — the glider has no animated sting yet; three takes
+   exist and none is picked, and D-046's animated wordmark predates the mark, so it shows the
+   flow-line lockup rather than the glider and needs a refresh once one is chosen.
+10. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor CLAUDE.md and D-043
+   set. Measured across four consecutive runs during the D-050 gate; **pre-existing and unrelated
+   to the mark** (font loading). Ranked here, not higher, only because no traffic reaches the site
+   yet — it moves up the moment it does.
+11. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
+   mark needs a graphite chip on light material until a light-ground variant exists. Does not
+   gate the CR80 card (D-055), whose mark sits on the dark back only; gates any future
+   light-ground application.
+12. **The card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo`
+   checks the three canonical vector sources only; the card plate and both print masters
+   (paper, and CR80 per D-055) carry their own 0-origin copy, and the plate's copy still has
+   one sub-resolvable path the canonical mark does not. `TBD:` guard them or replace them —
+   see D-051, before the next card change.
 
 ### Known defects (technical, none blocking)
 
 - The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
   an English visitor at `/en/tippfehler` gets the German page.
+- Below the `md` breakpoint the homepage h1 renders as „Prozesse, dievon selbst laufen." —
+  `Hero.astro` writes `Prozesse, die<br class="hidden md:block">von selbst laufen.`, so when the
+  break is hidden the two words collide. Pre-existing on `main`, found during the D-050 gate; the
+  fix is one space before the `<br>`, and it touches customer-facing German, so it goes through
+  `copywriter-de` on its own branch.
 - `npm --prefix website run check` reports four `'heroArrow' is possibly null` errors in
   `website/src/scripts/flowrail.ts` (D-044). Pre-existing, not runtime bugs — but they are why
   `check` is not yet wired into `build` (D-058). Clear them, then gate the build on it.
@@ -131,11 +185,13 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The gated teaser page (D-056, D-057) — mechanism built, waiting on the two films and their
-codes from the founders (open item 5). The motion upgrade (D-038…D-042), the icon vocabulary
-(D-043) and the flowrail (D-044) are merged and live; the WebGL hero-dissolve experiment was
-killed on the founder's verdict (D-045) and its branch is deleted. `main` is still the only
-long-lived branch — the teaser work is a feature branch heading for a PR.
+The gated teaser page (D-056, D-057, D-058) — mechanism built, waiting on the two films and
+their codes from the founders (open item 5). It was built in the cloud against an older `main`
+and numbered D-049…D-051 there; those entries were renumbered to D-056…D-058 when `main` was
+merged in, because the cards and the logo mark had taken D-049…D-055 meanwhile. Everything
+else is merged into `main`, the only long-lived branch: the logo mark (D-050), the animated
+wordmark sting (D-046), the wordmark drop (D-047), and the complete NB-VK card system
+(D-049, D-051…D-055).
 
 ## Next
 

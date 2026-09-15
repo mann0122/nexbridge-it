@@ -8,6 +8,7 @@
     "kb": "node ops/scripts/build-kb-graph.mjs",
     "site": "npm --prefix website run dev",
     "site:build": "npm --prefix website run build",
+    "logo": "node ops/scripts/check-logo.mjs",
     "teaser:assets": "node ops/scripts/build-teaser-assets.mjs"
   },
   "engines": {

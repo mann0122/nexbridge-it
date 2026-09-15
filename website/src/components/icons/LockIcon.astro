@@ -1,0 +1,35 @@
+---
+/**
+ * Lock (NB-T01/T02 status field) — the locked teaser's status mark, drawn to
+ * the D-043 grammar: 1.5 weight on the 24 grid, butt caps, miter joins,
+ * currentColor only. It is steel on graphite and never signal: the ration
+ * counts elements, and a status mark is an annotation.
+ *
+ * Motion is the shackle lifting 1.5 units out of the body on parent hover —
+ * a lock being opened, not a wobble. The body never moves, so the drawing
+ * stays readable mid-transition. Rest state is the complete lock, so no-JS,
+ * reduced-motion and ?snap all render a finished icon.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 16, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-lock', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <path class="icn-lock-shackle" d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+  <rect class="icn-lock-body" x="5" y="10" width="14" height="10"></rect>
+  <path class="icn-lock-pin" d="M12 14v2"></path>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

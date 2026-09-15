@@ -1,0 +1,27 @@
+---
+/*
+ * English twin of /teaser — same composition, dictionary-driven (src/i18n/ui.ts).
+ * altPath() already maps /teaser ↔ /en/teaser, so the language switch needs
+ * nothing special here.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import TeaserGrid from '../../components/TeaserGrid.astro';
+import { useTranslations } from '../../i18n/ui';
+
+const t = useTranslations('en');
+---
+
+<Layout
+  lang="en"
+  path="/en/teaser"
+  title={t('teaser.meta.title')}
+  description={t('teaser.meta.description')}
+>
+  <Header lang="en" path="/en/teaser" />
+  <main id="main">
+    <TeaserGrid lang="en" />
+  </main>
+  <Footer lang="en" />
+</Layout>

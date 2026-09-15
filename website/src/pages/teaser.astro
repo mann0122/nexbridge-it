@@ -1,0 +1,26 @@
+---
+/*
+ * Gated teaser page (D-049). Two advertisement films behind a 4-digit code,
+ * self-hosted so the site keeps making zero third-party requests — which is
+ * what keeps the Datenschutzerklärung's "keine Videos Dritter" sentence true.
+ *
+ * The films themselves are not in this repo: they are generated into
+ * website/public/teaser/ by `npm run teaser:assets`. Until they are, the cards
+ * render as empty drawing sheets and the page builds and deploys fine.
+ */
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import TeaserGrid from '../components/TeaserGrid.astro';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations('de');
+---
+
+<Layout lang="de" path="/teaser" title={t('teaser.meta.title')} description={t('teaser.meta.description')}>
+  <Header lang="de" path="/teaser" />
+  <main id="main">
+    <TeaserGrid lang="de" />
+  </main>
+  <Footer lang="de" />
+</Layout>

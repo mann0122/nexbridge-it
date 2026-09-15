@@ -15,7 +15,7 @@ decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-08-06**
+Last reviewed: **2026-09-15**
 
 ## The venture in five lines
 
@@ -46,10 +46,17 @@ Deployed as a Cloudflare static-asset Worker (D-022). Astro 7 + Tailwind 4 (D-02
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
-**Six routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`.
+**Eight routes exist**: `/`, `/en/`, `/impressum`, `/datenschutz`, `/en/impressum`,
+`/en/datenschutz`, `/teaser`, `/en/teaser`.
 The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:17`). The spec sitemap lists them as planned pages.
+`Teaser` is the exception: a real page, and the first one in the nav (D-050).
+
+`/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-049) — a
+blurred silent loop on hover, the full film after a code. **The films are not in the repo
+yet**: the mechanism ships, the assets do not. Until they land the cards render as empty
+drawing sheets reading "Film folgt", and the site builds and deploys normally.
 
 Three single sources you must not work around:
 
@@ -75,9 +82,15 @@ Ranked. Owner in brackets.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
-5. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
-6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
-7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
+5. **Teaser films not generated** [founders] — `/teaser` is live but empty. Drop the two
+   source films into `ops/teaser-src/` as `NBIT1` (Rathaus) and `NBG1` (general), then run
+   `TEASER_1_CODE=… TEASER_2_CODE=… npm run teaser:assets` and commit
+   `website/public/teaser/`. The codes never enter the repo — they live in the founders'
+   shell and in the conversations where they are handed out. Rotating a code means re-running
+   the script; it retires the old file. See D-049.
+6. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
+7. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
+8. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
    choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
 
 ### Known defects (technical, none blocking)
@@ -103,9 +116,11 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. The motion upgrade (D-038…D-042), the icon vocabulary (D-043) and the flowrail
-(D-044) are merged and live; the WebGL hero-dissolve experiment was killed on the founder's
-verdict (D-045) and its branch is deleted. `main` is the only long-lived branch.
+The gated teaser page (D-049, D-050) — mechanism built, waiting on the two films and their
+codes from the founders (open item 5). The motion upgrade (D-038…D-042), the icon vocabulary
+(D-043) and the flowrail (D-044) are merged and live; the WebGL hero-dissolve experiment was
+killed on the founder's verdict (D-045) and its branch is deleted. `main` is still the only
+long-lived branch — the teaser work is a feature branch heading for a PR.
 
 ## Next
 

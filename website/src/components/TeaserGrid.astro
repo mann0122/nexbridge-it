@@ -1,0 +1,181 @@
+---
+/**
+ * Teaser cards + the shared unlock dialog (D-049).
+ *
+ * A locked teaser is an uninked drawing sheet: hairline DIN frame, a
+ * Zeichnungskopf carrying the name, the part number and a status field. The
+ * silent preview loop plays *inside* the frame under a graphite scrim and a
+ * blur, so motion and colour read but nothing in the film is legible — the
+ * point of a teaser is that you can tell something is there.
+ *
+ * All furniture is steel, never signal: two cards sit in one viewport and the
+ * ration counts elements (DESIGN.md). The only signal here is the focus ring.
+ *
+ * The card is a <button>, so keyboard and screen-reader behaviour come from
+ * the platform. One <dialog> serves both cards — one focus trap, one <video>
+ * to tear down on route change.
+ *
+ * Nothing here names the full films' URLs. They are derived from the typed
+ * code in scripts/teaser.ts and exist in the DOM only after a correct one.
+ */
+import { type Lang, useTranslations } from '../i18n/ui';
+import { TEASERS, previewSrc, posterSrc } from '../config/teasers';
+import LockIcon from './icons/LockIcon.astro';
+import CtaArrow from './icons/CtaArrow.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const cards = TEASERS.map((teaser, i) => ({
+  ...teaser,
+  name: t(`teaser.${i + 1}.name` as Parameters<typeof t>[0]),
+  preview: previewSrc(teaser.id),
+  poster: posterSrc(teaser.id),
+}));
+---
+
+<section
+  id="teaser"
+  class="surface-grid border-t border-steel-soft bg-graphite"
+  data-teaser-scope
+  data-label-locked={t('teaser.locked')}
+  data-label-unlocked={t('teaser.unlocked')}
+  data-label-pending={t('teaser.pending')}
+  data-label-hint={t('teaser.hint')}
+  data-label-checking={t('teaser.dialog.checking')}
+  data-label-error={t('teaser.dialog.error')}
+>
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel" data-reveal>{t('teaser.kicker')}</p>
+    <h1 class="type-display mt-4 max-w-[20ch] text-[clamp(1.9rem,3.6vw,3rem)] text-paper" data-reveal>
+      {t('teaser.title')}
+    </h1>
+    <p class="mt-6 max-w-[58ch] leading-relaxed text-steel" data-reveal>{t('teaser.intro')}</p>
+
+    <noscript>
+      <p class="type-annot mt-8 border border-steel-soft px-4 py-3 text-steel">{t('teaser.noJs')}</p>
+    </noscript>
+
+    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+      {
+        cards.map((card) => (
+          <button
+            type="button"
+            class="teaser-card group"
+            data-teaser={card.id}
+            data-teaser-name={card.name}
+            data-teaser-part={`${t('teaser.field.part')} ${card.partNo}`}
+            data-icon-hover
+            aria-haspopup="dialog"
+          >
+            {/* Image area. aria-hidden: the loop is decoration, and it is
+                deliberately unreadable — there is nothing here to announce. */}
+            <span class="teaser-frame">
+              <video
+                class="teaser-preview"
+                data-teaser-preview
+                src={card.preview}
+                poster={card.poster}
+                muted
+                loop
+                playsinline
+                preload="none"
+                tabindex="-1"
+                aria-hidden="true"
+              />
+              <span class="teaser-scrim surface-grid" aria-hidden="true" />
+            </span>
+
+            {/* Zeichnungskopf: solid graphite, so every label keeps its
+                contrast no matter what frame the film is showing. */}
+            <span class="teaser-head">
+              <span class="teaser-head-name type-subhead text-xl text-paper md:text-2xl">{card.name}</span>
+
+              <span class="teaser-head-fields">
+                <span class="type-annot text-steel">
+                  {t('teaser.field.part')} {card.partNo}
+                </span>
+                <span class="type-annot inline-flex items-center gap-2 text-steel">
+                  <LockIcon size={16} class="shrink-0" />
+                  <span data-teaser-status>{t('teaser.locked')}</span>
+                </span>
+              </span>
+
+              <span class="teaser-head-hint type-annot text-steel">
+                {t('teaser.hint')}
+                <CtaArrow size={16} class="shrink-0" />
+              </span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+{/* One dialog, both cards. Native <dialog> gives the focus trap, the backdrop
+    and Esc for free — and returns focus to the card that opened it. */}
+<dialog class="teaser-dialog" data-teaser-dialog aria-labelledby="teaser-dialog-name">
+  <div class="teaser-dialog-sheet">
+    <div class="teaser-dialog-bar">
+      <p class="type-annot text-steel">
+        <span data-teaser-dialog-part>{TEASERS[0].partNo}</span>
+      </p>
+      <button type="button" class="teaser-dialog-close type-annot" data-teaser-close>
+        {t('teaser.dialog.close')}
+      </button>
+    </div>
+
+    <h2 id="teaser-dialog-name" class="type-subhead text-2xl text-paper" data-teaser-dialog-name>
+      {TEASERS[0].partNo}
+    </h2>
+
+    {/* Step 1 — the code. */}
+    <form class="teaser-code" data-teaser-form novalidate>
+      <p class="mt-3 max-w-[46ch] text-[0.95rem] leading-relaxed text-steel">
+        {t('teaser.dialog.intro')}
+      </p>
+
+      <fieldset class="teaser-digits">
+        <legend class="type-annot mb-3 text-steel">{t('teaser.dialog.label')}</legend>
+        {
+          [0, 1, 2, 3].map((i) => (
+            <input
+              class="teaser-digit"
+              data-teaser-digit
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="1"
+              autocomplete="off"
+              aria-label={`${t('a11y.teaserDigit')} ${i + 1}`}
+            />
+          ))
+        }
+      </fieldset>
+
+      {/* role=alert so the failure is announced, not just shown. */}
+      <p class="teaser-error type-annot" data-teaser-error role="alert" hidden></p>
+
+      <button type="submit" class="teaser-submit" data-icon-hover data-teaser-submit>
+        <span data-teaser-submit-label>{t('teaser.dialog.submit')}</span>
+        <CtaArrow size={18} class="shrink-0" />
+      </button>
+    </form>
+
+    {/* Step 2 — the film. src is set by JS at unlock time and blanked on close;
+        it is never rendered into the document. */}
+    <div class="teaser-player" data-teaser-player hidden>
+      <video data-teaser-full controls playsinline preload="none" aria-label={t('a11y.teaserPlayer')}
+      ></video>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import '../scripts/teaser';
+</script>

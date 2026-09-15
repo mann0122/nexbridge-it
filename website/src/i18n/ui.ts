@@ -26,6 +26,7 @@ export const ui = {
     'nav.vorgehen': 'Vorgehen',
     'nav.ueberUns': 'Über uns',
     'nav.kontakt': 'Kontakt',
+    'nav.teaser': 'Teaser',
 
     'hero.kicker': 'Automatisierung · KI-Agenten · Dashboards · Individualsoftware',
     'hero.h1a': 'Prozesse, die',
@@ -203,6 +204,38 @@ export const ui = {
     'footer.legal.datenschutz': 'Datenschutz',
 
     /*
+     * Teaser page (D-049). The cards carry the name, the part number and the
+     * status — nothing about what the films show. Nobody has watched them in a
+     * build session, and CLAUDE.md rule 1 forbids inventing the content; a
+     * description line gets added here once the founder writes one.
+     */
+    'teaser.meta.title': 'Teaser – NexBridge-IT',
+    'teaser.meta.description':
+      'Zwei kurze Filme über unsere Arbeit. Der vollständige Film öffnet sich mit einem vierstelligen Code.',
+    'teaser.kicker': 'Filme · Zugang mit Code',
+    'teaser.title': 'Zwei Filme, auf Anfrage.',
+    'teaser.intro':
+      'Diese beiden Filme zeigen wir nicht öffentlich. Den vierstelligen Code bekommen Sie von uns – im Gespräch oder auf Anfrage per E-Mail.',
+    'teaser.1.name': 'Teaser 1',
+    'teaser.2.name': 'Teaser 2',
+    'teaser.field.part': 'Teil-Nr.',
+    'teaser.field.status': 'Status',
+    'teaser.locked': 'gesperrt',
+    'teaser.unlocked': 'frei',
+    'teaser.hint': 'Code eingeben',
+    'teaser.pending': 'Film folgt',
+    'teaser.dialog.intro': 'Bitte geben Sie die vier Ziffern ein, die Sie von uns bekommen haben.',
+    'teaser.dialog.label': 'Vierstelliger Code',
+    'teaser.dialog.submit': 'Film öffnen',
+    'teaser.dialog.checking': 'Wird geprüft …',
+    'teaser.dialog.error': 'Der Code stimmt nicht. Bitte prüfen Sie die vier Ziffern.',
+    'teaser.dialog.close': 'Schließen',
+    'teaser.noJs': 'Zum Abspielen der Filme wird JavaScript benötigt.',
+    'a11y.teaserDialog': 'Teaser freischalten',
+    'a11y.teaserDigit': 'Ziffer',
+    'a11y.teaserPlayer': 'Vollständiger Film',
+
+    /*
      * The `en` twins of these keys are required by the type constraint but are
      * never rendered: 404.astro is German-only, because Cloudflare serves one
      * dist/404.html for every unmatched path — English included. Keep them
@@ -235,6 +268,7 @@ export const ui = {
     'nav.vorgehen': 'Approach',
     'nav.ueberUns': 'About',
     'nav.kontakt': 'Contact',
+    'nav.teaser': 'Teaser',
 
     'hero.kicker': 'Automation · AI agents · Dashboards · Custom applications',
     'hero.h1a': 'Processes that',
@@ -407,6 +441,33 @@ export const ui = {
     'footer.contact': 'Contact',
     'footer.legal.impressum': 'Imprint',
     'footer.legal.datenschutz': 'Privacy',
+
+    /* Teaser page (D-049) — English twin. */
+    'teaser.meta.title': 'Teaser — NexBridge-IT',
+    'teaser.meta.description':
+      'Two short films about our work. The full film opens with a four-digit code.',
+    'teaser.kicker': 'Films · access by code',
+    'teaser.title': 'Two films, on request.',
+    'teaser.intro':
+      'We do not show these two films publicly. You get the four-digit code from us — in conversation or by email on request.',
+    'teaser.1.name': 'Teaser 1',
+    'teaser.2.name': 'Teaser 2',
+    'teaser.field.part': 'Part no.',
+    'teaser.field.status': 'Status',
+    'teaser.locked': 'locked',
+    'teaser.unlocked': 'open',
+    'teaser.hint': 'Enter code',
+    'teaser.pending': 'Film to follow',
+    'teaser.dialog.intro': 'Please enter the four digits you received from us.',
+    'teaser.dialog.label': 'Four-digit code',
+    'teaser.dialog.submit': 'Open film',
+    'teaser.dialog.checking': 'Checking …',
+    'teaser.dialog.error': 'That code is not right. Please check the four digits.',
+    'teaser.dialog.close': 'Close',
+    'teaser.noJs': 'JavaScript is required to play the films.',
+    'a11y.teaserDialog': 'Unlock teaser',
+    'a11y.teaserDigit': 'Digit',
+    'a11y.teaserPlayer': 'Full film',
 
     'notFound.meta.title': 'Page not found — NexBridge-IT',
     'notFound.meta.description': 'This page does not exist. Head back to the home page.',

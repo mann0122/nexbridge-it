@@ -16,9 +16,12 @@ const base = lang === 'de' ? '' : '/en';
 const switchHref = altPath(lang, path);
 
 // Anchors into the landing page until dedicated subpages exist (D-010 scope).
+// Teaser is the exception and the first real route in here (D-050) — it is a
+// page, not an anchor, so it carries no `#`.
 const links = [
   { href: `${base}/#leistungen`, label: t('nav.leistungen') },
   { href: `${base}/#vorgehen`, label: t('nav.vorgehen') },
+  { href: `${base}/teaser`, label: t('nav.teaser') },
   { href: `${base}/#ueber-uns`, label: t('nav.ueberUns') },
   { href: `${base}/#kontakt`, label: t('nav.kontakt') },
 ];
@@ -34,7 +37,9 @@ const links = [
       >
     </a>
 
-    <nav class="hidden items-center gap-8 md:flex" aria-label={t('a11y.mainNav')}>
+    {/* gap-6 at md: the fifth link (D-050) does not fit beside the language
+        toggle at 768px on gap-8. Full spacing returns at lg. */}
+    <nav class="hidden items-center gap-6 md:flex lg:gap-8" aria-label={t('a11y.mainNav')}>
       {
         links.map((link) => (
           <a href={link.href} class="link-draw text-[0.9375rem] text-steel transition-colors hover:text-paper">

@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-08-23
+updated: 2026-09-15
 depends_on: []
 decisions: []
 ---
@@ -916,6 +916,76 @@ audited; the audit caught real errors before commit (service icons ship at a uni
 in a `Contact.astro` comment, corrected to the computed 3.10:1 in the same commit; axis
 order on padding values now labelled because the two rows disagreed silently).
 Owner: partner-b.
+
+## D-049 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED
+Founder asked for the two advertisement films on the site, visible as a hovering glimpse but
+watchable only after a code. Shipped as `/teaser` + `/en/teaser`: a card per film showing a
+silent 320px loop under a blur and a graphite scrim, and a `<dialog>` taking four digits.
+Named **Teaser 1** and **Teaser 2** on the founder's instruction. Separate code per film,
+also the founder's choice.
+
+**The gate is a courtesy gate, not access control, and must never be described as
+protection.** Four digits is 10,000 combinations; anyone willing to write a loop gets in, and
+anyone who unlocks it legitimately can read the URL out of devtools and pass it on. What it
+buys is real but narrow: the films are not linked, not indexed, and not casually shareable.
+Nothing confidential belongs behind it. The upgrade path, declined this session as
+disproportionate, is R2 + a Worker route validating against a Cloudflare secret.
+
+**No password and no film path are stored anywhere.** The URL is *derived* from the typed
+code — `sha256(code + ':' + teaserId)` sliced to 16 hex, plus `.mp4`.
+`ops/scripts/build-teaser-assets.mjs` names the output file by the same derivation, so a
+correct code computes a URL that exists and a wrong one computes a 404 — the 404 *is* the
+validation. Verified against the built site: `dist/` contains the two preview paths and the
+derivation code, and no film filename. Rotating a code renames the film, and the script
+sweeps the old name so a retired code stops working instead of quietly still opening it.
+
+**Self-hosted, and that is the point.** `i18n/legal.ts` tells visitors *"Es werden keine
+Karten, Videos, Social-Media-Elemente oder sonstigen Inhalte Dritter geladen."* Self-hosted
+video is not *Inhalte Dritter*, so the sentence stays true and the zero-third-party-request
+property (D-013) survives. YouTube, Vimeo or Cloudflare Stream would each falsify a legal
+page and force a lawyer round — that, not bandwidth, is why they were refused.
+
+**Costs accepted.** `sessionStorage` remembers an unlock for the session — the first browser
+storage on the site; strictly functional, non-tracking, no consent implied. Films are
+committed to the repo, so repo size grows by their weight; the script errors above the 25 MiB
+Cloudflare per-file cap rather than letting a deploy fail. The cards carry no description of
+what the films show: nobody has watched them in a build session and CLAUDE.md rule 1 forbids
+inventing it. Owner: partner-b; codes and films: founders.
+
+## D-050 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
+Teaser asset identity (id, part number, source-film name) lives in
+`website/src/config/teasers.ts`, joining `site.ts`, `global.css @theme` and `ui.ts` as a
+thing not to work around. It holds file identity only — every string stayed in `ui.ts`, and
+the codes and film paths are deliberately absent (D-049). A fourth config module beat
+bloating `site.ts`, which is brand identity and says so.
+
+The nav gained `Teaser` — the first entry pointing at a **page** rather than a homepage
+anchor, so `Header.astro`'s "anchors until dedicated subpages exist" comment (D-010) is now
+partly overtaken. Desktop nav spacing dropped to `gap-6` at `md` and returns to `gap-8` at
+`lg`: five links plus the language toggle do not fit at 768px on the old spacing. Owner:
+partner-b.
+
+## D-051 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
+The `qa-reviewer` gate on D-049 found that a guarantee the repo advertises was not real.
+`website/CLAUDE.md` says the EN block of `ui.ts` "cannot silently drift from the German one —
+a missing key is a compile error". It was not: `satisfies Record<Lang, Record<string, string>>`
+only requires string keys, `UiKey` derives from the German block alone, and `t()` falls back to
+German for a missing key. Nothing typechecked anyway — `astro build` does not, and no lint or
+typecheck script existed.
+
+**It had already fired.** While the teaser page was being built, `teaser.hintUnlocked` existed
+in `de` and not in `en`; the build passed clean and the English page shipped the German string.
+It was caught by eye, not by tooling.
+
+Two changes: `AssertKeys` type assertions at the end of `ui.ts` fail the moment either block
+gains or loses a key the other lacks (verified by deleting a key — it errors, naming it), and
+`npm --prefix website run check` runs `astro check`, with `@astrojs/check` + `typescript` added
+as devDependencies. Types only, no runtime cost.
+
+**Deliberately not done:** `check` is NOT wired into `build`. It currently reports four
+pre-existing `'heroArrow' is possibly null` errors in `scripts/flowrail.ts` (D-044), which are
+not this change's to fix, and a build that fails on unrelated code would just get bypassed.
+Clearing those and then gating the build on `check` is the follow-up. Owner: partner-b.
 
 ## Template
 ```

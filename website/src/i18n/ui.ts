@@ -26,6 +26,7 @@ export const ui = {
     'nav.vorgehen': 'Vorgehen',
     'nav.ueberUns': 'Über uns',
     'nav.kontakt': 'Kontakt',
+    'nav.teaser': 'Teaser',
 
     'hero.kicker': 'Automatisierung · KI-Agenten · Dashboards · Individualsoftware',
     'hero.h1a': 'Prozesse, die',
@@ -203,6 +204,47 @@ export const ui = {
     'footer.legal.datenschutz': 'Datenschutz',
 
     /*
+     * Teaser page (D-049). The cards carry the name, the part number and the
+     * status — nothing about what the films show. Nobody has watched them in a
+     * build session, and CLAUDE.md rule 1 forbids inventing the content; a
+     * description line gets added here once the founder writes one.
+     */
+    'teaser.meta.title': 'Teaser – NexBridge-IT',
+    'teaser.meta.description':
+      'Zwei Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
+    'teaser.kicker': 'Filme · Zugang mit Code',
+    'teaser.title': 'Zwei Filme, auf Anfrage.',
+    /* "Diese beiden Filme zeigen wir nicht öffentlich" was false: the page, the
+       cards and the blurred loops are public — only the full films are not. */
+    'teaser.intro':
+      'Die vollständigen Filme zeigen wir nicht öffentlich. Den vierstelligen Code bekommen Sie von uns – im Gespräch oder per E-Mail.',
+    'teaser.1.name': 'Teaser 1',
+    'teaser.2.name': 'Teaser 2',
+    /* "Film-Nr.", not "Teil-Nr.": a film is not a part in a Stückliste. */
+    'teaser.field.part': 'Film-Nr.',
+    'teaser.field.status': 'Status',
+    /* gesperrt / freigegeben is the Freigabevermerk pair from a real
+       Zeichnungskopf — the metaphor the card is built on. "frei" would read
+       as vacant or free of charge. */
+    'teaser.locked': 'gesperrt',
+    'teaser.unlocked': 'freigegeben',
+    'teaser.hint': 'Code eingeben',
+    'teaser.hintUnlocked': 'Film ansehen',
+    'teaser.pending': 'Film folgt',
+    'teaser.dialog.intro': 'Bitte geben Sie die vier Ziffern ein, die Sie von uns bekommen haben.',
+    'teaser.dialog.label': 'Vierstelliger Code',
+    'teaser.dialog.submit': 'Film öffnen',
+    'teaser.dialog.checking': 'Wird geprüft …',
+    /* Stays true when the network, not the visitor, is at fault — the same
+       message fires from the catch branch in scripts/teaser.ts. */
+    'teaser.dialog.error':
+      'Der Film lässt sich mit diesem Code nicht öffnen. Bitte prüfen Sie die vier Ziffern.',
+    'teaser.dialog.close': 'Schließen',
+    'teaser.noJs': 'Die Filme brauchen JavaScript. Bitte aktivieren Sie es, um sie anzusehen.',
+    'a11y.teaserDigit': 'Ziffer',
+    'a11y.teaserPlayer': 'Vollständiger Film',
+
+    /*
      * The `en` twins of these keys are required by the type constraint but are
      * never rendered: 404.astro is German-only, because Cloudflare serves one
      * dist/404.html for every unmatched path — English included. Keep them
@@ -235,6 +277,7 @@ export const ui = {
     'nav.vorgehen': 'Approach',
     'nav.ueberUns': 'About',
     'nav.kontakt': 'Contact',
+    'nav.teaser': 'Teaser',
 
     'hero.kicker': 'Automation · AI agents · Dashboards · Custom applications',
     'hero.h1a': 'Processes that',
@@ -408,6 +451,33 @@ export const ui = {
     'footer.legal.impressum': 'Imprint',
     'footer.legal.datenschutz': 'Privacy',
 
+    /* Teaser page (D-049) — English twin. */
+    'teaser.meta.title': 'Teaser — NexBridge-IT',
+    'teaser.meta.description':
+      'Two films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
+    'teaser.kicker': 'Films · access by code',
+    'teaser.title': 'Two films, on request.',
+    'teaser.intro':
+      'We do not show the full films publicly. You get the four-digit code from us — in conversation or by email.',
+    'teaser.1.name': 'Teaser 1',
+    'teaser.2.name': 'Teaser 2',
+    'teaser.field.part': 'Film no.',
+    'teaser.field.status': 'Status',
+    'teaser.locked': 'locked',
+    'teaser.unlocked': 'released',
+    'teaser.hint': 'Enter code',
+    'teaser.hintUnlocked': 'Watch film',
+    'teaser.pending': 'Film to follow',
+    'teaser.dialog.intro': 'Please enter the four digits you received from us.',
+    'teaser.dialog.label': 'Four-digit code',
+    'teaser.dialog.submit': 'Open film',
+    'teaser.dialog.checking': 'Checking …',
+    'teaser.dialog.error': 'The film will not open with this code. Please check the four digits.',
+    'teaser.dialog.close': 'Close',
+    'teaser.noJs': 'The films need JavaScript. Please switch it on to watch them.',
+    'a11y.teaserDigit': 'Digit',
+    'a11y.teaserPlayer': 'Full film',
+
     'notFound.meta.title': 'Page not found — NexBridge-IT',
     'notFound.meta.description': 'This page does not exist. Head back to the home page.',
     'notFound.heading': 'This page does not exist.',
@@ -421,6 +491,23 @@ export const ui = {
 } as const satisfies Record<Lang, Record<string, string>>;
 
 export type UiKey = keyof (typeof ui)['de'];
+
+/**
+ * Real parity guard between the two blocks.
+ *
+ * `satisfies Record<Lang, Record<string, string>>` above does NOT enforce it —
+ * both blocks only have to have string keys — and `UiKey` derives from German
+ * alone, so a key present in `de` and missing from `en` type-checks, builds
+ * clean, and makes `t()` silently serve German on the English page. That is
+ * not hypothetical: it happened while the teaser page was being built, and the
+ * build stayed green (qa gate, D-049).
+ *
+ * These two lines fail `npm run check` the moment either block gains or loses
+ * a key the other does not have. They cost nothing at runtime — they are types.
+ */
+type AssertKeys<T extends Record<K, string>, K extends string> = T;
+type _EnCoversDe = AssertKeys<(typeof ui)['en'], UiKey>;
+type _DeCoversEn = AssertKeys<(typeof ui)['de'], keyof (typeof ui)['en']>;
 
 export function useTranslations(lang: Lang) {
   return function t(key: UiKey): string {

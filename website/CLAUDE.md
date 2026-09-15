@@ -12,18 +12,24 @@ to the Astro app.
 | Design tokens (colours, type scale) | `src/styles/global.css` `@theme` |
 | Every user-visible string, DE and EN | `src/i18n/ui.ts` |
 
-`ui.ts` is typed `as const satisfies Record<Lang, Record<string, string>>`, so the English block
-cannot silently drift from the German one — a missing key is a compile error. Add the key there,
-never a hardcoded string in a component. The EN page shares the DE page's components; it is not a
-copy.
+The English block cannot silently drift from the German one — but NOT because of the
+`satisfies Record<Lang, Record<string, string>>`, which only requires string keys and let exactly
+that drift ship once (D-051). What enforces it is the `AssertKeys` pair at the foot of `ui.ts`,
+and it only speaks when you run `npm run check`. `astro build` does not typecheck. Add the key in
+both blocks, never a hardcoded string in a component. The EN page shares the DE page's
+components; it is not a copy.
 
 ## Commands
 
 ```
 npm run dev      # localhost:4321
-npm run build    # static output to dist/
+npm run build    # static output to dist/ — does NOT typecheck
+npm run check    # astro check: types + the ui.ts DE/EN parity guard (D-051)
 npm run preview  # serve the build
 ```
+
+`check` is not wired into `build` yet: it still reports four pre-existing errors in
+`scripts/flowrail.ts`. Clear those first, then gate the build on it.
 
 Deployed as a Cloudflare static-asset Worker (`wrangler.jsonc`), not Pages — D-022. Custom domains
 are attached in the Cloudflare dashboard, not via `routes`.

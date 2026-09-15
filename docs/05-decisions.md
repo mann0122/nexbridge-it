@@ -917,7 +917,7 @@ in a `Contact.astro` comment, corrected to the computed 3.10:1 in the same commi
 order on padding values now labelled because the two rows disagreed silently).
 Owner: partner-b.
 
-## D-049 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED
+## D-056 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED
 Founder asked for the two advertisement films on the site, visible as a hovering glimpse but
 watchable only after a code. Shipped as `/teaser` + `/en/teaser`: a card per film showing a
 silent 320px loop under a blur and a graphite scrim, and a `<dialog>` taking four digits.
@@ -952,11 +952,11 @@ Cloudflare per-file cap rather than letting a deploy fail. The cards carry no de
 what the films show: nobody has watched them in a build session and CLAUDE.md rule 1 forbids
 inventing it. Owner: partner-b; codes and films: founders.
 
-## D-050 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
+## D-057 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
 Teaser asset identity (id, part number, source-film name) lives in
 `website/src/config/teasers.ts`, joining `site.ts`, `global.css @theme` and `ui.ts` as a
 thing not to work around. It holds file identity only — every string stayed in `ui.ts`, and
-the codes and film paths are deliberately absent (D-049). A fourth config module beat
+the codes and film paths are deliberately absent (D-056). A fourth config module beat
 bloating `site.ts`, which is brand identity and says so.
 
 The nav gained `Teaser` — the first entry pointing at a **page** rather than a homepage
@@ -965,8 +965,8 @@ partly overtaken. Desktop nav spacing dropped to `gap-6` at `md` and returns to 
 `lg`: five links plus the language toggle do not fit at 768px on the old spacing. Owner:
 partner-b.
 
-## D-051 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
-The `qa-reviewer` gate on D-049 found that a guarantee the repo advertises was not real.
+## D-058 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
+The `qa-reviewer` gate on D-056 found that a guarantee the repo advertises was not real.
 `website/CLAUDE.md` says the EN block of `ui.ts` "cannot silently drift from the German one —
 a missing key is a compile error". It was not: `satisfies Record<Lang, Record<string, string>>`
 only requires string keys, `UiKey` derives from the German block alone, and `t()` falls back to

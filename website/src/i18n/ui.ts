@@ -204,7 +204,7 @@ export const ui = {
     'footer.legal.datenschutz': 'Datenschutz',
 
     /*
-     * Teaser page (D-049). The cards carry the name, the part number and the
+     * Teaser page (D-056). The cards carry the name, the part number and the
      * status — nothing about what the films show. Nobody has watched them in a
      * build session, and CLAUDE.md rule 1 forbids inventing the content; a
      * description line gets added here once the founder writes one.
@@ -451,7 +451,7 @@ export const ui = {
     'footer.legal.impressum': 'Imprint',
     'footer.legal.datenschutz': 'Privacy',
 
-    /* Teaser page (D-049) — English twin. */
+    /* Teaser page (D-056) — English twin. */
     'teaser.meta.title': 'Teaser — NexBridge-IT',
     'teaser.meta.description':
       'Two films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
@@ -500,7 +500,7 @@ export type UiKey = keyof (typeof ui)['de'];
  * alone, so a key present in `de` and missing from `en` type-checks, builds
  * clean, and makes `t()` silently serve German on the English page. That is
  * not hypothetical: it happened while the teaser page was being built, and the
- * build stayed green (qa gate, D-049).
+ * build stayed green (qa gate, D-056).
  *
  * These two lines fail `npm run check` the moment either block gains or loses
  * a key the other does not have. They cost nothing at runtime — they are types.

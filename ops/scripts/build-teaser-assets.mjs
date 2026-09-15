@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Builds the teaser assets from the two source films (D-049).
+ * Builds the teaser assets from the two source films (D-056).
  *
  * Run: TEASER_1_CODE=1234 TEASER_2_CODE=5678 npm run teaser:assets
  *

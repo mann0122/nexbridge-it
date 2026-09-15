@@ -148,7 +148,7 @@ at 94.
 - Nav: graphite, wordmark left, links center-right, language switch DE/EN as mono toggle,
   CTA right. Mobile: full-screen graphite overlay.
 - Focus states: 2px signal outline offset 2px, everywhere.
-- Teaser card (D-049): an uninked drawing sheet — 16:9 image area over a Zeichnungskopf that
+- Teaser card (D-056): an uninked drawing sheet — 16:9 image area over a Zeichnungskopf that
   carries the name, the part number and a status field with the lock mark. The silent preview
   loop sits *inside* the image area under `blur(14px) saturate(0.35)` and a 0.62 graphite
   scrim: motion reads, content does not. The title block is **solid** graphite, never a scrim

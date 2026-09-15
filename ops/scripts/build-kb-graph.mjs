@@ -196,7 +196,7 @@ if (!log) errors.push('No doc with `type: decision-log` found — expected docs/
 
 /**
  * Headers are parsed *after* inline code is stripped, so a backtick in a
- * decision header silently deletes words from the title in INDEX.md — D-050
+ * decision header silently deletes words from the title in INDEX.md — D-057
  * first rendered as "as asset manifest; …" with its subject gone, and the build
  * stayed green. A quietly wrong generated file is the exact rot this script
  * exists to prevent, so this fails instead. The log's own template is plain;

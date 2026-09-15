@@ -156,9 +156,9 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | `state` |
 | D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
 | D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
-| D-049 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED | `website-spec`, `state` |
-| D-050 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED | `website-spec`, `state` |
-| D-051 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED | `state` |
+| D-056 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED | `website-spec`, `state` |
+| D-057 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED | `website-spec`, `state` |
+| D-058 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

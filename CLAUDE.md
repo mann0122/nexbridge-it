@@ -77,7 +77,7 @@ Four single sources in the website — never work around them:
 - Brand name and URLs → `website/src/config/site.ts`
 - Design tokens → `website/src/styles/global.css` `@theme`
 - Every user-visible string → `website/src/i18n/ui.ts`
-- Teaser asset identity → `website/src/config/teasers.ts` (D-050; file identity only — no
+- Teaser asset identity → `website/src/config/teasers.ts` (D-057; file identity only — no
   strings, and never the codes or the film paths)
 
 ## Working style

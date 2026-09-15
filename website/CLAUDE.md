@@ -14,7 +14,7 @@ to the Astro app.
 
 The English block cannot silently drift from the German one — but NOT because of the
 `satisfies Record<Lang, Record<string, string>>`, which only requires string keys and let exactly
-that drift ship once (D-051). What enforces it is the `AssertKeys` pair at the foot of `ui.ts`,
+that drift ship once (D-058). What enforces it is the `AssertKeys` pair at the foot of `ui.ts`,
 and it only speaks when you run `npm run check`. `astro build` does not typecheck. Add the key in
 both blocks, never a hardcoded string in a component. The EN page shares the DE page's
 components; it is not a copy.
@@ -24,7 +24,7 @@ components; it is not a copy.
 ```
 npm run dev      # localhost:4321
 npm run build    # static output to dist/ — does NOT typecheck
-npm run check    # astro check: types + the ui.ts DE/EN parity guard (D-051)
+npm run check    # astro check: types + the ui.ts DE/EN parity guard (D-058)
 npm run preview  # serve the build
 ```
 

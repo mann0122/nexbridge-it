@@ -11,7 +11,7 @@ Four single sources you must never work around:
 - Design tokens → `website/src/styles/global.css` `@theme`
 - Brand name and URLs → `website/src/config/site.ts`
 - Every user-visible string → `website/src/i18n/ui.ts` (typed so EN cannot drift from DE)
-- Teaser asset identity → `website/src/config/teasers.ts` (D-050; file identity only — no
+- Teaser asset identity → `website/src/config/teasers.ts` (D-057; file identity only — no
   strings, and never the codes or the film paths)
 
 German copy is `copywriter-de`'s job, not yours. Add the key, leave the wording to them.

@@ -16,7 +16,7 @@ const base = lang === 'de' ? '' : '/en';
 const switchHref = altPath(lang, path);
 
 // Anchors into the landing page until dedicated subpages exist (D-010 scope).
-// Teaser is the exception and the first real route in here (D-050) — it is a
+// Teaser is the exception and the first real route in here (D-057) — it is a
 // page, not an anchor, so it carries no `#`.
 const links = [
   { href: `${base}/#leistungen`, label: t('nav.leistungen') },
@@ -37,7 +37,7 @@ const links = [
       >
     </a>
 
-    {/* gap-6 at md: the fifth link (D-050) does not fit beside the language
+    {/* gap-6 at md: the fifth link (D-057) does not fit beside the language
         toggle at 768px on gap-8. Full spacing returns at lg. */}
     <nav class="hidden items-center gap-6 md:flex lg:gap-8" aria-label={t('a11y.mainNav')}>
       {

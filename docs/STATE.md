@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-15
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-049, D-050, D-051]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-056, D-057, D-058]
 cites_history: [D-007]
 ---
 
@@ -52,14 +52,14 @@ drafting-sheet transition veil (D-039); the motion system is documented in `DESI
 The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage anchors, not
 pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:18`). The spec sitemap lists them as planned pages.
-`Teaser` is the exception: a real page, and the first one in the nav (D-050).
+`Teaser` is the exception: a real page, and the first one in the nav (D-057).
 
-`/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-049) — a
+`/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-056) — a
 blurred silent loop on hover, the full film after a code. **The films are not in the repo
 yet**: the mechanism ships, the assets do not. Until they land the cards render as empty
 drawing sheets reading "Film folgt", and the site builds and deploys normally.
 The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
-`sitemap-index.xml` like every other route — D-049's "not indexed" is about the film URLs,
+`sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
 which appear nowhere until a correct code derives them, not about `/teaser` itself.
 
 Four single sources you must not work around:
@@ -68,8 +68,8 @@ Four single sources you must not work around:
 - Design tokens → `website/src/styles/global.css` `@theme`
 - Every user-visible string → `website/src/i18n/ui.ts`. EN cannot drift from DE — but only
   because of the `AssertKeys` guard at the foot of that file, and only when someone runs
-  `npm --prefix website run check`. The `satisfies` line alone never enforced it (D-051).
-- Teaser asset identity → `website/src/config/teasers.ts` (D-050; file identity only, no
+  `npm --prefix website run check`. The `satisfies` line alone never enforced it (D-058).
+- Teaser asset identity → `website/src/config/teasers.ts` (D-057; file identity only, no
   strings, no codes)
 
 Details → [[website-spec]], visual world → `DESIGN.md`.
@@ -82,7 +82,7 @@ Ranked. Owner in brackets.
    documents (D-036) and no longer block traffic. Four points were left for a professional
    rather than guessed at: the Drittland section now that Cloudflare is named, whether the
    Cloudflare AVV is actually accepted in the account, the Impressum naming two
-   Geschäftsführer alongside "Einzelunternehmer", and — new with D-049 — whether §8
+   Geschäftsführer alongside "Einzelunternehmer", and — new with D-056 — whether §8
    *"Cookies und ähnliche Technologien"* (`website/src/i18n/legal.ts:144`) has to name the
    teaser's `sessionStorage` entry. Its text currently denies cookies only, which stays
    literally true; the heading covers similar technologies, and § 25 TDDDG is a lawyer's
@@ -99,7 +99,7 @@ Ranked. Owner in brackets.
    `TEASER_1_CODE=… TEASER_2_CODE=… npm run teaser:assets` and commit
    `website/public/teaser/`. The codes never enter the repo — they live in the founders'
    shell and in the conversations where they are handed out. Rotating a code means re-running
-   the script; it retires the old file. See D-049.
+   the script; it retires the old file. See D-056.
 6. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
 7. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
 8. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
@@ -111,7 +111,7 @@ Ranked. Owner in brackets.
   an English visitor at `/en/tippfehler` gets the German page.
 - `npm --prefix website run check` reports four `'heroArrow' is possibly null` errors in
   `website/src/scripts/flowrail.ts` (D-044). Pre-existing, not runtime bugs — but they are why
-  `check` is not yet wired into `build` (D-051). Clear them, then gate the build on it.
+  `check` is not yet wired into `build` (D-058). Clear them, then gate the build on it.
 
 ## Blocked / pending
 
@@ -131,7 +131,7 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The gated teaser page (D-049, D-050) — mechanism built, waiting on the two films and their
+The gated teaser page (D-056, D-057) — mechanism built, waiting on the two films and their
 codes from the founders (open item 5). The motion upgrade (D-038…D-042), the icon vocabulary
 (D-043) and the flowrail (D-044) are merged and live; the WebGL hero-dissolve experiment was
 killed on the founder's verdict (D-045) and its branch is deleted. `main` is still the only

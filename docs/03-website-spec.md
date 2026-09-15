@@ -34,8 +34,8 @@ in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
 - `/kontakt` (form + direct email + optional booking link)
 - `/impressum`, `/datenschutz` (required; footer-linked from every page)
 - `/teaser` (+ `/en/teaser`) — two advertisement films behind a 4-digit courtesy gate,
-  nav-linked. **Built and live**, unlike the four entries above it, which are still homepage
-  anchors. Films are self-hosted so the zero-third-party-request property holds (D-056).
+  nav-linked. **Built** (on nexbridge-it.com after the next `wrangler deploy`, D-022), unlike the
+  four entries above it, which are still homepage anchors. Films are self-hosted so the zero-third-party-request property holds (D-056).
 - Later: `/cases/<slug>` (MDX per reference case)
 
 ## Homepage sections (order)

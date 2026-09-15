@@ -93,7 +93,9 @@ onPage(({ lenis }) => {
     errorBox: dialog.querySelector<HTMLElement>('[data-teaser-error]'),
     player: dialog.querySelector<HTMLElement>('[data-teaser-player]'),
     film: dialog.querySelector<HTMLVideoElement>('[data-teaser-full]'),
-    submit: dialog.querySelector<HTMLButtonElement>('[data-teaser-submit]'),
+    // Cta.astro renders the submit and forwards no data attributes, so the
+    // form's own submit button is the handle.
+    submit: dialog.querySelector<HTMLButtonElement>('[data-teaser-form] button[type="submit"]'),
     submitLabel: dialog.querySelector<HTMLElement>('[data-teaser-submit-label]'),
   };
   if (

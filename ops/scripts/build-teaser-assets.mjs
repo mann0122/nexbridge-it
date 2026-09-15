@@ -93,9 +93,12 @@ function ffmpegBin() {
   );
 }
 
-function run(bin, args, label) {
+/** `onFail` runs before the process exits — fail() does not unwind a
+    try/finally, so anything that must not be left on disk is removed here. */
+function run(bin, args, label, onFail) {
   const result = spawnSync(bin, args, { stdio: ['ignore', 'ignore', 'pipe'], encoding: 'utf8' });
   if (result.status !== 0) {
+    onFail?.();
     // ffmpeg's last stderr line is the one that says what actually went wrong.
     const why = (result.stderr ?? '').trim().split('\n').slice(-3).join('\n  ');
     fail(`ffmpeg failed while building ${label}:\n  ${why}`);
@@ -120,27 +123,36 @@ function durationSeconds(bin, source) {
 function encodeToFit(bin, source, out, seconds, label) {
   const videoKbps = Math.floor((FIT_TARGET_BYTES * 8) / 1000 / seconds) - AUDIO_KBPS;
   if (videoKbps < MIN_VIDEO_KBPS) {
+    // `out` is the over-cap crf pass. Refusing with it still in public/ would
+    // leave an undeployable film under a valid name — the same rule as the
+    // size check below.
+    fs.rmSync(out, { force: true });
     fail(
       `${label}: ${Math.round(seconds)} s is too long for the 25 MiB cap — the budget would be ` +
         `${videoKbps} kb/s of video, and under ${MIN_VIDEO_KBPS} nothing is watchable. Shorten the film.`,
     );
   }
-  const passlog = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'nb-teaser-')), 'x264');
+  const passdir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-teaser-'));
+  const passlog = path.join(passdir, 'x264');
   const video = ['-vf', `scale='min(${FIT_WIDTH},iw)':-2`, '-c:v', 'libx264', '-b:v', `${videoKbps}k`,
     '-maxrate', `${Math.round(videoKbps * 1.5)}k`, '-bufsize', `${videoKbps * 3}k`,
     '-preset', 'slow', '-pix_fmt', 'yuv420p', '-passlogfile', passlog];
   const nul = process.platform === 'win32' ? 'NUL' : '/dev/null';
-  try {
-    run(bin, ['-y', '-i', source, ...video, '-pass', '1', '-an', '-f', 'mp4', nul], `${label} (pass 1)`);
-    run(
-      bin,
-      ['-y', '-i', source, ...video, '-pass', '2', '-c:a', 'aac', '-b:a', `${AUDIO_KBPS}k`,
-        '-movflags', '+faststart', out],
-      `${label} (pass 2)`,
-    );
-  } finally {
-    fs.rmSync(path.dirname(passlog), { recursive: true, force: true });
-  }
+  // A failed pass leaves the over-cap crf film (pass 1) or a truncated film
+  // (pass 2) at `out`; neither may stay in public/.
+  const abandon = () => {
+    fs.rmSync(out, { force: true });
+    fs.rmSync(passdir, { recursive: true, force: true });
+  };
+  run(bin, ['-y', '-i', source, ...video, '-pass', '1', '-an', '-f', 'mp4', nul], `${label} (pass 1)`, abandon);
+  run(
+    bin,
+    ['-y', '-i', source, ...video, '-pass', '2', '-c:a', 'aac', '-b:a', `${AUDIO_KBPS}k`,
+      '-movflags', '+faststart', out],
+    `${label} (pass 2)`,
+    abandon,
+  );
+  fs.rmSync(passdir, { recursive: true, force: true });
   return videoKbps;
 }
 

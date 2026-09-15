@@ -540,7 +540,8 @@ section[id] {
 .teaser-scrim {
   position: absolute;
   inset: 0;
-  background-color: rgb(20 23 26 / 0.62);
+  /* Graphite from the token, not a literal: the scrim must follow the theme. */
+  background-color: color-mix(in srgb, var(--color-graphite) 62%, transparent);
 }
 
 /* Registration marks: the plate's own drawing furniture, so the image area
@@ -610,7 +611,7 @@ section[id] {
   color: var(--color-paper);
 }
 .teaser-dialog::backdrop {
-  background: rgb(20 23 26 / 0.82);
+  background: color-mix(in srgb, var(--color-graphite) 82%, transparent);
 }
 .teaser-dialog-sheet {
   padding: 1.25rem 1.5rem 1.75rem;
@@ -685,21 +686,6 @@ section[id] {
   font-size: 0.8125rem;
   line-height: 1.5;
 }
-.teaser-submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
-  margin-top: 1.5rem;
-  padding: 0.75rem 1.25rem;
-  font-weight: 600;
-  color: var(--color-graphite);
-  background: var(--color-signal);
-  border-radius: 2px;
-}
-.teaser-submit:disabled {
-  opacity: 0.6;
-}
-
 /* The film itself. Height-capped so a portrait or square cut cannot push the
    controls past the bottom of a laptop viewport. */
 .teaser-player video {

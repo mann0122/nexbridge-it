@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-15
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058]
+decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060]
 cites_history: [D-007]
 ---
 
@@ -58,9 +58,13 @@ anchors, not pages — temporary, "until dedicated subpages exist"
 `Teaser` is the exception: a real page, and the first one in the nav (D-057).
 
 `/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-056) — a
-blurred silent loop on hover, the full film after a code. **The films are not in the repo
-yet**: the mechanism ships, the assets do not. Until they land the cards render as empty
-drawing sheets reading "Film folgt", and the site builds and deploys normally.
+blurred silent loop on hover, the full film after a code. **Both films are in the repo**
+(D-059): `website/public/teaser/` carries the two code-named films, the posters and the
+preview loops, built by `ops/teaser-assets.bat` / `npm run teaser:assets` from the founder's
+source films in the gitignored `ops/teaser-src/`. Teaser 1 is the Rathaus film (NBIT1, 2:10,
+fitted to 720p for the 25 MiB cap), Teaser 2 the general film (NBG1, 1:20, 1080p). The codes
+are in no file; the founders hold them. Rotating a code means re-running the script, which
+retires the old file.
 The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
 `sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
 which appear nowhere until a correct code derives them, not about `/teaser` itself.
@@ -74,7 +78,7 @@ metallic ramp, with no revision date on the plate. The 85 × 55 paper master
 (`print/visitenkarte/`, D-053) is retained but superseded as the active physical carrier. The
 digital plate carries the company mark (D-050) engraved in one ink in the `.card-mark` slot
 (D-051); card revision is unified at 09/2026 (`cards.ts` `CARD_REVISION`). Printing is gated
-on the DPMA trademark check — open item 6 — plus the mandatory both-sides machine proof (D-055).
+on the DPMA trademark check — open item 5 — plus the mandatory both-sides machine proof (D-055).
 
 The plate's material is a founder override (D-054): full-range metallic, a live 26s drift that
 rests under `prefers-reduced-motion`, and the house texture laws (light-only pools, crush and
@@ -125,30 +129,24 @@ Ranked. Owner in brackets.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
-5. **Teaser films not generated** [founders] — `/teaser` is live but empty. Drop the two
-   source films into `ops/teaser-src/` as `NBIT1` (Rathaus) and `NBG1` (general), then run
-   `TEASER_1_CODE=… TEASER_2_CODE=… npm run teaser:assets` and commit
-   `website/public/teaser/`. The codes never enter the repo — they live in the founders'
-   shell and in the conversations where they are handed out. Rotating a code means re-running
-   the script; it retires the old file. See D-056.
-6. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
+5. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
    Should include the generated-mark provenance question in one pass (origin recorded in D-050,
    consequence logged in D-051).
-7. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
-8. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
+6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
+7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
    choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
-9. **Mark animation not chosen** [founders] — the glider has no animated sting yet; three takes
+8. **Mark animation not chosen** [founders] — the glider has no animated sting yet; three takes
    exist and none is picked, and D-046's animated wordmark predates the mark, so it shows the
    flow-line lockup rather than the glider and needs a refresh once one is chosen.
-10. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor CLAUDE.md and D-043
+9. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor CLAUDE.md and D-043
    set. Measured across four consecutive runs during the D-050 gate; **pre-existing and unrelated
    to the mark** (font loading). Ranked here, not higher, only because no traffic reaches the site
    yet — it moves up the moment it does.
-11. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
+10. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
    mark needs a graphite chip on light material until a light-ground variant exists. Does not
    gate the CR80 card (D-055), whose mark sits on the dark back only; gates any future
    light-ground application.
-12. **The card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo`
+11. **The card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo`
    checks the three canonical vector sources only; the card plate and both print masters
    (paper, and CR80 per D-055) carry their own 0-origin copy, and the plate's copy still has
    one sub-resolvable path the canonical mark does not. `TBD:` guard them or replace them —
@@ -185,13 +183,13 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The gated teaser page (D-056, D-057, D-058) — mechanism built, waiting on the two films and
-their codes from the founders (open item 5). It was built in the cloud against an older `main`
-and numbered D-049…D-051 there; those entries were renumbered to D-056…D-058 when `main` was
-merged in, because the cards and the logo mark had taken D-049…D-055 meanwhile. Everything
-else is merged into `main`, the only long-lived branch: the logo mark (D-050), the animated
-wordmark sting (D-046), the wordmark drop (D-047), and the complete NB-VK card system
-(D-049, D-051…D-055).
+Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark (D-050),
+the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
+(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-060). The teaser was
+built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
+renumbered to D-056…D-058 when `main` was merged in. **The live site does not show the teaser
+yet**: the deploy is manual (`npx wrangler deploy` from `website/`, D-022) and has not been
+run since the merge — nexbridge-it.com is still the D-055 state until it is.
 
 ## Next
 

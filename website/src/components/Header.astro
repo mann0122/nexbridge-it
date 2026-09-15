@@ -37,7 +37,7 @@ const links = [
         wrapper element would silently kill the period's drop. The mark takes
         off on hover and focus, the period lifts — one gesture, two parts, both
         off under reduced motion. */}
-    <a href={lang === 'de' ? '/' : '/en/'} class="group type-wordmark text-[1.35rem]">
+    <a href={lang === 'de' ? '/' : '/en/'} class="group type-wordmark whitespace-nowrap text-[1.35rem]">
       <Mark
         height={20}
         class="mr-2.5 hidden align-[-0.1em] transition-transform duration-300 ease-out group-hover:-translate-y-[1px] group-hover:translate-x-[2px] group-focus-visible:-translate-y-[1px] group-focus-visible:translate-x-[2px] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-x-0 motion-reduce:group-focus-visible:translate-y-0 sm:inline-block"
@@ -49,12 +49,19 @@ const links = [
       >
     </a>
 
-    {/* gap-6 at md: the fifth link (D-057) does not fit beside the language
-        toggle at 768px on gap-8. Full spacing returns at lg. */}
+    {/* md is tight: five links (D-057) plus the toggle need ~717px of the
+        705px a 768px viewport leaves behind a classic scrollbar, so the toggle
+        wears its short label until lg and the gap drops to 6 (D-060). Nothing
+        here may wrap — a lockup broken over two lines with the period stranded
+        is not the brand element D-050 describes — so nowrap makes a future
+        sixth link overflow visibly instead of failing quietly. */}
     <nav class="hidden items-center gap-6 md:flex lg:gap-8" aria-label={t('a11y.mainNav')}>
       {
         links.map((link) => (
-          <a href={link.href} class="link-draw text-[0.9375rem] text-steel transition-colors hover:text-paper">
+          <a
+            href={link.href}
+            class="link-draw text-[0.9375rem] whitespace-nowrap text-steel transition-colors hover:text-paper"
+          >
             {link.label}
           </a>
         ))
@@ -64,11 +71,12 @@ const links = [
           <a
             href={switchHref}
             data-icon-hover
-            class="type-annot ml-2 inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
+            class="type-annot ml-2 inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 whitespace-nowrap text-steel transition-colors hover:border-steel hover:text-paper"
             aria-label={t('a11y.langSwitch')}
           >
             <WorldIcon size={14} class="shrink-0" />
-            {lang === 'de' ? 'DE → EN' : 'EN → DE'}
+            <span class="lg:hidden">{lang === 'de' ? 'EN' : 'DE'}</span>
+            <span class="hidden lg:inline">{lang === 'de' ? 'DE → EN' : 'EN → DE'}</span>
           </a>
         )
       }

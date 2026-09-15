@@ -4,9 +4,9 @@
  * self-hosted so the site keeps making zero third-party requests — which is
  * what keeps the Datenschutzerklärung's "keine Videos Dritter" sentence true.
  *
- * The films themselves are not in this repo: they are generated into
- * website/public/teaser/ by `npm run teaser:assets`. Until they are, the cards
- * render as empty drawing sheets and the page builds and deploys fine.
+ * The films live in website/public/teaser/, generated from the founders'
+ * source films by `npm run teaser:assets` (D-059). Should they ever be absent,
+ * the cards render as empty drawing sheets and the page still builds.
  */
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';

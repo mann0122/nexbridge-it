@@ -1282,6 +1282,46 @@ pre-existing `'heroArrow' is possibly null` errors in `scripts/flowrail.ts` (D-0
 not this change's to fix, and a build that fails on unrelated code would just get bypassed.
 Clearing those and then gating the build on `check` is the follow-up. Owner: partner-b.
 
+## D-059 | 2026-09-15 | The two teaser films are in the repo; the build fits the 25 MiB cap itself | DECIDED
+The founder's first run of `ops/teaser-assets.bat` (D-056) failed twice over. npm 11 no longer
+runs a dependency's install script unless `package.json` `allowScripts` names it, so
+`ffmpeg-static` never downloaded its binary; and the Rathaus film — 130 s of 1080p — came out
+over Cloudflare's 25 MiB per-file cap at crf 23, where the script's only advice was to edit
+ffmpeg flags by hand. Neither was visible from the cloud session that wrote the script: it had
+no films and no npm 11.
+
+**Two changes.** `allowScripts: { "ffmpeg-static": true }` in the root `package.json`,
+unpinned because the `^5.2.0` range would outgrow a pinned entry silently. And the film is
+still encoded quality-first (crf 23 at source resolution), but if that lands over the cap it
+is re-encoded two-pass at the bitrate 22 MiB leaves after 128 kb/s of audio, scaled to
+1280 px — 720p holds at that bitrate where 1080p falls apart in the gradients. Refusal is now
+the last resort: only a film so long that the budget drops under 300 kb/s is rejected, with
+"shorten the film" as the message. D-056's "the script errors above the cap" stands for that
+case only.
+
+**Measured.** Teaser 1 (Rathaus, NBIT1, 2:10): fitted, 22.1 MiB at 1280×720, 1284 kb/s.
+Teaser 2 (general, NBG1, 1:20): never needed it — 23.7 MiB at 1080p crf 23. Both films, both
+posters and both preview loops are committed under `website/public/teaser/`; the repo grows by
+about 46 MiB. The codes were chosen by the founder and handed over in the build session; they
+are in no file. The unlock, wrong-code, session-memory and EN paths were exercised in a browser
+against the built site before commit. Owner: partner-b; codes: founders.
+
+## D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED
+D-057 said `gap-6` made five links plus the language toggle fit at 768 px. Measured on the
+built site during the D-059 gate, it does not on a classic scrollbar: the DE header needs
+~717 px of content width and a 768 px Windows viewport leaves 705 px, so from 768 to 779 px
+"Über uns" and "DE → EN" broke over two lines and the lockup dropped its signal period onto a
+second line under the mark — the brand element D-050 describes, broken, on every page in that
+band (a half-snapped window on a 1920 × 1080 display at 125 % lands exactly there). Overlay
+scrollbars had hidden it in the cloud build. Introduced by the fifth link, not pre-existing.
+
+Two changes to `Header.astro`: the desktop toggle wears the mobile bar's short label
+(`EN` / `DE`) from `md` and its full `DE → EN` from `lg`, which returns ~47 px; and the lockup,
+the links and the toggle are `whitespace-nowrap`, so a future sixth link overflows visibly
+instead of failing quietly. Same gate also moved the dialog's submit onto `Cta.astro` (it was
+a fourth hand-rolled copy, against D-043), dropped a doubled hairline under the header on
+`/teaser`, and put the scrim and backdrop on the graphite token. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

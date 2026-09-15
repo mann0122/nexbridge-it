@@ -4,9 +4,9 @@
  *
  * A locked teaser is an uninked drawing sheet: hairline DIN frame, a
  * Zeichnungskopf carrying the name, the part number and a status field. The
- * silent preview loop plays *inside* the frame under a graphite scrim and a
- * blur, so motion and colour read but nothing in the film is legible — the
- * point of a teaser is that you can tell something is there.
+ * silent preview loop plays *inside* the frame under a graphite scrim, a blur
+ * and a greyscale filter, so motion reads but nothing in the film is legible
+ * or in colour — the point of a teaser is that you can tell something is there.
  *
  * All furniture is steel, never signal: two cards sit in one viewport and the
  * ration counts elements (DESIGN.md). The only signal here is the focus ring.
@@ -23,7 +23,7 @@ import path from 'node:path';
 import { type Lang, useTranslations } from '../i18n/ui';
 import { TEASERS, previewSrc, posterSrc } from '../config/teasers';
 import LockIcon from './icons/LockIcon.astro';
-import CtaArrow from './icons/CtaArrow.astro';
+import Cta from './Cta.astro';
 
 interface Props {
   lang: Lang;
@@ -68,9 +68,12 @@ const cards = TEASERS.map((teaser, i) => ({
 }));
 ---
 
+{/* No border-t: the sticky header already draws that hairline, and a second
+    one directly beneath it made the /teaser seam 2px where every other page
+    has 1px. */}
 <section
   id="teaser"
-  class="surface-grid border-t border-steel-soft bg-graphite"
+  class="surface-grid bg-graphite"
   data-teaser-scope
   data-label-locked={t('teaser.locked')}
   data-label-unlocked={t('teaser.unlocked')}
@@ -214,10 +217,12 @@ const cards = TEASERS.map((teaser, i) => ({
           read, and 11px mono is not a reading face. */}
       <p class="teaser-error" data-teaser-error role="alert" hidden></p>
 
-      <button type="submit" class="teaser-submit" data-icon-hover data-teaser-submit>
+      {/* The house CTA (D-043: one component, not a fourth drifted copy). It is
+          this viewport's one signal element. scripts/teaser.ts finds it as the
+          form's submit button — Cta.astro forwards no data attributes. */}
+      <Cta type="submit" class="mt-6 disabled:opacity-60">
         <span data-teaser-submit-label>{t('teaser.dialog.submit')}</span>
-        <CtaArrow size={18} class="shrink-0" />
-      </button>
+      </Cta>
     </form>
 
     {/* Step 2 — the film. src is set by JS at unlock time and blanked on close;

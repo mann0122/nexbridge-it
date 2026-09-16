@@ -1,0 +1,262 @@
+---
+/**
+ * Statistics board (D-063) — the founders' datasheet for the self-hosted,
+ * cookieless visit counts. Shared by /statistik and /en/stats so the twins
+ * cannot drift.
+ *
+ * Paper ground, like Demo.astro: this is a reading sheet, not a stage. Two
+ * states, both server-rendered and toggled by scripts/stats.ts:
+ *
+ *   1. Key state — a password field and the house CTA. Shown when no key is
+ *      stored in sessionStorage or the API answered 401. The CTA is that
+ *      viewport's one signal element, so the error line is steel-deep ink
+ *      behind a 1px rule, never signal (the TeaserGrid lesson, D-061).
+ *   2. Board state — one bordered document: Zeichnungskopf, a KPI row, the
+ *      views-per-day bar chart and six Positionsliste tables. The latest
+ *      day's bar is the one signal element on the page; every other piece of
+ *      furniture is graphite, steel-deep or line.
+ *
+ * Every number is formatted in the script with Intl; every string from the
+ * API lands in the DOM through textContent only. Labels the script needs are
+ * carried as data-label-* attributes on the scope, never hardcoded in TS.
+ *
+ * No <style> block: the stats-* rules live in global.css (D-043 — colocated
+ * styles cost the Lighthouse floor).
+ */
+import { type Lang, useTranslations } from '../i18n/ui';
+import { SITE } from '../config/site';
+import Cta from './Cta.astro';
+import '../styles/stats.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const locale = lang === 'de' ? 'de-DE' : 'en-GB';
+const host = new URL(SITE.url).host;
+
+const kpis = [
+  { id: 'views', label: t('stats.kpi.views'), note: '' },
+  { id: 'visitors', label: t('stats.kpi.visitors'), note: t('stats.kpi.visitorsNote') },
+  { id: 'events', label: t('stats.kpi.events'), note: '' },
+] as const;
+
+/* Column heads per table. The first column is the identifier, the rest are
+   counts and right-aligned; scripts/stats.ts fills the rows in this order. */
+const tables = [
+  { id: 'pages', title: t('stats.table.pages'), cols: [t('stats.col.path'), t('stats.col.views'), t('stats.col.visitors')] },
+  { id: 'referrers', title: t('stats.table.referrers'), cols: [t('stats.col.ref'), t('stats.col.views')] },
+  { id: 'countries', title: t('stats.table.countries'), cols: [t('stats.col.country'), t('stats.col.visitors')] },
+  { id: 'devices', title: t('stats.table.devices'), cols: [t('stats.col.device'), t('stats.col.visitors')] },
+  { id: 'langs', title: t('stats.table.langs'), cols: [t('stats.col.lang'), t('stats.col.views')] },
+  { id: 'events', title: t('stats.table.events'), cols: [t('stats.col.event'), t('stats.col.count')] },
+] as const;
+
+/* 30 is the default: the contract's own example range, and the one a site
+   with little traffic yet actually says something at. */
+const ranges = ([7, 30, 90] as const).map((days) => ({
+  days,
+  label: t(`stats.range.${days}` as Parameters<typeof t>[0]),
+  checked: days === 30,
+}));
+---
+
+{/* No border-t: the sticky header already draws that hairline (TeaserGrid). */}
+<section
+  id="statistik"
+  class="surface-paper"
+  data-stats-scope
+  data-locale={locale}
+  data-label-loading={t('stats.loading')}
+  data-label-network={t('stats.error.network')}
+  data-label-checking={t('stats.key.checking')}
+  data-label-wrong={t('stats.key.wrong')}
+  data-label-views={t('stats.col.views')}
+  data-label-visitors={t('stats.col.visitors')}
+  data-label-direct={t('stats.direct')}
+  data-label-device-mobile={t('stats.device.mobile')}
+  data-label-device-tablet={t('stats.device.tablet')}
+  data-label-device-desktop={t('stats.device.desktop')}
+  data-label-device-unknown={t('stats.device.unknown')}
+>
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel-deep" data-reveal>{t('stats.kicker')}</p>
+    {/* Subpage H1 grade (TeaserGrid), not the homepage section-h2 clamp. */}
+    <h1 class="type-display mt-4 max-w-[20ch] text-[clamp(2rem,4vw,3.2rem)]" data-reveal>
+      {t('stats.title')}
+    </h1>
+    <p class="mt-6 max-w-[58ch] text-lg leading-relaxed text-steel-deep" data-reveal>{t('stats.intro')}</p>
+
+    <noscript>
+      <p class="mt-8 max-w-[58ch] border border-line px-4 py-3 text-[0.9375rem] leading-relaxed text-steel-deep">
+        {t('stats.noJs')}
+      </p>
+    </noscript>
+
+    {/* ---- 1. Key state ------------------------------------------------ */}
+    {/* Rendered visible: without JS this is all there is, and with JS the
+        script hides it the moment a stored key is found. */}
+    <form class="stats-key mt-12" data-stats-key-form novalidate aria-label={t('a11y.statsKey')}>
+      <label class="type-annot text-steel-deep" for="stats-key">{t('stats.key.label')}</label>
+      <div class="stats-key-row">
+        <input
+          id="stats-key"
+          class="stats-key-input"
+          data-stats-key-input
+          type="password"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          aria-describedby="stats-key-error"
+        />
+        {/* The house CTA (D-043). scripts/stats.ts finds it as the form's
+            submit button — Cta.astro forwards no data attributes. */}
+        <Cta type="submit" class="disabled:opacity-60">
+          <span data-stats-key-submit-label>{t('stats.key.submit')}</span>
+        </Cta>
+      </div>
+      {/* role=alert so a wrong key is announced, not just shown. */}
+      <p class="stats-key-error" id="stats-key-error" data-stats-key-error role="alert" hidden></p>
+    </form>
+
+    {/* ---- 2. Board state ---------------------------------------------- */}
+    <div class="mt-12" data-stats-board hidden>
+      {/* Controls: one left-aligned row above everything they scope, date
+          range first. All furniture steel-deep/graphite/line — the chart
+          below owns the signal. */}
+      <div class="stats-controls">
+        <fieldset class="stats-range">
+          <legend class="type-annot text-steel-deep">{t('stats.range.label')}</legend>
+          {/* The three segments are one control and wrap as one unit. */}
+          <div class="stats-toggles">
+            {
+              ranges.map((range) => (
+                <label class="stats-toggle">
+                  <input type="radio" name="stats-range" value={range.days} checked={range.checked} data-stats-range />
+                  <span>{range.label}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+        <button type="button" class="stats-btn" data-stats-refresh>{t('stats.refresh')}</button>
+        <button type="button" class="stats-btn" data-stats-forget>{t('stats.key.forget')}</button>
+        <label class="stats-exclude">
+          <input type="checkbox" data-stats-exclude />
+          <span>{t('stats.exclude')}</span>
+        </label>
+      </div>
+
+      {/* Loading and network errors. Sans: a sentence, not a label. */}
+      <p class="mt-4 min-h-[1.5rem] text-[0.875rem] leading-relaxed text-steel-deep" data-stats-status role="status" aria-live="polite"></p>
+
+      {/* The sheet: one bordered document. data-stats-busy dims it while a
+          refetch is in flight — previous render held, no skeleton. */}
+      <div class="stats-sheet mt-4 border border-line" data-stats-sheet>
+        {/* Zeichnungskopf */}
+        <dl class="grid grid-cols-1 divide-y divide-line border-b border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div class="px-5 py-3">
+            <dt class="type-annot text-steel-deep">{t('stats.head.site')}</dt>
+            <dd class="mt-1 font-mono text-[0.8125rem] text-graphite">{host}</dd>
+          </div>
+          <div class="px-5 py-3">
+            <dt class="type-annot text-steel-deep">{t('stats.head.range')}</dt>
+            <dd class="mt-1 font-mono text-[0.8125rem] text-graphite" data-stats-range-out>–</dd>
+          </div>
+          <div class="px-5 py-3">
+            <dt class="type-annot text-steel-deep">{t('stats.head.fetched')}</dt>
+            <dd class="mt-1 font-mono text-[0.8125rem] text-graphite" data-stats-fetched>–</dd>
+          </div>
+        </dl>
+
+        {/* KPI row. Proportional figures at display size — tabular-nums is
+            for columns only (the tables below). */}
+        <div class="grid grid-cols-1 sm:grid-cols-3">
+          {
+            kpis.map((kpi, i) => (
+              <div class={`px-5 py-6 ${i > 0 ? 'border-t border-line sm:border-l sm:border-t-0' : ''}`}>
+                <p class="type-annot text-steel-deep">
+                  {kpi.label}
+                  {kpi.note && <span class="stats-kpi-note"> · {kpi.note}</span>}
+                </p>
+                <p class="type-display mt-2 text-4xl text-graphite" data-stats-kpi={kpi.id}>–</p>
+              </div>
+            ))
+          }
+        </div>
+
+        {/* Chart. The <svg> is built by the script from the JSON and the
+            container's measured width, so its text never stretches. */}
+        <div class="border-t border-line px-5 py-6">
+          <h2 class="type-annot text-steel-deep">{t('stats.chart.title')}</h2>
+          <div class="stats-chart mt-4" data-stats-chart>
+            <svg class="stats-svg" data-stats-svg role="group" aria-label={t('a11y.statsChart')}></svg>
+            {/* One tooltip for every bar: value first, date second. */}
+            <div class="stats-tip" data-stats-tip role="tooltip" hidden>
+              <strong data-stats-tip-value></strong>
+              <span data-stats-tip-label></span>
+            </div>
+          </div>
+          <p class="mt-3 text-[0.875rem] leading-relaxed text-steel-deep" data-stats-empty hidden>
+            {t('stats.chart.empty')}
+          </p>
+
+          {/* The chart as a table: every day's numbers without hovering or
+              tabbing through ninety bars. Closed by default so the sheet
+              stays short; the summary is a mono label, not a button. */}
+          <details class="stats-details mt-4">
+            <summary class="stats-summary type-annot text-steel-deep">{t('stats.table.daysToggle')}</summary>
+            <div class="mt-3 min-w-0 max-w-[32rem] overflow-x-auto">
+              <table class="stats-table w-full border-collapse text-left">
+                <caption class="sr-only">{t('stats.table.days')}</caption>
+                <thead>
+                  <tr class="border-y border-graphite">
+                    <th scope="col" class="type-annot py-2.5 pr-4 font-normal text-steel-deep">{t('stats.col.day')}</th>
+                    <th scope="col" class="type-annot py-2.5 pl-4 text-right font-normal text-steel-deep">{t('stats.col.views')}</th>
+                    <th scope="col" class="type-annot py-2.5 pl-4 text-right font-normal text-steel-deep">{t('stats.col.visitors')}</th>
+                  </tr>
+                </thead>
+                <tbody data-stats-rows="days" data-stats-cols="3"></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+        {/* Tables in the Positionsliste grammar (Problems.astro): mono heads,
+            hairline rows, numbers right-aligned and tabular. Each scrolls in
+            its own wrapper so a long path cannot widen the page at 360px. */}
+        <div class="grid grid-cols-1 gap-x-10 gap-y-10 border-t border-line px-5 py-6 md:grid-cols-2">
+          {
+            tables.map((table) => (
+              <div class="min-w-0 overflow-x-auto">
+                <table class="stats-table w-full border-collapse text-left">
+                  <caption class="type-annot pb-3 text-left text-steel-deep">{table.title}</caption>
+                  <thead>
+                    <tr class="border-y border-graphite">
+                      {table.cols.map((col, i) => (
+                        <th scope="col" class={`type-annot py-2.5 font-normal text-steel-deep ${i > 0 ? 'pl-4 text-right' : 'pr-4'}`}>
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody data-stats-rows={table.id} data-stats-cols={table.cols.length}></tbody>
+                </table>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      {/* What is counted and what is not. Sans, not mono: sentences are not
+          labels. Inside the board state because it points at the checkbox. */}
+      <p class="mt-10 max-w-[62ch] text-[0.95rem] leading-relaxed text-steel-deep">{t('stats.note')}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/stats';
+</script>

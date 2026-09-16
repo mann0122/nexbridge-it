@@ -245,6 +245,75 @@ export const ui = {
     'a11y.teaserPlayer': 'Vollständiger Film',
 
     /*
+     * Statistik (/statistik — D-063). An internal datasheet for the two
+     * founders: the self-hosted, cookieless visit counts. Not in the nav,
+     * noindex, behind a key. German is DRAFT for the copywriter-de gate.
+     * The numbers themselves never pass through here — scripts/stats.ts
+     * formats them with Intl from the API's JSON.
+     */
+    'stats.meta.title': 'Statistik – NexBridge-IT',
+    'stats.meta.description': 'Interne Besuchsstatistik von nexbridge-it.com.',
+    'stats.kicker': 'Statistik · intern',
+    'stats.title': 'Wer war da.',
+    'stats.intro':
+      'Besuche auf nexbridge-it.com: wie viele, welche Seiten, woher, womit – und was angeklickt wurde. Ohne Cookies. IP-Adressen speichern wir nicht.',
+    'stats.noJs': 'Diese Seite braucht JavaScript. Bitte aktivieren Sie es, um die Zahlen zu sehen.',
+    'stats.key.label': 'Schlüssel',
+    'stats.key.submit': 'Zahlen anzeigen',
+    'stats.key.checking': 'Wird geprüft …',
+    'stats.key.wrong': 'Dieser Schlüssel passt nicht. Bitte prüfen Sie die Eingabe.',
+    'stats.key.forget': 'Abmelden',
+    'stats.range.label': 'Zeitraum',
+    'stats.range.7': '7 Tage',
+    'stats.range.30': '30 Tage',
+    'stats.range.90': '90 Tage',
+    'stats.refresh': 'Aktualisieren',
+    'stats.exclude': 'Eigene Besuche in diesem Browser nicht zählen',
+    'stats.head.site': 'Website',
+    'stats.head.range': 'Zeitraum',
+    'stats.head.fetched': 'Stand',
+    'stats.kpi.views': 'Aufrufe',
+    'stats.kpi.visitors': 'Besucher',
+    /* The visitor hash rotates daily, so this is a sum of daily uniques —
+       the label has to say so, or the number reads as more than it is. */
+    'stats.kpi.visitorsNote': 'je Tag eindeutig, summiert',
+    'stats.kpi.events': 'Aktionen',
+    'stats.chart.title': 'Aufrufe je Tag',
+    'stats.chart.empty': 'Noch keine Aufrufe in diesem Zeitraum.',
+    'stats.table.pages': 'Seiten',
+    'stats.table.referrers': 'Herkunft',
+    'stats.table.countries': 'Länder',
+    'stats.table.devices': 'Geräte',
+    'stats.table.langs': 'Sprachen',
+    'stats.table.events': 'Aktionen',
+    'stats.table.days': 'Tage',
+    'stats.table.daysToggle': 'Als Tabelle',
+    'stats.col.path': 'Pfad',
+    'stats.col.views': 'Aufrufe',
+    'stats.col.visitors': 'Besucher',
+    'stats.col.ref': 'Quelle',
+    'stats.col.country': 'Land',
+    'stats.col.device': 'Gerät',
+    'stats.col.lang': 'Sprache',
+    'stats.col.event': 'Aktion',
+    'stats.col.count': 'Anzahl',
+    'stats.col.day': 'Tag',
+    'stats.direct': 'direkt',
+    'stats.device.mobile': 'Mobilgerät',
+    'stats.device.tablet': 'Tablet',
+    'stats.device.desktop': 'Desktop',
+    'stats.device.unknown': 'unbekannt',
+    'stats.error.network': 'Die Zahlen lassen sich gerade nicht laden. Bitte versuchen Sie es noch einmal.',
+    'stats.loading': 'Wird geladen …',
+    /* Mechanism, not a Datenschutz clause. "IP-Adressen speichern wir nicht"
+       is the honest form: the Worker hashes the IP under a daily salt and
+       keeps neither (worker/stats.js), so "ohne IP-Adressen" overstated it. */
+    'stats.note':
+      'Wir zählen Seitenaufrufe und Klicks auf einzelne Schaltflächen und Links. Cookies setzen wir nicht, IP-Adressen speichern wir nicht. Besucher unterscheiden wir über eine Kennung, die täglich wechselt – wer an zwei Tagen kommt, zählt zweimal. Mit dem Häkchen oben nehmen Sie Ihre eigenen Besuche in diesem Browser aus der Zählung.',
+    'a11y.statsChart': 'Balkendiagramm: Aufrufe je Tag im gewählten Zeitraum',
+    'a11y.statsKey': 'Schlüssel für die Statistik',
+
+    /*
      * Digital business cards (/karte/<slug> — the NB-VK register). All German
      * card copy is DRAFT for the copywriter-de gate; names, numbers and the
      * address come from site.ts via config/cards.ts, never from here.
@@ -501,6 +570,64 @@ export const ui = {
     'a11y.teaserDigit': 'Digit',
     'a11y.teaserPlayer': 'Full film',
 
+    /* Statistics page (D-063) — English twin. */
+    'stats.meta.title': 'Statistics — NexBridge-IT',
+    'stats.meta.description': 'Internal visit statistics for nexbridge-it.com.',
+    'stats.kicker': 'Statistics · internal',
+    'stats.title': 'Who was here.',
+    'stats.intro':
+      'Visits to nexbridge-it.com: how many, which pages, from where, on what — and what was clicked. No cookies. We do not store IP addresses.',
+    'stats.noJs': 'This page needs JavaScript. Please switch it on to see the numbers.',
+    'stats.key.label': 'Key',
+    'stats.key.submit': 'Show numbers',
+    'stats.key.checking': 'Checking …',
+    'stats.key.wrong': 'This key does not match. Please check what you typed.',
+    'stats.key.forget': 'Sign out',
+    'stats.range.label': 'Range',
+    'stats.range.7': '7 days',
+    'stats.range.30': '30 days',
+    'stats.range.90': '90 days',
+    'stats.refresh': 'Refresh',
+    'stats.exclude': 'Do not count my own visits in this browser',
+    'stats.head.site': 'Website',
+    'stats.head.range': 'Range',
+    'stats.head.fetched': 'As of',
+    'stats.kpi.views': 'Views',
+    'stats.kpi.visitors': 'Visitors',
+    'stats.kpi.visitorsNote': 'unique per day, summed',
+    'stats.kpi.events': 'Actions',
+    'stats.chart.title': 'Views per day',
+    'stats.chart.empty': 'No views in this range yet.',
+    'stats.table.pages': 'Pages',
+    'stats.table.referrers': 'Sources',
+    'stats.table.countries': 'Countries',
+    'stats.table.devices': 'Devices',
+    'stats.table.langs': 'Languages',
+    'stats.table.events': 'Actions',
+    'stats.table.days': 'Days',
+    'stats.table.daysToggle': 'As a table',
+    'stats.col.path': 'Path',
+    'stats.col.views': 'Views',
+    'stats.col.visitors': 'Visitors',
+    'stats.col.ref': 'Source',
+    'stats.col.country': 'Country',
+    'stats.col.device': 'Device',
+    'stats.col.lang': 'Language',
+    'stats.col.event': 'Action',
+    'stats.col.count': 'Count',
+    'stats.col.day': 'Day',
+    'stats.direct': 'direct',
+    'stats.device.mobile': 'Mobile device',
+    'stats.device.tablet': 'Tablet',
+    'stats.device.desktop': 'Desktop',
+    'stats.device.unknown': 'unknown',
+    'stats.error.network': 'The numbers will not load right now. Please try again.',
+    'stats.loading': 'Loading …',
+    'stats.note':
+      'We count page views and clicks on individual buttons and links. We set no cookies and store no IP addresses. Visitors are told apart by a token that changes daily — someone who comes on two days counts twice. Tick the box above to leave your own visits in this browser out of the count.',
+    'a11y.statsChart': 'Bar chart: views per day in the selected range',
+    'a11y.statsKey': 'Key for the statistics',
+
     'card.meta.description': 'Digital business card. Save the contact, call or write directly.',
     'card.1.role': 'Sales & Partnerships',
     'card.2.role': 'Engineering & Delivery',
@@ -557,15 +684,25 @@ export function useTranslations(lang: Lang) {
 }
 
 /**
- * Path of the same page in the other language. Mostly `/x` ↔ `/en/x`;
- * `/karte/*` ↔ `/en/card/*` is the one translated segment pair — both slugs
- * are fixed because printed QR codes point at them.
+ * Path of the same page in the other language. Mostly `/x` ↔ `/en/x`; two
+ * first segments are translated: `/karte/*` ↔ `/en/card/*` (both slugs fixed
+ * because printed QR codes point at them) and `/statistik` ↔ `/en/stats`
+ * (D-063). Only the first segment is mapped, and only as a whole word —
+ * `/stats` does not match `/statistik`.
  */
+const SEGMENT_DE_EN = { karte: 'card', statistik: 'stats' } as const;
+const SEGMENT_EN_DE = { card: 'karte', stats: 'statistik' } as const;
+
 export function altPath(lang: Lang, path: string): string {
   if (lang === 'de') {
     if (path === '/') return '/en/';
-    return `/en${path.replace(/^\/karte(?=\/|$)/, '/card')}`;
+    return `/en${path.replace(
+      /^\/(karte|statistik)(?=\/|$)/,
+      (_, seg: keyof typeof SEGMENT_DE_EN) => `/${SEGMENT_DE_EN[seg]}`,
+    )}`;
   }
-  const stripped = path.replace(/^\/en\/?/, '/').replace(/^\/card(?=\/|$)/, '/karte');
+  const stripped = path
+    .replace(/^\/en\/?/, '/')
+    .replace(/^\/(card|stats)(?=\/|$)/, (_, seg: keyof typeof SEGMENT_EN_DE) => `/${SEGMENT_EN_DE[seg]}`);
   return stripped === '' ? '/' : stripped;
 }

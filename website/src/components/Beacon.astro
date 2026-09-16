@@ -1,0 +1,17 @@
+---
+/**
+ * The stats beacon (D-063), as a component so it can be left out entirely.
+ *
+ * Astro hoists a <script> whenever the component that carries it renders, so
+ * the only way to ship no beacon when `statsEnabled` is off is to not render
+ * the component — Analytics.astro does exactly that. The meta is the runtime
+ * half of the same switch: scripts/beacon.ts registers nothing without it.
+ * Nothing else may import scripts/beacon.ts (see the note in that file).
+ */
+---
+
+<meta name="nb:stats" content="1" />
+
+<script>
+  import '../scripts/beacon';
+</script>

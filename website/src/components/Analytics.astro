@@ -1,11 +1,20 @@
 ---
 /**
- * Cookieless analytics. Nothing is injected unless a provider is configured
- * in src/config/site.ts, so the site keeps its "no third-party requests"
- * property by default — and no consent banner is required for either option,
- * because neither sets cookies or stores personal data.
+ * Cookieless analytics — three options, all off by default, so the site keeps
+ * its "no third-party requests" property until someone flips a value in
+ * src/config/site.ts. No consent banner is required for any of them: none
+ * sets a cookie or stores personal data.
+ *
+ * - `plausibleDomain`: Plausible's script, one third-party request per page.
+ * - `cfAnalyticsToken`: Cloudflare Web Analytics, the same shape.
+ * - `statsEnabled` (D-063): our own beacon, Beacon.astro — one meta tag and
+ *   src/scripts/beacon.ts, which reports to /api/hit on this origin. Rendered
+ *   only when the flag is on: a `false` flag means the built pages carry no
+ *   beacon script at all — zero requests, not merely zero third-party ones —
+ *   and the meta is what the module checks before it registers anything.
  */
 import { SITE } from '../config/site';
+import Beacon from './Beacon.astro';
 ---
 
 {
@@ -29,3 +38,5 @@ import { SITE } from '../config/site';
     />
   )
 }
+
+{SITE.statsEnabled && <Beacon />}

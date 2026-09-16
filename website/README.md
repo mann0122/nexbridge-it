@@ -14,6 +14,7 @@ npm install
 npm run dev       # localhost:4321
 npm run build     # -> dist/
 npm run preview   # serve the build
+npm run dev:worker  # the build + the Worker under wrangler on :8787 (stats routes, videos)
 ```
 
 Node >= 22.12. From the repo root, `npm run site` and `npm run site:build` do the same thing.
@@ -24,12 +25,16 @@ Node >= 22.12. From the repo root, `npm run site` and `npm run site:build` do th
 |---|---|
 | `/` | `src/pages/index.astro` |
 | `/en/` | `src/pages/en/index.astro` |
-| `/impressum` | `src/pages/impressum.astro` — skeleton, awaiting legal text |
-| `/datenschutz` | `src/pages/datenschutz.astro` — skeleton, awaiting legal text |
+| `/impressum`, `/en/impressum` | `src/pages/impressum.astro`, `en/impressum.astro` — text from the founder's documents via `src/i18n/legal.ts` (D-036); lawyer review still open |
+| `/datenschutz`, `/en/datenschutz` | `src/pages/datenschutz.astro`, `en/datenschutz.astro` — same source, same open review |
+| `/teaser`, `/en/teaser` | `src/pages/teaser.astro`, `en/teaser.astro` — gated films (D-056) |
+| `/karte/…`, `/en/card/…` | `src/pages/karte/`, `en/card/` — NFC business cards (D-049), noindex |
+| `/statistik`, `/en/stats` | `src/pages/statistik.astro`, `en/stats.astro` — founders' stats board (D-063), noindex, key-gated |
+| `/api/hit`, `/api/stats` | `worker/stats.js` — not pages: the beacon's POST and the board's feed |
 | 404 | `src/pages/404.astro` -> `dist/404.html`, wired via `wrangler.jsonc` |
 
 `/leistungen`, `/vorgehen`, `/ueber-uns` and `/kontakt` are **homepage anchors, not pages** — see
-`src/components/Header.astro:17`. The spec lists them as planned.
+`src/components/Header.astro:19`. The spec lists them as planned.
 
 ## Structure
 
@@ -39,15 +44,20 @@ src/
   styles/global.css   @theme design tokens. Single source. No hex in components.
   i18n/ui.ts          Every user-visible string, DE + EN. Single source.
   layouts/            Layout.astro — head, JSON-LD, OG, hreflang, skip link
-  components/         22 components + icons/; the EN page reuses all of them
-  pages/              The four routes above + 404
+  components/         29 components + icons/; the EN pages reuse all of them
+  pages/              The routes above + 404
   scripts/motion.ts   GSAP + Lenis motion layer
+  scripts/beacon.ts   The stats beacon (D-063) — inert unless site.ts enables it
+  scripts/stats.ts    The /statistik board: fetch, key gate, inline-SVG chart
 public/               favicon.svg + logo-mark.svg + apple-touch-icon.png (the D-050
                       mark), og.png, robots.txt, GSC verification file
+worker/               index.js (videos as 206, D-062) + stats.js (the two /api routes,
+                      D-063) + migrations/ (the D1 schema)
 ```
 
-`ui.ts` is typed so the English block cannot drift from the German one — a missing key is a
-compile error, not a silent fallback in production.
+`ui.ts` is typed so the English block cannot drift from the German one — a missing key is an
+error in `npm run check` (D-058), not a silent fallback in production. `npm run build` does not
+run that check yet.
 
 ## Things that will bite you
 
@@ -58,7 +68,9 @@ compile error, not a silent fallback in production.
   breaks verification.
 - Motion honours `prefers-reduced-motion`. `?snap` renders final states for static capture.
 - The site currently makes **zero third-party requests**. That is a GDPR position, not an
-  oversight — adding one is a decision to log, not an implementation detail.
+  oversight — adding one is a decision to log, not an implementation detail. The stats beacon
+  is first-party and off until `statsEnabled` in `site.ts` is `true` — which is coupled to the
+  Datenschutz text (D-063). Not a switch to flip for a test.
 
 ## Deploy
 

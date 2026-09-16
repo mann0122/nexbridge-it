@@ -23,7 +23,8 @@ Standards:
 - Accessibility: WCAG AA contrast, keyboard focus visible, prefers-reduced-motion respected,
   alt texts in German.
 - Performance budget: Lighthouse ≥95, self-hosted fonts (Fontsource), images optimized with
-  dimensions set, zero third-party requests except Plausible + form provider.
+  dimensions set, zero third-party requests except the form provider (the D-063 stats beacon is
+  same-origin and ships only when `statsEnabled` is on).
 - The flow-line signature animation: SVG stroke-dashoffset on scroll, subtle, once per section
   maximum. Motion earns its place or gets cut.
 - After any UI change: request design-critic review, then run build + preview before committing.

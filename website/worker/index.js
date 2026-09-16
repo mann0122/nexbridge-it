@@ -1,13 +1,14 @@
 /**
  * The site's only Worker code. Everything else on nexbridge-it.com is a static
  * asset served without a script (D-022); this runs only for the paths named in
- * `run_worker_first` in wrangler.jsonc — the teaser videos.
+ * `run_worker_first` in wrangler.jsonc — the teaser videos and, since D-063,
+ * the two stats routes under /api/ (worker/stats.js).
  *
- * Why it exists (D-062): the static-asset server answers a `Range` request with
- * the whole file as a 200. Chrome and Firefox tolerate that; Safari on iOS and
- * macOS does not — it probes a <video> source with `Range: bytes=0-1` and will
- * not play unless it gets a 206 back. So the films and the preview loops were
- * silent on every iPhone.
+ * Why the video part exists (D-062): the static-asset server answers a `Range`
+ * request with the whole file as a 200. Chrome and Firefox tolerate that;
+ * Safari on iOS and macOS does not — it probes a <video> source with
+ * `Range: bytes=0-1` and will not play unless it gets a 206 back. So the films
+ * and the preview loops were silent on every iPhone.
  *
  * How: the Cache API slices a cached 200 into a 206 on its own when the request
  * carries a Range header (documented behaviour, needs Content-Length). First
@@ -16,9 +17,23 @@
  * there. A wrong-code URL 404s exactly as before — the asset store's 404 is
  * returned untouched, so the gate's "the 404 is the validation" (D-056) holds.
  */
+import { handleHit, handleStats } from './stats.js';
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // The stats routes first: they are the only paths under /api/, and nothing
+    // under it is ever an asset — an unknown one is a JSON 404, not the site's
+    // 404 page.
+    if (url.pathname === '/api/hit') return handleHit(request, env, ctx);
+    if (url.pathname === '/api/stats') return handleStats(request, env);
+    if (url.pathname.startsWith('/api/')) {
+      return new Response(JSON.stringify({ error: 'not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+      });
+    }
+
     const isVideo = url.pathname.endsWith('.mp4');
     const method = request.method;
     if (!isVideo || (method !== 'GET' && method !== 'HEAD')) {

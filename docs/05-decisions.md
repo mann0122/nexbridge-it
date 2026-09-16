@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-09-15
+updated: 2026-09-16
 depends_on: []
 decisions: []
 ---
@@ -1385,6 +1385,68 @@ Worker" because it still is one. Declined: R2 (needs billing enabled on the acco
 step), HLS (a player library), and moving the films off-site (D-056's legal-page reason).
 Not verified on a real Safari — nobody here has one; the mechanism Safari documents as
 required is what was verified. Owner: partner-b.
+
+## D-063 | 2026-09-16 | Website stats are self-hosted: own beacon, Worker route, D1, key-gated dashboard — shipped dark | DECIDED
+The founder asked whether footfall and clicks on nexbridge-it.com can be measured and, offered
+Cloudflare Web Analytics (free, page views only), Plausible (the D-002/D-013 plan: EU-hosted,
+click events, a monthly fee) and a self-built dashboard, **chose the self-built one**. Reasons
+that hold: it keeps the site's zero-third-party-request property (the legal page's hosting-only
+story stays literally true), it counts named clicks (Cloudflare's free tool cannot), it costs
+nothing per month, and we sell dashboards — the first one we run is our own.
+
+**What exists.** A beacon, `website/src/scripts/beacon.ts`, sends one `POST /api/hit` per page
+view — initial load and every client-side navigation (D-039) — and one per named click:
+`cta:hero`, `cta:hero-secondary`, `cta:404`, `form:sent`, `form:mail`, `lang:<target>`,
+`vcard:<slug>`, `contact:tel`, `contact:mail`, `teaser:<id>` (the id, never the code) and
+`outbound:<host>`. Payload: event, optional value, path, referrer, page language, viewport
+width — nothing else. The Worker script from D-062 gains a second module,
+`website/worker/stats.js`, and `run_worker_first` gains `/api/*`; every other route is still a
+scriptless asset. `/api/hit` validates against a fixed grammar (a 400, never a guess), drops
+crawler user agents, answers 204 before the row is written and stores it in a **D1** database
+`nexbridge-stats` (`worker/migrations/0001_stats.sql`, applied with `npm run stats:migrate`).
+`/api/stats?days=7|30|90` returns aggregates only — totals, a zero-filled daily series, top
+pages, referrer hosts, countries, devices, languages, events — behind
+`Authorization: Bearer <STATS_KEY>` (a Worker secret, compared timing-safe). The dashboard is
+two pages, `/statistik` and `/en/stats` (`StatsBoard.astro`, `scripts/stats.ts`): `noindex`,
+out of the sitemap, in no nav — the key is entered once per tab and held in `sessionStorage`,
+exactly the teaser's mechanism (D-056). One bordered datasheet on paper: Zeichnungskopf, a KPI
+row, an inline-SVG bar chart of views per day (no library; the latest day is the sheet's one
+signal element), and Positionsliste tables. Every string is in `ui.ts` in both languages.
+
+**Privacy design, so nobody re-derives it.** No cookie, no id, no consent banner needed on our
+reading of Art. 6(1)(f) — but see below. The IP address and user agent are never stored: a
+visitor is the first 16 hex of SHA-256(salt | ip | ua) under a salt that is random per UTC day,
+created by the first beacon of the day and deleted by the next day's — so the same person
+tomorrow is a new hash and yesterday's hashes can be recomputed by nobody, us included.
+"Besucher" is therefore the **sum of daily uniques**, and the dashboard says so. The beacon is
+inert when `navigator.globalPrivacyControl` or `doNotTrack` is set, when `navigator.webdriver`
+is true (Lighthouse, headless runs), and when a founder has ticked "don't count my own visits
+in this browser" on the dashboard (`localStorage`, that browser only). The beacon itself writes
+nothing to storage.
+
+**Shipped dark.** `SITE.statsEnabled` in `site.ts` is `false`, and without it the built pages
+carry no beacon meta and make no `/api/` request. It may be flipped **only together with the
+Datenschutzerklärung**: §10 (`legal.ts`) currently says „Derzeit setzen wir keine Webanalyse-
+oder Reichweitenmessungsdienste ein", which becomes false the moment the beacon is live. Its
+second sentence already names the Art. 6(1)(f) basis for cookieless analytics; the replacement
+for the first, and whether the daily-salted hash needs its own sentence, is the founders'
+generator/lawyer's to write — CLAUDE.md rule 4, no one here drafts it. `TBD:` legal review,
+added to open item 1. The other three flip prerequisites are ops, not law: create the D1 store
+(`npx wrangler d1 create nexbridge-stats`, paste the id into `wrangler.jsonc`), run
+`npm run stats:migrate`, set `npx wrangler secret put STATS_KEY`, then deploy.
+
+**Costs and limits.** D1 Free: 5 million rows read and 100 000 written per day, 5 GB — years of
+this site's traffic. Every beacon is a metered Worker request on the same 100 000/day Free
+allowance D-062 opened; a WAF rate-limit rule on `/api/hit` is the answer if abuse ever shows,
+dashboard config rather than code. Retention is unlimited by design (the alternative, Workers
+Analytics Engine, keeps 90 days and can only be read through the REST API with a token, which
+is why it was declined). Also declined: Plausible (fee, third-party request), Cloudflare Web
+Analytics (no events, a third-party script), any consent banner (nothing here needs one, and a
+banner on a GDPR-first site is a contradiction). Verified locally under `wrangler dev` with a
+local D1: every route branch (204 / 400 / 405 / 413 / 401 / 404), path normalisation, same-
+origin referrer dropped, bot UA dropped, salt row created, rows carry no IP or UA. D-002 is now
+superseded on a **third** point (analytics: Plausible → own); D-013's "Plausible still NOT
+installed" is history. Owner: partner-b for the code; founders for the §10 sentence and the flip.
 
 ## Template
 ```

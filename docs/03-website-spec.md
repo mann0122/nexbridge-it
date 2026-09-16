@@ -4,9 +4,9 @@ title: Website spec
 type: spec
 status: active
 owner: partner-b
-updated: 2026-09-15
+updated: 2026-09-16
 depends_on: [offer, brand]
-decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-056, D-057, D-062]
+decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-056, D-057, D-062, D-063]
 ---
 
 # 03 — Website Spec (nexbridge-it.com)
@@ -15,11 +15,15 @@ decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-056, D-057, D-062
 One job: convert a Mittelstand decision-maker (sent by Partner A or via search) into an
 Erstgespräch booking. Everything serves that.
 
-## Tech (D-002, superseded on two points by D-022 and D-023)
+## Tech (D-002, superseded on three points by D-022, D-023 and D-063)
 **Astro 7 + Tailwind 4 + MDX** — D-002 said Astro 5; `website/package.json` is authoritative.
 Deployed as a **Cloudflare static-asset Worker** (`website/wrangler.jsonc`, D-022), not Pages;
-custom domains are attached in the dashboard, not via `routes`. Plausible (cookieless, EU) is specced but **not yet installed** — `plausibleDomain` in
-`src/config/site.ts` is still empty, and D-013 flags this as a do-before-driving-traffic item.
+custom domains are attached in the dashboard, not via `routes`. Analytics are **first-party**
+(D-063, supersedes the Plausible plan): a cookieless beacon posts to `/api/hit` on the site's own
+Worker, rows live in D1, and `/statistik` reads the aggregates behind a key. **Built, shipped
+dark** — `statsEnabled` in `src/config/site.ts` is `false` until the Datenschutz §10 sentence is
+replaced (open item 1) and the D1 store + `STATS_KEY` secret exist in the account. The
+`plausibleDomain` / `cfAnalyticsToken` slots remain as the two off-the-shelf fallbacks.
 Contact form via GDPR-compatible provider with explicit consent checkbox + double opt-in for
 anything recurring.
 Language: bilingual from v1 (D-010) — DE default at `/`, EN at `/en/`, language switcher in
@@ -36,6 +40,9 @@ in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
 - `/teaser` (+ `/en/teaser`) — two advertisement films behind a 4-digit courtesy gate,
   nav-linked. **Built and deployed** (2026-09-15), unlike the four entries above it, which are
   still homepage anchors. The videos are the one path served by a Worker script (D-062). Films are self-hosted so the zero-third-party-request property holds (D-056).
+- `/statistik` (+ `/en/stats`) — the founders' stats dashboard (D-063): `noindex`, excluded
+  from `sitemap-index.xml` (`astro.config.mjs` filter), in no nav, key-gated. Internal, not a
+  visitor route. Built, shipped dark — see Tech above; merge and go-live status live in STATE.
 - Later: `/cases/<slug>` (MDX per reference case)
 
 ## Homepage sections (order)
@@ -58,7 +65,7 @@ Lighthouse ≥95 (a11y/SEO/desktop perf) and ≥94 mobile perf (re-based by D-04
 ≥95 across the board until 2026-09-15), WCAG AA contrast, works at 360px, semantic HTML with `lang="de"`,
 meta title+description per page, OG image, sitemap.xml + robots.txt, all images with dimensions +
 lazy loading, prefers-reduced-motion respected, no console errors, no third-party requests except
-Plausible + form provider.
+the form provider — the stats beacon is same-origin (D-063).
 
 ## Legal notes
 Impressum + Datenschutzerklärung content: generate skeleton, fill via reputable generator, human

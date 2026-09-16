@@ -28,8 +28,9 @@ marked PENDING in the decision log, ask the human before building on top of it �
 3. Any change to UI files triggers a `design-critic` review before commit.
 4. Impressum and Datenschutzerklärung are legally required pages. Generate structure only; final
    text comes from a generator + human/lawyer review. Say so in comments.
-5. GDPR-first is our positioning: no tracking cookies, no US-hosted analytics defaults, Plausible
-   only, forms need an explicit consent checkbox.
+5. GDPR-first is our positioning: no tracking cookies, no US-hosted analytics defaults, only the
+   first-party stats of D-063 (cookieless, no IP at rest) or nothing, forms need an explicit
+   consent checkbox.
 6. When new lasting decisions are made in a session, append them to `docs/05-decisions.md` in the
    same commit. The log is append-only — supersede, never rewrite history.
 7. Touching anything in `docs/` means running `npm run kb` before commit. It rebuilds the graph
@@ -67,9 +68,10 @@ have to re-derive, and you can ask the founder a question.
 
 Full protocol and anti-patterns: `docs/06-agent-system.md`.
 
-## Stack (see D-002, superseded on two points by D-022 and D-023)
+## Stack (see D-002, superseded on three points by D-022, D-023 and D-063)
 Astro 7 + Tailwind 4 + MDX in `website/`, deployed as a Cloudflare static-asset Worker (D-022),
-Plausible analytics (specced, not yet installed), contact form via a GDPR-compatible provider.
+first-party stats — own beacon, Worker route, D1, `/statistik` (D-063; built, dark until the
+legal text is updated), contact form via a GDPR-compatible provider.
 Node LTS. TypeScript strict where applicable. `website/package.json` is authoritative for
 versions — D-002's "Astro 5, Cloudflare Pages" is history, not state.
 

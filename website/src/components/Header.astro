@@ -71,6 +71,7 @@ const links = [
           <a
             href={switchHref}
             data-icon-hover
+            data-track={lang === 'de' ? 'lang:en' : 'lang:de'}
             class="type-annot ml-2 inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 whitespace-nowrap text-steel transition-colors hover:border-steel hover:text-paper"
             aria-label={t('a11y.langSwitch')}
           >
@@ -90,6 +91,7 @@ const links = [
           <a
             href={switchHref}
             data-icon-hover
+            data-track={lang === 'de' ? 'lang:en' : 'lang:de'}
             class="type-annot inline-flex items-center gap-2 border border-steel-soft px-2.5 py-1.5 text-steel transition-colors hover:border-steel hover:text-paper"
             aria-label={t('a11y.langSwitch')}
           >

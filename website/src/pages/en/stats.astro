@@ -1,0 +1,22 @@
+---
+/*
+ * English twin of /statistik — same composition, dictionary-driven
+ * (src/i18n/ui.ts). altPath() maps /statistik ↔ /en/stats as a translated
+ * segment pair, so the header's language switch needs nothing special here.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import StatsBoard from '../../components/StatsBoard.astro';
+import { useTranslations } from '../../i18n/ui';
+
+const t = useTranslations('en');
+---
+
+<Layout lang="en" path="/en/stats" title={t('stats.meta.title')} description={t('stats.meta.description')} noindex hasAlternate={false}>
+  <Header lang="en" path="/en/stats" />
+  <main id="main">
+    <StatsBoard lang="en" />
+  </main>
+  <Footer lang="en" />
+</Layout>

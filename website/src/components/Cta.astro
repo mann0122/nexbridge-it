@@ -14,8 +14,10 @@ interface Props {
   magnetic?: string;
   size?: 'base' | 'lg';
   class?: string;
+  /** Stats event for the beacon (D-063), `"event"` or `"event:value"` — see scripts/beacon.ts. */
+  track?: string;
 }
-const { href, type, magnetic = '0.3', size = 'base', class: className } = Astro.props;
+const { href, type, magnetic = '0.3', size = 'base', class: className, track } = Astro.props;
 const Tag = href ? 'a' : 'button';
 ---
 
@@ -24,6 +26,7 @@ const Tag = href ? 'a' : 'button';
   type={href ? undefined : (type ?? 'button')}
   data-magnetic={magnetic}
   data-icon-hover
+  data-track={track}
   class:list={[
     'inline-flex items-center gap-3 bg-signal font-semibold text-graphite',
     size === 'lg' ? 'px-7 py-4' : 'px-6 py-3.5',

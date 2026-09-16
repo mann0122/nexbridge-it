@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-09-15 · 16 nodes · 62 decisions
+Content as of 2026-09-16 · 16 nodes · 63 decisions
 
 ## Map
 
@@ -89,15 +89,15 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `vision` | Vision & operating model | knowledge | active | founders | 2026-07-27 | [docs/00-vision.md](00-vision.md) | `offer`, `brand`, `agent-system`, `state`, `product` |
 | `offer` | Offer & packages | knowledge | active | founders | 2026-07-31 | [docs/01-offer.md](01-offer.md) | `website-spec`, `delivery`, `state`, `product` |
 | `brand` | Brand | knowledge | active | partner-b | 2026-08-23 | [docs/02-brand.md](02-brand.md) | `website-spec`, `brand-kit`, `state`, `design`, `product` |
-| `website-spec` | Website spec | spec | active | partner-b | 2026-09-15 | [docs/03-website-spec.md](03-website-spec.md) | `brand-kit`, `state` |
+| `website-spec` | Website spec | spec | active | partner-b | 2026-09-16 | [docs/03-website-spec.md](03-website-spec.md) | `brand-kit`, `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-09-15 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-09-16 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `brand-kit` | Brand kit (portable, single file) | knowledge | active | partner-b | 2026-08-23 | [docs/07-brand-kit.md](07-brand-kit.md) | — |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
-| `state` | Where things stand | state | active | partner-b | 2026-09-15 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
+| `state` | Where things stand | state | active | partner-b | 2026-09-16 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
@@ -117,12 +117,12 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-005 | 2026-07-26 | Legal vehicle | PENDING | — |
 | ~~D-006~~ | 2026-07-26 | Domain: klarfluss.eu | SUPERSEDED by D-016 | — |
 | ~~D-007~~ | 2026-07-26 | v1 package prices | SUPERSEDED by D-018 | — |
-| D-008 | 2026-07-26 | Legal/admin items: covered by founders | DECIDED | `vision` |
+| D-008 | 2026-07-26 | Legal/admin items: covered by founders | DECIDED | `vision`, `state` |
 | D-009 | 2026-07-26 | Skill arsenal: maximal | DECIDED | `research-skills` |
 | D-010 | 2026-07-26 | Bilingual DE/EN from v1; name provisional until demo review | DECIDED | `website-spec` |
 | D-011 | 2026-07-26 | Premium motion layer on the landing page | DECIDED | — |
 | D-012 | 2026-07-26 | No FAQ — objections answered inside a narrative | DECIDED | — |
-| D-013 | 2026-07-26 | Contact: real form, mailto only as fallback | DECIDED | `website-spec` |
+| D-013 | 2026-07-26 | Contact: real form, mailto only as fallback | DECIDED | `website-spec`, `state` |
 | ~~D-014~~ | 2026-07-26 | Name: NextBridge | SUPERSEDED by D-016 (one day later) | — |
 | D-015 | 2026-07-26 | Published preview on Cloudflare Pages | DECIDED | — |
 | D-016 | 2026-07-27 | Name: NexBridge-IT · Domain: nexbridge-it.de | DECIDED | `brand`, `brand-kit`, `research-domains`, `state` |
@@ -133,7 +133,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-021 | 2026-08-01 | Orchestration: tiered loop, gates, 3-iteration cap | DECIDED | `agent-system` |
 | D-022 | 2026-08-01 | Deploy target is a Cloudflare static-asset Worker, not Pages | DECIDED | `website-spec`, `state` |
 | D-023 | 2026-08-01 | Astro 7, not Astro 5 | DECIDED | `website-spec`, `state` |
-| D-024 | 2026-08-01 | 404 page: German-only, noindex, reports the requested path | DECIDED | — |
+| D-024 | 2026-08-01 | 404 page: German-only, noindex, reports the requested path | DECIDED | `state` |
 | D-025 | 2026-08-01 | nexbridge-it.com is registered to us | DECIDED | `brand`, `research-domains`, `state` |
 | ~~D-026~~ | 2026-08-02 | Particle field adopted for the Vorgehen section only | SUPERSEDED by D-027 | — |
 | D-027 | 2026-08-02 | Particle field reverted from the homepage; needs its own layout | DECIDED | — |
@@ -156,7 +156,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | `state` |
 | D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | `state` |
 | D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED | `brand`, `state` |
-| D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
+| D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit`, `state` |
 | D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
 | D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
 | D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED | `brand`, `brand-kit`, `state` |
@@ -172,6 +172,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED | `state` |
 | D-061 | 2026-09-15 | Teaser scrim 0.62 → 0.74, tuned against the real posters | DECIDED | `state` |
 | D-062 | 2026-09-15 | The teaser videos are served by a Worker script as 206 — Safari needs Range | DECIDED | `website-spec`, `state` |
+| D-063 | 2026-09-16 | Website stats are self-hosted: own beacon, Worker route, D1, key-gated dashboard — shipped dark | DECIDED | `website-spec`, `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

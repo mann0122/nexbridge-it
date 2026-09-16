@@ -14,7 +14,16 @@
   "main": "./worker/index.js",
   // Workers Logs for the script's own console output — the only way to see a
   // failed stats write, since the beacon gets its 204 before the row lands.
-  "observability": { "enabled": true },
+  // Invocation logs OFF (D-064): they would record every /api/hit request
+  // with its headers in our account, which is exactly the server log the
+  // Datenschutzerklärung says we do not keep. Only our own console lines
+  // land, and those carry no IP or agent string.
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+  // Housekeeping for the stats (D-064): every day at 00:07 UTC the Worker's
+  // scheduled handler deletes the previous days' salts — so the deletion the
+  // Datenschutz text promises does not wait for the next visitor — and rows
+  // older than the retention period (worker/stats.js).
+  "triggers": { "crons": ["7 0 * * *"] },
   // The stats store (D-063): created 2026-09-16 in region WEUR (Western
   // Europe — a location is fixed at creation, so it was chosen, not left to
   // wrangler's default of wherever the founder happened to be). Schema via

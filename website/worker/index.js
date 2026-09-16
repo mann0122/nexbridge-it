@@ -17,9 +17,14 @@
  * there. A wrong-code URL 404s exactly as before — the asset store's 404 is
  * returned untouched, so the gate's "the 404 is the validation" (D-056) holds.
  */
-import { handleHit, handleStats } from './stats.js';
+import { handleHit, handleStats, housekeeping } from './stats.js';
 
 export default {
+  /** Cron (wrangler.jsonc `triggers`): the daily salt and retention sweep. */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(housekeeping(env.DB));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     // The stats routes first: they are the only paths under /api/, and nothing

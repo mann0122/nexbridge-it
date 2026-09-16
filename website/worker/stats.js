@@ -12,9 +12,14 @@
  *
  * What is NOT here, deliberately: no cookie, no id, no IP or user agent at
  * rest. A visitor is SHA-256(salt | ip | ua) cut to 16 hex, under a salt that
- * is random per UTC day and deleted the day after. That counts "how many
- * different people today" and can identify nobody — the same person tomorrow
- * is a new hash, and yesterday's salt no longer exists to recompute anything.
+ * is random per UTC day and deleted afterwards (lazily by the first hit of
+ * the next day, and reliably by the daily cron — `housekeeping`). The token
+ * links one visitor's hits within a day, which is how "visitors" is counted,
+ * and the same person tomorrow is a new token. Be exact about the limit:
+ * once the salt row is gone it cannot be recomputed from the database, but
+ * D1's Time Travel keeps point-in-time backups of the store for a bounded
+ * window, so "deleted" means deleted from the live database, not from every
+ * backup — the Datenschutz text (D-064) is worded to that, not beyond it.
  *
  * The schema is worker/migrations/0001_stats.sql; the payload and JSON shape
  * are the contract with the two scripts named above. Change them together.
@@ -158,7 +163,8 @@ async function store(db, hit, ip, ua) {
 /**
  * Today's salt, created by whoever asks first. One batch = one transaction:
  * concurrent first beacons of a day all insert-or-ignore, then all read the
- * single winner. The delete is what makes past days unrecoverable.
+ * single winner. The delete removes past days from the live database (the
+ * cron in wrangler.jsonc does the same without waiting for a visitor).
  */
 async function dailySalt(db, day) {
   const fresh = randomHex(16);
@@ -266,6 +272,36 @@ async function bearerMatches(request, key) {
   if (!given) return false;
   const [a, b] = await Promise.all([sha256(given), sha256(key)]);
   return crypto.subtle.timingSafeEqual(a, b);
+}
+
+/* -------------------------------------------------------------------- */
+/* Scheduled housekeeping                                                */
+/* -------------------------------------------------------------------- */
+
+/** Rows older than this are dropped. Two years of daily counts is more
+    history than any decision here needs; the Datenschutz text names it. */
+const RETENTION_DAYS = 730;
+
+/**
+ * Runs from the cron in wrangler.jsonc once a day. The salt sweep is the
+ * same statement `dailySalt` runs on the first hit of a day — here it does
+ * not depend on a visitor turning up. The retention sweep is by row time.
+ */
+export async function housekeeping(db) {
+  const now = Date.now();
+  const today = new Date(now).toISOString().slice(0, 10);
+  const cutoff = Math.floor(now / 1000) - RETENTION_DAYS * 86_400;
+  const [salts, hits] = await db.batch([
+    db.prepare('DELETE FROM salts WHERE day < ?1').bind(today),
+    db.prepare('DELETE FROM hits WHERE ts < ?1').bind(cutoff),
+  ]);
+  console.log(
+    JSON.stringify({
+      route: 'housekeeping',
+      salts: salts.meta?.changes ?? 0,
+      hits: hits.meta?.changes ?? 0,
+    }),
+  );
 }
 
 /* -------------------------------------------------------------------- */

@@ -69,8 +69,8 @@ run that check yet.
 - Motion honours `prefers-reduced-motion`. `?snap` renders final states for static capture.
 - The site currently makes **zero third-party requests**. That is a GDPR position, not an
   oversight — adding one is a decision to log, not an implementation detail. The stats beacon
-  is first-party and off until `statsEnabled` in `site.ts` is `true` — which is coupled to the
-  Datenschutz text (D-063). Not a switch to flip for a test.
+  is first-party and live; `statsEnabled` in `site.ts` is coupled to the Datenschutz §10 text
+  (D-063/D-064) — not a switch to flip for a test.
 
 ## Deploy
 

@@ -11,13 +11,21 @@
  *  1. Notes addressed to whoever completes the document ("Bitte ergänzen Sie
  *     hier…", "[Hosting-Anbieter]", "[Speicherdauer …]") are replaced with
  *     VERIFIABLE FACTS about this site's own stack — the host is Cloudflare
- *     (D-022), no cookies are set, no analytics is installed (`site.ts`
- *     `plausibleDomain` and `cfAnalyticsToken` are both empty), fonts are
- *     self-hosted via Fontsource, and the contact form has no endpoint so it
- *     hands the message to the visitor's own mail client. Those sentences are
- *     instructions to an author, not text for a reader; shipping them would
- *     have been worse than wrong.
- *  2. "Stand: 09/2026" was future-dated and is corrected to 08/2026.
+ *     (D-022), no cookies are set, fonts are self-hosted via Fontsource, and
+ *     the contact form has no endpoint so it hands the message to the
+ *     visitor's own mail client. Those sentences are instructions to an
+ *     author, not text for a reader; shipping them would have been worse
+ *     than wrong.
+ *  2. "Stand: 09/2026" was future-dated and is corrected to 08/2026 — and
+ *     bumped back to 09/2026 by D-064 when §10 changed.
+ *
+ * ONE LATER EXCEPTION — §10 (D-064, 2026-09-16): the generator's "no analytics"
+ * sentences became false when the first-party stats (D-063) were switched
+ * on. On the founder's explicit direction the replacement was written HERE,
+ * as a plain description of what the code does, keeping the generator's own
+ * legal-basis sentences. It is not lawyer-reviewed — `TBD:` legal review,
+ * STATE open item 1 — and the §8 "similar technologies" question (the
+ * teaser's and the dashboard's browser storage) is still the lawyer's too.
  *
  * Still open for the lawyer, deliberately NOT resolved here — see D-036:
  *  · §4 log retention is our host's policy, not ours, so no number is claimed.
@@ -157,8 +165,15 @@ export const legal = {
         {
           heading: '10. Webanalyse und Reichweitenmessung',
           body: [
-            'Derzeit setzen wir keine Webanalyse- oder Reichweitenmessungsdienste ein. Es findet keine Auswertung Ihres Nutzungsverhaltens statt.',
-            'Sofern wir künftig Analyse-Tools einsetzen, erfolgt der Einsatz einwilligungspflichtiger Tools nur nach Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG. Sofern eine datenschutzfreundliche Analyse ohne Cookies und ohne Einwilligungspflicht eingesetzt wird, erfolgt die Verarbeitung auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.',
+            /* D-064: founder-directed, in-house wording (2026-09-16), NOT lawyer-
+               reviewed — `TBD:` legal review, STATE open item 1. Every claim below
+               is a verifiable fact of src/scripts/beacon.ts and worker/stats.js;
+               the two legal-basis sentences that follow are the generator's own
+               (D-036), unchanged. Change the code, change this text. */
+            'Wir messen die Nutzung dieser Website mit einem eigenen Verfahren, das ohne Cookies und ohne Dienste Dritter auf unserem Hosting-System bei Cloudflare läuft (siehe Abschnitt 5). Je Seitenaufruf werden der Zeitpunkt, die aufgerufene Seite, die verweisende Website (nur deren Domain), die Sprache der Seite, die Geräteklasse (Mobilgerät, Tablet oder Desktop, abgeleitet aus der Fensterbreite) und das aus der IP-Adresse abgeleitete Land erfasst; außerdem bestimmte Aktionen, nämlich Klicks auf einzelne Schaltflächen und Links (etwa Kontakt, Sprachwechsel oder externe Links), das Absenden des Kontaktformulars und das Öffnen eines Teaser-Films.',
+            'Ihre IP-Adresse und die Kennung Ihres Browsers werden dabei nicht gespeichert. Aus beiden wird zusammen mit einem täglich neu erzeugten Zufallswert ein Kurzwert gebildet, unter dem die Aufrufe desselben Browsers an diesem Tag zusammengefasst werden; so zählen wir Besucher je Tag. Der Zufallswert des Vortages wird täglich aus der Datenbank gelöscht, danach ist der Kurzwert für uns kein Merkmal einer bestimmten Person mehr; über mehrere Tage hinweg werden Besucher nicht wiedererkannt. Wir führen die Messdaten nicht mit anderen Daten zusammen und geben sie nicht an Dritte weiter; die Auswertung ist nur uns zugänglich. Die Messdaten werden nach 24 Monaten gelöscht.',
+            'Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse liegt in der statistischen Auswertung der Nutzung und der Verbesserung unseres Angebots. Sie können der Messung jederzeit widersprechen: mit der Schaltfläche am Ende dieses Abschnitts, die die Messung für den gerade verwendeten Browser abschaltet, oder – soweit Ihr Browser sie anbietet – über die Einstellung „Do Not Track“ oder „Global Privacy Control“, die wir ebenfalls beachten.',
+            'Sofern wir künftig weitere Analyse-Tools einsetzen, erfolgt der Einsatz einwilligungspflichtiger Tools nur nach Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG. Sofern eine datenschutzfreundliche Analyse ohne Cookies und ohne Einwilligungspflicht eingesetzt wird, erfolgt die Verarbeitung auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.',
           ],
         },
         {
@@ -331,8 +346,11 @@ export const legal = {
         {
           heading: '10. Web analytics and reach measurement',
           body: [
-            'We currently use no web analytics or reach measurement services. Your usage behaviour is not evaluated.',
-            'Should we use analytics tools in future, tools requiring consent will be used only after your consent pursuant to Art. 6(1)(a) GDPR and § 25(1) TDDDG. Where privacy-friendly analytics without cookies and without a consent requirement is used, processing is based on Art. 6(1)(f) GDPR.',
+            /* Convenience translation of the D-064 wording; the German version prevails. */
+            'We measure the use of this website with our own method, which runs without cookies and without third-party services on our hosting system at Cloudflare (see section 5). For each page view we record the time, the page requested, the referring website (its domain only), the language of the page, the device class (mobile, tablet or desktop, derived from the window width) and the country derived from the IP address; in addition, certain actions, namely clicks on individual buttons and links (such as contact, the language switch or external links), the sending of the contact form and the opening of a teaser film.',
+            'Your IP address and your browser identifier are not stored. From the two, together with a random value generated afresh every day, a short token is formed under which the views of the same browser on that day are grouped; that is how we count visitors per day. The previous day’s random value is deleted from the database every day, after which the token is no longer a characteristic of a particular person for us; visitors are not recognised across several days. We do not combine the measurement data with other data and do not pass it on to third parties; the evaluation is accessible to us only. The measurement data is deleted after 24 months.',
+            'Processing is based on Art. 6(1)(f) GDPR; our legitimate interest lies in the statistical evaluation of usage and the improvement of our offering. You may object to the measurement at any time: with the button at the end of this section, which switches the measurement off for the browser you are using, or — where your browser offers it — via the “Do Not Track” or “Global Privacy Control” setting, which we honour as well.',
+            'Should we use further analytics tools in future, tools requiring consent will be used only after your consent pursuant to Art. 6(1)(a) GDPR and § 25(1) TDDDG. Where privacy-friendly analytics without cookies and without a consent requirement is used, processing is based on Art. 6(1)(f) GDPR.',
           ],
         },
         {

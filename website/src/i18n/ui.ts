@@ -311,6 +311,14 @@ export const ui = {
     'stats.note':
       'Wir zählen Seitenaufrufe und Klicks auf einzelne Schaltflächen und Links. Cookies setzen wir nicht, IP-Adressen speichern wir nicht. Besucher unterscheiden wir über eine Kennung, die täglich wechselt – wer an zwei Tagen kommt, zählt zweimal. Mit dem Häkchen oben nehmen Sie Ihre eigenen Besuche in diesem Browser aus der Zählung.',
     'a11y.statsChart': 'Balkendiagramm: Aufrufe je Tag im gewählten Zeitraum',
+    /* The opt-out control under Datenschutz §10 (D-064). Not legal text: a
+       button label and three status lines about this browser. */
+    'legal.optOut.disable': 'Messung in diesem Browser abschalten',
+    'legal.optOut.enable': 'Messung in diesem Browser wieder einschalten',
+    'legal.optOut.stateOn': 'Die Messung ist in diesem Browser aktiv.',
+    'legal.optOut.stateOff': 'Die Messung ist in diesem Browser abgeschaltet.',
+    'legal.optOut.stateBrowser':
+      'Die Messung ist in diesem Browser bereits durch Ihre Browser-Einstellung abgeschaltet.',
     'a11y.statsKey': 'Schlüssel für die Statistik',
 
     /*
@@ -626,6 +634,12 @@ export const ui = {
     'stats.note':
       'We count page views and clicks on individual buttons and links. We set no cookies and store no IP addresses. Visitors are told apart by a token that changes daily — someone who comes on two days counts twice. Tick the box above to leave your own visits in this browser out of the count.',
     'a11y.statsChart': 'Bar chart: views per day in the selected range',
+    'legal.optOut.disable': 'Switch off measurement in this browser',
+    'legal.optOut.enable': 'Switch measurement in this browser back on',
+    'legal.optOut.stateOn': 'Measurement is active in this browser.',
+    'legal.optOut.stateOff': 'Measurement is switched off in this browser.',
+    'legal.optOut.stateBrowser':
+      'Measurement is already switched off in this browser by your browser setting.',
     'a11y.statsKey': 'Key for the statistics',
 
     'card.meta.description': 'Digital business card. Save the contact, call or write directly.',

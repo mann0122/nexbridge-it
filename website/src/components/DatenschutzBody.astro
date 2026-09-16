@@ -9,7 +9,7 @@
  * away from the Impressum.
  */
 import { SITE } from '../config/site';
-import { type Lang } from '../i18n/ui';
+import { type Lang, useTranslations } from '../i18n/ui';
 import { useLegal } from '../i18n/legal';
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
 const { lang } = Astro.props;
 const doc = useLegal(lang);
 const t = doc.datenschutz;
+const ui = useTranslations(lang);
 ---
 
 <main id="main" class="surface-paper">
@@ -63,6 +64,30 @@ const t = doc.datenschutz;
             {s.body.map((p) => (
               <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-deep">{p}</p>
             ))}
+            {/* The objection §10 offers, for every browser (D-064): Safari has
+                neither Do Not Track nor Global Privacy Control, so the text's
+                browser-setting route alone would exclude iPhone visitors. One
+                per-browser switch (localStorage, read by scripts/beacon.ts),
+                rendered only while the stats are on — the beacon that drives it
+                ships under the same flag. Not legal text: a control. */}
+            {s.heading.startsWith('10.') && SITE.statsEnabled && (
+              <div class="mt-5">
+                <button
+                  type="button"
+                  class="type-annot inline-flex border border-steel-deep px-4 py-2 text-graphite transition-colors hover:bg-graphite hover:text-paper motion-reduce:transition-none"
+                  data-stats-optout
+                  data-label-disable={ui('legal.optOut.disable')}
+                  data-label-enable={ui('legal.optOut.enable')}
+                  data-state-on={ui('legal.optOut.stateOn')}
+                  data-state-off={ui('legal.optOut.stateOff')}
+                  data-state-browser={ui('legal.optOut.stateBrowser')}
+                  aria-pressed="false"
+                >
+                  {ui('legal.optOut.disable')}
+                </button>
+                <p class="mt-3 text-[0.9375rem] leading-relaxed text-steel-deep" data-stats-optout-state role="status" aria-live="polite"></p>
+              </div>
+            )}
           </section>
         ))
       }

@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-16
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065]
+decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065, D-066]
 cites_history: [D-007]
 ---
 
@@ -75,11 +75,13 @@ which appear nowhere until a correct code derives them, not about `/teaser` itse
 **Website stats are live** (D-063, switched on by D-064 on 2026-09-16). A cookieless
 first-party beacon (`src/scripts/beacon.ts`) reports page views and named clicks to
 `/api/hit` — page views, named clicks and, since D-065, whether a page was scrolled to its end;
-rows live in the D1 store `nexbridge-stats` (region WEUR). `/statistik` leads with the
-**Durchlauf-Messbank** (D-065): the funnel visitors → interaction → reached the end → enquiries
-as a horizontal measuring bench, live (60-s poll), then visits, visitors (sum of daily uniques —
-the hash rotates daily), pages, referrers, countries, devices, languages and events, behind the
-`STATS_KEY` the founders hold. `statsEnabled` in
+rows live in the D1 store `nexbridge-stats` (region WEUR). `/statistik` leads with **Strom**
+(D-066, which superseded the D-065 bench the founder rejected as "industrial"): the funnel
+visitors → clicked → reached the end → enquiries as a river of light in which every particle is
+a counted visitor, live (60-s poll), then the daily water level, ranked ledgers of pages,
+referrers, countries, devices, languages and events, and one sentence of totals — behind the
+`STATS_KEY` the founders hold. The page is exempt from the drawing-office register (D-066);
+tokens, fonts, contrast and reduced-motion still bind. `statsEnabled` in
 `site.ts` is `true` and is **coupled to Datenschutz §10** — the one cannot change without the
 other. A daily cron on the Worker deletes past salts and rows older than 24 months; the
 Datenschutz page carries a per-browser opt-out control under §10. The two off-the-shelf slots

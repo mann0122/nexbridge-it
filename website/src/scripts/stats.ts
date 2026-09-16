@@ -1,35 +1,41 @@
 /**
- * Statistics board (D-063, redesigned D-065).
+ * Statistics board (D-063), rebuilt as STROM (D-066).
  *
  * Fetches `GET /api/stats?days=<7|30|90>` with `Authorization: Bearer <key>`
- * and renders the founders' datasheet: the Durchlauf-Messbank, the KPI row,
- * one bar chart and seven Positionsliste tables. The Worker answers
- * aggregates only — there is nothing in the JSON that identifies a visitor,
- * and nothing here that could.
+ * and renders the founders' dashboard: the river (scripts/strom.ts) with its
+ * counts, shares and rates as DOM text, the totals sentence, the datum line,
+ * Der Pegel (the daily series as a water level) and the six Zuläufe ledgers.
+ * The Worker answers aggregates only — there is nothing in the JSON that
+ * identifies a visitor, and nothing here that could.
  *
  * Every string that arrives is untrusted and reaches the DOM through
- * textContent alone. `render(data)` is a pure function of the parsed JSON,
- * so the board can be checked against a fixture without a Worker
- * (`?fixture` exposes `window.nbStatsRender(json)` for exactly that).
+ * textContent alone (a path's title attribute is the one attribute, set as
+ * a property). `render(data)` is a pure function of the parsed JSON, so the
+ * board can be checked against a fixture without a Worker: in DEV,
+ * `?fixture` exposes `window.nbStatsRender(json)`, and `?fixture=seed` /
+ * `?fixture=empty` render a built-in one straight away.
  *
- * The Messbank (D-065) is built like the chart: inline SVG at the
- * container's measured width, one unit per CSS pixel. The builder always
- * writes the FINAL drawing; the motion driver, when motion is on, sets the
- * initial states with gsap.set and tweens to them — from the origin on the
- * first paint, from the previous drawing on a poll. Reduced motion and
- * `?snap` therefore get the complete drawing with no tween at all.
+ * Motion: the river runs on gsap.ticker; the texts are driven by its hooks —
+ * on the first data the reveal front crosses each gate and that gate's
+ * count rolls, name and share rise, the rate behind it resolves on the
+ * teleprinter; the Anfragen count rolls, in signal, as the first enquiry
+ * particle crosses gate 4. Later data is an update: changed counts roll,
+ * changed rates re-scramble, unchanged stations do not move. Reduced motion
+ * and `?snap` get the complete picture with no tween at all; the countdown
+ * still ticks (information, not motion).
  *
  * "Live" is a 60-second poll (skipped while the tab is hidden), the STAND
- * stamp with seconds and a countdown line — nothing on the bench loops.
+ * stamp with seconds and a countdown on the datum line.
  *
  * The key is a courtesy, not a secret: it sits in sessionStorage for the tab
  * and travels as a bearer header. A wrong one gets a 401 and the form back.
  *
  * Registered through onPage: ClientRouter is live (D-039), so an in-flight
- * fetch, an interval, a tween or a ResizeObserver left bound would ride into
- * the next page.
+ * fetch, an interval, a tween, the river's ticker callback or an observer
+ * left bound would ride into the next page.
  */
 import { gsap, motionOff, onPage, primeDraw } from './motion';
+import { createStrom, type Strom } from './strom';
 
 const KEY_STORE = 'nb.stats.key';
 const OFF_STORE = 'nb.stats.off';
@@ -48,8 +54,8 @@ interface DayPoint {
 }
 
 /** Four distinct-visitor counts over the range. A stage MAY exceed the one
-    before it (a form can be sent with no tracked click first) — the bench
-    draws that honestly instead of assuming monotony. */
+    before it (a form can be sent with no tracked click first) — the river
+    draws that honestly as a tributary instead of assuming monotony. */
 interface Funnel {
   visitors: number;
   engaged: number;
@@ -167,11 +173,9 @@ interface Fmt {
   int: Intl.NumberFormat;
   /** 35,4 % / 35.4% — shares and conversion rates; whole numbers stay whole (100 %). */
   pct: Intl.NumberFormat;
-  /** 25 % — the beam's percent graduation. */
-  pct0: Intl.NumberFormat;
-  /** 16.09. / 16/09 — axis labels and the range's start. */
+  /** 16.09. / 16/09 — the Pegel's two dates. */
   dayShort: Intl.DateTimeFormat;
-  /** 16.09.2026 / 16/09/2026 — tooltips, aria labels, the range's end. */
+  /** 16.09.2026 / 16/09/2026 — tooltips, aria labels, the days table. */
   dayFull: Intl.DateTimeFormat;
   /** Fetched-at, in the viewer's own time, to the second: the STAND stamp. */
   stamp: Intl.DateTimeFormat;
@@ -183,11 +187,8 @@ function makeFmt(locale: string): Fmt {
   return {
     int: new Intl.NumberFormat(locale),
     pct: new Intl.NumberFormat(locale, { style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 1 }),
-    pct0: new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }),
     dayShort: new Intl.DateTimeFormat(locale, { timeZone: 'UTC', day: '2-digit', month: '2-digit' }),
     dayFull: new Intl.DateTimeFormat(locale, { timeZone: 'UTC', day: '2-digit', month: '2-digit', year: 'numeric' }),
-    // Two-digit year: with six cells in the title block from lg, the full
-    // stamp wrapped to a second line in its cell (design gate, D-065).
     stamp: new Intl.DateTimeFormat(locale, {
       day: '2-digit',
       month: '2-digit',
@@ -211,50 +212,12 @@ function fmtDay(fmt: Intl.DateTimeFormat, day: string): string {
   return date ? fmt.format(date) : day;
 }
 
-/**
- * Y-axis ticks at clean integer steps (1, 2, 5 × 10^k), about four of them,
- * the last one at or above the maximum so every bar fits under it.
- */
-function niceTicks(max: number): number[] {
-  if (max <= 0) return [];
-  const raw = max / 4;
-  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
-  const norm = raw / mag;
-  const step = Math.max(1, (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag);
-  const ticks: number[] = [];
-  for (let v = step; v < max + step; v += step) ticks.push(v);
-  return ticks;
-}
-
-/**
- * The beam's graduation: major ticks at a clean step (about six of them,
- * none past the scale top — the beam ends where the scale ends, like a
- * ruler cut to length) and minor ticks between them, ruler-style: halves
- * under a 2-step, fifths under a 5- or 10-step, none under a 1-step.
- */
-function beamTicks(top: number): { step: number; majors: number[]; minors: number[] } {
-  const raw = Math.max(top, 1) / 6;
-  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
-  const norm = raw / mag;
-  const step = Math.max(1, Math.round((norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag));
-  const majors: number[] = [];
-  for (let k = 1; k * step <= top; k++) majors.push(k * step);
-  const leading = Math.round(step / Math.pow(10, Math.floor(Math.log10(step))));
-  const minorStep = step <= 1 ? 0 : leading === 2 ? step / 2 : step / 5;
-  const minors: number[] = [];
-  if (minorStep > 0) {
-    const ratio = Math.round(step / minorStep);
-    for (let k = 1; k * minorStep <= top; k++) if (k % ratio !== 0) minors.push(k * minorStep);
-  }
-  return { step, majors, minors };
-}
-
-/** The bench's derived figures, shared by the drawing and its Positionsliste. */
+/** The river's derived figures, shared by the object and its table. */
 interface FunnelTexts {
   shares: string[]; // of visitors, per stage
   rates: string[]; // stage i → i+1, three of them
   losses: string[]; // the absolute change, true minus sign
-  grows: boolean[]; // a stage that grew reads in graphite
+  grows: boolean[]; // a stage that grew reads in paper
 }
 
 function funnelTexts(counts: number[], fmt: Fmt): FunnelTexts {
@@ -279,8 +242,6 @@ function funnelTexts(counts: number[], fmt: Fmt): FunnelTexts {
 /* ------------------------------------------------------------------ */
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const MONO_CH = 8.2; // Fragment Mono 11px + 0.08em tracking, measured off a render — collision estimates only
-const STAGE_CH = 8; // Archivo 13px, wdth 112, wght 600 — average glyph, same purpose
 
 function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number>): SVGElementTagNameMap[K] {
   const el = document.createElementNS(SVG_NS, tag);
@@ -288,672 +249,174 @@ function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<strin
   return el;
 }
 
-function svgText(cls: string, x: number, y: number, content: string, anchor: 'start' | 'middle' | 'end' = 'start', dy = ''): SVGTextElement {
-  const attrs: Record<string, string | number> = { class: cls, x, y, 'text-anchor': anchor };
-  if (dy) attrs.dy = dy;
-  const el = svgEl('text', attrs);
+function svgText(cls: string, x: number, y: number, content: string, anchor: 'start' | 'middle' | 'end' = 'start'): SVGTextElement {
+  const el = svgEl('text', { class: cls, x, y, 'text-anchor': anchor });
   el.textContent = content;
   return el;
 }
 
-/** Snap to the pixel centre so 1px hairlines render as one crisp row. */
-function snap(v: number): number {
-  return Math.round(v - 0.5) + 0.5;
-}
-
 /* ------------------------------------------------------------------ */
-/* Chart geometry                                                      */
+/* Der Pegel                                                           */
 /* ------------------------------------------------------------------ */
+/*
+ * The daily series as a water level: views as a straight paper polyline
+ * over a fill that fades from steel 18 % to nothing, visitors as a steel
+ * polyline inside it, a blurred duplicate of the views path behind it as
+ * the only glow. Direct labels at the right ends, the latest day a paper
+ * dot with "heute", the first and last dates only — no axes, no gridlines,
+ * no legend, and linear segments always: a smoothed curve would invent days.
+ */
 
-const CHART_H = 220;
-const PAD_TOP = 34; // room for the HEUTE tick + label, and the max label above it
-const PAD_BOTTOM = 26; // the x-label band
-const PAD_RIGHT = 6;
-const BAR_MAX = 24; // dataviz: thin marks, never the whole slot
-const MONO_AXIS_CH = 6.8; // Fragment Mono at 11px, 0.04em — gutter and label stride
-const X_LABEL_W = 46; // "16.09." plus air
-const TODAY_TICK = 10; // the latest day's extension tick, off the bar's top
+const PEGEL = { padTop: 20, padBottom: 22, padLeft: 4, padRight: 100 };
+const FILL_ID = 'nb-pegel-fill';
 
 interface BarHandlers {
   show: (cx: number, top: number, value: string, label: string) => void;
   hide: () => void;
 }
 
-interface ChartDrawing {
-  baseline: number;
-  bars: { day: string; views: number; fill: SVGRectElement }[];
+interface PegelDrawing {
+  n: number;
+  width: number;
+  points: { views: string; visitors: string; fill: string };
+  dot: { x: number; y: number };
+  labelY: { views: number; visitors: number; today: number };
+  els: {
+    fill: SVGPolygonElement;
+    glow: SVGPolylineElement;
+    views: SVGPolylineElement;
+    visitors: SVGPolylineElement;
+    dot: SVGCircleElement;
+    texts: SVGTextElement[];
+    labelViews: SVGTextElement;
+    labelVisitors: SVGTextElement;
+    labelToday: SVGTextElement;
+  };
 }
 
-/**
- * Draw the views-per-day chart at the given pixel width. One viewBox unit is
- * one CSS pixel, so text is never stretched — the caller re-runs this from a
- * ResizeObserver instead of letting the browser scale the drawing.
- */
-function drawChart(
+function drawPegel(
   svg: SVGSVGElement,
   series: DayPoint[],
   width: number,
+  height: number,
   fmt: Fmt,
   labels: { views: string; visitors: string; today: string },
   handlers: BarHandlers,
-): ChartDrawing {
+): PegelDrawing | null {
   svg.replaceChildren();
-  svg.setAttribute('viewBox', `0 0 ${width} ${CHART_H}`);
-
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
   const n = series.length;
-  const max = series.reduce((m, p) => Math.max(m, p.views), 0);
-  const ticks = niceTicks(max);
-  const tickLabels = ticks.map((v) => fmt.int.format(v));
-  const gutter = Math.max(24, Math.ceil(8 + Math.max(0, ...tickLabels.map((s) => s.length)) * MONO_AXIS_CH));
-  const plotW = Math.max(0, width - gutter - PAD_RIGHT);
-  const baseline = CHART_H - PAD_BOTTOM;
-  const plotH = baseline - PAD_TOP;
-  const top = ticks.length ? ticks[ticks.length - 1] : 1;
-  const y = (v: number) => baseline - (v / top) * plotH;
-  const drawing: ChartDrawing = { baseline, bars: [] };
+  if (n === 0) return null;
 
-  // Hairline grid at each tick, recessive; the baseline is the same rule.
-  for (let i = 0; i < ticks.length; i++) {
-    const ty = Math.round(y(ticks[i])) + 0.5;
-    svg.append(svgEl('line', { class: 'stats-grid', x1: gutter, x2: width - PAD_RIGHT, y1: ty, y2: ty }));
-    svg.append(svgText('stats-axis', gutter - 6, ty, tickLabels[i], 'end', '0.35em'));
-  }
-  svg.append(svgEl('line', { class: 'stats-grid', x1: gutter, x2: width - PAD_RIGHT, y1: baseline + 0.5, y2: baseline + 0.5 }));
+  const max = series.reduce((m, p) => Math.max(m, p.views, p.visitors), 0);
+  const plotW = Math.max(0, width - PEGEL.padLeft - PEGEL.padRight);
+  const baseline = height - PEGEL.padBottom;
+  const plotH = baseline - PEGEL.padTop;
+  const x = (i: number) => PEGEL.padLeft + (n > 1 ? (i * plotW) / (n - 1) : plotW / 2);
+  const y = (v: number) => baseline - (max > 0 ? v / max : 0) * plotH;
+  const r1 = (v: number) => Math.round(v * 10) / 10;
 
-  if (n === 0 || plotW <= 0) return drawing;
+  const viewsPts = series.map((p, i) => `${r1(x(i))},${r1(y(p.views))}`).join(' ');
+  const visitorsPts = series.map((p, i) => `${r1(x(i))},${r1(y(p.visitors))}`).join(' ');
+  const fillPts = `${viewsPts} ${r1(x(n - 1))},${baseline} ${r1(x(0))},${baseline}`;
 
-  const slot = plotW / n;
-  const gap = slot >= 4 ? 2 : 1;
-  // Floored, not rounded: with an integer gap this keeps the paper gap
-  // between every pair of bars — rounding up let two neighbouring days fuse
-  // into one double-width bar at 90 days on a phone (design gate, D-063).
-  const bar = Math.max(1, Math.floor(Math.min(BAR_MAX, slot - gap)));
-  const centre = (i: number) => gutter + i * slot + slot / 2;
+  // The fill's gradient: a token via the style attribute, never a hex.
+  const defs = svgEl('defs', {});
+  const grad = svgEl('linearGradient', { id: FILL_ID, x1: 0, y1: 0, x2: 0, y2: 1 });
+  const s0 = svgEl('stop', { offset: 0, 'stop-opacity': 0.18 });
+  s0.style.stopColor = 'var(--color-steel)';
+  const s1 = svgEl('stop', { offset: 1, 'stop-opacity': 0 });
+  s1.style.stopColor = 'var(--color-steel)';
+  grad.append(s0, s1);
+  defs.append(grad);
+  svg.append(defs);
 
-  // Sparse x labels: every day for a week, otherwise every seventh — widened
-  // until neighbours cannot touch. The first and last days are always named,
-  // anchored to the plot's edges; a middle label is centred on its bar, so it
-  // must clear a full label width plus the edge label's own width — the
-  // stride alone measures centre to centre and let "11.09.16.09." happen.
+  const fill = svgEl('polygon', { class: 'stats-pegel-fill', points: fillPts, fill: `url(#${FILL_ID})` });
+  const glow = svgEl('polyline', { class: 'stats-pegel-line stats-pegel-glow', points: viewsPts });
+  const visitors = svgEl('polyline', { class: 'stats-pegel-line stats-pegel-visitors', points: visitorsPts });
+  const views = svgEl('polyline', { class: 'stats-pegel-line stats-pegel-views', points: viewsPts });
+  svg.append(fill, glow, visitors, views);
+
+  // Per-day hit targets: the whole slot, plot-height tall, a 1px paper
+  // cursor line on hover/focus. One tab stop — the latest day — and the
+  // arrow keys walk the rest (the keydown listener lives in the init).
   const last = n - 1;
-  const left = gutter;
-  const right = gutter + n * slot;
-  let stride = Math.max(n > 7 ? 7 : 1, Math.ceil(X_LABEL_W / slot));
-  if (n > 7) stride = Math.ceil(stride / 7) * 7;
-  const labelAt: number[] = [0];
-  for (let i = stride; i < last; i += stride) {
-    const c = centre(i);
-    if (c - X_LABEL_W / 2 >= left + X_LABEL_W + 4 && c + X_LABEL_W / 2 <= right - X_LABEL_W - 4) labelAt.push(i);
-  }
-  if (last > 0) labelAt.push(last);
-
-  for (const i of labelAt) {
-    const anchor = i === 0 ? 'start' : i === last ? 'end' : 'middle';
-    const x = i === 0 ? left : i === last ? right : centre(i);
-    svg.append(svgText('stats-axis', x, CHART_H - 8, fmtDay(fmt.dayShort, series[i].day), anchor));
-  }
-
-  // Bars. Each is a focusable group: a transparent hit rect the height of
-  // the plot (the target is bigger than the mark) over the painted bar. One
-  // tab stop for the whole chart — the latest day — and the arrow keys walk
-  // the rest (the keydown listener lives in the init, the svg persists).
-  const maxIndex = series.reduce((best, p, i) => (p.views >= series[best].views ? i : best), 0);
-  let latestTop = baseline;
+  const slot = n > 1 ? plotW / (n - 1) : plotW;
   for (let i = 0; i < n; i++) {
-    const point = series[i];
-    const x = Math.floor(gutter + i * slot + (slot - bar) / 2);
-    // A day with no views has no bar — except the latest, whose 2px tick on
-    // the baseline keeps "today" marked before the first visit lands.
-    const yTop = point.views > 0 ? Math.round(y(point.views)) : i === last ? baseline - 2 : baseline;
-    if (i === last) latestTop = yTop;
-    const dayFull = fmtDay(fmt.dayFull, point.day);
-    const value = `${fmt.int.format(point.views)} ${labels.views} · ${fmt.int.format(point.visitors)} ${labels.visitors}`;
-
+    const p = series[i];
+    const cx = x(i);
+    const dayFull = fmtDay(fmt.dayFull, p.day);
+    const value = `${fmt.int.format(p.views)} ${labels.views} · ${fmt.int.format(p.visitors)} ${labels.visitors}`;
     const g = svgEl('g', { class: 'stats-bar', tabindex: i === last ? 0 : -1, role: 'img' });
-    g.setAttribute(
-      'aria-label',
-      `${dayFull}: ${fmt.int.format(point.views)} ${labels.views}, ${fmt.int.format(point.visitors)} ${labels.visitors}`,
-    );
+    g.setAttribute('aria-label', `${dayFull}: ${fmt.int.format(p.views)} ${labels.views}, ${fmt.int.format(p.visitors)} ${labels.visitors}`);
     if (i === last) g.dataset.latest = 'true';
-    const fill = svgEl('rect', { class: 'stats-bar-fill', x, y: yTop, width: bar, height: baseline - yTop });
-    g.append(svgEl('rect', { class: 'stats-bar-hit', x: gutter + i * slot, y: PAD_TOP, width: slot, height: plotH }), fill);
-    const cx = centre(i);
+    const x0 = i === 0 ? PEGEL.padLeft : cx - slot / 2;
+    const x1 = i === last ? PEGEL.padLeft + plotW : cx + slot / 2;
+    g.append(
+      svgEl('rect', { class: 'stats-bar-hit', x: r1(x0), y: PEGEL.padTop, width: r1(Math.max(1, x1 - x0)), height: plotH }),
+      svgEl('line', { class: 'stats-bar-cursor', x1: r1(cx), x2: r1(cx), y1: PEGEL.padTop, y2: baseline }),
+    );
+    const yTop = y(p.views);
     const show = () => handlers.show(cx, yTop, value, dayFull);
     g.addEventListener('pointerenter', show);
     g.addEventListener('focus', show);
     g.addEventListener('pointerleave', handlers.hide);
     g.addEventListener('blur', handlers.hide);
     svg.append(g);
-    drawing.bars.push({ day: point.day, views: point.views, fill });
   }
 
-  // The latest day (D-065): not a colour — an extension tick rising off the
-  // bar with a direct HEUTE label. It sits at the right edge, so the label
-  // is end-anchored and clamped inside the plot. Today is a partial day, so
-  // a taller yesterday under the label is the common case: the tick extends
-  // to clear the tallest bar the label spans, and the text sits on a paper
-  // knockout (qa gate, D-065 — "HEU E" at 360px).
-  const tx = Math.round(centre(last)) + 0.5;
-  const todayText = labels.today.toLocaleUpperCase();
-  const todayX = Math.min(tx + (todayText.length * MONO_CH) / 2, width - PAD_RIGHT);
-  const labelLeft = todayX - todayText.length * MONO_CH - 4;
-  let clearTop = latestTop;
-  for (let i = 0; i < n; i++) {
-    const c = centre(i);
-    if (c + bar / 2 >= labelLeft && c - bar / 2 <= todayX && series[i].views > 0) {
-      clearTop = Math.min(clearTop, Math.round(y(series[i].views)));
-    }
-  }
-  svg.append(svgEl('line', { class: 'stats-hair', x1: tx, x2: tx, y1: latestTop - 2, y2: clearTop - 2 - TODAY_TICK }));
-  svg.append(svgText('stats-annot stats-knock', todayX, clearTop - TODAY_TICK - 6, todayText, 'end'));
+  // The latest day: a paper dot, "heute" beside it (above-left, or below
+  // when the day is the maximum and there is no room above).
+  const dx = x(last);
+  const dy = y(series[last].views);
+  const dot = svgEl('circle', { class: 'stats-pegel-dot', cx: r1(dx), cy: r1(dy), r: 2.5 });
+  // "heute" sits on the side the line does not come from: above-left when
+  // the last day rises into the dot, below-left when it falls into it — and
+  // never outside the plot.
+  const prevY = n > 1 ? y(series[n - 2].views) : dy;
+  let todayY = prevY >= dy ? dy - 11 : dy + 16;
+  if (todayY < PEGEL.padTop - 4) todayY = dy + 16;
+  else if (todayY > baseline + 4) todayY = dy - 11;
+  const labelToday = svgText('stats-pegel-text', r1(dx - 6), r1(todayY), labels.today, 'end');
 
-  // Direct label on the maximum only — the axis and the tooltip carry the
-  // rest. When today is the maximum it stacks above the HEUTE label.
-  if (max > 0) {
-    const cx = Math.min(Math.max(centre(maxIndex), gutter + 14), width - PAD_RIGHT - 14);
-    const ly = maxIndex === last ? clearTop - TODAY_TICK - 20 : y(max) - 6;
-    svg.append(svgText('stats-axis', cx, ly, fmt.int.format(max), 'middle'));
-  }
-  return drawing;
-}
+  // Direct labels at the right ends: the latest day's values. Pushed apart
+  // when the two lines end close together.
+  let vy = dy + 4;
+  let sy = y(series[last].visitors) + 4;
+  if (Math.abs(vy - sy) < 13) sy = vy + 13;
+  const clampY = (v: number) => Math.min(baseline + 4, Math.max(PEGEL.padTop - 6, v));
+  vy = clampY(vy);
+  sy = clampY(sy);
+  const labelViews = svgText('stats-pegel-text is-paper', r1(dx + 9), r1(vy), `${labels.views} ${fmt.int.format(series[last].views)}`);
+  const labelVisitors = svgText('stats-pegel-text', r1(dx + 9), r1(sy), `${labels.visitors} ${fmt.int.format(series[last].visitors)}`);
 
-/* ------------------------------------------------------------------ */
-/* The Durchlauf-Messbank (D-065)                                      */
-/* ------------------------------------------------------------------ */
-/*
- * One graduated beam carries two scales like a caliper: absolute counts on
- * one side, percent of visitors on the other. Four stations, each a slide
- * track with a carriage whose vernier hairline IS the reading; an extension
- * line carries every reading back to the beam, so the value is read off the
- * graduation, never off the end of a bar. A hard-vertex polyline joins the
- * readings — the taper — and the body beneath it is section-hatched. Fixed
- * shelves above the stations carry part number, count and stage name;
- * dimension lines between neighbours carry the rate over the loss, nominal
- * over tolerance. The last station's carriage is the instrument's pointer:
- * the page's one signal element.
- *
- * Across (≥ 560px measured): vertical beam left, stations left→right.
- * Stacked (below): horizontal beam on top, stations as rows top→bottom,
- * the same grammar turned a quarter.
- */
-
-/* Across: y coordinates, one unit per pixel. */
-const ACROSS = {
-  H: 420,
-  part: 14, // shelf: part-number baseline
-  count: 46, // shelf: count baseline (28px display)
-  name: 66, // shelf: stage-name baseline
-  rule: 74, // shelf rule
-  top: 100, // scale top = track head (node centre)
-  base: 340, // baseline = origin
-  dimTop: 343, // dimension extension lines start (3px off the baseline)
-  dimLine: 366,
-  dimBottom: 386,
-  rate: 361, // rate baseline, above the dimension line
-  loss: 380, // loss baseline, below it
-  datumRule: 392,
-  datumText: 409,
-  beamX: 56, // minimum; grows with the widest count label
-  pctZone: 58, // beam → plot: the percent ticks and labels
-  padRight: 8,
-  shelfDx: 26, // shelf left edge sits this far left of the station centre
-};
-
-/* Stacked: the beam on top, rows beneath, dimensions in a right-hand margin. */
-const STACK = {
-  H: 520,
-  beamY: 30,
-  pctText: 18, // percent labels, above the beam
-  countText: 52, // count labels, below it
-  row0: 70,
-  rowH: 100,
-  part: 12, // per row, from the row's top
-  count: 42,
-  name: 60,
-  share: 76,
-  track: 84,
-  labelW: 100, // the fixed label column
-  dimW: 72, // the right-hand dimension margin — holds "107,5 %" end-anchored
-  datumText1: 493,
-  datumText2: 509,
-  datumRule: 476,
-};
-
-const BENCH_MIN_ACROSS = 560;
-const HATCH_ID = 'nb-bench-hatch';
-const CLIP_ID = 'nb-bench-clip';
-
-interface BenchLabels {
-  part: string;
-  datum: string;
-  scale: string;
-  stages: string[];
-  range: string;
-  locale: string;
-}
-
-/** Everything the motion driver needs to animate from one drawing to the next. */
-interface BenchDrawing {
-  stacked: boolean;
-  width: number;
-  top: number;
-  counts: number[];
-  readings: number[]; // y per station (across) or x (stacked)
-  origin: number; // the baseline y (across) or the plot's x0 (stacked)
-  head: number; // the track's far end: the scale top y (across) or the plot's x1 (stacked)
-  span: number; // the hatch's full extent along the wipe axis
-  taperPoints: string;
-  hatchPoints: string;
-  texts: FunnelTexts;
-  els: {
-    beam: SVGGElement;
-    ticks: SVGElement[]; // in value order, for the stagger from the origin
-    tracks: SVGLineElement[];
-    carriages: SVGGElement[]; // [3] is the pointer
-    exts: SVGLineElement[];
-    taper: SVGPolylineElement;
-    hatch: SVGRectElement;
-    clip: SVGPolygonElement;
-    shelves: SVGGElement[];
-    counts: SVGTextElement[];
-    shares: SVGTextElement[];
-    nodes: SVGRectElement[];
-    dims: { line: SVGLineElement; arrows: SVGPolygonElement[]; rate: SVGTextElement; loss: SVGTextElement; mid: number; at: number }[];
-  };
-}
-
-/** The hatch pattern and the clip polygon, shared by both layouts. */
-function hatchDefs(points: string): { defs: SVGDefsElement; clip: SVGPolygonElement } {
-  const defs = svgEl('defs', {});
-  const pattern = svgEl('pattern', {
-    id: HATCH_ID,
-    patternUnits: 'userSpaceOnUse',
-    width: 8,
-    height: 8,
-    patternTransform: 'rotate(45)',
-  });
-  pattern.append(svgEl('line', { class: 'stats-hatch-line', x1: 0, y1: 0, x2: 0, y2: 8 }));
-  const clipPath = svgEl('clipPath', { id: CLIP_ID });
-  const clip = svgEl('polygon', { points });
-  clipPath.append(clip);
-  defs.append(pattern, clipPath);
-  return { defs, clip };
-}
-
-function drawBench(svg: SVGSVGElement, funnel: Funnel, width: number, fmt: Fmt, L: BenchLabels): BenchDrawing {
-  const counts = [funnel.visitors, funnel.engaged, funnel.reached_end, funnel.enquiries];
-  const texts = funnelTexts(counts, fmt);
-  svg.replaceChildren();
-  return width < BENCH_MIN_ACROSS
-    ? buildStacked(svg, counts, texts, width, fmt, L)
-    : buildAcross(svg, counts, texts, width, fmt, L);
-}
-
-function buildAcross(svg: SVGSVGElement, counts: number[], tx: FunnelTexts, width: number, fmt: Fmt, L: BenchLabels): BenchDrawing {
-  const A = ACROSS;
-  const up = (s: string) => s.toLocaleUpperCase(L.locale);
-  svg.setAttribute('viewBox', `0 0 ${width} ${A.H}`);
-
-  const visitors = counts[0];
-  const max = Math.max(...counts);
-  const top = max > 0 ? max : 10; // the zero state still shows a 0–10 scale
-  const ticks = beamTicks(top);
-  const labelW = Math.max(1, ...ticks.majors.map((v) => fmt.int.format(v).length)) * MONO_CH;
-  const beamX = Math.max(A.beamX, Math.ceil(12 + labelW + 4)) + 0.5;
-  const plotX0 = beamX + A.pctZone;
-  const plotX1 = width - A.padRight;
-  const plotW = Math.max(0, plotX1 - plotX0);
-  const slot = plotW / 4;
-  const baseY = A.base + 0.5;
-  const topY = A.top + 0.5;
-  const plotH = baseY - topY;
-  const y = (v: number) => snap(baseY - (v / top) * plotH);
-  const cx = (i: number) => Math.round(plotX0 + (i + 0.5) * slot) + 0.5;
-  const xs = counts.map((_, i) => cx(i));
-  const readings = counts.map(y);
-  const taperPoints = xs.map((x, i) => `${x},${readings[i]}`).join(' ');
-  // Six points, always: the four readings and the two baseline corners. A
-  // constant count is what lets a poll tween `points` (GSAP interpolates
-  // number for number) instead of rebuilding — never add or drop a vertex.
-  const hatchPoints = `${taperPoints} ${xs[3]},${baseY} ${xs[0]},${baseY}`;
-
-  /* 1. Hatch body, clipped to the wedge under the taper. */
-  const { defs, clip } = hatchDefs(hatchPoints);
-  const hatch = svgEl('rect', {
-    class: 'stats-hatch',
-    x: xs[0],
-    y: topY,
-    width: Math.max(0, xs[3] - xs[0]),
-    height: plotH,
-    fill: `url(#${HATCH_ID})`,
-    'clip-path': `url(#${CLIP_ID})`,
-  });
-  svg.append(defs, hatch);
-
-  /* 2. Origin datum and the extension lines — beneath everything they serve. */
-  svg.append(svgEl('line', { class: 'stats-ext', x1: beamX, x2: plotX1, y1: baseY, y2: baseY }));
-  for (const x of xs) svg.append(svgEl('line', { class: 'stats-ext', x1: x, x2: x, y1: A.dimTop + 0.5, y2: A.dimBottom + 0.5 }));
-  const exts = readings.map((r, i) => {
-    // From the carriage's edge to the beam: the line draws leftwards.
-    const el = svgEl('line', { class: 'stats-read', x1: xs[i] - 14, x2: beamX, y1: r, y2: r });
-    svg.append(el);
-    return el;
-  });
-
-  /* 3. The beam: counts ticked left, percent of visitors ticked right. */
-  const beam = svgEl('g', { class: 'stats-beam' });
-  beam.append(svgEl('line', { class: 'stats-hair', x1: beamX, x2: beamX, y1: baseY, y2: topY }));
-  const tickList: { v: number; el: SVGElement }[] = [];
-  const addTick = (v: number, el: SVGElement) => {
-    beam.append(el);
-    tickList.push({ v, el });
-  };
-  for (const v of [0, ...ticks.majors]) {
-    const ty = y(v);
-    addTick(v, svgEl('line', { class: 'stats-hair', x1: beamX - 8, x2: beamX, y1: ty, y2: ty }));
-    addTick(v, svgText('stats-annot', beamX - 12, ty, fmt.int.format(v), 'end', '0.35em'));
-  }
-  for (const v of ticks.minors) {
-    const ty = y(v);
-    addTick(v, svgEl('line', { class: 'stats-hair', x1: beamX - 4, x2: beamX, y1: ty, y2: ty }));
-  }
-  const pcts = visitors > 0 ? [0, 25, 50, 75, 100] : [0];
-  for (const p of pcts) {
-    const v = (p / 100) * visitors;
-    const ty = y(v);
-    addTick(v, svgEl('line', { class: 'stats-hair', x1: beamX, x2: beamX + 8, y1: ty, y2: ty }));
-    addTick(v, svgText('stats-annot stats-knock', beamX + 12, ty, up(fmt.pct0.format(p / 100)), 'start', '0.35em'));
-  }
-  tickList.sort((a, b) => a.v - b.v);
-  svg.append(beam);
-
-  /* 4. Tracks, drawn from the baseline upward. */
-  const tracks = xs.map((x) => {
-    const el = svgEl('line', { class: 'stats-hair', x1: x, x2: x, y1: baseY, y2: topY });
-    svg.append(el);
-    return el;
-  });
-
-  /* 5. The taper: hard vertices, never a curve. */
-  const taper = svgEl('polyline', { class: 'stats-taper', points: taperPoints });
-  svg.append(taper);
-
-  /* 6. Nodes at the track heads. */
-  const nodes = xs.map((x) => {
-    const el = svgEl('rect', { class: 'stats-node', x: x - 3.5, y: topY - 3.5, width: 7, height: 7 });
-    svg.append(el);
-    return el;
-  });
-
-  /* 7. Carriages; the last one carries the pointer instead of a vernier. */
-  const carriages = readings.map((r, i) => {
-    const x = xs[i];
-    const g = svgEl('g', { class: 'stats-carriage-g' });
-    g.append(svgEl('rect', { class: 'stats-carriage', x: x - 14, y: r - 5, width: 28, height: 10 }));
-    if (i === counts.length - 1) {
-      g.append(svgEl('path', { class: 'stats-pointer', d: `M${x - 14},${r} L${x - 4},${r - 4} V${r + 4} Z` }));
-    } else {
-      g.append(svgEl('line', { class: 'stats-vernier', x1: x - 14, x2: x + 14, y1: r, y2: r }));
-    }
-    svg.append(g);
-    return g;
-  });
-
-  /* 8. Shelves: fixed positions above each station. The share sits on the
-        stage-name row when the shelf is wide enough, else on the part row.
-        Capped at half a slot plus the overhang the right padding affords, so
-        the fourth shelf ends inside the drawing (design gate, D-065). */
-  const shelfW = Math.min(240, Math.floor(slot - 16), Math.floor(slot / 2 + A.shelfDx + A.padRight) - 1);
-  const shelves: SVGGElement[] = [];
-  const countEls: SVGTextElement[] = [];
-  const shareEls: SVGTextElement[] = [];
-  counts.forEach((c, i) => {
-    const sx = xs[i] - A.shelfDx;
-    const g = svgEl('g', { class: 'stats-shelf' });
-    const part = `${L.part}.${String(i + 1).padStart(2, '0')}`;
-    const name = L.stages[i] ?? '';
-    const share = tx.shares[i];
-    // The share sits at the shelf's end on the name row, on the part row if
-    // only that has room, and nowhere on the shelf if neither does — the
-    // beam's percent scale and the Positionsliste carry it. An empty text
-    // node keeps E.shares index-aligned for the driver. (Design gate, D-065:
-    // at tablet widths it used to fuse with the part number.)
-    const shareOnName = name.length * STAGE_CH + share.length * MONO_CH + 12 <= shelfW;
-    const shareOnPart = part.length * MONO_CH + share.length * MONO_CH + 12 <= shelfW;
-    const shareRow = shareOnName ? A.name : shareOnPart ? A.part : null;
-    g.append(svgText('stats-annot', sx, A.part, up(part)));
-    const countEl = svgText('stats-count', sx, A.count, fmt.int.format(c));
-    g.append(countEl);
-    g.append(svgText('stats-stage', sx, A.name, name));
-    const shareEl = svgText('stats-annot', sx + shelfW, shareRow ?? A.name, shareRow ? share : '', 'end');
-    g.append(shareEl);
-    g.append(svgEl('line', { class: 'stats-ext', x1: sx, x2: sx + shelfW, y1: A.rule + 0.5, y2: A.rule + 0.5 }));
-    // Leader from the shelf rule to the node.
-    g.append(svgEl('line', { class: 'stats-hair', x1: xs[i], x2: xs[i], y1: A.rule + 0.5, y2: topY - 3.5 }));
-    svg.append(g);
-    shelves.push(g);
-    countEls.push(countEl);
-    shareEls.push(shareEl);
-  });
-
-  /* 9. Dimension band: rate above the line, loss below — nominal over
-        tolerance. Closed 8×6 arrowheads at both ends. */
-  const dims: BenchDrawing['els']['dims'] = [];
-  const dy = A.dimLine + 0.5;
-  for (let i = 0; i < counts.length - 1; i++) {
-    const xa = xs[i];
-    const xb = xs[i + 1];
-    const mid = (xa + xb) / 2;
-    const ink = tx.grows[i] ? ' stats-ink' : '';
-    const line = svgEl('line', { class: 'stats-hair', x1: xa, x2: xb, y1: dy, y2: dy });
-    const arrows = [
-      svgEl('polygon', { class: 'stats-arrow', points: `${xa},${dy} ${xa + 8},${dy - 3} ${xa + 8},${dy + 3}` }),
-      svgEl('polygon', { class: 'stats-arrow', points: `${xb},${dy} ${xb - 8},${dy - 3} ${xb - 8},${dy + 3}` }),
-    ];
-    const rate = svgText(`stats-annot${ink}`, mid, A.rate, tx.rates[i], 'middle');
-    const loss = svgText(`stats-loss${ink}`, mid, A.loss, tx.losses[i], 'middle');
-    svg.append(line, ...arrows, rate, loss);
-    dims.push({ line, arrows, rate, loss, mid, at: dy });
-  }
-
-  /* 10. Datum band. */
-  svg.append(svgEl('line', { class: 'stats-ext', x1: 0, x2: width, y1: A.datumRule + 0.5, y2: A.datumRule + 0.5 }));
-  svg.append(svgText('stats-annot', 0, A.datumText, `${up(L.datum)} · ${L.range}`));
-  svg.append(svgText('stats-annot', width, A.datumText, up(L.scale), 'end'));
+  // Only the first and last dates under the line.
+  const texts: SVGTextElement[] = [];
+  texts.push(svgText('stats-pegel-text', PEGEL.padLeft, height - 6, fmtDay(fmt.dayShort, series[0].day), 'start'));
+  if (n > 1) texts.push(svgText('stats-pegel-text', r1(x(last)), height - 6, fmtDay(fmt.dayShort, series[last].day), 'end'));
+  svg.append(dot, labelToday, labelViews, labelVisitors, ...texts);
 
   return {
-    stacked: false,
+    n,
     width,
-    top,
-    counts,
-    readings,
-    origin: baseY,
-    head: topY,
-    span: Math.max(0, xs[3] - xs[0]),
-    taperPoints,
-    hatchPoints,
-    texts: tx,
-    els: { beam, ticks: tickList.map((t) => t.el), tracks, carriages, exts, taper, hatch, clip, shelves, counts: countEls, shares: shareEls, nodes, dims },
-  };
-}
-
-function buildStacked(svg: SVGSVGElement, counts: number[], tx: FunnelTexts, width: number, fmt: Fmt, L: BenchLabels): BenchDrawing {
-  const S = STACK;
-  const up = (s: string) => s.toLocaleUpperCase(L.locale);
-  svg.setAttribute('viewBox', `0 0 ${width} ${S.H}`);
-
-  const visitors = counts[0];
-  const max = Math.max(...counts);
-  const top = max > 0 ? max : 10;
-  const ticks = beamTicks(top);
-  const plotX0 = S.labelW + 0.5;
-  const plotX1 = Math.max(plotX0, width - S.dimW) + 0.5;
-  const plotW = Math.max(0, plotX1 - plotX0);
-  const beamY = S.beamY + 0.5;
-  const x = (v: number) => snap(plotX0 + (v / top) * plotW);
-  const trackY = (i: number) => S.row0 + i * S.rowH + S.track + 0.5;
-  const ys = counts.map((_, i) => trackY(i));
-  const readings = counts.map(x);
-  const taperPoints = readings.map((r, i) => `${r},${ys[i]}`).join(' ');
-  // Six points, always — see buildAcross.
-  const hatchPoints = `${taperPoints} ${plotX0},${ys[3]} ${plotX0},${ys[0]}`;
-
-  /* 1. Hatch body, left of the taper. */
-  const { defs, clip } = hatchDefs(hatchPoints);
-  const hatch = svgEl('rect', {
-    class: 'stats-hatch',
-    x: plotX0,
-    y: ys[0],
-    width: plotW,
-    height: ys[3] - ys[0],
-    fill: `url(#${HATCH_ID})`,
-    'clip-path': `url(#${CLIP_ID})`,
-  });
-  svg.append(defs, hatch);
-
-  /* 2. Extension lines: readings rise to the beam; dimensions run right. */
-  for (const ty of ys) svg.append(svgEl('line', { class: 'stats-ext', x1: plotX1 + 3, x2: width - 4, y1: ty, y2: ty }));
-  const exts = readings.map((r, i) => {
-    const el = svgEl('line', { class: 'stats-read', x1: r, x2: r, y1: ys[i] - 14, y2: beamY });
-    svg.append(el);
-    return el;
-  });
-
-  /* 3. The beam across the top: counts below, percent above. Labels are
-        thinned to a stride that cannot collide at this width. */
-  const beam = svgEl('g', { class: 'stats-beam' });
-  beam.append(svgEl('line', { class: 'stats-hair', x1: plotX0, x2: plotX1, y1: beamY, y2: beamY }));
-  const tickList: { v: number; el: SVGElement }[] = [];
-  const addTick = (v: number, el: SVGElement) => {
-    beam.append(el);
-    tickList.push({ v, el });
-  };
-  const countLabelW = Math.max(1, ...ticks.majors.map((v) => fmt.int.format(v).length)) * MONO_CH;
-  const majorPx = (ticks.step / top) * plotW;
-  const countStride = Math.max(1, Math.ceil((countLabelW + 8) / Math.max(majorPx, 1)));
-  [0, ...ticks.majors].forEach((v, k) => {
-    const tx0 = x(v);
-    addTick(v, svgEl('line', { class: 'stats-hair', x1: tx0, x2: tx0, y1: beamY, y2: beamY + 8 }));
-    if (k % countStride === 0) addTick(v, svgText('stats-annot stats-knock', tx0, S.countText, fmt.int.format(v), 'middle'));
-  });
-  for (const v of ticks.minors) {
-    const tx0 = x(v);
-    addTick(v, svgEl('line', { class: 'stats-hair', x1: tx0, x2: tx0, y1: beamY, y2: beamY + 4 }));
-  }
-  const pcts = visitors > 0 ? [0, 25, 50, 75, 100] : [0];
-  const pctPx = ((0.25 * visitors) / top) * plotW;
-  const pctStride = Math.max(1, Math.ceil((5 * MONO_CH + 8) / Math.max(pctPx, 1)));
-  pcts.forEach((p, k) => {
-    const v = (p / 100) * visitors;
-    const tx0 = x(v);
-    addTick(v, svgEl('line', { class: 'stats-hair', x1: tx0, x2: tx0, y1: beamY - 8, y2: beamY }));
-    if (k % pctStride === 0 || k === pcts.length - 1) {
-      addTick(v, svgText('stats-annot stats-knock', tx0, S.pctText, up(fmt.pct0.format(p / 100)), 'middle'));
-    }
-  });
-  tickList.sort((a, b) => a.v - b.v);
-  svg.append(beam);
-
-  /* 4. Rows: shelf in the label column, node at the origin, track rightward. */
-  const tracks: SVGLineElement[] = [];
-  const nodes: SVGRectElement[] = [];
-  const shelves: SVGGElement[] = [];
-  const countEls: SVGTextElement[] = [];
-  const shareEls: SVGTextElement[] = [];
-  counts.forEach((c, i) => {
-    const rowTop = S.row0 + i * S.rowH;
-    const ty = ys[i];
-    const track = svgEl('line', { class: 'stats-hair', x1: plotX0, x2: plotX1, y1: ty, y2: ty });
-    svg.append(track);
-    tracks.push(track);
-    const g = svgEl('g', { class: 'stats-shelf' });
-    const part = `${L.part}.${String(i + 1).padStart(2, '0')}`;
-    g.append(svgText('stats-annot', 0, rowTop + S.part, up(part)));
-    const countEl = svgText('stats-count', 0, rowTop + S.count, fmt.int.format(c));
-    g.append(countEl);
-    g.append(svgText('stats-stage', 0, rowTop + S.name, L.stages[i] ?? ''));
-    const shareEl = svgText('stats-annot', 0, rowTop + S.share, tx.shares[i]);
-    g.append(shareEl);
-    // The shelf rule runs out to the node: rule and leader in one.
-    g.append(svgEl('line', { class: 'stats-ext', x1: 0, x2: plotX0 - 3.5, y1: ty, y2: ty }));
-    svg.append(g);
-    shelves.push(g);
-    countEls.push(countEl);
-    shareEls.push(shareEl);
-  });
-
-  /* 5. The taper, top to bottom. */
-  const taper = svgEl('polyline', { class: 'stats-taper', points: taperPoints });
-  svg.append(taper);
-
-  ys.forEach((ty) => {
-    const el = svgEl('rect', { class: 'stats-node', x: plotX0 - 3.5, y: ty - 3.5, width: 7, height: 7 });
-    svg.append(el);
-    nodes.push(el);
-  });
-
-  /* 6. Carriages, turned a quarter: 10×28, the pointer aims at the beam. */
-  const carriages = readings.map((r, i) => {
-    const ty = ys[i];
-    const g = svgEl('g', { class: 'stats-carriage-g' });
-    g.append(svgEl('rect', { class: 'stats-carriage', x: r - 5, y: ty - 14, width: 10, height: 28 }));
-    if (i === counts.length - 1) {
-      g.append(svgEl('path', { class: 'stats-pointer', d: `M${r},${ty - 14} L${r - 4},${ty - 4} H${r + 4} Z` }));
-    } else {
-      g.append(svgEl('line', { class: 'stats-vernier', x1: r, x2: r, y1: ty - 14, y2: ty + 14 }));
-    }
-    svg.append(g);
-    return g;
-  });
-
-  /* 7. Dimensions, vertical, in the right-hand margin; rate over loss. */
-  const dims: BenchDrawing['els']['dims'] = [];
-  const dx = width - 8.5;
-  for (let i = 0; i < counts.length - 1; i++) {
-    const ya = ys[i];
-    const yb = ys[i + 1];
-    const mid = (ya + yb) / 2;
-    const ink = tx.grows[i] ? ' stats-ink' : '';
-    const line = svgEl('line', { class: 'stats-hair', x1: dx, x2: dx, y1: ya, y2: yb });
-    const arrows = [
-      svgEl('polygon', { class: 'stats-arrow', points: `${dx},${ya} ${dx - 3},${ya + 8} ${dx + 3},${ya + 8}` }),
-      svgEl('polygon', { class: 'stats-arrow', points: `${dx},${yb} ${dx - 3},${yb - 8} ${dx + 3},${yb - 8}` }),
-    ];
-    const rate = svgText(`stats-annot${ink}`, width - 14, mid - 3, tx.rates[i], 'end');
-    const loss = svgText(`stats-loss${ink}`, width - 14, mid + 11, tx.losses[i], 'end');
-    svg.append(line, ...arrows, rate, loss);
-    dims.push({ line, arrows, rate, loss, mid, at: dx });
-  }
-
-  /* 8. Datum band, two lines at this width. */
-  svg.append(svgEl('line', { class: 'stats-ext', x1: 0, x2: width, y1: S.datumRule + 0.5, y2: S.datumRule + 0.5 }));
-  svg.append(svgText('stats-annot', 0, S.datumText1, `${up(L.datum)} · ${L.range}`));
-  svg.append(svgText('stats-annot', 0, S.datumText2, up(L.scale)));
-
-  return {
-    stacked: true,
-    width,
-    top,
-    counts,
-    readings,
-    origin: plotX0,
-    head: plotX1,
-    span: ys[3] - ys[0],
-    taperPoints,
-    hatchPoints,
-    texts: tx,
-    els: { beam, ticks: tickList.map((t) => t.el), tracks, carriages, exts, taper, hatch, clip, shelves, counts: countEls, shares: shareEls, nodes, dims },
+    points: { views: viewsPts, visitors: visitorsPts, fill: fillPts },
+    dot: { x: dx, y: dy },
+    labelY: { views: vy, visitors: sy, today: todayY },
+    els: { fill, glow, views, visitors, dot, texts, labelViews, labelVisitors, labelToday },
   };
 }
 
 /* ------------------------------------------------------------------ */
-/* Motion                                                              */
+/* Motion helpers                                                      */
 /* ------------------------------------------------------------------ */
 
 /** Roll a formatted integer from one value to another; the tween is returned
-    so a timeline can own it. Not countUp: that one is ScrollTrigger-bound. */
+    so the caller can kill it. Not countUp: that one is ScrollTrigger-bound. */
 function rollNumber(el: Element, from: number, to: number, fmt: Intl.NumberFormat, duration: number): gsap.core.Tween {
   const state = { v: from };
+  // The first onUpdate lands on the next tick; the start value is written
+  // now so a count never shows its placeholder for a frame.
+  el.textContent = fmt.format(Math.round(from));
   return gsap.to(state, {
     v: to,
     duration,
@@ -969,137 +432,31 @@ function rollNumber(el: Element, from: number, to: number, fmt: Intl.NumberForma
 
 const SCRAMBLE = { chars: '0123456789', speed: 0.4 };
 
-/** A token's resolved colour, read from the root — GSAP cannot tween var(). */
-function token(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-
-/**
- * Entrance (prev = null): the bench assembles from its origin. Update: the
- * carriages slide from the previous readings with the same settle. Both
- * start from a DOM that already holds the final drawing.
- */
-function animateBench(d: BenchDrawing, prev: BenchDrawing | null, fmt: Fmt): gsap.core.Timeline {
-  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-  const E = d.els;
-  const axis = d.stacked ? 'x' : 'y';
-  const scaleAxis = d.stacked ? 'scaleY' : 'scaleX';
-  const wipeAttr = d.stacked ? 'height' : 'width';
-  const settle = { duration: 0.9, ease: 'expo.out' };
-  /* A gauge settles by a constant few pixels and never past its stop. The
-     carriage runs past its reading by ≤ 3px in the direction of travel —
-     clamped to the room left before the track head or the origin — then
-     eases back. back.out was tried first: its overshoot scales with travel,
-     so the top carriage rode 17px past its node while Anfragen's settle was
-     invisible (design gate, D-065). `offset` is the carriage's transform at
-     the start; the reading is transform 0. */
-  const settleTo = (el: SVGGElement, offset: number, reading: number, at: number) => {
-    const dir = offset > 0 ? -1 : offset < 0 ? 1 : 0; // travel direction in axis units
-    // Room left past the reading in that direction: to the head or to the origin.
-    const room =
-      dir === 0 ? 0 : dir < 0
-        ? (d.stacked ? reading - d.origin : reading - d.head)
-        : (d.stacked ? d.head - reading : d.origin - reading);
-    const over = Math.min(3, Math.max(0, Math.round(room)));
-    if (!dir || !over) {
-      tl.to(el, { [axis]: 0, ...settle }, at);
-      return;
-    }
-    tl.to(el, { [axis]: dir * over, duration: 0.68, ease: 'expo.out' }, at);
-    tl.to(el, { [axis]: 0, duration: 0.22, ease: 'power1.inOut' }, at + 0.68);
-  };
-
-  if (!prev) {
-    // Tracks draw from the origin outward; the beam's ticks follow.
-    E.tracks.forEach(primeDraw);
-    tl.to(E.tracks, { strokeDashoffset: 0, duration: 0.6, stagger: 0.08 }, 0);
-    gsap.set(E.ticks, { opacity: 0 });
-    tl.to(E.ticks, { opacity: 1, duration: 0.25, stagger: 0.02 }, 0.1);
-    // Carriages start at the origin and rise to their readings; each
-    // extension line draws as its carriage arrives. The pointer comes last.
-    E.carriages.forEach((c, i) => gsap.set(c, { [axis]: d.origin - d.readings[i] }));
-    // Reading lines are dashed, so they fade in rather than draw (a draw-on
-    // would overwrite the dash pattern).
-    gsap.set(E.exts, { opacity: 0 });
-    for (let i = 0; i < 3; i++) {
-      settleTo(E.carriages[i], d.origin - d.readings[i], d.readings[i], 0.3 + 0.1 * i);
-      tl.to(E.exts[i], { opacity: 1, duration: 0.5 }, 0.85 + 0.1 * i);
-    }
-    // Shelves fade up (no blur — SVG text blur is expensive); counts roll.
-    gsap.set(E.shelves, { opacity: 0, y: 8 });
-    tl.to(E.shelves, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1 }, 0.4);
-    E.counts.forEach((el, i) => tl.add(rollNumber(el, 0, d.counts[i], fmt.int, 1.2), 0.5 + 0.1 * i));
-    // The taper draws left→right (top→bottom stacked); the hatch wipes in under it.
-    primeDraw(E.taper);
-    tl.to(E.taper, { strokeDashoffset: 0, duration: 1.0 }, 1.1);
-    gsap.set(E.hatch, { attr: { [wipeAttr]: 0 } });
-    tl.to(E.hatch, { attr: { [wipeAttr]: d.span }, duration: 1.0, ease: 'power2.out' }, 1.1);
-    // Dimension lines grow from their centres; arrowheads fade; the figures
-    // resolve on the teleprinter (D-041's one idiom, on numbers that resolve).
-    E.dims.forEach((dim, i) => {
-      const origin = d.stacked ? `${dim.at} ${dim.mid}` : `${dim.mid} ${dim.at}`;
-      gsap.set(dim.line, { [scaleAxis]: 0, svgOrigin: origin });
-      gsap.set([dim.arrows, dim.loss], { opacity: 0 });
-      tl.to(dim.line, { [scaleAxis]: 1, duration: 0.5 }, 1.2 + 0.1 * i);
-      tl.to([dim.arrows, dim.loss], { opacity: 1, duration: 0.3 }, 1.45 + 0.1 * i);
-      // Only the rates resolve on the teleprinter — sixteen scrambling
-      // numerals at once was noise, not an idiom (design gate, D-065).
-      tl.to(dim.rate, { duration: 0.5, scrambleText: { text: d.texts.rates[i], ...SCRAMBLE } }, 1.4 + 0.1 * i);
-    });
-    // The signal pointer lands last.
-    settleTo(E.carriages[3], d.origin - d.readings[3], d.readings[3], 1.5);
-    tl.to(E.exts[3], { opacity: 1, duration: 0.5 }, 2.05);
-    return tl;
-  }
-
-  // Update. Same width by construction (size changes redraw without motion),
-  // so only readings and texts differ; unchanged stations do not move.
-  if (prev.stacked !== d.stacked || prev.width !== d.width) return tl;
-  const graphite = token('--color-graphite');
-  const steelDeep = token('--color-steel-deep');
-  d.readings.forEach((r, i) => {
-    if (prev.readings[i] === r) return;
-    gsap.set(E.carriages[i], { [axis]: prev.readings[i] - r });
-    settleTo(E.carriages[i], prev.readings[i] - r, r, 0);
-    const p = prev.readings[i];
-    tl.fromTo(
-      E.exts[i],
-      { attr: d.stacked ? { x1: p, x2: p } : { y1: p, y2: p } },
-      { attr: d.stacked ? { x1: r, x2: r } : { y1: r, y2: r }, ...settle },
-      0,
-    );
-  });
-  if (prev.taperPoints !== d.taperPoints) {
-    // Legal because both strings carry the same number of numbers (4 and 6
-    // points, always) — GSAP tweens them pairwise.
-    tl.fromTo(E.taper, { attr: { points: prev.taperPoints } }, { attr: { points: d.taperPoints }, ...settle }, 0);
-    tl.fromTo(E.clip, { attr: { points: prev.hatchPoints } }, { attr: { points: d.hatchPoints }, ...settle }, 0);
-  }
-  d.counts.forEach((c, i) => {
-    if (prev.counts[i] === c) return;
-    tl.add(rollNumber(E.counts[i], prev.counts[i], c, fmt.int, 0.9), 0);
-    // The changed station's node flashes once, then clears back to its class.
-    tl.fromTo(E.nodes[i], { fill: graphite }, { fill: steelDeep, duration: 1.2, ease: 'power1.out', clearProps: 'fill' }, 0);
-  });
-  // Shares and losses simply show their new value (the builder wrote it);
-  // only a changed rate re-scrambles.
-  E.dims.forEach((dim, i) => {
-    if (prev.texts.rates[i] !== d.texts.rates[i]) tl.to(dim.rate, { duration: 0.4, scrambleText: { text: d.texts.rates[i], ...SCRAMBLE } }, 0);
-  });
-  // A new scale top re-graduates the beam; it fades in rather than jumps.
-  if (prev.top !== d.top) tl.from(E.beam, { opacity: 0, duration: 0.4 }, 0);
-  return tl;
-}
-
 /* ------------------------------------------------------------------ */
 /* Tables                                                              */
 /* ------------------------------------------------------------------ */
 
-function fillRows(tbody: HTMLTableSectionElement, rows: string[][], cols: number): void {
+interface Row {
+  cells: string[];
+  /** This row's share of the list's top value, 0..1 — the light trace. */
+  share: number;
+}
+
+function fillRows(tbody: HTMLTableSectionElement, rows: Row[], cols: number): void {
   tbody.replaceChildren();
+  // The Aktionen ledger flows its rows top→bottom across CSS grid columns
+  // (one, two or three by breakpoint); the row count per column is set here
+  // because CSS cannot ceil. Explicit roles keep the table a table for
+  // assistive tech once its rows are grid items (the markup sets them too).
+  const n = Math.max(1, rows.length);
+  tbody.style.setProperty('--rows-1', String(n));
+  tbody.style.setProperty('--rows-2', String(Math.ceil(n / 2)));
+  tbody.style.setProperty('--rows-3', String(Math.ceil(n / 3)));
   if (rows.length === 0) {
     const tr = document.createElement('tr');
+    tr.setAttribute('role', 'row');
     const td = document.createElement('td');
+    td.setAttribute('role', 'cell');
     td.className = 'stats-td stats-td-id';
     td.colSpan = cols;
     td.textContent = '–';
@@ -1107,16 +464,64 @@ function fillRows(tbody: HTMLTableSectionElement, rows: string[][], cols: number
     tbody.append(tr);
     return;
   }
-  for (const row of rows) {
+  rows.forEach((row, r) => {
     const tr = document.createElement('tr');
-    row.forEach((cell, i) => {
+    tr.setAttribute('role', 'row');
+    tr.className = r === 0 && row.share > 0 ? 'stats-row is-lead' : 'stats-row';
+    tr.style.setProperty('--share', row.share.toFixed(3));
+    row.cells.forEach((cell, i) => {
       const td = document.createElement('td');
+      td.setAttribute('role', 'cell');
       td.className = i === 0 ? 'stats-td stats-td-id' : 'stats-td stats-td-num';
       td.textContent = cell;
+      // A truncated path carries its full text in the title (a property,
+      // never markup).
+      if (i === 0) td.title = cell;
       tr.append(td);
     });
     tbody.append(tr);
+  });
+}
+
+/** Rows for a ranked list: the identifier, the formatted counts, the share. */
+function ranked(items: { id: string; values: number[] }[], fmt: Fmt): Row[] {
+  const top = items.reduce((m, it) => Math.max(m, it.values[0] ?? 0), 0);
+  return items.map((it) => ({
+    cells: [it.id, ...it.values.map((v) => fmt.int.format(v))],
+    share: top > 0 ? Math.max(0, Math.min(1, (it.values[0] ?? 0) / top)) : 0,
+  }));
+}
+
+/* ------------------------------------------------------------------ */
+/* DEV fixtures                                                        */
+/* ------------------------------------------------------------------ */
+
+/** A built-in reading for checking the picture without a Worker (DEV only —
+    Vite drops the whole function from the production chunk). `seed`
+    mirrors the local database; `empty` is a range with nobody in it. */
+function fixture(days: number, mode: 'seed' | 'empty'): unknown {
+  const to = new Date(Date.UTC(2026, 8, 16));
+  const series = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(to.getTime() - i * 86400000);
+    const views = mode === 'empty' ? 0 : Math.max(0, Math.round(30 + 18 * Math.sin(i / 2.6) + (i % 7 === 0 ? 14 : 0) + (i === 9 ? 26 : 0)));
+    series.push({ day: d.toISOString().slice(0, 10), views, visitors: Math.round(views * 0.62) });
   }
+  const views = series.reduce((t, p) => t + p.views, 0);
+  const visitors = series.reduce((t, p) => t + p.visitors, 0);
+  const empty = mode === 'empty';
+  return {
+    range: { from: series[0].day, to: '2026-09-16', days },
+    totals: { views, visitors, events: empty ? 0 : 89 },
+    series,
+    pages: empty ? [] : [{ path: '/', views: 141, visitors: 98 }, { path: '/teaser', views: 42, visitors: 30 }, { path: '/en/', views: 19, visitors: 15 }, { path: '/karte/manush-vaghani', views: 12, visitors: 9 }, { path: '/en/card/peter-knopp/eine-sehr-lange-adresse-die-nicht-die-seite-verbreitern-darf', views: 1, visitors: 1 }],
+    referrers: empty ? [] : [{ ref: '', views: 120 }, { ref: 'www.linkedin.com', views: 44 }, { ref: 'www.google.com', views: 31 }],
+    countries: empty ? [] : [{ country: 'DE', visitors: 130 }, { country: 'AT', visitors: 9 }, { country: 'CH', visitors: 6 }],
+    devices: empty ? [] : [{ device: 'desktop', visitors: 90 }, { device: 'mobile', visitors: 51 }, { device: 'tablet', visitors: 4 }],
+    langs: empty ? [] : [{ lang: 'de', views: 190 }, { lang: 'en', views: 30 }],
+    events: empty ? [] : [{ event: 'cta', value: 'hero', count: 14 }, { event: 'cta', value: 'closing', count: 6 }, { event: 'teaser', value: 'unlock', count: 3 }],
+    funnel: empty ? { visitors: 0, engaged: 0, reached_end: 0, enquiries: 0 } : { visitors: 263, engaged: 93, reached_end: 45, enquiries: 4 },
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -1138,12 +543,13 @@ onPage(() => {
     submitLabel: scope.querySelector<HTMLElement>('[data-stats-key-submit-label]'),
     board: scope.querySelector<HTMLElement>('[data-stats-board]'),
     status: scope.querySelector<HTMLElement>('[data-stats-status]'),
-    sheet: scope.querySelector<HTMLElement>('[data-stats-sheet]'),
-    rangeOut: scope.querySelector<HTMLElement>('[data-stats-range-out]'),
+    toggles: scope.querySelector<HTMLElement>('[data-stats-toggles]'),
+    ink: scope.querySelector<HTMLElement>('[data-stats-range-ink]'),
     fetched: scope.querySelector<HTMLElement>('[data-stats-fetched]'),
     nextOut: scope.querySelector<HTMLElement>('[data-stats-next]'),
-    benchBox: scope.querySelector<HTMLElement>('[data-stats-bench-box]'),
-    bench: scope.querySelector<SVGSVGElement>('[data-stats-bench]'),
+    scaleOut: scope.querySelector<HTMLElement>('[data-stats-scale]'),
+    stage: scope.querySelector<HTMLElement>('[data-stats-stage]'),
+    canvas: scope.querySelector<HTMLCanvasElement>('[data-stats-canvas]'),
     chart: scope.querySelector<HTMLElement>('[data-stats-chart]'),
     svg: scope.querySelector<SVGSVGElement>('[data-stats-svg]'),
     tip: scope.querySelector<HTMLElement>('[data-stats-tip]'),
@@ -1156,11 +562,10 @@ onPage(() => {
   };
   if (Object.values(found).some((el) => el === null)) return;
   /* Re-bound through one object after the guard so the non-null types
-     survive into the handlers below (teaser.ts, same lesson). The guard
-     above checked every member, which is what the assertion states. */
+     survive into the handlers below (teaser.ts, same lesson). */
   const els = found as { [K in keyof typeof found]: NonNullable<(typeof found)[K]> };
-  const { form, input, keyError, submit, submitLabel, board, status, sheet, rangeOut, fetched, nextOut } = els;
-  const { benchBox, bench, chart, svg, tip, tipValue, tipLabel, empty, refresh, forget, exclude } = els;
+  const { form, input, keyError, submit, submitLabel, board, status, toggles, ink, fetched, nextOut, scaleOut } = els;
+  const { stage, canvas, chart, svg, tip, tipValue, tipLabel, empty, refresh, forget, exclude } = els;
 
   const radios = Array.from(scope.querySelectorAll<HTMLInputElement>('[data-stats-range]'));
   const kpiEls = new Map<string, HTMLElement>();
@@ -1169,6 +574,20 @@ onPage(() => {
   for (const el of scope.querySelectorAll<HTMLTableSectionElement>('[data-stats-rows]')) {
     tbodies.set(el.dataset.statsRows ?? '', el);
   }
+  const q = <T extends Element>(sel: string, i: number) => scope.querySelector<T>(`[${sel}="${i}"]`);
+  const countEls = [0, 1, 2, 3].map((i) => q<HTMLElement>('data-stats-count', i));
+  const nameEls = [0, 1, 2, 3].map((i) => q<HTMLElement>('data-stats-name', i));
+  const shareEls = [0, 1, 2, 3].map((i) => q<HTMLElement>('data-stats-share', i));
+  const rateEls = [0, 1, 2].map((i) => q<HTMLElement>('data-stats-rate', i));
+  const rateValEls = [0, 1, 2].map((i) => q<HTMLElement>('data-stats-rate-val', i));
+  const rateLossEls = [0, 1, 2].map((i) => q<HTMLElement>('data-stats-rate-loss', i));
+  if ([...countEls, ...nameEls, ...shareEls, ...rateEls, ...rateValEls, ...rateLossEls].some((el) => el === null)) return;
+  const counts = countEls as HTMLElement[];
+  const names = nameEls as HTMLElement[];
+  const shares = shareEls as HTMLElement[];
+  const rates = rateEls as HTMLElement[];
+  const rateVals = rateValEls as HTMLElement[];
+  const rateLosses = rateLossEls as HTMLElement[];
 
   const ds = scope.dataset;
   const labels = {
@@ -1181,6 +600,9 @@ onPage(() => {
     direct: ds.labelDirect ?? '',
     today: ds.labelToday ?? '',
     next: ds.labelNext ?? '',
+    arrow: ds.labelArrow ?? '',
+    scaleOne: ds.labelScaleOne ?? '',
+    scaleMany: ds.labelScaleMany ?? '',
     device: {
       mobile: ds.labelDeviceMobile ?? '',
       tablet: ds.labelDeviceTablet ?? '',
@@ -1189,17 +611,9 @@ onPage(() => {
     },
   };
   const locale = ds.locale ?? 'de-DE';
-  const stages = [ds.labelStageVisitors ?? '', ds.labelStageEngaged ?? '', ds.labelStageEnd ?? '', ds.labelStageEnquiries ?? ''];
-  const benchLabels: BenchLabels = {
-    part: ds.labelPart ?? '',
-    datum: ds.labelDatum ?? '',
-    scale: ds.labelScale ?? '',
-    stages,
-    range: '',
-    locale,
-  };
   const fmt = makeFmt(locale);
   const submitIdle = submitLabel.textContent ?? '';
+  const dev = import.meta.env.DEV;
 
   let key = recallKey();
   let data: StatsData | null = null;
@@ -1207,21 +621,152 @@ onPage(() => {
   let inFlight = false;
   let raf = 0;
 
-  // Drawings and the tweens born outside the page context's synchronous
-  // pass — all killed in the cleanup.
-  let benchDraw: BenchDrawing | null = null;
-  let benchWidth = 0;
-  let benchTl: gsap.core.Timeline | null = null;
-  let chartBars: Map<string, number> | null = null;
-  let chartWidth = 0;
-  let chartTween: gsap.core.Tween | null = null;
+  // The funnel texts as shown (null until the first data) and every tween
+  // born outside the page context's synchronous pass — killed in the cleanup.
+  let shownCounts: number[] | null = null;
+  let shownTexts: FunnelTexts | null = null;
+  let pendingTexts: { counts: number[]; ft: FunnelTexts } | null = null;
+  const textTweens: gsap.core.Tween[] = [];
+  let leadFallback = 0;
+  let settleTimer = 0;
+  let leadRolled = false;
+  let pegel: PegelDrawing | null = null;
+  let pegelWidth = 0;
+  let pegelTl: gsap.core.Timeline | null = null;
   const kpiShown = new Map<string, number>();
   const kpiTweens: gsap.core.Tween[] = [];
+  let inkTween: gsap.core.Tween | null = null;
 
   // The poll and its countdown.
   let pollTimer = 0;
   let nextAt = 0;
   let countdown = 0;
+
+  /* ---- the funnel texts --------------------------------------------- */
+
+  function killTextTweens(): void {
+    for (const t of textTweens) t.kill();
+    textTweens.length = 0;
+    clearTimeout(leadFallback);
+    leadFallback = 0;
+    clearTimeout(settleTimer);
+    settleTimer = 0;
+  }
+
+  function setRate(i: number, ft: FunnelTexts, scramble: boolean): void {
+    const text = ft.rates[i] === '–' ? '–' : `${labels.arrow} ${ft.rates[i]}`;
+    rateLosses[i].textContent = ft.losses[i] === '–' ? '' : ft.losses[i];
+    rates[i].classList.toggle('is-growth', ft.grows[i]);
+    if (scramble && !motionOff) {
+      textTweens.push(gsap.to(rateVals[i], { duration: 0.5, scrambleText: { text, ...SCRAMBLE } }));
+    } else {
+      rateVals[i].textContent = text;
+    }
+  }
+
+  /** Every text on the object at its final value, no motion. */
+  function finalizeTexts(): void {
+    if (!pendingTexts) return;
+    const { counts: c, ft } = pendingTexts;
+    killTextTweens();
+    c.forEach((v, i) => {
+      counts[i].textContent = fmt.int.format(v);
+      shares[i].textContent = ft.shares[i];
+    });
+    for (let i = 0; i < 3; i++) setRate(i, ft, false);
+    gsap.set([...counts, ...names, ...shares], { opacity: 1, y: 0, clearProps: 'opacity,transform' });
+    shownCounts = c.slice();
+    shownTexts = ft;
+    pendingTexts = null;
+    leadRolled = true;
+  }
+
+  /** The gate the reveal front just crossed. */
+  function frontAt(g: number): void {
+    if (!pendingTexts) return;
+    const { counts: c, ft } = pendingTexts;
+    shares[g].textContent = ft.shares[g];
+    textTweens.push(gsap.to([names[g], shares[g]], { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }));
+    if (g < 3) {
+      gsap.set(counts[g], { opacity: 1 });
+      textTweens.push(rollNumber(counts[g], 0, c[g], fmt.int, 1.2));
+    } else if (c[3] === 0) {
+      // Nothing will ever cross gate 4: the signal count reads 0 now.
+      leadRolled = true;
+      counts[3].textContent = fmt.int.format(0);
+      textTweens.push(gsap.to(counts[3], { opacity: 1, duration: 0.6 }));
+    } else {
+      // The Anfragen count waits for the first enquiry particle; a spark
+      // arrives within a second at today's numbers, but never later than this.
+      leadFallback = window.setTimeout(leadAt, 2000);
+    }
+    if (g >= 1) setRate(g - 1, ft, true);
+  }
+
+  /** The first enquiry particle crossed gate 4: the signal count rolls last. */
+  function leadAt(): void {
+    if (leadRolled || !pendingTexts) return;
+    leadRolled = true;
+    clearTimeout(leadFallback);
+    gsap.set(counts[3], { opacity: 1 });
+    textTweens.push(rollNumber(counts[3], 0, pendingTexts.counts[3], fmt.int, 1.2));
+  }
+
+  /** The reveal ended. Complete: the rolls and rises still running finish on
+      their own and everything is made final once they have — the Anfragen
+      count may still be waiting for its spark. Not complete: final now. */
+  function revealDone(complete: boolean): void {
+    if (!pendingTexts) return;
+    if (!complete) {
+      finalizeTexts();
+      return;
+    }
+    const { counts: c, ft } = pendingTexts;
+    shownCounts = c.slice();
+    shownTexts = ft;
+    settleTimer = window.setTimeout(finalizeTexts, 2600);
+  }
+
+  const strom: Strom = createStrom(canvas, stage, motionOff, { onFront: frontAt, onLead: leadAt, onDone: revealDone, onScale: showScale }, dev);
+
+  /** New funnel figures: the reveal's initial states, or an update. */
+  function showFunnel(c: number[]): void {
+    const ft = funnelTexts(c, fmt);
+    if (motionOff || shownCounts === null) {
+      if (motionOff) {
+        pendingTexts = { counts: c, ft };
+        finalizeTexts();
+      } else {
+        // First data with motion: hide the texts; the river's hooks reveal them.
+        pendingTexts = { counts: c, ft };
+        leadRolled = false;
+        gsap.set([...counts, ...names, ...shares], { opacity: 0 });
+        gsap.set([...names, ...shares], { y: 8 });
+        for (let i = 0; i < 3; i++) {
+          rateVals[i].textContent = '';
+          rateLosses[i].textContent = '';
+        }
+      }
+      strom.setData(c);
+      return;
+    }
+    // Update: changed counts roll, changed rates re-scramble, the rest is set.
+    const prev = shownCounts;
+    const prevTexts = shownTexts;
+    // A reveal still settling is cut short: its texts are final before the
+    // update moves them.
+    if (pendingTexts) finalizeTexts();
+    killTextTweens();
+    c.forEach((v, i) => {
+      shares[i].textContent = ft.shares[i];
+      if (prev[i] !== v) textTweens.push(rollNumber(counts[i], prev[i], v, fmt.int, 0.9));
+      else counts[i].textContent = fmt.int.format(v);
+    });
+    for (let i = 0; i < 3; i++) setRate(i, ft, prevTexts?.rates[i] !== ft.rates[i]);
+    shownCounts = c.slice();
+    shownTexts = ft;
+    strom.setData(c);
+  }
 
   /* ---- tooltip ------------------------------------------------------ */
 
@@ -1233,10 +778,10 @@ onPage(() => {
       const half = tip.offsetWidth / 2;
       const width = chart.clientWidth;
       tip.style.left = `${Math.min(Math.max(cx, half), Math.max(half, width - half))}px`;
-      // Above the bar, unless there is no room — then pinned to the top edge.
-      const pinned = top - 6 - tip.offsetHeight < 0;
+      // Above the point, unless there is no room — then pinned to the top edge.
+      const pinned = top - 8 - tip.offsetHeight < 0;
       tip.classList.toggle('stats-tip-pinned', pinned);
-      tip.style.top = pinned ? '0px' : `${top - 6}px`;
+      tip.style.top = pinned ? '0px' : `${top - 8}px`;
     },
     hide() {
       tip.hidden = true;
@@ -1251,44 +796,56 @@ onPage(() => {
   }
 
   /**
-   * The bench at the box's real width. 'data' animates — the entrance when
-   * there is no previous drawing, the update otherwise; 'size' redraws the
-   * final state, except that the first drawing after the board is shown
-   * (width 0 → real) is the entrance.
+   * The Pegel at the container's real width. 'data' animates — the draw-in
+   * when there is no previous drawing or the day count changed, the points
+   * tween otherwise; 'size' redraws the final state.
    */
-  function redrawBench(reason: Reason): void {
-    const width = benchBox.clientWidth;
-    if (!data || width < 40) return; // hidden (display:none) or not yet laid out
-    const prev = benchDraw;
-    benchTl?.kill();
-    benchTl = null;
-    const drawing = drawBench(bench, data.funnel, width, fmt, benchLabels);
-    benchDraw = drawing;
-    benchWidth = width;
-    if (motionOff) return;
-    if (!prev) benchTl = animateBench(drawing, null, fmt);
-    else if (reason === 'data') benchTl = animateBench(drawing, prev, fmt);
-  }
-
-  function redrawChart(reason: Reason): void {
+  function redrawPegel(reason: Reason): void {
     const width = chart.clientWidth;
+    const height = svg.clientHeight || 160;
     if (!data || width < 40) return;
     handlers.hide();
-    chartTween?.kill();
-    chartTween = null;
-    const drawing = drawChart(svg, data.series, width, fmt, { views: labels.views, visitors: labels.visitors, today: labels.today }, handlers);
-    chartWidth = width;
-    // New or changed days grow from the baseline; unchanged bars stay.
-    if (!motionOff && (reason === 'data' || !chartBars)) {
-      const grown = drawing.bars.filter((b) => chartBars?.get(b.day) !== b.views && b.views > 0).map((b) => b.fill);
-      if (grown.length) {
-        chartTween = gsap.from(grown, { attr: { y: drawing.baseline, height: 0 }, duration: 0.5, stagger: 0.01, ease: 'expo.out' });
-      }
+    const prev = pegel;
+    pegelTl?.kill();
+    pegelTl = null;
+    const drawing = drawPegel(svg, data.series, width, height, fmt, { views: labels.views, visitors: labels.visitors, today: labels.today }, handlers);
+    pegel = drawing;
+    pegelWidth = width;
+    if (!drawing || motionOff) return;
+    const E = drawing.els;
+    if (reason === 'size') return;
+    if (!prev || prev.n !== drawing.n || prev.width !== drawing.width) {
+      // Draw-in: the lines stroke themselves left→right, the fill and the
+      // labels follow.
+      const tl = gsap.timeline();
+      for (const line of [E.glow, E.visitors, E.views]) primeDraw(line);
+      tl.to([E.glow, E.views], { strokeDashoffset: 0, duration: 1.0, ease: 'power2.out' }, 0);
+      tl.to(E.visitors, { strokeDashoffset: 0, duration: 1.0, ease: 'power2.out' }, 0.1);
+      tl.from(E.fill, { opacity: 0, duration: 0.8, ease: 'power2.out' }, 0.3);
+      tl.from([E.dot, E.labelToday, E.labelViews, E.labelVisitors, ...E.texts], { opacity: 0, duration: 0.5, stagger: 0.04 }, 0.8);
+      pegelTl = tl;
+      return;
     }
-    chartBars = new Map(drawing.bars.map((b) => [b.day, b.views]));
+    // A poll with the same days: the level moves. Legal because both point
+    // strings carry the same number of numbers — GSAP tweens them pairwise.
+    const settle = { duration: 0.9, ease: 'expo.out' };
+    const tl = gsap.timeline();
+    if (prev.points.views !== drawing.points.views) {
+      tl.fromTo(E.views, { attr: { points: prev.points.views } }, { attr: { points: drawing.points.views }, ...settle }, 0);
+      tl.fromTo(E.glow, { attr: { points: prev.points.views } }, { attr: { points: drawing.points.views }, ...settle }, 0);
+      tl.fromTo(E.fill, { attr: { points: prev.points.fill } }, { attr: { points: drawing.points.fill }, ...settle }, 0);
+      tl.fromTo(E.dot, { attr: { cy: prev.dot.y } }, { attr: { cy: drawing.dot.y }, ...settle }, 0);
+      tl.fromTo(E.labelViews, { attr: { y: prev.labelY.views } }, { attr: { y: drawing.labelY.views }, ...settle }, 0);
+      tl.fromTo(E.labelToday, { attr: { y: prev.labelY.today } }, { attr: { y: drawing.labelY.today }, ...settle }, 0);
+    }
+    if (prev.points.visitors !== drawing.points.visitors) {
+      tl.fromTo(E.visitors, { attr: { points: prev.points.visitors } }, { attr: { points: drawing.points.visitors }, ...settle }, 0);
+      tl.fromTo(E.labelVisitors, { attr: { y: prev.labelY.visitors } }, { attr: { y: drawing.labelY.visitors }, ...settle }, 0);
+    }
+    pegelTl = tl;
   }
 
-  /** KPI figures roll from what is shown to what is new — never blink. */
+  /** Totals roll from what is shown to what is new — never blink. */
   function setKpi(id: string, value: number): void {
     const el = kpiEls.get(id);
     if (!el) return;
@@ -1301,43 +858,49 @@ onPage(() => {
     kpiTweens.push(rollNumber(el, from ?? 0, value, fmt.int, from === undefined ? 1.2 : 0.9));
   }
 
-  /** Everything on the sheet, from the JSON alone. */
+  /** The datum line's written contract, fed by the river itself whenever it
+      recomputes k (data, size, breakpoint) — never read ahead of it. */
+  function showScale(k: number): void {
+    scaleOut.textContent = k === 1 ? labels.scaleOne : labels.scaleMany.replace('{k}', fmt.int.format(k));
+  }
+
+  /** Everything on the board, from the JSON alone. */
   function render(next: StatsData): void {
     data = next;
-    benchLabels.range = `${fmtDay(fmt.dayShort, next.range.from)}–${fmtDay(fmt.dayFull, next.range.to)}`;
-    rangeOut.textContent = benchLabels.range;
     fetched.textContent = fmt.stamp.format(new Date());
 
     setKpi('views', next.totals.views);
     setKpi('visitors', next.totals.visitors);
     setKpi('events', next.totals.events);
 
-    empty.hidden = next.series.some((p) => p.views > 0);
-    redrawBench('data');
-    redrawChart('data');
-
     const f = next.funnel;
-    const counts = [f.visitors, f.engaged, f.reached_end, f.enquiries];
-    const ft = funnelTexts(counts, fmt);
-    const rows: Record<string, string[][]> = {
-      // The bench as a table: Stufe · Anzahl · Anteil · Übergang — every
-      // figure on the drawing, reachable without reading the drawing.
-      funnel: counts.map((c, i) => {
+    const c = [f.visitors, f.engaged, f.reached_end, f.enquiries];
+    showFunnel(c);
+
+    empty.hidden = next.series.some((p) => p.views > 0);
+    redrawPegel('data');
+
+    const ft = funnelTexts(c, fmt);
+    const stageNames = names.map((el) => el.textContent ?? '');
+    const rows: Record<string, Row[]> = {
+      // The river as a table: Stufe · Anzahl · Anteil · Zur Vorstufe — every
+      // figure on the object, reachable without reading the object.
+      funnel: c.map((v, i) => {
         const step = i === 0 || (ft.rates[i - 1] === '–' && ft.losses[i - 1] === '–') ? '–' : `${ft.rates[i - 1]} · ${ft.losses[i - 1]}`;
-        return [stages[i], fmt.int.format(c), ft.shares[i], step];
+        return { cells: [stageNames[i], fmt.int.format(v), ft.shares[i], step], share: 0 };
       }),
-      pages: next.pages.map((r) => [r.path, fmt.int.format(r.views), fmt.int.format(r.visitors)]),
-      referrers: next.referrers.map((r) => [r.ref || labels.direct, fmt.int.format(r.views)]),
-      countries: next.countries.map((r) => [r.country || '–', fmt.int.format(r.visitors)]),
-      devices: next.devices.map((r) => [deviceLabel(r.device), fmt.int.format(r.visitors)]),
-      langs: next.langs.map((r) => [r.lang || '–', fmt.int.format(r.views)]),
-      events: next.events.map((r) => [r.value ? `${r.event}:${r.value}` : r.event, fmt.int.format(r.count)]),
-      // The chart's table view, newest day first — every number the tooltip
+      pages: ranked(next.pages.map((r) => ({ id: r.path, values: [r.views, r.visitors] })), fmt),
+      referrers: ranked(next.referrers.map((r) => ({ id: r.ref || labels.direct, values: [r.views] })), fmt),
+      countries: ranked(next.countries.map((r) => ({ id: r.country || '–', values: [r.visitors] })), fmt),
+      devices: ranked(next.devices.map((r) => ({ id: deviceLabel(r.device), values: [r.visitors] })), fmt),
+      langs: ranked(next.langs.map((r) => ({ id: r.lang || '–', values: [r.views] })), fmt),
+      events: ranked(next.events.map((r) => ({ id: r.value ? `${r.event}:${r.value}` : r.event, values: [r.count] })), fmt),
+      // The Pegel's table view, newest day first — every number the tooltip
       // shows, reachable without hovering (dataviz: tooltips never gate).
       days: next.series
         .slice()
         .reverse()
-        .map((p) => [fmtDay(fmt.dayFull, p.day), fmt.int.format(p.views), fmt.int.format(p.visitors)]),
+        .map((p) => ({ cells: [fmtDay(fmt.dayFull, p.day), fmt.int.format(p.views), fmt.int.format(p.visitors)], share: 0 })),
     };
     for (const [id, tbody] of tbodies) {
       fillRows(tbody, rows[id] ?? [], Number(tbody.dataset.statsCols) || 2);
@@ -1345,31 +908,59 @@ onPage(() => {
   }
 
   function killMotion(): void {
-    benchTl?.kill();
-    benchTl = null;
-    chartTween?.kill();
-    chartTween = null;
+    killTextTweens();
+    pegelTl?.kill();
+    pegelTl = null;
     for (const t of kpiTweens) t.kill();
     kpiTweens.length = 0;
+    inkTween?.kill();
+    inkTween = null;
   }
 
   /** Back to placeholders — after the key is forgotten, no numbers linger. */
   function clearBoard(): void {
     data = null;
     killMotion();
-    bench.replaceChildren();
-    benchDraw = null;
-    benchWidth = 0;
+    strom.clear();
+    pendingTexts = null;
+    shownCounts = null;
+    shownTexts = null;
+    for (let i = 0; i < 4; i++) {
+      counts[i].textContent = '–';
+      shares[i].textContent = '–';
+    }
+    for (let i = 0; i < 3; i++) {
+      rateVals[i].textContent = '';
+      rateLosses[i].textContent = '';
+      rates[i].classList.remove('is-growth');
+    }
+    gsap.set([...counts, ...names, ...shares], { clearProps: 'opacity,transform' });
     svg.replaceChildren();
-    chartBars = null;
-    chartWidth = 0;
+    pegel = null;
+    pegelWidth = 0;
     handlers.hide();
     empty.hidden = true;
-    rangeOut.textContent = '–';
     fetched.textContent = '–';
+    scaleOut.textContent = '–';
     kpiShown.clear();
     for (const el of kpiEls.values()) el.textContent = '–';
     for (const tbody of tbodies.values()) tbody.replaceChildren();
+  }
+
+  /* ---- the range underline ------------------------------------------ */
+
+  function moveInk(animate: boolean): void {
+    const checked = radios.find((r) => r.checked);
+    const label = checked?.closest<HTMLElement>('.stats-toggle');
+    if (!label) return;
+    const x = label.offsetLeft;
+    const width = label.offsetWidth;
+    inkTween?.kill();
+    if (!animate || motionOff) {
+      gsap.set(ink, { x, width });
+      return;
+    }
+    inkTween = gsap.to(ink, { x, width, duration: 0.5, ease: 'expo.out' });
   }
 
   /* ---- the poll ----------------------------------------------------- */
@@ -1426,6 +1017,7 @@ onPage(() => {
   function showBoard(): void {
     form.hidden = true;
     board.hidden = false;
+    moveInk(false);
   }
 
   function currentDays(): Days {
@@ -1438,7 +1030,7 @@ onPage(() => {
   type Outcome = 'ok' | 'unauthorized' | 'error' | 'aborted';
 
   /**
-   * One request, one outcome. The previous render stays on the sheet while
+   * One request, one outcome. The previous render stays on the board while
    * this runs — dimmed only on the very first load, when there is nothing
    * but placeholders to dim; a poll says nothing at all unless it fails.
    */
@@ -1448,7 +1040,7 @@ onPage(() => {
     const ctl = new AbortController();
     controller = ctl;
     inFlight = true;
-    if (!data) sheet.dataset.statsBusy = 'true';
+    if (!data) board.dataset.statsBusy = 'true';
     if (!silent) status.textContent = labels.loading;
 
     let outcome: Outcome = 'error';
@@ -1471,9 +1063,9 @@ onPage(() => {
       // Offline, blocked, malformed JSON — or superseded by a newer request.
       outcome = ctl.signal.aborted ? 'aborted' : 'error';
     }
-    if (ctl.signal.aborted) return 'aborted'; // the newer request owns the sheet now
+    if (ctl.signal.aborted) return 'aborted'; // the newer request owns the board now
     inFlight = false;
-    delete sheet.dataset.statsBusy;
+    delete board.dataset.statsBusy;
     status.textContent = outcome === 'error' ? labels.network : '';
     if (outcome === 'ok') armPoll();
     return outcome;
@@ -1521,7 +1113,12 @@ onPage(() => {
     }
   });
 
-  for (const radio of radios) radio.addEventListener('change', () => void reload());
+  for (const radio of radios) {
+    radio.addEventListener('change', () => {
+      moveInk(true);
+      void reload();
+    });
+  }
   refresh.addEventListener('click', () => void reload());
 
   forget.addEventListener('click', () => {
@@ -1537,9 +1134,9 @@ onPage(() => {
   exclude.checked = readOff();
   exclude.addEventListener('change', () => writeOff(exclude.checked));
 
-  // Chart keyboard model: arrows walk the days (focus moves the tooltip with
-  // it), Home/End jump, Escape dismisses the tooltip without leaving the bar
-  // (SC 1.4.13). The bars are rebuilt on every draw; the svg is not.
+  // Pegel keyboard model: arrows walk the days (focus moves the tooltip with
+  // it), Home/End jump, Escape dismisses the tooltip without leaving the day
+  // (SC 1.4.13). The hit groups are rebuilt on every draw; the svg is not.
   svg.addEventListener('keydown', (event) => {
     const bars = Array.from(svg.querySelectorAll<SVGGElement>('.stats-bar'));
     const at = bars.findIndex((b) => b === document.activeElement);
@@ -1555,37 +1152,40 @@ onPage(() => {
     }
     if (next < 0) return;
     event.preventDefault();
-    // Roving tabindex: the bar the visitor left last is where Tab returns.
+    // Roving tabindex: the day the visitor left last is where Tab returns.
     bars[at].tabIndex = -1;
     bars[next].tabIndex = 0;
     bars[next].focus();
   });
 
-  // Both drawings are built at their container's real width and redrawn
-  // when that changes — including the jump from 0 when the board is first
-  // shown. The bench box also grows in height as it is drawn, which fires
-  // the observer again: the width comparison is what keeps an entrance from
-  // being killed by its own first paint.
+  // The Pegel is built at its container's real width and redrawn when that
+  // changes — including the jump from 0 when the board is first shown. The
+  // river watches its own stage (scripts/strom.ts).
   const observer = new ResizeObserver(() => {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(() => {
-      if (benchBox.clientWidth !== benchWidth) redrawBench('size');
-      if (chart.clientWidth !== chartWidth) redrawChart('size');
+      if (chart.clientWidth !== pegelWidth) redrawPegel(pegel ? 'size' : 'data');
+      if (!board.hidden) moveInk(false);
     });
   });
-  observer.observe(benchBox);
   observer.observe(chart);
+  observer.observe(toggles);
+  void document.fonts?.ready.then(() => {
+    if (!board.hidden) moveInk(false);
+  });
 
   // The countdown ticks once a second — information, not motion, so it
   // runs under reduced motion too. Text only.
   countdown = window.setInterval(showCountdown, 1000);
 
-  // A fixture path for checking the drawing without a Worker: `?fixture`
-  // exposes render() on window for the console. Nothing else reads it.
+  // DEV only: `?fixture` exposes render() on window for the console;
+  // `?fixture=seed` / `?fixture=empty` render a built-in reading at once,
+  // with no key and no Worker. Vite drops the whole branch from the
+  // production chunk.
   type FixtureWindow = Window & { nbStatsRender?: (json: unknown) => boolean };
-  // DEV only: Vite drops the whole branch from the production chunk.
-  const fixture = import.meta.env.DEV && new URLSearchParams(window.location.search).has('fixture');
-  if (fixture) {
+  const fixtureParam = dev ? new URLSearchParams(window.location.search).get('fixture') : null;
+  const fixtureOn = dev && fixtureParam !== null;
+  if (fixtureOn) {
     (window as FixtureWindow).nbStatsRender = (json) => {
       const parsed = parse(json);
       if (!parsed) return false;
@@ -1594,7 +1194,17 @@ onPage(() => {
     };
   }
 
-  if (key) {
+  if (fixtureOn && (fixtureParam === 'seed' || fixtureParam === 'empty')) {
+    showBoard();
+    const parsed = parse(fixture(currentDays(), fixtureParam));
+    if (parsed) render(parsed);
+    for (const radio of radios) {
+      radio.addEventListener('change', () => {
+        const again = parse(fixture(currentDays(), fixtureParam));
+        if (again) render(again);
+      });
+    }
+  } else if (key) {
     showBoard();
     void reload();
   } else {
@@ -1609,6 +1219,7 @@ onPage(() => {
     clearInterval(pollTimer);
     clearInterval(countdown);
     killMotion();
-    if (fixture) delete (window as FixtureWindow).nbStatsRender;
+    strom.destroy();
+    if (fixtureOn) delete (window as FixtureWindow).nbStatsRender;
   };
 });

@@ -58,6 +58,27 @@ function optedOut(): boolean {
    form to a host and drops our own. */
 let prev = '';
 
+/* One `scroll:end` per page view, the moment the footer enters the viewport
+   — the funnel's third stage (D-065). An observer, not a scroll listener:
+   it costs nothing until the footer shows, and it works under Lenis, which
+   scrolls natively. Rebuilt on every page mount; the old one is dropped. */
+let ender: IntersectionObserver | null = null;
+function watchEnd(): void {
+  ender?.disconnect();
+  ender = null;
+  const footer = document.querySelector('footer');
+  if (!footer || !('IntersectionObserver' in window)) return;
+  ender = new IntersectionObserver((entries, obs) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    // Its own handle, not the module's: a callback queued across a route
+    // swap must not disconnect the next page's observer.
+    obs.disconnect();
+    if (ender === obs) ender = null;
+    track('scroll', 'end');
+  });
+  ender.observe(footer);
+}
+
 /** Report a named event with an optional value (cut to 80 characters). */
 export function track(e: string, v?: string): void {
   // The dashboard does not count itself — not its views, not its clicks:
@@ -124,6 +145,7 @@ if (on) {
   document.addEventListener(router ? 'astro:page-load' : 'DOMContentLoaded', () => {
     track('pageview');
     prev = location.pathname;
+    watchEnd();
   });
 
   /* The import-free entry for Contact.astro and scripts/teaser.ts. */

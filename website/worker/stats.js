@@ -201,11 +201,13 @@ export async function handleStats(request, env) {
   // a named click. "visitors" is COUNT(DISTINCT) of a hash that rotates
   // daily, so across a range it is the sum of daily uniques — the dashboard
   // labels it that way.
-  const [totals, series, pages, referrers, countries, devices, langs, events] = await env.DB.batch([
+  // `scroll` rows (the beacon's "reached the end", D-065) feed the funnel
+  // only — they are not actions, so the totals and the events table skip them.
+  const [totals, series, pages, referrers, countries, devices, langs, events, funnel] = await env.DB.batch([
     win(
       "SELECT COALESCE(SUM(event = 'pageview'), 0) AS views, " +
         "COUNT(DISTINCT CASE WHEN event = 'pageview' THEN visitor END) AS visitors, " +
-        "COALESCE(SUM(event <> 'pageview'), 0) AS events FROM hits WHERE day BETWEEN ?1 AND ?2",
+        "COALESCE(SUM(event NOT IN ('pageview', 'scroll')), 0) AS events FROM hits WHERE day BETWEEN ?1 AND ?2",
     ),
     win(
       "SELECT day, SUM(event = 'pageview') AS views, " +
@@ -234,7 +236,19 @@ export async function handleStats(request, env) {
     ),
     win(
       'SELECT event, value, COUNT(*) AS count FROM hits ' +
-        "WHERE day BETWEEN ?1 AND ?2 AND event <> 'pageview' GROUP BY event, value ORDER BY count DESC LIMIT 50",
+        "WHERE day BETWEEN ?1 AND ?2 AND event NOT IN ('pageview', 'scroll') GROUP BY event, value ORDER BY count DESC LIMIT 50",
+    ),
+    // The funnel: four distinct-visitor counts over the range. Each stage is
+    // a subset of the previous one in intent, not by construction — a form
+    // can be sent with no tracked click before it — so the dashboard must not
+    // assume monotony. Visitors are daily tokens, so these are sums of daily
+    // uniques like everything else here.
+    win(
+      "SELECT COUNT(DISTINCT CASE WHEN event = 'pageview' THEN visitor END) AS visitors, " +
+        "COUNT(DISTINCT CASE WHEN event NOT IN ('pageview', 'scroll', 'form') THEN visitor END) AS engaged, " +
+        "COUNT(DISTINCT CASE WHEN event = 'scroll' AND value = 'end' THEN visitor END) AS reached_end, " +
+        "COUNT(DISTINCT CASE WHEN event = 'form' THEN visitor END) AS enquiries " +
+        'FROM hits WHERE day BETWEEN ?1 AND ?2',
     ),
   ]);
 
@@ -248,6 +262,7 @@ export async function handleStats(request, env) {
     devices: devices.results,
     langs: langs.results,
     events: events.results,
+    funnel: funnel.results[0] ?? { visitors: 0, engaged: 0, reached_end: 0, enquiries: 0 },
   });
 }
 

@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-16
 depends_on: [offer, brand]
-decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-056, D-057, D-062, D-063, D-064]
+decisions: [D-002, D-010, D-013, D-017, D-022, D-023, D-043, D-056, D-057, D-062, D-063, D-064, D-065]
 ---
 
 # 03 — Website Spec (nexbridge-it.com)
@@ -40,7 +40,7 @@ in components. Fonts self-hosted via Fontsource — no Google Fonts CDN (GDPR).
 - `/teaser` (+ `/en/teaser`) — two advertisement films behind a 4-digit courtesy gate,
   nav-linked. **Built and deployed** (2026-09-15), unlike the four entries above it, which are
   still homepage anchors. The videos are the one path served by a Worker script (D-062). Films are self-hosted so the zero-third-party-request property holds (D-056).
-- `/statistik` (+ `/en/stats`) — the founders' stats dashboard (D-063): `noindex`, excluded
+- `/statistik` (+ `/en/stats`) — the founders' stats dashboard (D-063; the funnel bench of D-065 as its centrepiece): `noindex`, excluded
   from `sitemap-index.xml` (`astro.config.mjs` filter), in no nav, key-gated. Internal, not a
   visitor route. Live — see Tech above; status lives in STATE.
 - Later: `/cases/<slug>` (MDX per reference case)

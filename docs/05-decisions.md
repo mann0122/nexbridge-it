@@ -1503,6 +1503,71 @@ by default" floor (`docs/07-brand-kit.md` §11) is now stale and must be **regen
 edited (D-048) — open item 2. The first rows are the founders' own until traffic arrives.
 Owner: founders for the text, partner-b for keeping it true to the code.
 
+## D-065 | 2026-09-16 | The stats dashboard leads with the Durchlauf-Messbank: a horizontal funnel as a measuring bench, live | DECIDED
+The founder, seeing the first numbers, asked for "one main visual in the centre like a horizontal
+funnel — how many came, how many clicked, how many went through till the bottom, how many sent
+enquiries" and for the page to be redesigned so that "our work speaks for itself". Two things
+had to exist first. **Data:** the beacon now sends one `scroll:end` per page view when the
+footer enters the viewport (an IntersectionObserver, rebuilt per route; through `track`, so
+every guard of D-063/D-064 applies), and `/api/stats` returns `funnel: { visitors, engaged,
+reached_end, enquiries }` — distinct daily tokens with a page view / with any named click other
+than the form / with `scroll:end` / with a form event. `scroll` rows feed the funnel only; the
+totals and the actions table skip them. Datenschutz §10 names the new signal in one clause
+(DE + EN), under D-064's terms. Stages are subsets in intent, not by construction — a form can
+be sent without a tracked click — and the object is built to say so rather than clamp.
+
+**The object was chosen by a panel, not by the first idea.** Three concept agents worked three
+angles independently — a P&ID duct whose bore is the count, a Sankey-like sheared section with
+dimensioned offcuts, and a measuring bench — and two judges (one against DESIGN.md line by
+line, one as the founder) scored them on fidelity, boldness, feasibility and legibility. Both
+picked the **Messbank**: magnitude as *position on one graduated beam* instead of as thickness,
+so a count of 4 beside 263 is still a full-size instrument reading near its origin — no minimum
+size, no "not to scale" stamp, and 0/0/0/0 is an instrument at rest. The winner stacked the
+stages top to bottom; the founder said *horizontal*, so the bench is turned: four stations left
+to right along the beam, carriages (28×10 outlined, a 2px graphite vernier hairline) riding
+vertical tracks to their readings, a 1px `line` extension line from every carriage back to the
+beam — the judges' one non-negotiable: **the beam is the thing you read the value from** — a
+hard-vertex taper (1.5px steel-deep, miter, butt) joining the readings over a wedge hatched at
+45° in 1px `line` at 8px pitch, counts on fixed leader shelves (`NB-F.01`…`.04`, display grade,
+stage name, share of visitors), and a dimension band below: rate above each line, the
+**absolute loss below** with a true minus sign (grafted from the losing schematic — "nominal
+over tolerance"), growth reading `+n` in graphite. The enquiries carriage is a filled signal
+pointer in the CTA-arrowhead grammar — **the one signal element on the page**. Below ~560px the
+same builder emits the judges' original stacked form (beam horizontal at the top, four rows,
+carriages marching left), which fits 270px. Every figure repeats in a `<details>`
+Positionsliste. Files: `StatsBoard.astro`, `scripts/stats.ts` (`drawBench`, `animateBench`),
+`styles/stats.css`, 16 keys in `ui.ts`.
+
+**Consequence for D-063:** the bar chart's latest-day bar is **no longer signal** — a data mark
+whose colour competes with the pointer in the same viewport would break the ration, and both
+losing concepts had reached the same demotion independently. It renders graphite and is marked
+by a 1px steel-deep tick rising off its top with a `HEUTE` / `TODAY` label: direct labelling
+instead of a colour with no legend. D-063's "the latest day is the sheet's one signal element"
+is superseded on that clause; DESIGN.md's Stats board paragraph is rewritten in the same commit.
+
+**Live, without a new loop.** The board polls `/api/stats` every 60 s (skipped while
+`document.hidden`; cleared on route change), the Zeichnungskopf's STAND stamp carries seconds
+and a fourth cell counts down „Nächste Messung in n s" — text, not motion, so it ticks under
+reduced motion too. On a change, carriages slide to their new readings with a short instrument
+settle (`back.out(1.4)`, the one deliberate overshoot on the site — a gauge settles), extension
+lines and the taper's `points` tween (point counts are constant by construction), counts roll
+from the shown value, the changed rates re-scramble (D-041's one teleprinter idiom, on numbers
+that genuinely resolve), a changed node flashes once. Nothing on the bench loops: no blinking
+dot (Demo's `.live-dot` is SaaS furniture and stays in the demo), no crawling reading line — the
+judges refused both. The entrance (≈2.4 s: tracks draw, ticks, carriages rise, shelves, taper
+and hatch, dimension band, the pointer last) runs once when data lands; the builder writes the
+final state first and the driver only animates when `!motionOff`, so `?snap` and reduced motion
+get the complete drawing.
+
+**Standing rules for this object** (the judges' warning, now law): the value is read off the
+beam via its extension line; the reading is the vernier or the pointer, never a bar end; counts
+stay on the shelves; the taper never curves; the wedge is hatching, never a tint; no second
+colour enters the drawing. Cut the page around the object before cutting the object. Not
+settled: the entrance choreography's tempo is the founder's eyeball (D-045's rule); "Interaktion"
+counts any named click including the language switch, which is engagement, not intent; the
+funnel counts daily tokens, so a visitor returning another day is a new visitor in every stage.
+Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

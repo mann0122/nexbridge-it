@@ -349,6 +349,10 @@ onPage(({ lenis }) => {
 
       if (src && found) {
         remember(activeId, src);
+        // The stats (D-063) see the teaser id and nothing else: not the code,
+        // not the derived URL. A wrong guess is not reported at all. Dispatched,
+        // not imported — see the note at the top of scripts/beacon.ts.
+        document.dispatchEvent(new CustomEvent('nb:track', { detail: { e: 'teaser', v: activeId } }));
         const card = cardsById.get(activeId);
         if (card) markUnlocked(card);
         mountFilm(src);

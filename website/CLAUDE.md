@@ -27,6 +27,10 @@ npm run dev      # localhost:4321
 npm run build    # static output to dist/ — does NOT typecheck
 npm run check    # astro check: types + the ui.ts DE/EN parity guard (D-058)
 npm run preview  # serve the build
+npm run dev:worker          # wrangler dev on :8787 — the build in dist/ plus the Worker (needs
+                            # a build first; stats need .dev.vars + stats:migrate:local)
+npm run stats:migrate       # apply worker/migrations/ to the remote D1 (D-063)
+npm run stats:migrate:local # …to the local one under .wrangler/
 ```
 
 `check` is not wired into `build` yet: it still reports four pre-existing errors in
@@ -34,11 +38,20 @@ npm run preview  # serve the build
 
 Deployed as a Cloudflare static-asset Worker (`wrangler.jsonc`), not Pages — D-022. Custom domains
 are attached in the Cloudflare dashboard, not via `routes`. One script exists, `worker/index.js`,
-and only files under `/teaser/` go through it (`run_worker_first`; it acts on the `.mp4`s and
-passes the posters through): it serves the videos as `206` slices via the Cache API because the
-asset store ignores `Range` and Safari will not play without it (D-062). Everything else is a
-plain asset. `worker/` is excluded from `astro check`. Deploy check after any change there:
-`curl -sI -H "Range: bytes=0-1" <film url>` must say `206` and carry `x-nb-video`.
+and only two path sets go through it (`run_worker_first`): files under `/teaser/` — it serves the
+videos as `206` slices via the Cache API because the asset store ignores `Range` and Safari will
+not play without it (D-062), and passes the posters through — and `/api/*`, the two stats routes
+in `worker/stats.js` (D-063): `POST /api/hit` from the beacon, `GET /api/stats` for `/statistik`
+behind the `STATS_KEY` secret. Everything else is a plain asset. `worker/` is excluded from
+`astro check`. Deploy checks after any change there: `curl -sI -H "Range: bytes=0-1" <film url>`
+must say `206` and carry `x-nb-video`; `curl -s /api/stats` must say `401` — or `503` for as
+long as the `STATS_KEY` secret is not set in the account (`worker/stats.js` refuses rather than
+falling back to a default key).
+
+The stats are **dark by default**: `statsEnabled` in `site.ts` is `false`, the beacon module is
+inert without the `nb:stats` meta it renders, and flipping it is coupled to the Datenschutz §10
+text (D-063, open item 1 in `../docs/STATE.md`). Do not flip it to test — use `npm run
+dev:worker` with a local build, or the `curl` calls in D-063.
 
 ## Rules that bite
 

@@ -205,6 +205,17 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   an object. The plate is `grayscale(1)` for the same reason — partial saturation still puts
   a full-card field of unchosen colour in the viewport, and an uninked sheet is not in colour.
 
+- Stats board (D-063): the founders' datasheet at `/statistik` — one bordered document on
+  paper, like the demo dashboard: Zeichnungskopf, a KPI row in proportional display figures, a
+  bar chart of views per day drawn as inline SVG at the container's measured width (bars ≤ 24px,
+  square-ended, steel-deep, a 2px paper gap that survives 90 days on a phone), and Positionsliste
+  tables. The **latest day's bar is the sheet's one signal element** — the live dot in datasheet
+  form, kept as a 2px tick when today has no views yet. Text on paper is graphite or steel-deep
+  only; the tooltip is a graphite plate so its paper and steel inks keep the verified contrasts.
+  One tab stop on the chart, arrows walk the days, Escape dismisses the tooltip; every number the
+  tooltip shows is also in a table. Its CSS is a page-scoped sheet (`styles/stats.css`), not a
+  colocated block and not in the shared sheet — two founder-only routes do not tax every visitor.
+
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
 
 One `.astro` file per icon in `website/src/components/icons/`, inline SVG, no JS, no deps.

@@ -57,4 +57,12 @@ export const SITE = {
    * Only one of the two should be set.
    */
   cfAnalyticsToken: '',
+  /**
+   * Self-hosted, cookieless stats (D-063): a beacon on every page reports the
+   * view and named clicks to our own Worker, which stores them in D1 — no
+   * third party, no cookie, no personal data at rest. Off by default. Flip it
+   * ONLY together with the Datenschutz §10 update: its sentence "we use no
+   * web analytics" becomes false the moment this is true.
+   */
+  statsEnabled: false,
 } as const;

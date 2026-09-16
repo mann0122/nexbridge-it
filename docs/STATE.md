@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-09-15
+updated: 2026-09-16
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-016, D-018, D-022, D-023, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062]
+decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063]
 cites_history: [D-007]
 ---
 
@@ -16,7 +16,7 @@ cites_history: [D-007]
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-09-15**
+Last reviewed: **2026-09-16**
 
 ## The venture in five lines
 
@@ -44,17 +44,18 @@ Any audit price other than 295 € is superseded — D-007's figures are history
 
 Live on **nexbridge-it.com** — domain registered to us, confirmed by the founder (D-025).
 Deployed as a Cloudflare static-asset Worker (D-022) with one script, `website/worker/index.js`,
-that serves only the teaser videos — as `206` slices, which Safari needs (D-062). Astro 7 +
-Tailwind 4 (D-023).
+that serves the teaser videos as `206` slices, which Safari needs (D-062), and — since D-063 —
+the two stats routes under `/api/` (`worker/stats.js`). Astro 7 + Tailwind 4 (D-023).
 Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
 drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
 
-**Fourteen pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
+**Sixteen pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
 `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`), the gated teaser page
-(`/teaser`, `/en/teaser` — D-056), plus the NB-VK digital business cards (D-049) — `/karte`,
-`/karte/peter-knopp`, `/karte/manush-vaghani`, their EN mirrors under `/en/card/`, and static
-`/karte/<slug>.vcf` endpoints. Card routes are noindex and sitemap-excluded: handouts, not
-landing pages. The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage
+(`/teaser`, `/en/teaser` — D-056), the founders' stats dashboard (`/statistik`, `/en/stats` —
+D-063; noindex, sitemap-excluded, in no nav, key-gated), plus the NB-VK digital business cards
+(D-049) — `/karte`, `/karte/peter-knopp`, `/karte/manush-vaghani`, their EN mirrors under
+`/en/card/`, and static `/karte/<slug>.vcf` endpoints. Card routes are noindex and
+sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage
 anchors, not pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:19`). The spec sitemap lists them as planned pages.
 `Teaser` is the exception: a real page, and the first one in the nav (D-057).
@@ -70,6 +71,15 @@ retires the old file.
 The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
 `sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
 which appear nowhere until a correct code derives them, not about `/teaser` itself.
+
+**Website stats exist and are dark** (D-063). A cookieless first-party beacon
+(`src/scripts/beacon.ts`) reports page views and named clicks to `/api/hit`; rows live in a D1
+database; `/statistik` shows visits, visitors (sum of daily uniques — the hash rotates daily),
+pages, referrers, countries, devices, languages and events behind a key. Nothing is live:
+`statsEnabled` in `site.ts` is `false`, the `STATS_KEY` secret is not set in the account yet,
+and the Datenschutz §10 sentence still says no analytics is used. The D1 store itself exists
+and is empty (created 2026-09-16, region WEUR). The order to switch it on is in open item 2. The two off-the-shelf slots (`plausibleDomain`,
+`cfAnalyticsToken`) stay as fallbacks and are empty.
 
 The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
 the same URL the printed QR codes encode, and never a vCard record (D-054). The **physical
@@ -123,11 +133,19 @@ Ranked. Owner in brackets.
    *"Cookies und ähnliche Technologien"* (`website/src/i18n/legal.ts:144`) has to name the
    teaser's `sessionStorage` entry. Its text currently denies cookies only, which stays
    literally true; the heading covers similar technologies, and § 25 TDDDG is a lawyer's
-   call, not ours. `TBD:` legal review — no one here may draft that sentence (CLAUDE.md
-   rule 4). The English versions are convenience translations and are unreviewed.
-2. **Analytics not installed** [partner-b] — `plausibleDomain` and `cfAnalyticsToken` in
-   `site.ts` are both empty; the site makes zero third-party requests. D-013 flags this as
-   do-before-driving-traffic.
+   call, not ours. And — new with D-063 — §10 *"Webanalyse und Reichweitenmessung"*
+   (`legal.ts:160`) says no analytics is used; that sentence must be replaced before the
+   stats beacon is switched on (the daily-salted visitor hash may need naming, and the
+   dashboard's `sessionStorage` key and `localStorage` opt-out join the §8 question). `TBD:`
+   legal review — no one here may draft that sentence (CLAUDE.md rule 4). The English
+   versions are convenience translations and are unreviewed.
+2. **Stats built, not switched on** [founders → partner-b] — D-063. The D1 store exists
+   (`nexbridge-stats`, region WEUR, schema applied 2026-09-16; its id is in `wrangler.jsonc`,
+   so deploys are not blocked). Still to do, in this order: the §10 sentence from open item 1
+   lands in `legal.ts`; a founder sets the key with `npx wrangler secret put STATS_KEY` (until
+   then `/api/stats` answers 503 by design); `statsEnabled: true` in `site.ts`; build, deploy,
+   open `/statistik` with the key. D-013's do-before-driving-traffic flag still applies — no
+   traffic is driven until this is on.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
@@ -185,14 +203,16 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. Everything is merged into `main`, the only long-lived branch: the logo mark (D-050),
+Nothing. Everything is merged into `main`, the only long-lived branch: the stats dashboard
+(D-063, dark — the go-live sequence is open item 2), the logo mark (D-050),
 the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
 (D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-062). The teaser was
 built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
 renumbered to D-056…D-058 when `main` was merged in. **Deployed**: nexbridge-it.com serves the
-teaser page and both films since 2026-09-15 (deploys are manual — `npx wrangler deploy` from
-`website/`, D-022). Not yet seen on a real Safari — the first founder with an iPhone should
-open `/teaser`, enter a code and confirm the film plays (D-062).
+teaser page and both films since 2026-09-15 and the dormant stats routes plus `/statistik`
+since 2026-09-16 (deploys are manual — `npx wrangler deploy` from `website/`, D-022). Not yet
+seen on a real Safari — the first founder with an iPhone should open `/teaser`, enter a code
+and confirm the film plays (D-062).
 
 ## Next
 

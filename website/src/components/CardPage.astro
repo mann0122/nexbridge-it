@@ -62,19 +62,28 @@ const rows = [
     label: t('card.row.phone'),
     value: person.phoneE164.replace(/^(\+49)(\d{3})(\d+)$/, '$1 $2 $3'),
     Icon: PhoneIcon,
+    track: 'contact:tel',
   },
-  { href: `mailto:${SITE.email}`, label: t('card.row.email'), value: SITE.email, Icon: MailIcon },
+  {
+    href: `mailto:${SITE.email}`,
+    label: t('card.row.email'),
+    value: SITE.email,
+    Icon: MailIcon,
+    track: 'contact:mail',
+  },
   {
     href: SITE.url,
     label: t('card.row.web'),
     value: SITE.url.replace(/^https:\/\//, ''),
     Icon: WorldIcon,
+    track: undefined, // our own host; the beacon's outbound rule ignores it
   },
   {
     href: `${base}/impressum`,
     label: t('card.row.address'),
     value: `${SITE.street}, ${SITE.zip} ${SITE.city}`,
     Icon: MapPinIcon,
+    track: undefined, // an internal page view, counted as one
   },
 ];
 ---
@@ -105,6 +114,7 @@ const rows = [
               lang === 'de' ? ' – ' : ' — ',
             )}
             data-icon-hover
+            data-track={`vcard:${person.slug}`}
           >
             {/* Live gradient (founder order): the coloration + light pools
                 drift across the plate; the grain above stays surface-fixed. */}
@@ -192,6 +202,7 @@ const rows = [
               href={row.href}
               class="card-row dim-row flex items-center gap-4 border-b border-steel-soft py-3.5"
               data-icon-hover
+              data-track={row.track}
             >
               <row.Icon size={16} class="shrink-0 text-steel" />
               <span class="min-w-0 flex-1">
@@ -207,11 +218,13 @@ const rows = [
       <div class="card-stage mt-6 flex flex-wrap gap-3">
         <a
           href={`tel:${person.phoneE164}`}
+          data-track="contact:tel"
           class="inline-flex min-h-11 items-center border border-steel-soft px-4 text-[0.9375rem] font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
           >{t('card.call')}</a
         >
         <a
           href={`mailto:${SITE.email}`}
+          data-track="contact:mail"
           class="inline-flex min-h-11 items-center border border-steel-soft px-4 text-[0.9375rem] font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
           >{t('card.mail')}</a
         >

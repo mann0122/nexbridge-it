@@ -447,30 +447,47 @@ const config = JSON.stringify({
     });
   }
 
+  /* Strom (D-066): the stats page carries its own signal light — the river's
+     thread — and a second one riding the cursor over it is a bug, not a wash.
+     The trail is hidden on any page that has the board and mounts lazily on
+     the first page that does not — so a session that starts on /statistik
+     still gets its trail after a ClientRouter swap to the marketing site. */
+  const onStats = () => document.querySelector('[data-stats-scope]') !== null;
+  let mounted = false;
+
   /* Gates first, library second. The dynamic import keeps ogl out of the initial
      payload, so a phone or a reduced-motion visitor never downloads the ~55 KB
      raw / 16 KB gz it would otherwise fetch, parse, and then not execute. */
-  if (!motionOff && fine) {
+  function mount(): void {
+    if (mounted || motionOff || !fine || onStats()) return;
     const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-ribbons]'));
-    if (nodes.length) {
-      import('ogl')
-        .then(({ Renderer, Transform, Vec3, Color, Polyline }) => {
-          const ogl: OGL = { Renderer, Transform, Vec3, Color, Polyline };
-          for (const el of nodes) {
-            try {
-              initRibbons(ogl, el, JSON.parse(el.dataset.ribbons!) as RibbonsConfig);
-            } catch {
-              /* ogl logs "unable to create webgl context" and then dereferences
-                 the null context on the next line, so this throws for real on
-                 GPU-blocklisted drivers, with hardware acceleration off, and
-                 under hardened privacy settings. Decoration must never put an
-                 error on the marketing page — leave the page exactly as it was. */
-            }
+    if (!nodes.length) return;
+    mounted = true;
+    import('ogl')
+      .then(({ Renderer, Transform, Vec3, Color, Polyline }) => {
+        const ogl: OGL = { Renderer, Transform, Vec3, Color, Polyline };
+        for (const el of nodes) {
+          try {
+            initRibbons(ogl, el, JSON.parse(el.dataset.ribbons!) as RibbonsConfig);
+          } catch {
+            /* ogl logs "unable to create webgl context" and then dereferences
+               the null context on the next line, so this throws for real on
+               GPU-blocklisted drivers, with hardware acceleration off, and
+               under hardened privacy settings. Decoration must never put an
+               error on the marketing page — leave the page exactly as it was. */
           }
-        })
-        .catch(() => {
-          /* Chunk failed to load. Same contract: the site is unaffected. */
-        });
-    }
+        }
+      })
+      .catch(() => {
+        /* Chunk failed to load. Same contract: the site is unaffected. */
+        mounted = false;
+      });
   }
+
+  document.addEventListener('astro:page-load', () => {
+    const stats = onStats();
+    for (const el of document.querySelectorAll<HTMLElement>('[data-ribbons]')) el.hidden = stats;
+    if (!stats) mount();
+  });
+  mount();
 </script>

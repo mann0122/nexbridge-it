@@ -1568,6 +1568,55 @@ counts any named click including the language switch, which is engagement, not i
 funnel counts daily tokens, so a visitor returning another day is a new visitor in every stage.
 Owner: partner-b.
 
+## D-066 | 2026-09-16 | The founders' dashboard leaves the drawing-office register: Strom, a river of light | DECIDED
+The Messbank of D-065 — judged, gated, deployed — was rejected by the founder on sight: "do not
+give it a mechanical industrial vibe; we are an AI automation company, not an industrial
+engineering company; smooth and fantastic; highly stunning." Taken with the card work (D-046,
+D-054 — "AI agency, not manufacturing industry"), the pattern is now clear enough to write down:
+**the German engineering document is the marketing site's chrome, not the founders' taste for
+anything they hold or look at as owners.** For those surfaces they want one bold object that is
+smooth, luminous and alive.
+
+**Decision.** `/statistik` and `/en/stats` are **exempt from the drawing-office register** and
+from DESIGN.md's bans on glow, gradient-to-transparent and additive light — on this page only,
+for the two founders only. What stays binding on the page: the tokens (used luminously, but no
+non-token hue), the two fonts (Fragment Mono for small data labels, never as costume), GSAP as
+the one engine and gsap.ticker as the one clock, `prefers-reduced-motion` → a complete static
+picture, text contrast ≥ 4.5:1 (paper or steel on graphite; steel-deep is 3.1:1 there and is
+not text), no generated imagery (the founder offered Higgsfield; the brand's own generative
+canvas language — FlowField, Ribbons — is the better material and it is ours), no new
+dependencies, 360px, and the two traps named: the factory and the SaaS template (card grids,
+KPI tiles, generic charts with legends, glassmorphism-by-default, purple/teal). D-065's bench,
+its judges' rules and the demoted latest-day bar are **superseded** by this entry; the data
+layer of D-063/D-065 (beacon, `scroll:end`, funnel API, poll) is untouched.
+
+**The object, chosen by a second judged panel.** Three concepts on the flipped brief — a river
+of particles, layered aurora bands, a glowing pulse conduit — scored by a founder-voiced judge
+and a craft judge. Both chose **Strom**: a river of light across the page, on graphite, entering
+wide and pale on the left and leaving as one thin thread of pure signal on the right, passing
+four readings; at each of the last three the river narrows and the visitors who stop peel off
+downward and dissolve. **Every particle is a counted visitor** (k visitors per point, `k`
+printed on the object as "1 Punkt = n Besucher"), the share that continues past each gate is
+the measured rate held by a per-gate credit quota, the band's half-height is *linear* in the
+count with an 8px luminous floor (the craft judge's graft — sqrt overstated the middle stages),
+and each gate glows only with the light of the particles that actually cross it (the founder
+judge's graft — gate 4 beats once per arriving lead under the signal count). Counts, names,
+shares and rates are DOM text in two bands the canvas never paints. The reveal runs once when
+data lands (a front rushing in, each count rolling as it is crossed, the first spark igniting
+the signal count); idle is a constant calm current; a poll re-flows the river over its transit
+time. The rest of the page follows the same light: a water-level trace for the daily series
+(straight segments, direct labels, no axes), ranked ledgers with a 2px light trace per row
+instead of tables in boxes, one sentence of totals instead of tiles. The Ribbons cursor trail
+is off on this page — a second signal light over the river.
+
+**The judges' law for this object** (both warnings, verbatim in spirit): *no light without a
+visitor behind it.* Population and pass-rates are computed, never tuned; an empty range is a
+dry channel with zero particles; nothing moves on a timer — no pulses, wavefronts or shimmer on
+a clock; every request for "more life" is answered with luminance or alpha, never with more
+particles or speed. A quiet week is a quiet river. Not settled: the reveal's tempo and the
+river's density are the founder's eyeball (D-045); k grows with traffic by formula and should
+be revisited when the first thousand-visitor month arrives. Owner: partner-b.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

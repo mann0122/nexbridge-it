@@ -269,8 +269,6 @@ export const ui = {
     'stats.range.90': '90 Tage',
     'stats.refresh': 'Aktualisieren',
     'stats.exclude': 'Eigene Besuche in diesem Browser nicht zählen',
-    'stats.head.site': 'Website',
-    'stats.head.range': 'Zeitraum',
     'stats.head.fetched': 'Stand',
     'stats.kpi.views': 'Aufrufe',
     'stats.kpi.visitors': 'Besucher',
@@ -278,7 +276,7 @@ export const ui = {
        the label has to say so, or the number reads as more than it is. */
     'stats.kpi.visitorsNote': 'je Tag eindeutig, summiert',
     'stats.kpi.events': 'Aktionen',
-    'stats.chart.title': 'Aufrufe je Tag',
+    'stats.chart.title': 'Aufrufe und Besucher je Tag',
     'stats.chart.empty': 'Noch keine Aufrufe in diesem Zeitraum.',
     'stats.table.pages': 'Seiten',
     'stats.table.referrers': 'Herkunft',
@@ -311,7 +309,7 @@ export const ui = {
        keeps neither (worker/stats.js), so "ohne IP-Adressen" overstated it. */
     'stats.note':
       'Wir zählen Seitenaufrufe, Klicks auf einzelne Schaltflächen und Links sowie das Absenden des Kontaktformulars. Außerdem erfassen wir, ob eine Seite bis zum Ende gescrollt wurde. Cookies setzen wir nicht, IP-Adressen speichern wir nicht. Besucher unterscheiden wir über eine Kennung, die täglich wechselt – wer an zwei Tagen kommt, zählt zweimal. Mit dem Häkchen oben nehmen Sie Ihre eigenen Besuche in diesem Browser aus der Zählung.',
-    'a11y.statsChart': 'Balkendiagramm: Aufrufe je Tag im gewählten Zeitraum',
+    'a11y.statsChart': 'Pegel: Aufrufe und Besucher je Tag im gewählten Zeitraum',
     /* The opt-out control under Datenschutz §10 (D-064). Not legal text: a
        button label and three status lines about this browser. */
     'legal.optOut.disable': 'Messung in diesem Browser abschalten',
@@ -322,29 +320,33 @@ export const ui = {
       'Die Messung ist in diesem Browser bereits durch Ihre Browser-Einstellung abgeschaltet.',
     'a11y.statsKey': 'Schlüssel für die Statistik',
     /*
-     * The Messbank (D-065): the funnel drawn as a horizontal measuring bench.
-     * Stage names passed copywriter-de on 2026-09-16; the part prefix and the datum
-     * stamp are identifiers. 'stats.next' carries one placeholder, {s}, the
-     * seconds to the next poll — scripts/stats.ts substitutes it, so the
-     * copywriter may move it. First placeholder in this file; keep it rare.
+     * Strom (D-066): the funnel as a river of light. This block passed
+     * copywriter-de on 2026-09-16 (the stage names already had, as the
+     * Messbank's, D-065). Placeholders: {s} = seconds to the next poll,
+     * {k} = visitors per particle — scripts/stats.ts substitutes both.
+     * The scale line uses '=' — the German dot-density legend form — because
+     * '≙' is not in Fragment Mono and fell back to a foreign glyph at 11px.
+     * "Pegel" and "Zuläufe" carry no article: labels, not titles.
      */
-    'stats.head.next': 'Aktualisierung',
-    'stats.next': 'in {s} s',
-    'stats.bench.title': 'Vom Besuch zur Anfrage',
-    'stats.bench.part': 'NB-F',
-    'stats.bench.stage.visitors': 'Besucher',
-    'stats.bench.stage.engaged': 'Geklickt',
-    'stats.bench.stage.end': 'Bis zum Ende',
-    'stats.bench.stage.enquiries': 'Anfragen',
-    'stats.bench.datum': 'Messbank NB-F',
-    'stats.bench.scale': 'Skala: Besucher = 100 %',
+    'stats.datum.next': 'nächste Aktualisierung in {s} s',
+    'stats.strom.title': 'Vom Besuch zur Anfrage',
+    'stats.strom.stage.visitors': 'Besucher',
+    'stats.strom.stage.engaged': 'Geklickt',
+    'stats.strom.stage.end': 'Bis zum Ende',
+    'stats.strom.stage.enquiries': 'Anfragen',
+    'stats.strom.arrow': '→',
+    'stats.strom.scaleOne': '1 Punkt = 1 Besucher',
+    'stats.strom.scaleMany': '1 Punkt = {k} Besucher',
+    'stats.pegel.title': 'Pegel',
+    'stats.ledgers.title': 'Zuläufe',
     'stats.table.funnel': 'Vom Besuch zur Anfrage',
     'stats.col.stage': 'Stufe',
     'stats.col.share': 'Anteil',
     'stats.col.step': 'Zur Vorstufe',
-    'stats.chart.today': 'Heute',
-    'a11y.statsBench':
-      'Messbank: vier Stufen vom Besuch zur Anfrage im gewählten Zeitraum – Besucher, davon geklickt, bis zum Ende gescrollt, angefragt. Alle Zahlen stehen in der Tabelle darunter.',
+    'stats.chart.today': 'heute',
+    /* "Besucherstrom", not "Strom": heard cold, "Strom" is electricity. */
+    'a11y.statsStrom':
+      'Besucherstrom: vier Stufen vom Besuch zur Anfrage im gewählten Zeitraum – Besucher, davon geklickt, bis zum Ende gescrollt, angefragt. Alle Zahlen stehen in der Tabelle darunter.',
 
     /*
      * Digital business cards (/karte/<slug> — the NB-VK register). All German
@@ -622,14 +624,12 @@ export const ui = {
     'stats.range.90': '90 days',
     'stats.refresh': 'Refresh',
     'stats.exclude': 'Do not count my own visits in this browser',
-    'stats.head.site': 'Website',
-    'stats.head.range': 'Range',
     'stats.head.fetched': 'As of',
     'stats.kpi.views': 'Views',
     'stats.kpi.visitors': 'Visitors',
     'stats.kpi.visitorsNote': 'unique per day, summed',
     'stats.kpi.events': 'Actions',
-    'stats.chart.title': 'Views per day',
+    'stats.chart.title': 'Views and visitors per day',
     'stats.chart.empty': 'No views in this range yet.',
     'stats.table.pages': 'Pages',
     'stats.table.referrers': 'Sources',
@@ -659,7 +659,7 @@ export const ui = {
     'stats.loading': 'Loading …',
     'stats.note':
       'We count page views, clicks on individual buttons and links, and the sending of the contact form. We also record whether a page was scrolled to its end. We set no cookies and store no IP addresses. Visitors are told apart by a token that changes daily — someone who comes on two days counts twice. Tick the box above to leave your own visits in this browser out of the count.',
-    'a11y.statsChart': 'Bar chart: views per day in the selected range',
+    'a11y.statsChart': 'Water level: views and visitors per day in the selected range',
     'legal.optOut.disable': 'Switch off measurement in this browser',
     'legal.optOut.enable': 'Switch measurement in this browser back on',
     'legal.optOut.stateOn': 'Measurement is active in this browser.',
@@ -667,24 +667,25 @@ export const ui = {
     'legal.optOut.stateBrowser':
       'Measurement is already switched off in this browser by your browser setting.',
     'a11y.statsKey': 'Key for the statistics',
-    /* Messbank (D-065) — English twin. */
-    'stats.head.next': 'Refresh',
-    'stats.next': 'in {s} s',
-    'stats.bench.title': 'From visit to enquiry',
-    'stats.bench.part': 'NB-F',
-    'stats.bench.stage.visitors': 'Visitors',
-    'stats.bench.stage.engaged': 'Clicked',
-    'stats.bench.stage.end': 'To the end',
-    'stats.bench.stage.enquiries': 'Enquiries',
-    'stats.bench.datum': 'Measuring bench NB-F',
-    'stats.bench.scale': 'Scale: visitors = 100%',
+    /* Strom (D-066) — English twin. */
+    'stats.datum.next': 'next refresh in {s} s',
+    'stats.strom.title': 'From visit to enquiry',
+    'stats.strom.stage.visitors': 'Visitors',
+    'stats.strom.stage.engaged': 'Clicked',
+    'stats.strom.stage.end': 'To the end',
+    'stats.strom.stage.enquiries': 'Enquiries',
+    'stats.strom.arrow': '→',
+    'stats.strom.scaleOne': '1 dot = 1 visitor',
+    'stats.strom.scaleMany': '1 dot = {k} visitors',
+    'stats.pegel.title': 'Water level',
+    'stats.ledgers.title': 'Inflows',
     'stats.table.funnel': 'From visit to enquiry',
     'stats.col.stage': 'Stage',
     'stats.col.share': 'Share',
     'stats.col.step': 'vs. previous stage',
-    'stats.chart.today': 'Today',
-    'a11y.statsBench':
-      'Measuring bench: four stages from visit to enquiry over the selected range — visitors, of whom clicked, scrolled to the end, enquired. All numbers are in the table below.',
+    'stats.chart.today': 'today',
+    'a11y.statsStrom':
+      'Visitor stream: four stages from visit to enquiry over the selected range — visitors, of whom clicked, scrolled to the end, enquired. All numbers are in the table below.',
 
     'card.meta.description': 'Digital business card. Save the contact, call or write directly.',
     'card.1.role': 'Sales & Partnerships',

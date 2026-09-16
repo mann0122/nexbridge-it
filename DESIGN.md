@@ -205,22 +205,20 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   an object. The plate is `grayscale(1)` for the same reason — partial saturation still puts
   a full-card field of unchosen colour in the viewport, and an uninked sheet is not in colour.
 
-- Stats board (D-063, D-065): the founders' datasheet at `/statistik` — one bordered document on
-  paper, like the demo dashboard: Zeichnungskopf (with a live STAND stamp and a poll countdown),
-  then **the Durchlauf-Messbank** as the dominant panel — a horizontal measuring bench: one
-  graduated beam (counts left, percent of visitors right), four stations along it, carriages
-  riding vertical tracks to their readings with an extension line back to the beam, a hard-vertex
-  taper over a 45° hatched wedge, counts on fixed leader shelves, a dimension band with the rate
-  above each line and the absolute loss below; the **enquiries pointer is the page's one signal
-  element**. Below ~560px the same builder emits the stacked form. Views and actions are data
-  cells in the Zeichnungskopf, not a KPI strip — three equal cells of display figures read as
-  dashboard template. Then the day chart (bars steel-deep, the latest day graphite with a
-  labelled `HEUTE` tick — no longer signal) and Positionsliste tables. Text on paper is graphite or steel-deep only; the tooltip is a
-  graphite plate. Motion: the bench draws itself once when data lands and settles like an
-  instrument on updates (`back.out(1.4)`, the one overshoot on the site); nothing on it loops.
-  The judges' rules for the object stand: the beam is what you read the value from, the reading
-  is the vernier or the pointer and never a bar end, the taper never curves, the wedge is hatching
-  never a tint, no second colour. Its CSS is a page-scoped sheet (`styles/stats.css`).
+- Stats board (D-063, D-066): the founders' private dashboard at `/statistik` is **the one page
+  exempt from this document's register** (D-066 — the founder rejected the D-065 measuring bench
+  as "industrial"; the drawing office is the marketing site's chrome, not the owners' taste for
+  their own tools). It is graphite, luminous and alive: **Strom**, a river of light in which every
+  particle is a counted visitor, narrowing through four gates to one signal thread; the daily
+  series as a water-level trace; ranked ledgers with a light trace per row; one sentence of
+  totals. What still binds there: the tokens (used luminously, no foreign hue), the two fonts,
+  GSAP + gsap.ticker, reduced motion → a complete static picture, ≥ 4.5:1 text (paper or steel
+  on graphite — never steel-deep), no generated imagery, no new dependency, 360px, and the two
+  traps: the factory and the SaaS template. The judges' law: no light without a visitor behind
+  it — population (Σ count_i / k, plus the arrivals in the entry reach and the leavers in the
+  exit reach, each with a visitor behind it) and pass-rates are computed, never tuned; an empty
+  range is a dry channel; nothing moves on a timer. The Ribbons trail is off on that page. Its CSS is page-scoped
+  (`styles/stats.css`); the river is `scripts/strom.ts`, the texts, Pegel and ledgers `stats.ts`.
 
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
 

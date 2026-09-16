@@ -4,9 +4,12 @@
  * Self-hosted and cookieless: every page view and a handful of named clicks
  * go to our own Worker at /api/hit on this origin. What travels is the path,
  * the referrer, the document language and the viewport width — no agent
- * string, no screen fingerprint, no id of any kind. Two hits from the same
- * visitor cannot be joined, which is the point, and nothing is ever written
- * to the visitor's browser: no cookie, no storage.
+ * string, no screen fingerprint, no id of any kind. The Worker turns the IP
+ * and agent string into a token that changes daily and stores only that
+ * (worker/stats.js); nothing is ever written to the visitor's browser by
+ * this module — no cookie, no storage. The one storage key it reads,
+ * `nb.stats.off`, is written by the visitor's own choice through the
+ * opt-out control on the Datenschutz page, or by a founder on /statistik.
  *
  * Inert unless Analytics.astro rendered its meta tag (the site.ts flag), and
  * inert for anyone who has said no in a way a browser can carry — Global
@@ -66,9 +69,10 @@ export function track(e: string, v?: string): void {
     p: location.pathname,
     r: prev ? location.origin + prev : document.referrer,
     l: document.documentElement.lang,
-    // A document loaded into a not-yet-sized pane reports 0; the screen is
-    // the honest fallback for the device class and nothing finer.
-    w: innerWidth || screen.width,
+    // A document loaded into a not-yet-sized pane reports 0 and lands as
+    // device '' — better an unknown than a screen read the legal text would
+    // then have to mention.
+    w: innerWidth,
   });
   // sendBeacon outlives the unload a click usually causes; keepalive fetch is
   // the same promise where it is missing or its queue is full. Neither is
@@ -80,6 +84,37 @@ export function track(e: string, v?: string): void {
     method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' },
   }).catch(() => {});
 }
+
+/* The Datenschutz page's opt-out control (D-064). Wired whenever the module
+   is present — i.e. whenever the flag is on — even where `on` is false, so a
+   visitor whose browser already objects sees that, not a dead button. The
+   only place this module writes to storage, and only on the visitor's click. */
+function syncOptOut(): void {
+  const btn = document.querySelector<HTMLButtonElement>('[data-stats-optout]');
+  const state = document.querySelector<HTMLElement>('[data-stats-optout-state]');
+  if (!btn || !state) return;
+  const off = optedOut();
+  btn.textContent = (off ? btn.dataset.labelEnable : btn.dataset.labelDisable) ?? '';
+  btn.setAttribute('aria-pressed', String(off));
+  state.textContent =
+    (!on && !off ? btn.dataset.stateBrowser : off ? btn.dataset.stateOff : btn.dataset.stateOn) ?? '';
+}
+
+{
+  const router = document.querySelector('meta[name="astro-view-transitions-enabled"]');
+  document.addEventListener(router ? 'astro:page-load' : 'DOMContentLoaded', syncOptOut);
+}
+
+document.addEventListener('click', (ev) => {
+  if (!(ev.target instanceof Element) || !ev.target.closest('[data-stats-optout]')) return;
+  try {
+    if (optedOut()) localStorage.removeItem('nb.stats.off');
+    else localStorage.setItem('nb.stats.off', '1');
+  } catch {
+    /* storage refused: the state line keeps saying what is actually true */
+  }
+  syncOptOut();
+});
 
 if (on) {
   /* Without the router there is exactly one view: this document. A module

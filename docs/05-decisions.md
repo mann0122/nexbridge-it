@@ -1452,6 +1452,57 @@ origin referrer dropped, bot UA dropped, salt row created, rows carry no IP or U
 superseded on a **third** point (analytics: Plausible → own); D-013's "Plausible still NOT
 installed" is history. Owner: partner-b for the code; founders for the §10 sentence and the flip.
 
+## D-064 | 2026-09-16 | Stats switched on; Datenschutz §10 rewritten in-house on the founder's direction | DECIDED
+The go-live sequence of D-063 ran the same day: the founder set `STATS_KEY` himself
+(`wrangler secret put`, the value is in no file and was never handled here), and when asked
+for the §10 replacement from his generator or lawyer answered "just put the sentence
+according to you". That is a **founder override of CLAUDE.md rule 4** for one section, and
+it is logged as such rather than done quietly: §10 *"Webanalyse und Reichweitenmessung"* in
+`website/src/i18n/legal.ts` now carries four paragraphs written in this repo — a plain
+description of what `beacon.ts` and `worker/stats.js` record and store, how the daily-salted
+token works, the Art. 6(1)(f) basis with the legitimate interest named, the objection routes,
+and the generator's original future-tools sentence unchanged. The English §10 is a convenience
+translation, German prevails. `legalRevision` is bumped to 09/2026. `statsEnabled` is `true`;
+the flag and §10 are coupled — one cannot change without the other.
+
+**The draft was adversarially checked against the code before the deploy, and three of its
+claims failed.** Each was fixed in the code or the wording, never by softening the check:
+- *"Yesterday's salt is deleted, so the token can be attributed to nobody"* — deletion was
+  lazy (only the next valid hit of a later day ran it) and D1 **Time Travel** keeps restorable
+  point-in-time backups of the store for a bounded window, so "deleted" is true of the live
+  database, not of every backup. Now a **daily cron** (`triggers.crons`, `scheduled()` →
+  `housekeeping()`) deletes past salts at 00:07 UTC without waiting for a visitor, and the
+  text says what the code does: the previous day's value is deleted from the database, after
+  which the token is no longer a characteristic of a person *for us*; D-063's "recomputed by
+  nobody, us included" was an overstatement and is superseded on that point.
+- *"Object via Do Not Track or Global Privacy Control"* — Safari offers neither, Chrome only
+  DNT, Firefox only GPC, so the route alone excluded every iPhone visitor. Now the Datenschutz
+  page carries an **opt-out control under §10** (`DatenschutzBody.astro`, rendered only while
+  the flag is on; the beacon toggles the per-browser `nb.stats.off` key and reports the
+  state), and the text offers it first, the browser signals second "soweit Ihr Browser sie
+  anbietet".
+- *"IP and user agent are not stored"* was proven for D1 only: Workers Logs' **invocation
+  logs** would have recorded every `/api/hit` request with its headers in our account — the
+  server log §4 says we do not keep. `observability.logs.invocation_logs` is now `false`;
+  only our own console lines land, and they carry neither.
+Also from the check: the token *links* one visitor's hits within a day (that is how visitors
+are counted) and the text says so instead of "distinguishes"; the events that are not clicks
+— a sent enquiry, an opened teaser film, an outbound link — are named; the timestamp is named;
+**retention is 24 months** (the cron deletes older rows — D-063's "unlimited by design" is
+superseded); the cross-reference points at §5 (hosting and Cloudflare), not §4 (logs); the
+`screen.width` fallback in the beacon is gone so the text has one fewer device read to
+mention. The three code comments that repeated the overstatement are corrected.
+
+**What this does not settle.** The text is not lawyer-reviewed; open item 1 keeps it, along
+with the § 25 TDDDG questions the stats add to the teaser's: the dashboard's `sessionStorage`
+key, the beacon's `localStorage` opt-out read, and the `navigator` signals it checks. Nothing
+here claims where the D1 rows physically sit — the store is pinned to Cloudflare's "Western
+Europe" region, which is not a guarantee of EU soil, and the hashing runs at whichever edge
+serves the visitor; §15 (Drittland) already covers Cloudflare. The brand kit's "no analytics
+by default" floor (`docs/07-brand-kit.md` §11) is now stale and must be **regenerated**, not
+edited (D-048) — open item 2. The first rows are the founders' own until traffic arrives.
+Owner: founders for the text, partner-b for keeping it true to the code.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

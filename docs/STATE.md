@@ -6,7 +6,7 @@ status: active
 owner: partner-b
 updated: 2026-09-16
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063]
+decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064]
 cites_history: [D-007]
 ---
 
@@ -72,14 +72,15 @@ The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
 `sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
 which appear nowhere until a correct code derives them, not about `/teaser` itself.
 
-**Website stats exist and are dark** (D-063). A cookieless first-party beacon
-(`src/scripts/beacon.ts`) reports page views and named clicks to `/api/hit`; rows live in a D1
-database; `/statistik` shows visits, visitors (sum of daily uniques — the hash rotates daily),
-pages, referrers, countries, devices, languages and events behind a key. Nothing is live:
-`statsEnabled` in `site.ts` is `false`, the `STATS_KEY` secret is not set in the account yet,
-and the Datenschutz §10 sentence still says no analytics is used. The D1 store itself exists
-and is empty (created 2026-09-16, region WEUR). The order to switch it on is in open item 2. The two off-the-shelf slots (`plausibleDomain`,
-`cfAnalyticsToken`) stay as fallbacks and are empty.
+**Website stats are live** (D-063, switched on by D-064 on 2026-09-16). A cookieless
+first-party beacon (`src/scripts/beacon.ts`) reports page views and named clicks to
+`/api/hit`; rows live in the D1 store `nexbridge-stats` (region WEUR); `/statistik` shows
+visits, visitors (sum of daily uniques — the hash rotates daily), pages, referrers, countries,
+devices, languages and events behind the `STATS_KEY` the founders hold. `statsEnabled` in
+`site.ts` is `true` and is **coupled to Datenschutz §10** — the one cannot change without the
+other. A daily cron on the Worker deletes past salts and rows older than 24 months; the
+Datenschutz page carries a per-browser opt-out control under §10. The two off-the-shelf slots
+(`plausibleDomain`, `cfAnalyticsToken`) stay as fallbacks and are empty.
 
 The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
 the same URL the printed QR codes encode, and never a vCard record (D-054). The **physical
@@ -133,19 +134,21 @@ Ranked. Owner in brackets.
    *"Cookies und ähnliche Technologien"* (`website/src/i18n/legal.ts:144`) has to name the
    teaser's `sessionStorage` entry. Its text currently denies cookies only, which stays
    literally true; the heading covers similar technologies, and § 25 TDDDG is a lawyer's
-   call, not ours. And — new with D-063 — §10 *"Webanalyse und Reichweitenmessung"*
-   (`legal.ts:160`) says no analytics is used; that sentence must be replaced before the
-   stats beacon is switched on (the daily-salted visitor hash may need naming, and the
-   dashboard's `sessionStorage` key and `localStorage` opt-out join the §8 question). `TBD:`
-   legal review — no one here may draft that sentence (CLAUDE.md rule 4). The English
-   versions are convenience translations and are unreviewed.
-2. **Stats built, not switched on** [founders → partner-b] — D-063. The D1 store exists
-   (`nexbridge-stats`, region WEUR, schema applied 2026-09-16; its id is in `wrangler.jsonc`,
-   so deploys are not blocked). Still to do, in this order: the §10 sentence from open item 1
-   lands in `legal.ts`; a founder sets the key with `npx wrangler secret put STATS_KEY` (until
-   then `/api/stats` answers 503 by design); `statsEnabled: true` in `site.ts`; build, deploy,
-   open `/statistik` with the key. D-013's do-before-driving-traffic flag still applies — no
-   traffic is driven until this is on.
+   call, not ours. And — since D-064 — §10 *"Webanalyse und Reichweitenmessung"* was
+   **rewritten in this repo on the founder's direction** (a logged override of rule 4): a
+   factual description of the D-063 stats plus the generator's own legal-basis sentences.
+   It is checked against the code (three claims failed that check and were fixed, D-064),
+   not by a lawyer — `TBD:` legal review of §10; the dashboard's `sessionStorage` key, the
+   beacon's `localStorage` opt-out read and its `navigator` signal checks join the §8 / § 25
+   TDDDG question; and D1 Time Travel backups mean "deleted" is true of the live database
+   only — the text is worded to that. The English versions are convenience translations and
+   are unreviewed.
+2. **Stats live, kit line stale** [partner-b] — the go-live sequence of D-063 is complete
+   (D-064): key set by the founder, §10 rewritten, flag on, deployed. Left over: the brand
+   kit's "no analytics by default" floor (`docs/07-brand-kit.md` §11) is now false in letter
+   and must be regenerated, never hand-edited (D-048), at the next kit regeneration. The
+   first rows are the founders' own — tick "Eigene Besuche in diesem Browser nicht zählen"
+   on `/statistik` in each browser you use.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
@@ -204,13 +207,14 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 ## In flight
 
 Nothing. Everything is merged into `main`, the only long-lived branch: the stats dashboard
-(D-063, dark — the go-live sequence is open item 2), the logo mark (D-050),
+(D-063, live since D-064), the logo mark (D-050),
 the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
 (D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-062). The teaser was
 built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
 renumbered to D-056…D-058 when `main` was merged in. **Deployed**: nexbridge-it.com serves the
-teaser page and both films since 2026-09-15 and the dormant stats routes plus `/statistik`
-since 2026-09-16 (deploys are manual — `npx wrangler deploy` from `website/`, D-022). Not yet
+teaser page and both films since 2026-09-15 and the live stats — beacon, `/api/` routes,
+`/statistik` — since 2026-09-16 (deploys are manual — `npx wrangler deploy` from
+`website/`, D-022). Not yet
 seen on a real Safari — the first founder with an iPhone should open `/teaser`, enter a code
 and confirm the film plays (D-062).
 

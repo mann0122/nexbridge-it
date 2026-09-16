@@ -1,11 +1,11 @@
 -- Self-hosted, cookieless website stats (D-063).
 --
--- One row per beacon: a page view or a named click. Deliberately NOT stored:
+-- One row per beacon: a page view or a named action. Deliberately NOT stored:
 -- the IP address, the user agent, any cookie or id. `visitor` is the first
 -- 16 hex of SHA-256(salt | ip | ua) under a salt that is random per UTC day
--- and deleted the day after (see `salts`), so it distinguishes visitors
--- within one day and identifies nobody — the same person tomorrow is a new
--- hash, and yesterday's salt no longer exists to recompute anything.
+-- and deleted afterwards (see `salts` and the cron in wrangler.jsonc): it
+-- links one visitor's rows within a day and is a new value the next day.
+-- Rows older than the retention period are deleted by the same cron.
 --
 -- Applied with `npm run stats:migrate` (remote) / `stats:migrate:local`.
 
@@ -28,8 +28,8 @@ CREATE INDEX IF NOT EXISTS hits_day_event ON hits (day, event);
 
 -- One random salt per UTC day. The first beacon of a day writes it
 -- (INSERT OR IGNORE — concurrent first beacons all end up reading the same
--- winner); every beacon deletes rows older than today. Nothing ever reads a
--- past day's salt, and no endpoint returns one.
+-- winner); every beacon and the daily cron delete rows older than today.
+-- Nothing ever reads a past day's salt, and no endpoint returns one.
 CREATE TABLE IF NOT EXISTS salts (
   day  TEXT PRIMARY KEY,
   salt TEXT NOT NULL

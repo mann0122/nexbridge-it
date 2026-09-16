@@ -48,10 +48,11 @@ must say `206` and carry `x-nb-video`; `curl -s /api/stats` must say `401` — o
 long as the `STATS_KEY` secret is not set in the account (`worker/stats.js` refuses rather than
 falling back to a default key).
 
-The stats are **dark by default**: `statsEnabled` in `site.ts` is `false`, the beacon module is
-inert without the `nb:stats` meta it renders, and flipping it is coupled to the Datenschutz §10
-text (D-063, open item 1 in `../docs/STATE.md`). Do not flip it to test — use `npm run
-dev:worker` with a local build, or the `curl` calls in D-063.
+The stats are **live** (D-064): `statsEnabled` in `site.ts` is `true` and the beacon ships
+inline in every document. The flag and Datenschutz §10 are coupled — switching either without
+the other makes the legal page wrong. Local testing: `npm run dev:worker` with a local build,
+`.dev.vars` and `stats:migrate:local`; your own visits are excluded per browser via the checkbox
+on `/statistik`.
 
 ## Rules that bite
 

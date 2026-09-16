@@ -40,8 +40,8 @@ Site is bilingual: DE default at `/`, EN at `/en/` (D-010).
 ## Capabilities and Constraints
 
 Astro static site on a Cloudflare static-asset Worker (D-022), first-party cookieless stats
-(D-063: own beacon, D1, key-gated `/statistik` — built, dark until the Datenschutz §10 text is
-updated), no tracking cookies, self-hosted fonts, no third-party requests beyond form provider. Lighthouse ≥95 on a11y/SEO and desktop performance, ≥94 on mobile performance
+(D-063/D-064: own beacon, D1, key-gated `/statistik` — live, described in Datenschutz §10),
+no tracking cookies, self-hosted fonts, no third-party requests beyond form provider. Lighthouse ≥95 on a11y/SEO and desktop performance, ≥94 on mobile performance
 (re-based by D-043), WCAG AA, works at 360px. Undecided: contact form
 provider (see docs/STATE.md open items — `formEndpoint` in site.ts is still empty). The domain
 question is settled: nexbridge-it.com is registered to us (D-025, `site.ts` line 9).

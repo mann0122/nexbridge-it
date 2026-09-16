@@ -70,8 +70,8 @@ Full protocol and anti-patterns: `docs/06-agent-system.md`.
 
 ## Stack (see D-002, superseded on three points by D-022, D-023 and D-063)
 Astro 7 + Tailwind 4 + MDX in `website/`, deployed as a Cloudflare static-asset Worker (D-022),
-first-party stats — own beacon, Worker route, D1, `/statistik` (D-063; built, dark until the
-legal text is updated), contact form via a GDPR-compatible provider.
+first-party stats — own beacon, Worker route, D1, `/statistik` (D-063, live since D-064;
+`statsEnabled` and Datenschutz §10 are coupled), contact form via a GDPR-compatible provider.
 Node LTS. TypeScript strict where applicable. `website/package.json` is authoritative for
 versions — D-002's "Astro 5, Cloudflare Pages" is history, not state.
 

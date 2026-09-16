@@ -203,16 +203,16 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-The stats dashboard (D-063) is on branch `claude/website-activity-tracking-dashboard-6a6df3`,
-built and locally verified, waiting for merge — and, separately, for the go-live sequence in
-open item 2. Everything else is merged into `main`, the only long-lived branch: the logo mark (D-050),
+Nothing. Everything is merged into `main`, the only long-lived branch: the stats dashboard
+(D-063, dark — the go-live sequence is open item 2), the logo mark (D-050),
 the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
 (D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-062). The teaser was
 built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
 renumbered to D-056…D-058 when `main` was merged in. **Deployed**: nexbridge-it.com serves the
-teaser page and both films since 2026-09-15 (deploys are manual — `npx wrangler deploy` from
-`website/`, D-022). Not yet seen on a real Safari — the first founder with an iPhone should
-open `/teaser`, enter a code and confirm the film plays (D-062).
+teaser page and both films since 2026-09-15 and the dormant stats routes plus `/statistik`
+since 2026-09-16 (deploys are manual — `npx wrangler deploy` from `website/`, D-022). Not yet
+seen on a real Safari — the first founder with an iPhone should open `/teaser`, enter a code
+and confirm the film plays (D-062).
 
 ## Next
 

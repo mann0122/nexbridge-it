@@ -1431,9 +1431,13 @@ oder Reichweitenmessungsdienste ein", which becomes false the moment the beacon 
 second sentence already names the Art. 6(1)(f) basis for cookieless analytics; the replacement
 for the first, and whether the daily-salted hash needs its own sentence, is the founders'
 generator/lawyer's to write — CLAUDE.md rule 4, no one here drafts it. `TBD:` legal review,
-added to open item 1. The other three flip prerequisites are ops, not law: create the D1 store
-(`npx wrangler d1 create nexbridge-stats`, paste the id into `wrangler.jsonc`), run
-`npm run stats:migrate`, set `npx wrangler secret put STATS_KEY`, then deploy.
+added to open item 1. The ops prerequisites: the D1 store **exists** — created the same day on
+the founder's go-ahead, pinned to region **WEUR** (a D1 location is fixed at creation; the
+first attempt landed in EEUR by wrangler's default and was deleted empty and recreated), schema
+applied with `npm run stats:migrate`, id in `wrangler.jsonc` — which also means merging this
+does not block deploys, as the qa gate had warned a placeholder id would. Still open: a founder
+sets `npx wrangler secret put STATS_KEY` (the key is theirs to choose and is in no file; until
+it is set, `/api/stats` answers 503), then the flip and a deploy.
 
 **Costs and limits.** D1 Free: 5 million rows read and 100 000 written per day, 5 GB — years of
 this site's traffic. Every beacon is a metered Worker request on the same 100 000/day Free

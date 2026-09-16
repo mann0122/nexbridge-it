@@ -76,9 +76,9 @@ which appear nowhere until a correct code derives them, not about `/teaser` itse
 (`src/scripts/beacon.ts`) reports page views and named clicks to `/api/hit`; rows live in a D1
 database; `/statistik` shows visits, visitors (sum of daily uniques — the hash rotates daily),
 pages, referrers, countries, devices, languages and events behind a key. Nothing is live:
-`statsEnabled` in `site.ts` is `false`, the D1 store and the `STATS_KEY` secret do not exist in
-the account yet, and the Datenschutz §10 sentence still says no analytics is used. The order to
-switch it on is in open item 2. The two off-the-shelf slots (`plausibleDomain`,
+`statsEnabled` in `site.ts` is `false`, the `STATS_KEY` secret is not set in the account yet,
+and the Datenschutz §10 sentence still says no analytics is used. The D1 store itself exists
+and is empty (created 2026-09-16, region WEUR). The order to switch it on is in open item 2. The two off-the-shelf slots (`plausibleDomain`,
 `cfAnalyticsToken`) stay as fallbacks and are empty.
 
 The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
@@ -139,15 +139,13 @@ Ranked. Owner in brackets.
    dashboard's `sessionStorage` key and `localStorage` opt-out join the §8 question). `TBD:`
    legal review — no one here may draft that sentence (CLAUDE.md rule 4). The English
    versions are convenience translations and are unreviewed.
-2. **Stats built, not switched on** [founders → partner-b] — D-063. To go live, in this order:
-   the §10 sentence from open item 1 lands in `legal.ts`; `npx wrangler d1 create
-   nexbridge-stats` and the id into `wrangler.jsonc`; `npm run stats:migrate`; `npx wrangler
-   secret put STATS_KEY`; `statsEnabled: true` in `site.ts`; build, deploy, open `/statistik`
-   with the key. D-013's do-before-driving-traffic flag still applies — no traffic is driven
-   until this is on. Until the store exists, `wrangler.jsonc` carries a `TBD:` placeholder as
-   the D1 `database_id`; `wrangler deploy --dry-run` accepts it, a real deploy has not been
-   tried with it — `TBD:` [partner-b] confirm before the next unrelated deploy, or do the D1
-   step first.
+2. **Stats built, not switched on** [founders → partner-b] — D-063. The D1 store exists
+   (`nexbridge-stats`, region WEUR, schema applied 2026-09-16; its id is in `wrangler.jsonc`,
+   so deploys are not blocked). Still to do, in this order: the §10 sentence from open item 1
+   lands in `legal.ts`; a founder sets the key with `npx wrangler secret put STATS_KEY` (until
+   then `/api/stats` answers 503 by design); `statsEnabled: true` in `site.ts`; build, deploy,
+   open `/statistik` with the key. D-013's do-before-driving-traffic flag still applies — no
+   traffic is driven until this is on.
 3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
    to the visitor's mail client. Enquiries arrive but are unmeasurable.
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.

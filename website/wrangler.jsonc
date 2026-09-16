@@ -15,8 +15,9 @@
   // Workers Logs for the script's own console output — the only way to see a
   // failed stats write, since the beacon gets its 204 before the row lands.
   "observability": { "enabled": true },
-  // The stats store (D-063). Create it once per account:
-  //   npx wrangler d1 create nexbridge-stats   → paste the id below
+  // The stats store (D-063): created 2026-09-16 in region WEUR (Western
+  // Europe — a location is fixed at creation, so it was chosen, not left to
+  // wrangler's default of wherever the founder happened to be). Schema via
   //   npm run stats:migrate                     → applies worker/migrations/
   //   npx wrangler secret put STATS_KEY         → the dashboard's key
   // `wrangler dev` uses a local SQLite under .wrangler/ instead; migrate it
@@ -25,7 +26,7 @@
     {
       "binding": "DB",
       "database_name": "nexbridge-stats",
-      "database_id": "TBD: id from `npx wrangler d1 create nexbridge-stats`",
+      "database_id": "a75285a4-96e3-450c-9410-2269b4757497",
       "migrations_dir": "./worker/migrations"
     }
   ],

@@ -1,8 +1,8 @@
 /* ---------------------------------------------------------------------
-   D-063 statistics board (/statistik, /en/stats). The founders' datasheet
-   for the self-hosted, cookieless visit counts — paper ground, one bordered
-   document, Positionsliste tables. Namespaced stats-*; geometry is built by
-   scripts/stats.ts.
+   D-063 statistics board (/statistik, /en/stats), redesigned D-065. The
+   founders' datasheet for the self-hosted, cookieless visit counts — paper
+   ground, one bordered document, the Durchlauf-Messbank, Positionsliste
+   tables. Namespaced stats-*; geometry is built by scripts/stats.ts.
 
    Its own sheet, imported by StatsBoard.astro alone, so it is linked only on
    the two stats pages: in global.css it was +4.5 KB raw / +0.9 KB gzip of
@@ -13,10 +13,11 @@
    come from global.css's @theme, which every page loads first.
 
    Colour discipline: on paper, text is graphite or steel-deep only — steel
-   (#8B959E) fails AA on paper. The latest day's bar is the page's ONE signal
-   element; every control below is steel-deep / graphite / line furniture,
-   and the focus ring is the only other signal. Bars have square ends:
-   nothing on this site rounds.
+   (#8B959E) fails AA on paper. The bench's enquiries pointer is the page's
+   ONE signal element (D-065; the chart's latest-day bar was demoted to
+   graphite and a HEUTE tick). Every control below is steel-deep / graphite /
+   line furniture, and the focus ring is the only other signal. Nothing here
+   rounds: butt caps, miter joins, square ends.
    --------------------------------------------------------------------- */
 
 /* Key state ------------------------------------------------------------ */
@@ -140,13 +141,14 @@
   position: relative;
   z-index: 1;
 }
+/* The site's focus convention (DESIGN.md), drawn on the visible span. */
 .stats-toggle input:focus-visible + span {
   outline: 2px solid var(--color-signal);
   outline-offset: 2px;
   position: relative;
   z-index: 2;
 }
-/* The checkbox: graphite accent, not signal — the chart owns the signal. */
+/* The checkbox: graphite accent, not signal — the bench owns the signal. */
 .stats-exclude {
   display: inline-flex;
   align-items: center;
@@ -164,8 +166,8 @@
 }
 
 /* The sheet ------------------------------------------------------------- */
-/* Refetch keeps the frame: the previous render holds at reduced opacity
-   while the next answer is in flight. No skeleton, no layout jump. */
+/* The very first load dims the placeholders; polls and refetches leave the
+   previous render untouched (D-065) — numbers roll, nothing blinks. */
 .stats-sheet {
   transition: opacity 200ms ease;
 }
@@ -175,6 +177,198 @@
 .stats-kpi-note {
   text-transform: none;
   letter-spacing: 0.04em;
+}
+
+/* The Messbank (D-065) ---------------------------------------------------- */
+/* The svg's viewBox is set by the script to the container's pixel width by
+   the drawing's height (420 across, 520 stacked); with width 100% the aspect
+   ratio makes one unit one pixel, so no text ever stretches. */
+.stats-bench {
+  position: relative;
+}
+.stats-bench-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* Hairlines: the beam, its ticks, the tracks, the leaders, the dimension
+   lines. Butt caps, crisp — drawn, not rendered. */
+.stats-hair {
+  fill: none;
+  stroke: var(--color-steel-deep);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  shape-rendering: crispEdges;
+}
+/* Extension lines, the shelf rules, the origin datum and the datum band's
+   rule: the paper hairline, recessive — they carry a reading to the beam
+   without competing with it. */
+.stats-ext {
+  fill: none;
+  stroke: var(--color-line);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  shape-rendering: crispEdges;
+}
+/* The reading lines — carriage to beam — are the instrument's mechanism,
+   so they must clear 3:1 on paper where the paper hairline does not (1.3:1):
+   steel-deep, dashed 2/2, construction-line grammar that separates from the
+   solid tracks by pattern rather than ink (design gate, D-065). */
+.stats-read {
+  fill: none;
+  stroke: var(--color-steel-deep);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  stroke-linecap: butt;
+  shape-rendering: crispEdges;
+}
+/* The Zeichnungskopf as a six-cell title block: WEBSITE · ZEITRAUM · STAND ·
+   AKTUALISIERUNG · AUFRUFE · AKTIONEN. One row from lg, two of three at md,
+   three of two at sm, a column on phones — hairlines between cells, never
+   doubled. The two counts live here as data cells since D-065: a three-up
+   strip of display figures under the bench read as dashboard template, and
+   its "Besucher" repeated the bench's own first station. */
+.stats-head {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.stats-head > div {
+  border-top: 1px solid var(--color-line);
+}
+.stats-head > div:first-child {
+  border-top: 0;
+}
+@media (min-width: 640px) {
+  .stats-head {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stats-head > div:nth-child(-n + 2) {
+    border-top: 0;
+  }
+  .stats-head > div:nth-child(2n) {
+    border-left: 1px solid var(--color-line);
+  }
+}
+@media (min-width: 768px) {
+  .stats-head {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stats-head > div {
+    border-top: 1px solid var(--color-line);
+    border-left: 0;
+  }
+  .stats-head > div:nth-child(-n + 3) {
+    border-top: 0;
+  }
+  .stats-head > div:not(:nth-child(3n + 1)) {
+    border-left: 1px solid var(--color-line);
+  }
+}
+@media (min-width: 1024px) {
+  .stats-head {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .stats-head > div {
+    border-top: 0;
+    border-left: 1px solid var(--color-line);
+  }
+  .stats-head > div:first-child {
+    border-left: 0;
+  }
+}
+/* The carriage: an outlined 28×10 (10×28 stacked) riding its track; the
+   2px vernier hairline across its centre IS the reading. */
+.stats-carriage {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.stats-vernier {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 2;
+  stroke-linecap: butt;
+  shape-rendering: crispEdges;
+}
+/* THE signal element on the page: the last station's pointer, a filled
+   triangle in the CTA-arrowhead grammar, in place of its vernier. */
+.stats-pointer {
+  fill: var(--color-signal);
+}
+/* The taper: hard vertices — miter, butt — never a curve. */
+.stats-taper {
+  fill: none;
+  stroke: var(--color-steel-deep);
+  stroke-width: 1.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+}
+/* The funnel body is section hatching, 45° at 8px pitch — never a fill,
+   never a tint. The pattern's line wears the paper hairline. */
+.stats-hatch-line {
+  stroke: var(--color-line);
+  stroke-width: 1;
+  stroke-linecap: butt;
+}
+/* Nodes at the track heads and the dimension arrowheads: solid steel-deep.
+   Nodes flash graphite → steel-deep once when their station's count moves. */
+.stats-node,
+.stats-arrow {
+  fill: var(--color-steel-deep);
+}
+/* Annotation text in the svg: the .type-annot grade (Fragment Mono 11px,
+   0.08em, uppercase — the script uppercases; the rule is belt and braces). */
+.stats-annot {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--color-steel-deep);
+}
+/* Labels the extension lines pass beneath (the percent scale, the stacked
+   beam's count labels) knock the line out — a paper stroke painted under
+   the glyphs, the way hatching stops for a dimension figure. A knockout,
+   not a halo: no blur, paper only. */
+.stats-knock {
+  paint-order: stroke;
+  stroke: var(--color-paper);
+  stroke-width: 3px;
+  stroke-linejoin: miter;
+}
+/* The count on the shelf: display grade — Archivo expanded, bold,
+   proportional figures. */
+.stats-count {
+  font-family: var(--font-sans);
+  font-variation-settings:
+    'wdth' 125,
+    'wght' 700;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  fill: var(--color-graphite);
+}
+/* The stage name: the wordmark grade (112 / 600). */
+.stats-stage {
+  font-family: var(--font-sans);
+  font-variation-settings:
+    'wdth' 112,
+    'wght' 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  fill: var(--color-graphite);
+}
+/* The loss under a dimension line: the tolerance figure, one step smaller. */
+.stats-loss {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  fill: var(--color-steel-deep);
+}
+/* A stage that grew: its rate and gain read in graphite. Declared after the
+   text grades so the ink wins on either. */
+.stats-ink {
+  fill: var(--color-graphite);
 }
 
 /* Chart ------------------------------------------------------------------ */
@@ -194,7 +388,7 @@
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* Axis and the one direct label: text wears the text token, never the data
+/* Axis and the direct labels: text wears the text token, never the data
    colour (dataviz). */
 .stats-axis {
   font-family: var(--font-mono);
@@ -221,10 +415,11 @@
 .stats-bar:focus-visible .stats-bar-fill {
   fill: var(--color-graphite);
 }
-/* The latest day: the one signal element on the page (the demo's live dot,
-   in datasheet form). Declared last so it holds under hover too. */
+/* The latest day (D-065): graphite — its hover ink — and marked by a
+   steel-deep extension tick with a HEUTE label, not by a colour with no
+   legend. The signal moved to the bench's pointer for good. */
 .stats-bar[data-latest] .stats-bar-fill {
-  fill: var(--color-signal);
+  fill: var(--color-graphite);
 }
 /* Tooltip: value first, date second. Graphite plate on paper, so the paper
    and steel inks inherit the site's verified on-graphite contrast. */
@@ -254,8 +449,8 @@
   color: var(--color-steel);
 }
 
-/* The chart's table view: a disclosure whose summary is a mono label with a
-   drawn "+" / "–" in place of the browser's triangle — nothing on this site
+/* The table views: a disclosure whose summary is a mono label with a drawn
+   "+" / "–" in place of the browser's triangle — nothing on this site
    wears a default marker. */
 .stats-summary {
   cursor: pointer;

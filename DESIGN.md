@@ -205,16 +205,22 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   an object. The plate is `grayscale(1)` for the same reason — partial saturation still puts
   a full-card field of unchosen colour in the viewport, and an uninked sheet is not in colour.
 
-- Stats board (D-063): the founders' datasheet at `/statistik` — one bordered document on
-  paper, like the demo dashboard: Zeichnungskopf, a KPI row in proportional display figures, a
-  bar chart of views per day drawn as inline SVG at the container's measured width (bars ≤ 24px,
-  square-ended, steel-deep, a 2px paper gap that survives 90 days on a phone), and Positionsliste
-  tables. The **latest day's bar is the sheet's one signal element** — the live dot in datasheet
-  form, kept as a 2px tick when today has no views yet. Text on paper is graphite or steel-deep
-  only; the tooltip is a graphite plate so its paper and steel inks keep the verified contrasts.
-  One tab stop on the chart, arrows walk the days, Escape dismisses the tooltip; every number the
-  tooltip shows is also in a table. Its CSS is a page-scoped sheet (`styles/stats.css`), not a
-  colocated block and not in the shared sheet — two founder-only routes do not tax every visitor.
+- Stats board (D-063, D-065): the founders' datasheet at `/statistik` — one bordered document on
+  paper, like the demo dashboard: Zeichnungskopf (with a live STAND stamp and a poll countdown),
+  then **the Durchlauf-Messbank** as the dominant panel — a horizontal measuring bench: one
+  graduated beam (counts left, percent of visitors right), four stations along it, carriages
+  riding vertical tracks to their readings with an extension line back to the beam, a hard-vertex
+  taper over a 45° hatched wedge, counts on fixed leader shelves, a dimension band with the rate
+  above each line and the absolute loss below; the **enquiries pointer is the page's one signal
+  element**. Below ~560px the same builder emits the stacked form. Views and actions are data
+  cells in the Zeichnungskopf, not a KPI strip — three equal cells of display figures read as
+  dashboard template. Then the day chart (bars steel-deep, the latest day graphite with a
+  labelled `HEUTE` tick — no longer signal) and Positionsliste tables. Text on paper is graphite or steel-deep only; the tooltip is a
+  graphite plate. Motion: the bench draws itself once when data lands and settles like an
+  instrument on updates (`back.out(1.4)`, the one overshoot on the site); nothing on it loops.
+  The judges' rules for the object stand: the beam is what you read the value from, the reading
+  is the vernier or the pointer and never a bar end, the taper never curves, the wedge is hatching
+  never a tint, no second colour. Its CSS is a page-scoped sheet (`styles/stats.css`).
 
 ### Icon grammar (D-043, supersedes D-032's zero-icon rule)
 

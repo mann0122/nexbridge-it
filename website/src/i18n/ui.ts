@@ -256,7 +256,7 @@ export const ui = {
     'stats.kicker': 'Statistik · intern',
     'stats.title': 'Wer war da.',
     'stats.intro':
-      'Besuche auf nexbridge-it.com: wie viele, welche Seiten, woher, womit – und was angeklickt wurde. Ohne Cookies. IP-Adressen speichern wir nicht.',
+      'Besuche auf nexbridge-it.com: wie viele kommen, klicken, bis zum Ende scrollen und anfragen – dazu welche Seiten, woher und womit. Ohne Cookies. IP-Adressen speichern wir nicht.',
     'stats.noJs': 'Diese Seite braucht JavaScript. Bitte aktivieren Sie es, um die Zahlen zu sehen.',
     'stats.key.label': 'Schlüssel',
     'stats.key.submit': 'Zahlen anzeigen',
@@ -288,6 +288,7 @@ export const ui = {
     'stats.table.events': 'Aktionen',
     'stats.table.days': 'Tage',
     'stats.table.daysToggle': 'Als Tabelle',
+    'stats.table.funnelToggle': 'Stufen als Tabelle',
     'stats.col.path': 'Pfad',
     'stats.col.views': 'Aufrufe',
     'stats.col.visitors': 'Besucher',
@@ -309,7 +310,7 @@ export const ui = {
        is the honest form: the Worker hashes the IP under a daily salt and
        keeps neither (worker/stats.js), so "ohne IP-Adressen" overstated it. */
     'stats.note':
-      'Wir zählen Seitenaufrufe und Klicks auf einzelne Schaltflächen und Links. Cookies setzen wir nicht, IP-Adressen speichern wir nicht. Besucher unterscheiden wir über eine Kennung, die täglich wechselt – wer an zwei Tagen kommt, zählt zweimal. Mit dem Häkchen oben nehmen Sie Ihre eigenen Besuche in diesem Browser aus der Zählung.',
+      'Wir zählen Seitenaufrufe, Klicks auf einzelne Schaltflächen und Links sowie das Absenden des Kontaktformulars. Außerdem erfassen wir, ob eine Seite bis zum Ende gescrollt wurde. Cookies setzen wir nicht, IP-Adressen speichern wir nicht. Besucher unterscheiden wir über eine Kennung, die täglich wechselt – wer an zwei Tagen kommt, zählt zweimal. Mit dem Häkchen oben nehmen Sie Ihre eigenen Besuche in diesem Browser aus der Zählung.',
     'a11y.statsChart': 'Balkendiagramm: Aufrufe je Tag im gewählten Zeitraum',
     /* The opt-out control under Datenschutz §10 (D-064). Not legal text: a
        button label and three status lines about this browser. */
@@ -320,6 +321,30 @@ export const ui = {
     'legal.optOut.stateBrowser':
       'Die Messung ist in diesem Browser bereits durch Ihre Browser-Einstellung abgeschaltet.',
     'a11y.statsKey': 'Schlüssel für die Statistik',
+    /*
+     * The Messbank (D-065): the funnel drawn as a horizontal measuring bench.
+     * Stage names passed copywriter-de on 2026-09-16; the part prefix and the datum
+     * stamp are identifiers. 'stats.next' carries one placeholder, {s}, the
+     * seconds to the next poll — scripts/stats.ts substitutes it, so the
+     * copywriter may move it. First placeholder in this file; keep it rare.
+     */
+    'stats.head.next': 'Aktualisierung',
+    'stats.next': 'in {s} s',
+    'stats.bench.title': 'Vom Besuch zur Anfrage',
+    'stats.bench.part': 'NB-F',
+    'stats.bench.stage.visitors': 'Besucher',
+    'stats.bench.stage.engaged': 'Geklickt',
+    'stats.bench.stage.end': 'Bis zum Ende',
+    'stats.bench.stage.enquiries': 'Anfragen',
+    'stats.bench.datum': 'Messbank NB-F',
+    'stats.bench.scale': 'Skala: Besucher = 100 %',
+    'stats.table.funnel': 'Vom Besuch zur Anfrage',
+    'stats.col.stage': 'Stufe',
+    'stats.col.share': 'Anteil',
+    'stats.col.step': 'Zur Vorstufe',
+    'stats.chart.today': 'Heute',
+    'a11y.statsBench':
+      'Messbank: vier Stufen vom Besuch zur Anfrage im gewählten Zeitraum – Besucher, davon geklickt, bis zum Ende gescrollt, angefragt. Alle Zahlen stehen in der Tabelle darunter.',
 
     /*
      * Digital business cards (/karte/<slug> — the NB-VK register). All German
@@ -584,7 +609,7 @@ export const ui = {
     'stats.kicker': 'Statistics · internal',
     'stats.title': 'Who was here.',
     'stats.intro':
-      'Visits to nexbridge-it.com: how many, which pages, from where, on what — and what was clicked. No cookies. We do not store IP addresses.',
+      'Visits to nexbridge-it.com: how many come, click, scroll to the end and enquire — plus which pages, from where and on what. No cookies. We do not store IP addresses.',
     'stats.noJs': 'This page needs JavaScript. Please switch it on to see the numbers.',
     'stats.key.label': 'Key',
     'stats.key.submit': 'Show numbers',
@@ -614,6 +639,7 @@ export const ui = {
     'stats.table.events': 'Actions',
     'stats.table.days': 'Days',
     'stats.table.daysToggle': 'As a table',
+    'stats.table.funnelToggle': 'Stages as a table',
     'stats.col.path': 'Path',
     'stats.col.views': 'Views',
     'stats.col.visitors': 'Visitors',
@@ -632,7 +658,7 @@ export const ui = {
     'stats.error.network': 'The numbers will not load right now. Please try again.',
     'stats.loading': 'Loading …',
     'stats.note':
-      'We count page views and clicks on individual buttons and links. We set no cookies and store no IP addresses. Visitors are told apart by a token that changes daily — someone who comes on two days counts twice. Tick the box above to leave your own visits in this browser out of the count.',
+      'We count page views, clicks on individual buttons and links, and the sending of the contact form. We also record whether a page was scrolled to its end. We set no cookies and store no IP addresses. Visitors are told apart by a token that changes daily — someone who comes on two days counts twice. Tick the box above to leave your own visits in this browser out of the count.',
     'a11y.statsChart': 'Bar chart: views per day in the selected range',
     'legal.optOut.disable': 'Switch off measurement in this browser',
     'legal.optOut.enable': 'Switch measurement in this browser back on',
@@ -641,6 +667,24 @@ export const ui = {
     'legal.optOut.stateBrowser':
       'Measurement is already switched off in this browser by your browser setting.',
     'a11y.statsKey': 'Key for the statistics',
+    /* Messbank (D-065) — English twin. */
+    'stats.head.next': 'Refresh',
+    'stats.next': 'in {s} s',
+    'stats.bench.title': 'From visit to enquiry',
+    'stats.bench.part': 'NB-F',
+    'stats.bench.stage.visitors': 'Visitors',
+    'stats.bench.stage.engaged': 'Clicked',
+    'stats.bench.stage.end': 'To the end',
+    'stats.bench.stage.enquiries': 'Enquiries',
+    'stats.bench.datum': 'Measuring bench NB-F',
+    'stats.bench.scale': 'Scale: visitors = 100%',
+    'stats.table.funnel': 'From visit to enquiry',
+    'stats.col.stage': 'Stage',
+    'stats.col.share': 'Share',
+    'stats.col.step': 'vs. previous stage',
+    'stats.chart.today': 'Today',
+    'a11y.statsBench':
+      'Measuring bench: four stages from visit to enquiry over the selected range — visitors, of whom clicked, scrolled to the end, enquired. All numbers are in the table below.',
 
     'card.meta.description': 'Digital business card. Save the contact, call or write directly.',
     'card.1.role': 'Sales & Partnerships',

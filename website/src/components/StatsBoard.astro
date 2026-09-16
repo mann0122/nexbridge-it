@@ -1,8 +1,8 @@
 ---
 /**
- * Statistics board (D-063) — the founders' datasheet for the self-hosted,
- * cookieless visit counts. Shared by /statistik and /en/stats so the twins
- * cannot drift.
+ * Statistics board (D-063, redesigned D-065) — the founders' datasheet for
+ * the self-hosted, cookieless visit counts. Shared by /statistik and
+ * /en/stats so the twins cannot drift.
  *
  * Paper ground, like Demo.astro: this is a reading sheet, not a stage. Two
  * states, both server-rendered and toggled by scripts/stats.ts:
@@ -11,17 +11,20 @@
  *      stored in sessionStorage or the API answered 401. The CTA is that
  *      viewport's one signal element, so the error line is steel-deep ink
  *      behind a 1px rule, never signal (the TeaserGrid lesson, D-061).
- *   2. Board state — one bordered document: Zeichnungskopf, a KPI row, the
- *      views-per-day bar chart and six Positionsliste tables. The latest
- *      day's bar is the one signal element on the page; every other piece of
- *      furniture is graphite, steel-deep or line.
+ *   2. Board state — one bordered document: Zeichnungskopf, then the
+ *      Durchlauf-Messbank (D-065) full width as the dominant panel — the four
+ *      funnel stages read off one graduated beam, built as inline SVG by the
+ *      script at the container's measured width — then the KPI row, the
+ *      views-per-day chart and six Positionsliste tables. The bench's
+ *      enquiries pointer is the ONE signal element on the page; the chart's
+ *      latest day is marked by a HEUTE tick instead (D-065 demoted its bar).
  *
  * Every number is formatted in the script with Intl; every string from the
  * API lands in the DOM through textContent only. Labels the script needs are
  * carried as data-label-* attributes on the scope, never hardcoded in TS.
  *
- * No <style> block: the stats-* rules live in global.css (D-043 — colocated
- * styles cost the Lighthouse floor).
+ * No <style> block: the stats-* rules live in styles/stats.css (D-043 —
+ * colocated styles cost the Lighthouse floor).
  */
 import { type Lang, useTranslations } from '../i18n/ui';
 import { SITE } from '../config/site';
@@ -37,12 +40,6 @@ const t = useTranslations(lang);
 const locale = lang === 'de' ? 'de-DE' : 'en-GB';
 const host = new URL(SITE.url).host;
 
-const kpis = [
-  { id: 'views', label: t('stats.kpi.views'), note: '' },
-  { id: 'visitors', label: t('stats.kpi.visitors'), note: t('stats.kpi.visitorsNote') },
-  { id: 'events', label: t('stats.kpi.events'), note: '' },
-] as const;
-
 /* Column heads per table. The first column is the identifier, the rest are
    counts and right-aligned; scripts/stats.ts fills the rows in this order. */
 const tables = [
@@ -53,6 +50,9 @@ const tables = [
   { id: 'langs', title: t('stats.table.langs'), cols: [t('stats.col.lang'), t('stats.col.views')] },
   { id: 'events', title: t('stats.table.events'), cols: [t('stats.col.event'), t('stats.col.count')] },
 ] as const;
+
+/* The bench's Positionsliste: every figure on the drawing, as a table. */
+const funnelCols = [t('stats.col.stage'), t('stats.col.count'), t('stats.col.share'), t('stats.col.step')];
 
 /* 30 is the default: the contract's own example range, and the one a site
    with little traffic yet actually says something at. */
@@ -80,6 +80,15 @@ const ranges = ([7, 30, 90] as const).map((days) => ({
   data-label-device-tablet={t('stats.device.tablet')}
   data-label-device-desktop={t('stats.device.desktop')}
   data-label-device-unknown={t('stats.device.unknown')}
+  data-label-today={t('stats.chart.today')}
+  data-label-next={t('stats.next')}
+  data-label-part={t('stats.bench.part')}
+  data-label-datum={t('stats.bench.datum')}
+  data-label-scale={t('stats.bench.scale')}
+  data-label-stage-visitors={t('stats.bench.stage.visitors')}
+  data-label-stage-engaged={t('stats.bench.stage.engaged')}
+  data-label-stage-end={t('stats.bench.stage.end')}
+  data-label-stage-enquiries={t('stats.bench.stage.enquiries')}
 >
   <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
     <p class="type-annot text-steel-deep" data-reveal>{t('stats.kicker')}</p>
@@ -124,7 +133,7 @@ const ranges = ([7, 30, 90] as const).map((days) => ({
     {/* ---- 2. Board state ---------------------------------------------- */}
     <div class="mt-12" data-stats-board hidden>
       {/* Controls: one left-aligned row above everything they scope, date
-          range first. All furniture steel-deep/graphite/line — the chart
+          range first. All furniture steel-deep/graphite/line — the bench
           below owns the signal. */}
       <div class="stats-controls">
         <fieldset class="stats-range">
@@ -152,11 +161,14 @@ const ranges = ([7, 30, 90] as const).map((days) => ({
       {/* Loading and network errors. Sans: a sentence, not a label. */}
       <p class="mt-4 min-h-[1.5rem] text-[0.875rem] leading-relaxed text-steel-deep" data-stats-status role="status" aria-live="polite"></p>
 
-      {/* The sheet: one bordered document. data-stats-busy dims it while a
-          refetch is in flight — previous render held, no skeleton. */}
+      {/* The sheet: one bordered document. data-stats-busy dims it during the
+          very first load only — polls and refetches keep the render as is. */}
       <div class="stats-sheet mt-4 border border-line" data-stats-sheet>
-        {/* Zeichnungskopf */}
-        <dl class="grid grid-cols-1 divide-y divide-line border-b border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        {/* Zeichnungskopf: WEBSITE · ZEITRAUM · STAND (with seconds) · AKTUALISIERUNG
+            (counting down to the next poll) · AUFRUFE · AKTIONEN. The two
+            counts moved up here from a KPI strip (design gate, D-065): as
+            data cells they are part of the title block, not a second object. */}
+        <dl class="stats-head border-b border-line">
           <div class="px-5 py-3">
             <dt class="type-annot text-steel-deep">{t('stats.head.site')}</dt>
             <dd class="mt-1 font-mono text-[0.8125rem] text-graphite">{host}</dd>
@@ -169,22 +181,50 @@ const ranges = ([7, 30, 90] as const).map((days) => ({
             <dt class="type-annot text-steel-deep">{t('stats.head.fetched')}</dt>
             <dd class="mt-1 font-mono text-[0.8125rem] text-graphite" data-stats-fetched>–</dd>
           </div>
+          <div class="px-5 py-3">
+            <dt class="type-annot text-steel-deep">{t('stats.head.next')}</dt>
+            <dd class="mt-1 font-mono text-[0.8125rem] text-graphite" data-stats-next>–</dd>
+          </div>
+          <div class="px-5 py-3">
+            <dt class="type-annot text-steel-deep">{t('stats.kpi.views')}</dt>
+            <dd class="mt-1 font-mono text-[0.8125rem] text-graphite" data-stats-kpi="views">–</dd>
+          </div>
+          <div class="px-5 py-3">
+            <dt class="type-annot text-steel-deep">{t('stats.kpi.events')}</dt>
+            <dd class="mt-1 font-mono text-[0.8125rem] text-graphite" data-stats-kpi="events">–</dd>
+          </div>
         </dl>
 
-        {/* KPI row. Proportional figures at display size — tabular-nums is
-            for columns only (the tables below). */}
-        <div class="grid grid-cols-1 sm:grid-cols-3">
-          {
-            kpis.map((kpi, i) => (
-              <div class={`px-5 py-6 ${i > 0 ? 'border-t border-line sm:border-l sm:border-t-0' : ''}`}>
-                <p class="type-annot text-steel-deep">
-                  {kpi.label}
-                  {kpi.note && <span class="stats-kpi-note"> · {kpi.note}</span>}
-                </p>
-                <p class="type-display mt-2 text-4xl text-graphite" data-stats-kpi={kpi.id}>–</p>
-              </div>
-            ))
-          }
+        {/* The Durchlauf-Messbank (D-065): the first and dominant panel. The
+            <svg> is built by the script at the container's measured width —
+            one unit is one pixel, text never stretches. role=img: the drawing
+            is one object; its numbers are in the Positionsliste below. */}
+        <div class="border-b border-line px-5 py-8">
+          <h2 class="type-annot text-steel-deep">
+            {t('stats.bench.title')}
+            <span class="stats-kpi-note"> · {t('stats.kpi.visitors')} {t('stats.kpi.visitorsNote')}</span>
+          </h2>
+          <div class="stats-bench mt-6" data-stats-bench-box>
+            <svg class="stats-bench-svg" data-stats-bench viewBox="0 0 1000 420" role="img" aria-label={t('a11y.statsBench')}></svg>
+          </div>
+          <details class="stats-details mt-6">
+            <summary class="stats-summary type-annot text-steel-deep">{t('stats.table.funnelToggle')}</summary>
+            <div class="mt-3 min-w-0 max-w-[36rem] overflow-x-auto">
+              <table class="stats-table w-full border-collapse text-left">
+                <caption class="sr-only">{t('stats.table.funnel')}</caption>
+                <thead>
+                  <tr class="border-y border-graphite">
+                    {funnelCols.map((col, i) => (
+                      <th scope="col" class={`type-annot py-2.5 font-normal text-steel-deep ${i > 0 ? 'pl-4 text-right' : 'pr-4'}`}>
+                        {col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody data-stats-rows="funnel" data-stats-cols="4"></tbody>
+              </table>
+            </div>
+          </details>
         </div>
 
         {/* Chart. The <svg> is built by the script from the JSON and the

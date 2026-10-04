@@ -184,8 +184,8 @@ onPage(({ lenis }) => {
     } else {
       /* No hover to work with, so the card previews itself when it scrolls
          into view — ONCE, not on a loop. An indefinite auto-started animation
-         is the SC 2.2.2 case with no pause control to offer, and two blurred
-         videos looping forever is also the mobile-perf case on a floor with no
+         is the SC 2.2.2 case with no pause control to offer, and several
+         blurred videos looping forever is also the mobile-perf case on a floor with no
          headroom. One pass, then the card rests on its first frame. */
       observer = new IntersectionObserver(
         (entries) => {

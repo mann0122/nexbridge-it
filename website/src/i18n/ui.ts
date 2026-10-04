@@ -211,15 +211,16 @@ export const ui = {
      */
     'teaser.meta.title': 'Teaser – NexBridge-IT',
     'teaser.meta.description':
-      'Zwei Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
+      'Drei Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
     'teaser.kicker': 'Filme · Zugang mit Code',
-    'teaser.title': 'Zwei Filme.',
+    'teaser.title': 'Drei Filme.',
     /* "Diese beiden Filme zeigen wir nicht öffentlich" was false: the page, the
        cards and the blurred loops are public — only the full films are not. */
     'teaser.intro':
       'Die vollständigen Filme zeigen wir nicht öffentlich. Den vierstelligen Code bekommen Sie von uns – im Gespräch oder per E-Mail.',
     'teaser.1.name': 'Teaser 1',
     'teaser.2.name': 'Teaser 2',
+    'teaser.3.name': 'Teaser 3',
     /* "Film-Nr.", not "Teil-Nr.": a film is not a part in a Stückliste. */
     'teaser.field.part': 'Film-Nr.',
     'teaser.field.status': 'Status',
@@ -581,13 +582,14 @@ export const ui = {
     /* Teaser page (D-056) — English twin. */
     'teaser.meta.title': 'Teaser — NexBridge-IT',
     'teaser.meta.description':
-      'Two films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
+      'Three films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
     'teaser.kicker': 'Films · access by code',
-    'teaser.title': 'Two films.',
+    'teaser.title': 'Three films.',
     'teaser.intro':
       'We do not show the full films publicly. You get the four-digit code from us — in conversation or by email.',
     'teaser.1.name': 'Teaser 1',
     'teaser.2.name': 'Teaser 2',
+    'teaser.3.name': 'Teaser 3',
     'teaser.field.part': 'Film no.',
     'teaser.field.status': 'Status',
     'teaser.locked': 'locked',

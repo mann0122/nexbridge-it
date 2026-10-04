@@ -196,8 +196,10 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   loop sits *inside* the image area under `blur(14px) grayscale(1) contrast(0.95)` and a 0.74
   graphite scrim (tuned against the real posters, D-061): motion reads, content does not. The title block is **solid** graphite, never a scrim
   over the film — a translucent band would hand its contrast to whatever frame was showing.
-  All furniture is steel: two cards share a viewport, so neither may spend the signal. The
-  card is a `<button>`; the unlock `<dialog>` is shared by both, and its submit CTA is that
+  All furniture is steel: up to three cards share a viewport, so none may spend the signal. The
+  set runs three across from `lg`, two up at `md` with the third card alone on the second row —
+  never stretched, since a wider sheet reads as the important one (D-067). The
+  card is a `<button>`; the unlock `<dialog>` is shared by all of them, and its submit CTA is that
   viewport's one signal element — so the error line is **steel**, not signal and not a signal
   rule. A 1px signal rule was tried and failed the gate: the ban on coloured left-borders
   wider than 1px is about the alert-tab *shape*, and passing it buys no exemption from the

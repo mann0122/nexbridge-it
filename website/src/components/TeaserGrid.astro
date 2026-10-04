@@ -8,12 +8,13 @@
  * and a greyscale filter, so motion reads but nothing in the film is legible
  * or in colour — the point of a teaser is that you can tell something is there.
  *
- * All furniture is steel, never signal: two cards sit in one viewport and the
- * ration counts elements (DESIGN.md). The only signal here is the focus ring.
+ * All furniture is steel, never signal: several cards sit in one viewport and
+ * the ration counts elements (DESIGN.md). The only signal here is the focus ring.
  *
  * The card is a <button>, so keyboard and screen-reader behaviour come from
- * the platform. One <dialog> serves both cards — one focus trap, one <video>
- * to tear down on route change.
+ * the platform. One <dialog> serves every card — one focus trap, one <video>
+ * to tear down on route change. Cards come from TEASERS (config/teasers.ts):
+ * a new film is a manifest entry plus a `teaser.N.name` key, not markup.
  *
  * Nothing here names the full films' URLs. They are derived from the typed
  * code in scripts/teaser.ts and exist in the DOM only after a correct one.
@@ -37,7 +38,7 @@ const t = useTranslations(lang);
  *
  * Checked here, at build time, rather than by letting the browser discover it:
  * `preload="none"` does not suppress the poster fetch, so emitting the markup
- * unconditionally costs two 404s and two console errors on every view while the
+ * unconditionally costs a 404 and a console error per card on every view while the
  * films are missing — and the honest "Film folgt" state would appear only after
  * a hover, on the hovered card alone, because it hung off the <video> error
  * event. A card with no film now says so on first paint and is not clickable.
@@ -46,7 +47,7 @@ const t = useTranslations(lang);
    import.meta.url: Vite rewrites that during the build, so the lookup silently
    missed and every card rendered "Film folgt" even with the films in place.
    A missing public/ means the resolution is wrong rather than the assets — so
-   fail the build loudly instead of quietly mislabelling both cards. */
+   fail the build loudly instead of quietly mislabelling every card. */
 const publicDir = path.resolve(process.cwd(), 'public');
 if (!fs.existsSync(publicDir)) {
   throw new Error(
@@ -98,7 +99,11 @@ const cards = TEASERS.map((teaser, i) => ({
       </p>
     </noscript>
 
-    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+    {/* Three films (D-067): one sheet per row on phones, two up at md, the
+        full set of three across from lg. At md the third card sits alone on
+        the second row — a half-empty row, not a stretched card: a sheet that
+        is wider than its siblings would read as the important one. */}
+    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
       {
         cards.map((card) => (
           <button
@@ -171,7 +176,7 @@ const cards = TEASERS.map((teaser, i) => ({
   </div>
 </section>
 
-{/* One dialog, both cards. Native <dialog> gives the focus trap, the backdrop
+{/* One dialog, every card. Native <dialog> gives the focus trap, the backdrop
     and Esc for free — and returns focus to the card that opened it. */}
 <dialog class="teaser-dialog" data-teaser-dialog aria-labelledby="teaser-dialog-name">
   <div class="teaser-dialog-sheet">

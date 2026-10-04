@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-09-16
+updated: 2026-10-04
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065, D-066]
+decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065, D-066, D-067]
 cites_history: [D-007]
 ---
 
@@ -16,7 +16,7 @@ cites_history: [D-007]
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-09-16**
+Last reviewed: **2026-10-04**
 
 ## The venture in five lines
 
@@ -60,14 +60,16 @@ anchors, not pages — temporary, "until dedicated subpages exist"
 (`website/src/components/Header.astro:19`). The spec sitemap lists them as planned pages.
 `Teaser` is the exception: a real page, and the first one in the nav (D-057).
 
-`/teaser` holds the two advertisement films behind a 4-digit courtesy gate (D-056) — a
-blurred silent loop on hover, the full film after a code. **Both films are in the repo**
-(D-059): `website/public/teaser/` carries the two code-named films, the posters and the
+`/teaser` holds three advertisement films (D-067), each behind its own 4-digit courtesy gate
+(D-056) — a blurred silent loop on hover, the full film after a code. **Teasers 1 and 2 are in
+the repo** (D-059): `website/public/teaser/` carries their code-named films, posters and
 preview loops, built by `ops/teaser-assets.bat` / `npm run teaser:assets` from the founder's
 source films in the gitignored `ops/teaser-src/`. Teaser 1 is the Rathaus film (NBIT1, 2:10,
-fitted to 720p for the 25 MiB cap), Teaser 2 the general film (NBG1, 1:20, 1080p). The codes
-are in no file; the founders hold them. Rotating a code means re-running the script, which
-retires the old file.
+fitted to 720p for the 25 MiB cap), Teaser 2 the general film (NBG1, 1:20, 1080p).
+**Teaser 3 (NB3) has no film yet** — its card reads "Film folgt" and is not a control until
+the founders build it (open item 12). The codes are in no file; the founders hold them. A
+run builds only the films whose code is set, so adding a film needs only its own code; only a
+run with every code set sweeps, and that is the only way to retire an old code (D-067).
 The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
 `sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
 which appear nowhere until a correct code derives them, not about `/teaser` itself.
@@ -179,6 +181,11 @@ Ranked. Owner in brackets.
    (paper, and CR80 per D-055) carry their own 0-origin copy, and the plate's copy still has
    one sub-resolvable path the canonical mark does not. `TBD:` guard them or replace them —
    see D-051, before the next card change.
+12. **Teaser 3 film not built** [founders] — `/teaser` shows a third card reading "Film
+   folgt" (D-067). Drop the film into `ops/teaser-src/` as `NB3.mp4` and run
+   `ops/teaser-assets.bat`, typing only Teaser 3's code (Enter skips the other two), or
+   `TEASER_3_CODE=… npm run teaser:assets`. Teasers 1 and 2 are left byte-for-byte as they
+   are. Then commit `website/public/teaser/` and deploy.
 
 ### Known defects (technical, none blocking)
 
@@ -211,7 +218,9 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
 
 ## In flight
 
-Nothing. Everything is merged into `main`, the only long-lived branch: the stats dashboard
+**Teaser 3** (D-067) on `claude/tender-goldberg-qnn87f`, PR #1 — the third card, the
+partial-build script and the docs; waiting on the NB3 film and its code (open item 12).
+Everything else is merged into `main`, the only long-lived branch: the stats dashboard
 (D-063, live since D-064), the logo mark (D-050),
 the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
 (D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-062). The teaser was

@@ -29,6 +29,7 @@
  * courtesy, not motion — and swaps are instant with the veil display:none.
  */
 import { gsap, motionOff } from './motion';
+import { CARDS } from '../config/cards';
 
 interface BeforePreparationEvent extends Event {
   from: URL;
@@ -46,18 +47,28 @@ const dateEl = veil?.querySelector<HTMLElement>('[data-veil-date]') ?? null;
 const scan = veil?.querySelector<HTMLElement>('[data-veil-scan]') ?? null;
 const lines = veil ? Array.from(veil.querySelectorAll<SVGLineElement>('.veil-line')) : [];
 
-/** /en/impressum → /impressum, trailing slash dropped — one id per document. */
+/** /en/impressum → /impressum, /en/card/* → /karte/* (the one translated
+ *  segment pair), trailing slash dropped — one id per document. */
 function norm(path: string): string {
-  let p = path.replace(/^\/en(?=\/|$)/, '');
+  let p = path.replace(/^\/en(?=\/|$)/, '').replace(/^\/card(?=\/|$)/, '/karte');
   if (p === '' || p === '/') return '/';
   if (p.endsWith('/')) p = p.slice(0, -1);
   return p;
 }
 
-/* The site's sheet register. Three documents exist; anything else is the
-   404 and stamps 00. Grows when dedicated subpages do. */
-const SHEET: Record<string, string> = { '/': '01', '/impressum': '02', '/datenschutz': '03' };
-const sheetOf = (path: string) => `${SHEET[norm(path)] ?? '00'} / 03`;
+/* The site's sheet register. Anything not listed is the 404 and stamps 00.
+   Grows when dedicated subpages do — the card pages (NB-VK) did. */
+const SHEET: Record<string, string> = {
+  '/': '01',
+  '/impressum': '02',
+  '/datenschutz': '03',
+  '/karte': '04',
+};
+CARDS.forEach((card) => {
+  SHEET[`/karte/${card.slug}`] = String(Object.keys(SHEET).length + 1).padStart(2, '0');
+});
+const TOTAL = String(Object.keys(SHEET).length).padStart(2, '0');
+const sheetOf = (path: string) => `${SHEET[norm(path)] ?? '00'} / ${TOTAL}`;
 
 const isTwin = (from: URL, to: URL) =>
   norm(from.pathname) === norm(to.pathname) && from.pathname !== to.pathname;

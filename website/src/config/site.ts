@@ -31,7 +31,7 @@ export const SITE = {
   phoneE164: '+491739044077',
   representatives: ['Peter Knopp', 'Manush Vaghani'],
   /** "Stand" date carried by the legal pages. Bump when either text changes. */
-  legalRevision: '08/2026',
+  legalRevision: '09/2026',
   /**
    * Booking tool link (e.g. a self-hosted Cal.com instance — keeps the
    * GDPR-first positioning). Reserved: nothing reads this yet. Wiring the
@@ -57,4 +57,12 @@ export const SITE = {
    * Only one of the two should be set.
    */
   cfAnalyticsToken: '',
+  /**
+   * Self-hosted, cookieless stats (D-063): a beacon on every page reports the
+   * view and named clicks to our own Worker, which stores them in D1 — no
+   * third party, no cookie, no personal data at rest. Switched on 2026-09-16
+   * together with the Datenschutz §10 text (D-064) — the two are coupled: if
+   * this goes back to false, §10 must say so again, and vice versa.
+   */
+  statsEnabled: true,
 } as const;

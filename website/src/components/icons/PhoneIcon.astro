@@ -1,0 +1,33 @@
+---
+/**
+ * Phone — part symbol for the card pages' phone row (D-043 grammar; first
+ * call site is CardPage, per the no-icon-without-a-call-site rule). The
+ * handset holds still; on parent hover the two ring waves redraw once,
+ * staggered — the line ringing, single-shot. Rest state is the complete
+ * drawing. Tabler phone-call geometry, butt caps / miter joins by default.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 16, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-phone', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <path
+    d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"
+  ></path>
+  <path class="icn-phone-w" pathLength="1" style="--icn-d: 0ms" d="M15 7a2 2 0 0 1 2 2"></path>
+  <path class="icn-phone-w" pathLength="1" style="--icn-d: 60ms" d="M15 3a6 6 0 0 1 6 6"></path>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

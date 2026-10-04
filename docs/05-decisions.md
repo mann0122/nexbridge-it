@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-09-15
+updated: 2026-09-16
 depends_on: []
 decisions: []
 ---
@@ -848,6 +848,22 @@ their place; treatments applied over the whole canvas do not. Also housekeeping:
 deleted; `main` is the only long-lived branch again. Owner: founder (verdict), partner-b
 (removal).
 
+## D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED
+The company has an animated logo (5s, silent, graphite drafting-sheet world). Choreography,
+founder-directed: the two muted process lines draw in and converge; the signal line rules
+itself right with a **filled arrowhead as its moving tip** (the CTA/flowrail arrow grammar —
+the lockup itself now ends in this arrowhead); the wordmark rises out of blur above the line;
+the signal period stamps last; `NB-001` teletypes into the corner; hold on the exact lockup.
+Two candidates were built: a deterministic code-rendered master (HTML/SVG stepped frame-by-
+frame in headless Chromium, ffmpeg-encoded) and a Seedance 2.0 generation locked to
+brand-true start/end keyframes rendered from the real system (Archivo, token hexes — the
+model never drew the logo itself). **The founder picked the Higgsfield version**; the code
+master is archived as an alternate. 1:1 and 9:16 cuts follow the same keyframe recipe. Scope
+note: `DESIGN.md`'s generated-imagery ban governs the website's drawn world; this sting is
+off-site brand collateral (video intros, social) on founder order — the site keeps drawing
+its logo in code. Assets: founder's Higgsfield library (16:9 job `a4582aac`) + delivered
+MP4s; ~270 credits total. Owner: founder (verdict), partner-b (build).
+
 ## D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED
 Founder-described: the header wordmark's signal period lifts off, bounces across every
 letter, drops into the hero schematic and merges with the pulse that travels the signal
@@ -917,7 +933,286 @@ in a `Contact.astro` comment, corrected to the computed 3.10:1 in the same commi
 order on padding values now labelled because the two rows disagreed silently).
 Owner: partner-b.
 
-## D-049 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED
+## D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED
+*(Renumbered at merge from the D-046 its branch carried — that number was already held by
+the animated-logo decision above.)*
+**The routes, previously unlogged.** `/karte/peter-knopp`, `/karte/manush-vaghani`, `/karte/`
+(the Kartenverzeichnis), EN mirrors at `/en/card/*`, plus static vCard endpoints at
+`/karte/<slug>.vcf` — vCard 3.0, every value from the `site.ts`/`cards.ts`/`ui.ts` single
+sources, nothing invented. All card routes are noindex and sitemap-excluded: handouts, not
+landing pages. They joined the veil's sheet register (05/06), and `public/_headers` pins
+`text/vcard` so phones open the file as a contact. The physical print masters live in
+`print/visitenkarte/` (NB-VK-01/02, QR → these routes); printing stays gated on the DPMA
+trademark check — STATE open item 5.
+
+**The founder ruling.** The first shipped skin — DIN frame, self-measuring dimension line,
+NFC-antenna concealed geometry, Zeichnungskopf header — was rejected by the founder for the
+card surface: *"AI agency, not manufacturing"*. Redesigned to the product-shot composition the
+founder chose: one signal-orange machined-metal card object ("Das Objekt") on the graphite
+stage. **The ration ruling:** the card object is the viewport's ONE signal element, at CTA
+grade (all ink on it graphite), with the save action folded INTO the plate — the whole card is
+the vCard link. The page ground stays graphite; D-003 and the per-viewport ration stand
+unchanged. The alternative — a signal page ground — was analyzed as a D-003 supersession and
+NOT taken.
+
+**New tokens, contrast computed.** `--color-signal-soft` #FF6A26 (graphite on it: 6.29:1) and
+`--color-signal-deep` #EE4700 (4.74:1 — #E04300 was rejected at 4.26:1, an AA failure);
+`--color-groove` #D13F00 (3.79:1) never carries text — engraving strokes and the card border
+only. The existing graphite-on-signal 5.4:1 row is unchanged. **A narrow material sanction:**
+opaque CSS/SVG-drawn metal (feTurbulence roughness 1.15/2-octave overlay, brushed anisotropy
+0.012/0.5 soft-light, 135° signal-family gradient, inset arris hairlines, offset/blur floor
+shadow, zero halo) is sanctioned for the card object ONLY — not a site-wide material. The
+glassmorphism ban is untouched (the plate is opaque); white/black craft alphas were ruled
+acceptable as monochrome luminance modulation (`design-critic`, this gate round).
+
+**Loop reassignment.** The card routes' single idle loop is the sheen drift (9s period, 2.4s
+pass, 0.10 peak); the flow-line pulse does not exist on these routes — its schematic became a
+static engraving. Homepage accounting is unchanged. Tilt: pointer ±6°, touch-drag ±8°, no
+gyroscope (the iOS permission prompt was rejected); reduced-motion/`?snap`/no-JS rest at the
+complete still-life by CSS default. **Scoped amendments, logged so future audits don't file
+them as defects:** the focus ring on the card object is paper (signal is invisible on itself,
+graphite invisible on the stage — the 2px signal ring law stands everywhere else); the
+wordmark period renders graphite ON the plate (monochrome engraving); the second-rank stage
+actions (Anrufen/E-Mail/Teilen) deliberately carry `border-steel-soft`, demoted below the
+house secondary-CTA grade because the plate outranks everything; the engraving yields
+(`display: none`) below 290px container width so ink never collides with two-line names.
+
+**Gates.** `design-critic` ran a FIX-FIRST round — three should-fixes (NFC glyph round
+linecaps → butt caps per D-043; flow-mark/name clearance at narrow widths; a shadow
+inline-opacity killing the press response), all fixed and re-verified. `copywriter-de` passed
+the new key `card.a11y.vcard` („vCard herunterladen"); `card.tb.no` and `card.antenna`
+retired. `qa-reviewer` said SHIP: Lighthouse on the card page 96/100/100, homepage floors
+held at 94/100/100/100; the card page's SEO 63 is solely the deliberate noindex; the card JS
+chunk is 4,214 B. Owner: founder (verdict), partner-b (build).
+
+## D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED
+NexBridge-IT has a standalone mark for the first time. The founder rejected the drafting-office
+square mark ("gives me the vibe of a manufacturing company — we are an AI agency") and then, from
+24 vector concepts generated across two Recraft V4.1 rounds, picked the **folded paper glider**:
+a flat sheet folded into something that flies by itself, which is the offer stated as one object.
+Two brand colours only — signal `#FF4D00` body, paper `#F7F5F0` underside — flat vector, no
+background, 1.692:1.
+
+**Provenance, stated plainly.** The geometry was generated by Recraft V4.1 (`model_type: vector`)
+under a locked brand palette, then cleaned by hand for production: C2PA metadata stripped (12 KB
+of it), the canvas background removed, the artwork re-boxed to a tight `viewBox` via flattened
+bezier bbox, and the generator's 24×13-unit steel sliver at the tail deleted — it was sub-pixel at
+every real size and was the mark's only third colour. Canonical geometry now lives in exactly
+**three vector sources** whose path data must stay byte-identical — `website/public/logo-mark.svg`
+(transparent press asset), `website/public/favicon.svg` (graphite ground) and
+`website/src/components/Mark.astro` (tokens) — plus **two rasters rendered from them** that must be
+re-exported whenever the geometry changes: `website/public/apple-touch-icon.png` (180×180) and
+`website/public/og.png` (1200×630). Coordinates are rounded to one decimal (15% smaller, no visible
+change at any size), and `npm run logo` enforces the identical-paths rule — it fails on drift, on a
+stray paint and on any generator metadata, so "must never drift" is executable rather than a wish.
+
+**Where it ships:** favicon (supersedes the flow-line favicon of logo direction 2), new
+`apple-touch-icon.png` (180px), the rebuilt `og.png` social card, and the header lockup — mark +
+wordmark + period — from the `sm` breakpoint up. Below 640px the header is unchanged — a
+composition choice, not physics: measured at 360px the lockup leaves 2.9px of slack, which is not a
+margin, and the alternative (shrinking the wordmark of a company nobody has heard of yet) costs
+more than it buys. Phones meet the mark in the tab icon; revisit it with the header, not the logo.
+
+**Three constraints the gates surfaced, recorded rather than buried.** (1) **Ground is graphite,
+not "graphite or paper"** — the underside facet is `paper`, so on a light ground the fold stops
+reading and the mark drops to one colour; an on-light cut is `TBD:` and gates any print run. (2)
+**Below ~20px the fold closes up**, and the 16px browser tab is exactly that case and is not ours
+to choose — accepted knowingly, since a tab icon is a recognition cue, not a reproduction. (3) The
+**signal ration** now names the sticky lockup as a standing site-wide exception, which blocks a
+signal CTA in the nav; `DESIGN.md` carries both halves of that rule.
+
+**Gate outcomes.** design-critic and kb-curator failed the first pass and their majors are fixed
+here (ration scope, the self-contradicting 20px rule, the paper-ground claim, the file-count
+mismatch across three docs, the deleted D-046 lockup entry, the byte budget). qa-reviewer confirmed
+the build, a11y 100, exact raster dimensions and zero third-party requests, and flagged one thing
+this branch deliberately does **not** fix: mobile Lighthouse performance is 89–90, below the 94
+floor, **pre-existing and perf-neutral to this change** (font-loading, not the mark) — it is now an
+open item rather than a silent regression. The social card was re-rendered rather than edited, so
+its type was re-measured against the previous card and restored to within 1% of the original.
+
+**Two boundaries this decision does not cross.** (1) The **flow-line is not retired**. It stops
+being the logo and stays what it actually is — the motion signature: hero schematic, flowrail
+(D-044), section seams (D-041), CTA arrow. Logo = the glider; behaviour = the flow-line. (2)
+`Mark.astro` is a **brand element, not an icon**: D-043's icon contract (currentColor, strokes,
+never signal) governs annotations, and the logo is neither. It is filed at components root, not in
+`components/icons/`, so the contract stays clean.
+
+**Signal ration.** The lockup does not add a signal element — the logo has always been the
+ration's named exception; it now has a mark inside it. The wording in `DESIGN.md` is widened from
+"logo period" to "logo lockup" to say what was always meant.
+
+Still open, deliberately: the mark has no chosen animation yet (three takes exist, none picked),
+D-046's animated wordmark sting predates the mark and will need a refresh, and the DPMA check in
+[[state]] still gates any printing or first public post. Owner: founder (choice), partner-b (build).
+
+## D-051 | 2026-08-23 | The mark engraved on the NB-VK card plate: one-ink cut, 0-origin coordinates, grain ceiling | DECIDED
+*(Renumbered at merge from the D-047 its branch carried — that number is held by the wordmark
+drop above. Reframed in the same pass: the branch entry was written as if it adopted the company
+mark. It does not, and it never could — adoption is D-050's ruling and this entry defers to it.)*
+
+**What this entry is not.** It does not adopt a mark, and it does not rule on the scope of
+`DESIGN.md`'s generated-imagery ban. D-050 settles both — the mark's provenance and the finding
+that a brand owner's own vector identity mark is not what that ban governs (`DESIGN.md`, "The
+mark"). Cited here, not repeated. What follows is only how the adopted mark renders on the NB-VK
+card plate.
+
+**Two names, one geometry.** The card branch called it "the founder's arrowhead-contrail"; D-050
+calls it the folded glider. It is the same artwork. Every path drawn on the plate in
+`website/src/components/CardPage.astro` maps onto the canonical geometry in
+`website/public/logo-mark.svg` by exactly X = 10x + 446, Y = 10y + 680 — same shapes, same
+1.69:1 box, a different normalization. The card carries the coordinates cleaned to a 0-origin
+`viewBox 0 0 115 68`; the canonical sources carry `0 0 1145.06 676.8` plus a placement transform.
+
+**The engraved cut — the one sanctioned exception to "never recolour".** On the orange plate the
+mark is engraved rather than printed: the glider's body renders in graphite ink and its paper
+underside becomes a white-alpha 0.34 light-catch, because the plate's law is one ink plus craft
+alphas (D-049). [[brand]]'s never-recolour rule stands everywhere else; this exception exists on
+the card surface only. The cut replaces the flow-mark engraving in the `.card-mark` slot, which
+narrowly supersedes D-049's sentence about the flow-line schematic becoming the plate's static
+engraving. The flow-line is untouched as the site's motion signature.
+
+**Drift exposure, recorded rather than assumed away.** `npm run logo`
+(`ops/scripts/check-logo.mjs`) guards exactly three canonical vector sources; the card-plate copy
+and the print copies (D-053) are not among them, so nothing fails if they drift. They already
+differ in one respect: the plate copy carries the sub-resolvable contrail sliver as a sixth path,
+which the canonical five-path mark does not have and which D-053 deleted from the print vector.
+`TBD:` whether the two card copies come under the drift guard or are replaced by the canonical
+geometry — partner-b, before the next card round.
+
+**Grain ceiling (the reasoning, kept; the values, superseded twice since).** Founder order in this
+round, "more rough texture": the rough-grain layer went to baseFrequency 0.72 / 3 octaves /
+soft-light 0.85 and the brushed layer to 0.6, and `design-critic` ruled those values the hard
+ceiling — worst-case compound dark-cluster contrast ≈3.8:1 passed only there, so further roughness
+had to come from frequency and octave shaping, never from opacity. Those layers were replaced by
+D-052; the ceiling itself was suspended on this surface by founder order in D-054.
+
+**Consequences.** (a) Print and digital had to be reconciled before any print run — closed by
+D-053. (b) The DPMA trademark check (STATE open item 5, partner-a) should carry the
+generated-mark provenance question — copyright and registrability of a generator-drawn mark in
+DE/EU practice — asked once, with the origin recorded in D-050 on the table. Owner: founder
+(verdicts), partner-b (build).
+
+## D-052 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED
+*(Renumbered at merge from the D-048 its branch carried — that number is held by the portable
+brand kit above.)*
+**Material change (founder reference-driven, two photographic references supplied).** The card
+plate's material reads sandblasted signal-orange anodized, no longer brushed-anodized. The
+brushed-anisotropy layer is removed; the texture is now exactly two layers in
+`website/src/styles/global.css` (`.card-obj::before/::after`): LIGHT POOLS (feTurbulence
+0.007 / 2 octaves, GaussianBlur 6, contrast slope 1.5, final table floor [0.5, 0.6, 1],
+soft-light, opacity 1, 560px tile) and SANDBLAST GLITTER (feTurbulence 1.4 / 2 octaves, crush
+slope 2.1 intercept −0.55, soft-light 0.85, 200px tile). This narrowly supersedes D-051's
+texture-calibration paragraph — its pinned rough-grain/brushed values are dead layers now.
+D-051's engraved cut of the mark stands.
+
+**The light-only pools law (`design-critic`, this gate round).** The pools tile floors at
+exactly 0.5 — soft-light neutral — so the layer can only brighten. Pools are glyph-scale-plus:
+a darkening pool would BE the effective text ground, not a local perturbation; light-only
+keeps every verified flat contrast row (D-049) the binding worst case. The gate initially
+caught a 0.46 floor (−2% darkening, deep stop 4.74→4.61) and it was corrected to 0.5 before
+commit.
+
+**Glitter ceiling.** Soft-light 0.85 / crush slope 2.1 with pepper already clipped to 0 is the
+ceiling — worst joint-case local ≈3.7:1 on sub-glyph 1px dots, the same class as the ≈3.8:1
+D-051 accepted. Future roughness must come from frequency/octave/table-floor shaping only: no
+deeper crush, no opacity increase.
+
+**Unchanged.** Standing specular, arris hairlines, floor shadow, sheen loop (6.5s), and the
+engraved mark (D-051) all stand as shipped. Owner: founder (references + verdict), partner-b
+(build).
+
+## D-053 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED
+*(Renumbered at merge from the D-049 its branch carried — that number is held by the NB-VK
+digital cards above.)*
+The company mark (D-050, engraved on the digital plate per D-051) now renders full-color —
+signal wedges #FF4D00, paper contrail #F7F5F0 — on both graphite fronts of the print masters
+(`print/visitenkarte/visitenkarte.html`), replacing the labeled three-input process schematic.
+The front does one job: identity. The kicker still names the four services; the QR/NFC
+destination carries the full pitch. Ration arithmetic unchanged: wordmark lockup + one accent
+element per side (`design-critic`, this gate round). This closes D-051's open consequence (a):
+digital plate and print card now carry the same mark. The schematic retires from print entirely —
+deliberately NOT to be reinstated as a micro-element on the back, which is at density capacity
+(`design-critic` ruling, same round). The sub-resolvable contrail sliver (~0.7 × 0.06 mm) was
+deleted from the print vector. Production notes (knockout/trapping, total-ink, proof the mark
+region) added to `print/visitenkarte/README.md`. Printing remains DPMA-gated (STATE open item 5).
+Owner: founder (task), partner-b (build).
+
+## D-054 | 2026-08-23 | Card plate goes full metallic on founder override; house texture laws suspended on this surface | DECIDED
+**The order.** The founder supplied photographic references of sandblasted and glitter metal,
+required the full dynamic range of that material on the card plate, and overrode the house
+texture rules to get it — verbatim intent: *"bypass every rule which you are following just do as
+i say"*. This entry exists so the override is a documented decision with a named owner instead of
+an unexplained diff.
+
+**What shipped** (`website/src/styles/global.css`, commit `d61b047`):
+- **Full-range surface.** The light pools tile now floors at 0.15 instead of soft-light neutral
+  and blends `overlay`, so pools DARKEN as well as brighten (turbulence 0.008 / 3 octaves,
+  GaussianBlur 9, crush slope 2.4 intercept −0.7, 560px tile).
+- **Dense hard glint.** Crush slope 2.8 / intercept −0.9, `overlay`, opacity 1 — was soft-light at
+  0.85. The crisp specks of the reference, surface-fixed.
+- **Burnt calibration.** `--color-signal-soft` #F55508 and `--color-signal-deep` #B03200 replace
+  the AA-verified #FF6A26/#EE4700, with the standing specular dimmed from 0.30/0.08 to 0.22/0.05.
+- **A live drift.** The coloration and its pools ride one oversized `.card-drift` layer that
+  wanders across the plate on a 26s alternating cycle — transform-only, compositor-only, no JS —
+  and `prefers-reduced-motion` rests it. The grain stays surface-fixed: on real metal the light
+  moves and the grain does not.
+
+**What this suspends, by founder order, on this surface only.** (1) The light-only pools law and
+(2) the crush/opacity ceilings, both from D-052. (3) The AA contrast discipline for small ink on
+the plate: under a darkening pool, small graphite ink can fall below 4.5:1 in the darkest pools.
+That is a knowing, documented trade the founder ordered, and the CSS comments at the affected
+layers say the same. Nothing outside the card plate is affected — the site's contrast law, the
+signal ration and the texture rules stand everywhere else, and `--color-signal` #FF4D00 itself is
+untouched.
+
+**Also in this round.** Per-person phone numbers via `website/src/config/cards.ts` (`phoneE164`):
+Manush Vaghani +4917685919025 (founder-supplied), Peter Knopp keeps the venture line from
+`site.ts`. The vCard endpoint, the card's tap-to-call row and the print back all read the
+per-person value.
+
+**Hosting, decided this session.** The card pages stay at `nexbridge-it.com/karte/<slug>`. They
+are noindex, sitemap-excluded and unlinked, so they are handouts rather than website pages, and
+the printed QR codes already encode these URLs. The NFC tags carry the same URL — NTAG213 is
+enough at under 50 bytes — and a vCard NDEF record is never written, because iPhone background
+tag reading ignores it (sources in `print/visitenkarte/README.md`). Owner: founder (verdicts),
+partner-b (build).
+
+## D-055 | 2026-09-06 | The CR80 NFC card is final: design D back, pastel metallic front | DECIDED
+**Sign-off.** The physical NFC card is FINAL by founder sign-off (2026-09-06): CR80 format —
+trim 85.6 × 54 mm, corner radius ~3.18 mm, bleed 3 mm — production master
+`print/visitenkarte-nfc/nfc-cr80.html` + its `README.md`, built in commit `d1c3a25`. It
+supersedes the 85 × 55 paper master (`print/visitenkarte/visitenkarte.html`, D-053) as the
+**active physical carrier**; the paper master is retained for a possible later paper run.
+
+**Back — founder-picked "design D".** The glider mark at 34 mm plus the signal-orange wordmark
+with a PAPER period on the dark metallic ground (two radial pools over a graphite ramp). This
+sanctions two founder overrides, **CR80 back only**: (1) the wordmark-period inversion —
+`02-brand.md` defines a signal period on the wordmark; here the period is paper, rhyming with
+the mark's paper facet — and (2) a second signal element on one side (mark + wordmark), beyond
+the prior card exceptions (D-049/D-053 held the ration at wordmark lockup + one accent element
+per side).
+
+**Front — Zeichnungskopf on light pastel-peach metallic.** The contact side sits on a light
+pastel-peach metallic ramp — the founder iterated from paper-white through orange to pastel:
+`#fff0e3 → #ffd9b8 → #ffc79c`, with a white key-light pool. Every ink on it is a graphite
+alpha grade (the wordmark keeps its signal period); phone numbers are per person (D-054); the
+QR encodes `/karte/<slug>`; the concealed-antenna drawing (dashed coil +
+`NFC-ANTENNE · VERDECKT`) now sits on the card that physically contains the coil; and there is
+NO revision date on the plate by founder order — the part numbers NB-VK-01/02 stay. The
+gradient stops are new non-token values, print-surface only, logged here.
+
+**Revision.** `CARD_REVISION` is unified to `09/2026` across the digital plate, the paper
+master and the repo config (`website/src/config/cards.ts`); the NFC plate itself carries no
+date, per the same order.
+
+**Production gates** (in `print/visitenkarte-nfc/README.md`): a machine proof of BOTH sides is
+mandatory — gradient banding/posterization risk on CMYK-over-PVC — with fallbacks pre-decided:
+flat graphite back / flat light-orange front. The 1.5 mm type floor requires retransfer or
+≥600 dpi direct-to-card print. The DPMA trademark check (STATE open item 5) still precedes any
+printing. The NTAG write-and-lock procedure is referenced (`print/visitenkarte/README.md`).
+Owner: founder (design + sign-off), partner-b (build).
+
+## D-056 | 2026-09-15 | Gated teaser page: two self-hosted films behind a 4-digit code | DECIDED
 Founder asked for the two advertisement films on the site, visible as a hovering glimpse but
 watchable only after a code. Shipped as `/teaser` + `/en/teaser`: a card per film showing a
 silent 320px loop under a blur and a graphite scrim, and a `<dialog>` taking four digits.
@@ -952,11 +1247,11 @@ Cloudflare per-file cap rather than letting a deploy fail. The cards carry no de
 what the films show: nobody has watched them in a build session and CLAUDE.md rule 1 forbids
 inventing it. Owner: partner-b; codes and films: founders.
 
-## D-050 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
+## D-057 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED
 Teaser asset identity (id, part number, source-film name) lives in
 `website/src/config/teasers.ts`, joining `site.ts`, `global.css @theme` and `ui.ts` as a
 thing not to work around. It holds file identity only — every string stayed in `ui.ts`, and
-the codes and film paths are deliberately absent (D-049). A fourth config module beat
+the codes and film paths are deliberately absent (D-056). A fourth config module beat
 bloating `site.ts`, which is brand identity and says so.
 
 The nav gained `Teaser` — the first entry pointing at a **page** rather than a homepage
@@ -965,8 +1260,8 @@ partly overtaken. Desktop nav spacing dropped to `gap-6` at `md` and returns to 
 `lg`: five links plus the language toggle do not fit at 768px on the old spacing. Owner:
 partner-b.
 
-## D-051 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
-The `qa-reviewer` gate on D-049 found that a guarantee the repo advertises was not real.
+## D-058 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED
+The `qa-reviewer` gate on D-056 found that a guarantee the repo advertises was not real.
 `website/CLAUDE.md` says the EN block of `ui.ts` "cannot silently drift from the German one —
 a missing key is a compile error". It was not: `satisfies Record<Lang, Record<string, string>>`
 only requires string keys, `UiKey` derives from the German block alone, and `t()` falls back to
@@ -986,6 +1281,341 @@ as devDependencies. Types only, no runtime cost.
 pre-existing `'heroArrow' is possibly null` errors in `scripts/flowrail.ts` (D-044), which are
 not this change's to fix, and a build that fails on unrelated code would just get bypassed.
 Clearing those and then gating the build on `check` is the follow-up. Owner: partner-b.
+
+## D-059 | 2026-09-15 | The two teaser films are in the repo; the build fits the 25 MiB cap itself | DECIDED
+The founder's first run of `ops/teaser-assets.bat` (D-056) failed twice over. npm 11 no longer
+runs a dependency's install script unless `package.json` `allowScripts` names it, so
+`ffmpeg-static` never downloaded its binary; and the Rathaus film — 130 s of 1080p — came out
+over Cloudflare's 25 MiB per-file cap at crf 23, where the script's only advice was to edit
+ffmpeg flags by hand. Neither was visible from the cloud session that wrote the script: it had
+no films and no npm 11.
+
+**Two changes.** `allowScripts: { "ffmpeg-static": true }` in the root `package.json`,
+unpinned because the `^5.2.0` range would outgrow a pinned entry silently. And the film is
+still encoded quality-first (crf 23 at source resolution), but if that lands over the cap it
+is re-encoded two-pass at the bitrate 22 MiB leaves after 128 kb/s of audio, scaled to
+1280 px — 720p holds at that bitrate where 1080p falls apart in the gradients. Refusal is now
+the last resort: only a film so long that the budget drops under 300 kb/s is rejected, with
+"shorten the film" as the message. D-056's "the script errors above the cap" stands for that
+case only.
+
+**Measured.** Teaser 1 (Rathaus, NBIT1, 2:10): fitted, 22.1 MiB at 1280×720, 1284 kb/s.
+Teaser 2 (general, NBG1, 1:20): never needed it — 23.7 MiB at 1080p crf 23. Both films, both
+posters and both preview loops are committed under `website/public/teaser/`; the repo grows by
+about 46 MiB. The codes were chosen by the founder and handed over in the build session; they
+are in no file. The unlock, wrong-code, session-memory and EN paths were exercised in a browser
+against the built site before commit. Owner: partner-b; codes: founders.
+
+## D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED
+D-057 said `gap-6` made five links plus the language toggle fit at 768 px. Measured on the
+built site during the D-059 gate, it does not on a classic scrollbar: the DE header needs
+~717 px of content width and a 768 px Windows viewport leaves 705 px, so from 768 to 779 px
+"Über uns" and "DE → EN" broke over two lines and the lockup dropped its signal period onto a
+second line under the mark — the brand element D-050 describes, broken, on every page in that
+band (a half-snapped window on a 1920 × 1080 display at 125 % lands exactly there). Overlay
+scrollbars had hidden it in the cloud build. Introduced by the fifth link, not pre-existing.
+
+Two changes to `Header.astro`: the desktop toggle wears the mobile bar's short label
+(`EN` / `DE`) from `md` and its full `DE → EN` from `lg`, which returns ~47 px; and the lockup,
+the links and the toggle are `whitespace-nowrap`, so a future sixth link overflows visibly
+instead of failing quietly. Same gate also moved the dialog's submit onto `Cta.astro` (it was
+a fourth hand-rolled copy, against D-043), dropped a doubled hairline under the header on
+`/teaser`, and put the scrim and backdrop on the graphite token. Owner: partner-b.
+
+## D-061 | 2026-09-15 | Teaser scrim 0.62 → 0.74, tuned against the real posters | DECIDED
+The 0.62 scrim was set with no films in the build (D-056). With the real posters it produced
+two plates in different keys: the Rathaus poster averages Y 168 (paper-cutout daylight), the
+night-yard poster Y 64, so the light plate landed at Y ≈ 77 — brighter than any hairline on the
+page and the largest bright surface in the viewport — while the dark one sat at ≈ 38. A locked
+sheet is uninked; it must not be the brightest thing on the page.
+
+One number: the scrim goes to **0.74** of graphite. Measured on the built page (canvas
+composite of poster × filter × scrim): plates land at Y 56 and Y 32. The two bounds are the
+plate's real neighbours — the steel-soft hairline that frames it (Y 64) above, and the card's
+own graphite-2 ground (Y 30, not the section's graphite at Y 22) below. Light plate under 64
+needs the scrim above 71 %; dark plate over 30 needs it under 81 %. That window is 34 Y wide and
+the two posters are 104 apart, so no single value gives both plates a margin: at 74 % card 1
+sits 8 under the hairline and card 2 rests 2 over its ground, held apart from it by the hairline
+and its own internal contrast (its lit window peaks near Y 80). The cards are one grade of
+sheet, not one tone — a 24 Y gap where there was 39. The law stays a single scrim for all
+cards: a per-film value would be a config knob in the way of the next film. A future poster
+averaging under Y 45 would sink into graphite-2 at this value — re-measure then, do not add a
+knob. Same entry: the registration marks move from steel-soft to steel-deep — the hairline
+tone was 1.07:1 on the lighter plate, i.e. invisible, since before this change; steel-deep
+reads at 1.9:1 and 2.8:1, furniture grade under the head's text ink. Owner: partner-b.
+
+## D-062 | 2026-09-15 | The teaser videos are served by a Worker script as 206 — Safari needs Range | DECIDED
+Checked against the live site right after the D-061 deploy: the static-asset server answers a
+`Range: bytes=0-1` request for a film with the whole file as a `200`, no `Accept-Ranges`, no
+`Content-Range` — on a cache HIT as well as a MISS. Chrome and Firefox play a `200` stream
+progressively; Safari on iOS and macOS probes a `<video>` source with exactly that request and
+refuses to play without a `206`. So both films and both preview loops were silent on every
+iPhone, and nothing in the build or the gates could have seen it: the Astro preview server
+slices ranges, the asset store does not.
+
+**The site gains its first Worker script**, `website/worker/index.js`, and stays a static-asset
+Worker for everything else: `run_worker_first: ["/teaser/*", "!/teaser", "!/teaser/"]` sends
+only the teaser files through it; the page and every other route remain scriptless assets.
+For `.mp4` GET/HEAD it uses the Cache API, which slices a cached `200` into a `206` by itself
+when the request carries a Range — a documented behaviour that needs a `Content-Length`. The
+asset store streams its body without one, so the cold request per data centre reads the film
+whole (≤ 25 MiB, the asset cap), stores it for a day, and every request after that — ranged,
+full or the gate's HEAD probe — is answered from the cache. A wrong-code URL returns the
+store's own 404 untouched, so D-056's "the 404 is the validation" holds. Each response carries
+`x-nb-video: cache | store | store-as-is | store-uncached`, which is the whole debugging story.
+Verified locally under `wrangler dev`: `206` with correct `Content-Range` on cold and warm
+requests, a 1000-byte slice byte-identical to the file, HEAD `200`, wrong code `404`, the page
+and the posters untouched. Then deployed (version 690862d6) and verified on the live site with
+the same calls: cold `Range: bytes=0-1` on each film → `206`, `Content-Range: bytes 0-1/23136929`
+and `/24801544`, `x-nb-video: store`, 1.8 s; warm slice → `206` from cache in 0.2 s and
+byte-identical to the file; both preview loops `206`; HEAD `200`; wrong code `404`; the page and
+the posters carry no `x-nb-video`. `wrangler tail` during those requests: every outcome `ok`;
+cold requests cost 20–36 ms CPU (the whole-file read), warm ones 1–2 ms.
+
+**Costs.** Free-plan Workers requests are metered (100 000/day) and, unlike static assets, a
+request over the limit gets a `429` instead of the asset — the teaser's few viewers are far
+from it, but it is the first metered surface on the site. The cold read also runs over the
+Free plan's nominal 10 ms CPU per request (measured 20–36 ms); Cloudflare tolerates occasional
+overruns and every measured outcome was `ok`, and a cold read happens once per film per data
+centre per day. If `wrangler tail` ever shows `exceededCpu` on a teaser request, the fix is
+Workers Paid (30 s CPU) — a founder call — not a bigger script: the only script-side
+alternative is a public size manifest, which would leak the film names and defeat the gate. D-022's deploy target had no `main`
+at all; it now has one script for one path. `PRODUCT.md` and the spec keep "static-asset
+Worker" because it still is one. Declined: R2 (needs billing enabled on the account, changes the founders' build
+step), HLS (a player library), and moving the films off-site (D-056's legal-page reason).
+Not verified on a real Safari — nobody here has one; the mechanism Safari documents as
+required is what was verified. Owner: partner-b.
+
+## D-063 | 2026-09-16 | Website stats are self-hosted: own beacon, Worker route, D1, key-gated dashboard — shipped dark | DECIDED
+The founder asked whether footfall and clicks on nexbridge-it.com can be measured and, offered
+Cloudflare Web Analytics (free, page views only), Plausible (the D-002/D-013 plan: EU-hosted,
+click events, a monthly fee) and a self-built dashboard, **chose the self-built one**. Reasons
+that hold: it keeps the site's zero-third-party-request property (the legal page's hosting-only
+story stays literally true), it counts named clicks (Cloudflare's free tool cannot), it costs
+nothing per month, and we sell dashboards — the first one we run is our own.
+
+**What exists.** A beacon, `website/src/scripts/beacon.ts`, sends one `POST /api/hit` per page
+view — initial load and every client-side navigation (D-039) — and one per named click:
+`cta:hero`, `cta:hero-secondary`, `cta:404`, `form:sent`, `form:mail`, `lang:<target>`,
+`vcard:<slug>`, `contact:tel`, `contact:mail`, `teaser:<id>` (the id, never the code) and
+`outbound:<host>`. Payload: event, optional value, path, referrer, page language, viewport
+width — nothing else. The Worker script from D-062 gains a second module,
+`website/worker/stats.js`, and `run_worker_first` gains `/api/*`; every other route is still a
+scriptless asset. `/api/hit` validates against a fixed grammar (a 400, never a guess), drops
+crawler user agents, answers 204 before the row is written and stores it in a **D1** database
+`nexbridge-stats` (`worker/migrations/0001_stats.sql`, applied with `npm run stats:migrate`).
+`/api/stats?days=7|30|90` returns aggregates only — totals, a zero-filled daily series, top
+pages, referrer hosts, countries, devices, languages, events — behind
+`Authorization: Bearer <STATS_KEY>` (a Worker secret, compared timing-safe). The dashboard is
+two pages, `/statistik` and `/en/stats` (`StatsBoard.astro`, `scripts/stats.ts`): `noindex`,
+out of the sitemap, in no nav — the key is entered once per tab and held in `sessionStorage`,
+exactly the teaser's mechanism (D-056). One bordered datasheet on paper: Zeichnungskopf, a KPI
+row, an inline-SVG bar chart of views per day (no library; the latest day is the sheet's one
+signal element), and Positionsliste tables. Every string is in `ui.ts` in both languages.
+
+**Privacy design, so nobody re-derives it.** No cookie, no id, no consent banner needed on our
+reading of Art. 6(1)(f) — but see below. The IP address and user agent are never stored: a
+visitor is the first 16 hex of SHA-256(salt | ip | ua) under a salt that is random per UTC day,
+created by the first beacon of the day and deleted by the next day's — so the same person
+tomorrow is a new hash and yesterday's hashes can be recomputed by nobody, us included.
+"Besucher" is therefore the **sum of daily uniques**, and the dashboard says so. The beacon is
+inert when `navigator.globalPrivacyControl` or `doNotTrack` is set, when `navigator.webdriver`
+is true (Lighthouse, headless runs), and when a founder has ticked "don't count my own visits
+in this browser" on the dashboard (`localStorage`, that browser only). The beacon itself writes
+nothing to storage.
+
+**Shipped dark.** `SITE.statsEnabled` in `site.ts` is `false`, and without it the built pages
+carry no beacon meta and make no `/api/` request. It may be flipped **only together with the
+Datenschutzerklärung**: §10 (`legal.ts`) currently says „Derzeit setzen wir keine Webanalyse-
+oder Reichweitenmessungsdienste ein", which becomes false the moment the beacon is live. Its
+second sentence already names the Art. 6(1)(f) basis for cookieless analytics; the replacement
+for the first, and whether the daily-salted hash needs its own sentence, is the founders'
+generator/lawyer's to write — CLAUDE.md rule 4, no one here drafts it. `TBD:` legal review,
+added to open item 1. The ops prerequisites: the D1 store **exists** — created the same day on
+the founder's go-ahead, pinned to region **WEUR** (a D1 location is fixed at creation; the
+first attempt landed in EEUR by wrangler's default and was deleted empty and recreated), schema
+applied with `npm run stats:migrate`, id in `wrangler.jsonc` — which also means merging this
+does not block deploys, as the qa gate had warned a placeholder id would. Still open: a founder
+sets `npx wrangler secret put STATS_KEY` (the key is theirs to choose and is in no file; until
+it is set, `/api/stats` answers 503), then the flip and a deploy.
+
+**Costs and limits.** D1 Free: 5 million rows read and 100 000 written per day, 5 GB — years of
+this site's traffic. Every beacon is a metered Worker request on the same 100 000/day Free
+allowance D-062 opened; a WAF rate-limit rule on `/api/hit` is the answer if abuse ever shows,
+dashboard config rather than code. Retention is unlimited by design (the alternative, Workers
+Analytics Engine, keeps 90 days and can only be read through the REST API with a token, which
+is why it was declined). Also declined: Plausible (fee, third-party request), Cloudflare Web
+Analytics (no events, a third-party script), any consent banner (nothing here needs one, and a
+banner on a GDPR-first site is a contradiction). Verified locally under `wrangler dev` with a
+local D1: every route branch (204 / 400 / 405 / 413 / 401 / 404), path normalisation, same-
+origin referrer dropped, bot UA dropped, salt row created, rows carry no IP or UA. D-002 is now
+superseded on a **third** point (analytics: Plausible → own); D-013's "Plausible still NOT
+installed" is history. Owner: partner-b for the code; founders for the §10 sentence and the flip.
+
+## D-064 | 2026-09-16 | Stats switched on; Datenschutz §10 rewritten in-house on the founder's direction | DECIDED
+The go-live sequence of D-063 ran the same day: the founder set `STATS_KEY` himself
+(`wrangler secret put`, the value is in no file and was never handled here), and when asked
+for the §10 replacement from his generator or lawyer answered "just put the sentence
+according to you". That is a **founder override of CLAUDE.md rule 4** for one section, and
+it is logged as such rather than done quietly: §10 *"Webanalyse und Reichweitenmessung"* in
+`website/src/i18n/legal.ts` now carries four paragraphs written in this repo — a plain
+description of what `beacon.ts` and `worker/stats.js` record and store, how the daily-salted
+token works, the Art. 6(1)(f) basis with the legitimate interest named, the objection routes,
+and the generator's original future-tools sentence unchanged. The English §10 is a convenience
+translation, German prevails. `legalRevision` is bumped to 09/2026. `statsEnabled` is `true`;
+the flag and §10 are coupled — one cannot change without the other.
+
+**The draft was adversarially checked against the code before the deploy, and three of its
+claims failed.** Each was fixed in the code or the wording, never by softening the check:
+- *"Yesterday's salt is deleted, so the token can be attributed to nobody"* — deletion was
+  lazy (only the next valid hit of a later day ran it) and D1 **Time Travel** keeps restorable
+  point-in-time backups of the store for a bounded window, so "deleted" is true of the live
+  database, not of every backup. Now a **daily cron** (`triggers.crons`, `scheduled()` →
+  `housekeeping()`) deletes past salts at 00:07 UTC without waiting for a visitor, and the
+  text says what the code does: the previous day's value is deleted from the database, after
+  which the token is no longer a characteristic of a person *for us*; D-063's "recomputed by
+  nobody, us included" was an overstatement and is superseded on that point.
+- *"Object via Do Not Track or Global Privacy Control"* — Safari offers neither, Chrome only
+  DNT, Firefox only GPC, so the route alone excluded every iPhone visitor. Now the Datenschutz
+  page carries an **opt-out control under §10** (`DatenschutzBody.astro`, rendered only while
+  the flag is on; the beacon toggles the per-browser `nb.stats.off` key and reports the
+  state), and the text offers it first, the browser signals second "soweit Ihr Browser sie
+  anbietet".
+- *"IP and user agent are not stored"* was proven for D1 only: Workers Logs' **invocation
+  logs** would have recorded every `/api/hit` request with its headers in our account — the
+  server log §4 says we do not keep. `observability.logs.invocation_logs` is now `false`;
+  only our own console lines land, and they carry neither.
+Also from the check: the token *links* one visitor's hits within a day (that is how visitors
+are counted) and the text says so instead of "distinguishes"; the events that are not clicks
+— a sent enquiry, an opened teaser film, an outbound link — are named; the timestamp is named;
+**retention is 24 months** (the cron deletes older rows — D-063's "unlimited by design" is
+superseded); the cross-reference points at §5 (hosting and Cloudflare), not §4 (logs); the
+`screen.width` fallback in the beacon is gone so the text has one fewer device read to
+mention. The three code comments that repeated the overstatement are corrected.
+
+**What this does not settle.** The text is not lawyer-reviewed; open item 1 keeps it, along
+with the § 25 TDDDG questions the stats add to the teaser's: the dashboard's `sessionStorage`
+key, the beacon's `localStorage` opt-out read, and the `navigator` signals it checks. Nothing
+here claims where the D1 rows physically sit — the store is pinned to Cloudflare's "Western
+Europe" region, which is not a guarantee of EU soil, and the hashing runs at whichever edge
+serves the visitor; §15 (Drittland) already covers Cloudflare. The brand kit's "no analytics
+by default" floor (`docs/07-brand-kit.md` §11) is now stale and must be **regenerated**, not
+edited (D-048) — open item 2. The first rows are the founders' own until traffic arrives.
+Owner: founders for the text, partner-b for keeping it true to the code.
+
+## D-065 | 2026-09-16 | The stats dashboard leads with the Durchlauf-Messbank: a horizontal funnel as a measuring bench, live | DECIDED
+The founder, seeing the first numbers, asked for "one main visual in the centre like a horizontal
+funnel — how many came, how many clicked, how many went through till the bottom, how many sent
+enquiries" and for the page to be redesigned so that "our work speaks for itself". Two things
+had to exist first. **Data:** the beacon now sends one `scroll:end` per page view when the
+footer enters the viewport (an IntersectionObserver, rebuilt per route; through `track`, so
+every guard of D-063/D-064 applies), and `/api/stats` returns `funnel: { visitors, engaged,
+reached_end, enquiries }` — distinct daily tokens with a page view / with any named click other
+than the form / with `scroll:end` / with a form event. `scroll` rows feed the funnel only; the
+totals and the actions table skip them. Datenschutz §10 names the new signal in one clause
+(DE + EN), under D-064's terms. Stages are subsets in intent, not by construction — a form can
+be sent without a tracked click — and the object is built to say so rather than clamp.
+
+**The object was chosen by a panel, not by the first idea.** Three concept agents worked three
+angles independently — a P&ID duct whose bore is the count, a Sankey-like sheared section with
+dimensioned offcuts, and a measuring bench — and two judges (one against DESIGN.md line by
+line, one as the founder) scored them on fidelity, boldness, feasibility and legibility. Both
+picked the **Messbank**: magnitude as *position on one graduated beam* instead of as thickness,
+so a count of 4 beside 263 is still a full-size instrument reading near its origin — no minimum
+size, no "not to scale" stamp, and 0/0/0/0 is an instrument at rest. The winner stacked the
+stages top to bottom; the founder said *horizontal*, so the bench is turned: four stations left
+to right along the beam, carriages (28×10 outlined, a 2px graphite vernier hairline) riding
+vertical tracks to their readings, a 1px `line` extension line from every carriage back to the
+beam — the judges' one non-negotiable: **the beam is the thing you read the value from** — a
+hard-vertex taper (1.5px steel-deep, miter, butt) joining the readings over a wedge hatched at
+45° in 1px `line` at 8px pitch, counts on fixed leader shelves (`NB-F.01`…`.04`, display grade,
+stage name, share of visitors), and a dimension band below: rate above each line, the
+**absolute loss below** with a true minus sign (grafted from the losing schematic — "nominal
+over tolerance"), growth reading `+n` in graphite. The enquiries carriage is a filled signal
+pointer in the CTA-arrowhead grammar — **the one signal element on the page**. Below ~560px the
+same builder emits the judges' original stacked form (beam horizontal at the top, four rows,
+carriages marching left), which fits 270px. Every figure repeats in a `<details>`
+Positionsliste. Files: `StatsBoard.astro`, `scripts/stats.ts` (`drawBench`, `animateBench`),
+`styles/stats.css`, 16 keys in `ui.ts`.
+
+**Consequence for D-063:** the bar chart's latest-day bar is **no longer signal** — a data mark
+whose colour competes with the pointer in the same viewport would break the ration, and both
+losing concepts had reached the same demotion independently. It renders graphite and is marked
+by a 1px steel-deep tick rising off its top with a `HEUTE` / `TODAY` label: direct labelling
+instead of a colour with no legend. D-063's "the latest day is the sheet's one signal element"
+is superseded on that clause; DESIGN.md's Stats board paragraph is rewritten in the same commit.
+
+**Live, without a new loop.** The board polls `/api/stats` every 60 s (skipped while
+`document.hidden`; cleared on route change), the Zeichnungskopf's STAND stamp carries seconds
+and a fourth cell counts down „Nächste Messung in n s" — text, not motion, so it ticks under
+reduced motion too. On a change, carriages slide to their new readings with a short instrument
+settle (`back.out(1.4)`, the one deliberate overshoot on the site — a gauge settles), extension
+lines and the taper's `points` tween (point counts are constant by construction), counts roll
+from the shown value, the changed rates re-scramble (D-041's one teleprinter idiom, on numbers
+that genuinely resolve), a changed node flashes once. Nothing on the bench loops: no blinking
+dot (Demo's `.live-dot` is SaaS furniture and stays in the demo), no crawling reading line — the
+judges refused both. The entrance (≈2.4 s: tracks draw, ticks, carriages rise, shelves, taper
+and hatch, dimension band, the pointer last) runs once when data lands; the builder writes the
+final state first and the driver only animates when `!motionOff`, so `?snap` and reduced motion
+get the complete drawing.
+
+**Standing rules for this object** (the judges' warning, now law): the value is read off the
+beam via its extension line; the reading is the vernier or the pointer, never a bar end; counts
+stay on the shelves; the taper never curves; the wedge is hatching, never a tint; no second
+colour enters the drawing. Cut the page around the object before cutting the object. Not
+settled: the entrance choreography's tempo is the founder's eyeball (D-045's rule); "Interaktion"
+counts any named click including the language switch, which is engagement, not intent; the
+funnel counts daily tokens, so a visitor returning another day is a new visitor in every stage.
+Owner: partner-b.
+
+## D-066 | 2026-09-16 | The founders' dashboard leaves the drawing-office register: Strom, a river of light | DECIDED
+The Messbank of D-065 — judged, gated, deployed — was rejected by the founder on sight: "do not
+give it a mechanical industrial vibe; we are an AI automation company, not an industrial
+engineering company; smooth and fantastic; highly stunning." Taken with the card work (D-046,
+D-054 — "AI agency, not manufacturing industry"), the pattern is now clear enough to write down:
+**the German engineering document is the marketing site's chrome, not the founders' taste for
+anything they hold or look at as owners.** For those surfaces they want one bold object that is
+smooth, luminous and alive.
+
+**Decision.** `/statistik` and `/en/stats` are **exempt from the drawing-office register** and
+from DESIGN.md's bans on glow, gradient-to-transparent and additive light — on this page only,
+for the two founders only. What stays binding on the page: the tokens (used luminously, but no
+non-token hue), the two fonts (Fragment Mono for small data labels, never as costume), GSAP as
+the one engine and gsap.ticker as the one clock, `prefers-reduced-motion` → a complete static
+picture, text contrast ≥ 4.5:1 (paper or steel on graphite; steel-deep is 3.1:1 there and is
+not text), no generated imagery (the founder offered Higgsfield; the brand's own generative
+canvas language — FlowField, Ribbons — is the better material and it is ours), no new
+dependencies, 360px, and the two traps named: the factory and the SaaS template (card grids,
+KPI tiles, generic charts with legends, glassmorphism-by-default, purple/teal). D-065's bench,
+its judges' rules and the demoted latest-day bar are **superseded** by this entry; the data
+layer of D-063/D-065 (beacon, `scroll:end`, funnel API, poll) is untouched.
+
+**The object, chosen by a second judged panel.** Three concepts on the flipped brief — a river
+of particles, layered aurora bands, a glowing pulse conduit — scored by a founder-voiced judge
+and a craft judge. Both chose **Strom**: a river of light across the page, on graphite, entering
+wide and pale on the left and leaving as one thin thread of pure signal on the right, passing
+four readings; at each of the last three the river narrows and the visitors who stop peel off
+downward and dissolve. **Every particle is a counted visitor** (k visitors per point, `k`
+printed on the object as "1 Punkt = n Besucher"), the share that continues past each gate is
+the measured rate held by a per-gate credit quota, the band's half-height is *linear* in the
+count with an 8px luminous floor (the craft judge's graft — sqrt overstated the middle stages),
+and each gate glows only with the light of the particles that actually cross it (the founder
+judge's graft — gate 4 beats once per arriving lead under the signal count). Counts, names,
+shares and rates are DOM text in two bands the canvas never paints. The reveal runs once when
+data lands (a front rushing in, each count rolling as it is crossed, the first spark igniting
+the signal count); idle is a constant calm current; a poll re-flows the river over its transit
+time. The rest of the page follows the same light: a water-level trace for the daily series
+(straight segments, direct labels, no axes), ranked ledgers with a 2px light trace per row
+instead of tables in boxes, one sentence of totals instead of tiles. The Ribbons cursor trail
+is off on this page — a second signal light over the river.
+
+**The judges' law for this object** (both warnings, verbatim in spirit): *no light without a
+visitor behind it.* Population and pass-rates are computed, never tuned; an empty range is a
+dry channel with zero particles; nothing moves on a timer — no pulses, wavefronts or shimmer on
+a clock; every request for "more life" is answered with luminance or alpha, never with more
+particles or speed. A quiet week is a quiet river. Not settled: the reveal's tempo and the
+river's density are the founder's eyeball (D-045); k grows with traffic by formula and should
+be revisited when the first thousand-visitor month arrives. Owner: partner-b.
 
 ## Template
 ```

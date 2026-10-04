@@ -1,0 +1,51 @@
+---
+/**
+ * Minimal card footer: the legally required links (Impressum/Datenschutz
+ * are mandatory on every page) plus the DE↔EN toggle — /karte/<slug> maps
+ * onto /en/card/<slug> via altPath, the one translated segment pair.
+ */
+import { SITE } from '../config/site';
+import { type Lang, useTranslations, altPath } from '../i18n/ui';
+import WorldIcon from './icons/WorldIcon.astro';
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+
+const { lang, path } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'de' ? '' : '/en';
+const switchHref = altPath(lang, path);
+---
+
+<footer class="border-t border-steel-soft">
+  <div
+    class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3"
+  >
+    <p class="type-annot text-steel">© {SITE.foundedYear} {SITE.name}</p>
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+      <nav class="flex items-center gap-6" aria-label={t('a11y.legalNav')}>
+        <a
+          href={`${base}/impressum`}
+          class="type-annot link-draw inline-flex min-h-11 items-center text-steel"
+          >{t('footer.legal.impressum')}</a
+        >
+        <a
+          href={`${base}/datenschutz`}
+          class="type-annot link-draw inline-flex min-h-11 items-center text-steel"
+          >{t('footer.legal.datenschutz')}</a
+        >
+      </nav>
+      <a
+        href={switchHref}
+        data-icon-hover
+        class="type-annot inline-flex min-h-11 items-center gap-2 border border-steel-soft px-3 text-steel transition-colors hover:border-steel hover:text-paper motion-reduce:transition-none"
+        aria-label={t('a11y.langSwitch')}
+      >
+        <WorldIcon size={14} class="shrink-0" />
+        {lang === 'de' ? 'DE → EN' : 'EN → DE'}
+      </a>
+    </div>
+  </div>
+</footer>

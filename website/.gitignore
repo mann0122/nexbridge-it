@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+# wrangler: local D1/KV state, and the local secrets file (STATS_KEY for the
+# stats dashboard, D-063). The .example is the template and stays in git.
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

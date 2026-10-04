@@ -1,0 +1,4 @@
+# Copy to .dev.vars (gitignored) for `npm run dev:worker`. In production the
+# same variable is a Worker secret: `npx wrangler secret put STATS_KEY`.
+# It is the key the /statistik dashboard asks for. Long and random, please.
+STATS_KEY=

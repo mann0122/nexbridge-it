@@ -1,0 +1,29 @@
+---
+/**
+ * Mail — part symbol for the card pages' email row (D-043 grammar; first
+ * call site is CardPage). The envelope holds still; on parent hover the
+ * flap redraws once from the left — the letter sealed, single-shot. Rest
+ * state is the complete drawing.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 16, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icn-mail', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+  <path class="icn-mail-f" pathLength="1" d="M3 7l9 6l9 -6"></path>
+</svg>
+
+{/* Styles live in global.css (D-043 icon system section). */}

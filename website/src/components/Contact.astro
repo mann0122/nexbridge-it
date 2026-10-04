@@ -153,6 +153,7 @@ const formStrings = {
               <a
                 href={`mailto:${SITE.email}`}
                 data-icon-hover
+                data-track="contact:mail"
                 class="group link-draw ml-1.5 inline-flex items-center gap-1.5 text-paper"
               >
                 <PlugConnectedIcon
@@ -235,6 +236,12 @@ const formStrings = {
 <script>
   import { gsap, motionOff, drawOnScroll, onPage } from '../scripts/motion';
 
+  /* Stats (D-063) by event, not import: this component ships on every page,
+     and importing the beacon would pull its chunk in with the flag off. The
+     beacon listens only when Analytics.astro rendered it. */
+  const report = (e: string, v: string) =>
+    document.dispatchEvent(new CustomEvent('nb:track', { detail: { e, v } }));
+
   onPage(() => {
     const svg = document.querySelector('#kontakt svg');
     if (svg) {
@@ -313,6 +320,7 @@ const formStrings = {
           status.textContent = strings.success;
           status.classList.add('is-success');
           label.textContent = strings.submit;
+          report('form', 'sent');
           return;
         } catch {
           // fall through to the mail client — never lose an enquiry
@@ -333,6 +341,9 @@ const formStrings = {
       const subject = `${strings.mailSubject} – ${data.get('company') || data.get('name')}`;
       status.textContent = strings.fallbackNote;
       status.classList.add('is-success');
+      // Counted before the handoff: which path enquiries take is the one
+      // number that says whether the missing endpoint (STATE.md) costs us.
+      report('form', 'mail');
       window.location.href = `mailto:${mail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   });

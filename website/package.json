@@ -10,6 +10,9 @@
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",
+    "dev:worker": "wrangler dev --port 8787",
+    "stats:migrate": "wrangler d1 migrations apply nexbridge-stats --remote",
+    "stats:migrate:local": "wrangler d1 migrations apply nexbridge-stats --local",
     "astro": "astro"
   },
   "dependencies": {

@@ -38,11 +38,12 @@ const base = lang === 'de' ? '' : '/en';
     </p>
 
     <div class="hero-stage mt-10 flex flex-wrap items-center gap-4">
-      <Cta href={`${base}/#kontakt`}>{t('hero.ctaPrimary')}</Cta>
+      <Cta href={`${base}/#kontakt`} track="cta:hero">{t('hero.ctaPrimary')}</Cta>
       {/* Secondary per DESIGN.md: 1px steel border, paper text, the primary's
           geometry — replacing the bare link-draw that undersold it (D-043). */}
       <a
         href={`${base}/#leistungen`}
+        data-track="cta:hero-secondary"
         class="inline-flex items-center border border-steel-soft px-6 py-3.5 font-semibold text-paper transition-colors hover:border-steel motion-reduce:transition-none"
       >
         {t('hero.ctaSecondary')}

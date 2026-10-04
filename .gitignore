@@ -50,6 +50,6 @@ desktop.ini
 *.swp
 *~
 
-# Teaser source films (D-049). The originals stay on the founder's machine;
+# Teaser source films (D-056). The originals stay on the founder's machine;
 # only the generated, code-named outputs in website/public/teaser/ are committed.
 ops/teaser-src/

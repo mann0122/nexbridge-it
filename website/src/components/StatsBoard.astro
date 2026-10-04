@@ -1,0 +1,305 @@
+---
+/**
+ * Statistics board (D-063) — rebuilt as STROM (D-066): the founders' funnel
+ * as a river of light. Shared by /statistik and /en/stats so the twins
+ * cannot drift.
+ *
+ * Graphite ground, luminous: this is the one page exempt from the
+ * drawing-office register (DESIGN.md, "Stats board"). Two states, both
+ * server-rendered and toggled by scripts/stats.ts:
+ *
+ *   1. Key state — a password field on a single rule and the house CTA.
+ *      Shown when no key is stored in sessionStorage or the API answered
+ *      401. The CTA is that viewport's one signal element, so the error
+ *      line is paper ink behind a hairline, never signal (D-061).
+ *   2. Board state — one quiet control line, then THE STREAM: a full-bleed
+ *      canvas (scripts/strom.ts) with the four counts, names, shares and
+ *      the three rates as DOM text floating over it in the bands the canvas
+ *      never paints; the totals as one sentence top-right; a datum line;
+ *      the funnel as a closed table. Then Der Pegel — the daily series as a
+ *      water level (inline SVG built by the script) — and the Zuläufe: six
+ *      ranked ledgers with a light trace per row, still real <table>s.
+ *
+ * Every number is formatted in the script with Intl; every string from the
+ * API lands in the DOM through textContent only. Labels the script needs
+ * are carried as data-label-* attributes on the scope, never hardcoded.
+ *
+ * No <style> block: the stats-* rules live in styles/stats.css (D-043 —
+ * colocated styles cost the Lighthouse floor).
+ */
+import { type Lang, useTranslations } from '../i18n/ui';
+import Cta from './Cta.astro';
+import '../styles/stats.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const locale = lang === 'de' ? 'de-DE' : 'en-GB';
+
+/* The ledgers. The first column is the identifier, the rest are counts and
+   right-aligned; scripts/stats.ts fills the rows in this order and sets
+   --share on each row from the first count. */
+const tables = [
+  { id: 'pages', title: t('stats.table.pages'), cols: [t('stats.col.path'), t('stats.col.views'), t('stats.col.visitors')] },
+  { id: 'referrers', title: t('stats.table.referrers'), cols: [t('stats.col.ref'), t('stats.col.views')] },
+  { id: 'countries', title: t('stats.table.countries'), cols: [t('stats.col.country'), t('stats.col.visitors')] },
+  { id: 'devices', title: t('stats.table.devices'), cols: [t('stats.col.device'), t('stats.col.visitors')] },
+  { id: 'langs', title: t('stats.table.langs'), cols: [t('stats.col.lang'), t('stats.col.views')] },
+  { id: 'events', title: t('stats.table.events'), cols: [t('stats.col.event'), t('stats.col.count')] },
+] as const;
+
+/* The river's reading copy: every figure on the object, as a table. */
+const funnelCols = [t('stats.col.stage'), t('stats.col.count'), t('stats.col.share'), t('stats.col.step')];
+
+const stages = [
+  t('stats.strom.stage.visitors'),
+  t('stats.strom.stage.engaged'),
+  t('stats.strom.stage.end'),
+  t('stats.strom.stage.enquiries'),
+];
+
+/* 30 is the default: the contract's own example range, and the one a site
+   with little traffic yet actually says something at. */
+const ranges = ([7, 30, 90] as const).map((days) => ({
+  days,
+  label: t(`stats.range.${days}` as Parameters<typeof t>[0]),
+  checked: days === 30,
+}));
+---
+
+{/* No border-t: the sticky header already draws that hairline (TeaserGrid). */}
+<section
+  id="statistik"
+  class="stats-ground"
+  data-stats-scope
+  data-locale={locale}
+  data-label-loading={t('stats.loading')}
+  data-label-network={t('stats.error.network')}
+  data-label-checking={t('stats.key.checking')}
+  data-label-wrong={t('stats.key.wrong')}
+  data-label-views={t('stats.col.views')}
+  data-label-visitors={t('stats.col.visitors')}
+  data-label-direct={t('stats.direct')}
+  data-label-device-mobile={t('stats.device.mobile')}
+  data-label-device-tablet={t('stats.device.tablet')}
+  data-label-device-desktop={t('stats.device.desktop')}
+  data-label-device-unknown={t('stats.device.unknown')}
+  data-label-today={t('stats.chart.today')}
+  data-label-next={t('stats.datum.next')}
+  data-label-arrow={t('stats.strom.arrow')}
+  data-label-scale-one={t('stats.strom.scaleOne')}
+  data-label-scale-many={t('stats.strom.scaleMany')}
+>
+  <div class="mx-auto max-w-[1200px] px-6 py-20 md:py-28" data-reveal-scope>
+    <p class="type-annot text-steel" data-reveal>{t('stats.kicker')}</p>
+    {/* Subpage H1 grade (TeaserGrid), not the homepage section-h2 clamp. */}
+    <h1 class="type-display mt-4 max-w-[20ch] text-[clamp(2rem,4vw,3.2rem)] text-paper" data-reveal>
+      {t('stats.title')}
+    </h1>
+    <p class="mt-6 max-w-[58ch] text-lg leading-relaxed text-steel" data-reveal>{t('stats.intro')}</p>
+
+    <noscript>
+      <p class="mt-8 max-w-[58ch] border border-steel-soft px-4 py-3 text-[0.9375rem] leading-relaxed text-steel">
+        {t('stats.noJs')}
+      </p>
+    </noscript>
+
+    {/* ---- 1. Key state ------------------------------------------------ */}
+    {/* Rendered visible: without JS this is all there is, and with JS the
+        script hides it the moment a stored key is found. */}
+    <form class="stats-key mt-12" data-stats-key-form novalidate aria-label={t('a11y.statsKey')}>
+      <label class="type-annot text-steel" for="stats-key">{t('stats.key.label')}</label>
+      <div class="stats-key-row">
+        <input
+          id="stats-key"
+          class="stats-key-input"
+          data-stats-key-input
+          type="password"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          aria-describedby="stats-key-error"
+        />
+        {/* The house CTA (D-043). scripts/stats.ts finds it as the form's
+            submit button — Cta.astro forwards no data attributes. */}
+        <Cta type="submit" class="disabled:opacity-60">
+          <span data-stats-key-submit-label>{t('stats.key.submit')}</span>
+        </Cta>
+      </div>
+      {/* role=alert so a wrong key is announced, not just shown. */}
+      <p class="stats-key-error" id="stats-key-error" data-stats-key-error role="alert" hidden></p>
+    </form>
+
+    {/* ---- 2. Board state ---------------------------------------------- */}
+    <div class="stats-board mt-12" data-stats-board hidden>
+      {/* One quiet line: the range as mono radio labels with a sliding
+          underline, then refresh, sign-out and the exclude checkbox as steel
+          text. No boxed buttons — the river below owns the light. */}
+      <div class="stats-controls">
+        <fieldset class="stats-range">
+          <legend class="type-annot text-steel">{t('stats.range.label')}</legend>
+          {/* The three segments are one control and wrap as one unit. */}
+          <div class="stats-toggles" data-stats-toggles>
+            {
+              ranges.map((range) => (
+                <label class="stats-toggle">
+                  <input type="radio" name="stats-range" value={range.days} checked={range.checked} data-stats-range />
+                  <span>{range.label}</span>
+                </label>
+              ))
+            }
+            <span class="stats-range-ink" data-stats-range-ink aria-hidden="true"></span>
+          </div>
+        </fieldset>
+        <button type="button" class="stats-btn" data-stats-refresh>{t('stats.refresh')}</button>
+        <button type="button" class="stats-btn" data-stats-forget>{t('stats.key.forget')}</button>
+        <label class="stats-exclude">
+          <input type="checkbox" data-stats-exclude />
+          <span>{t('stats.exclude')}</span>
+        </label>
+      </div>
+
+      {/* Loading and network errors. Sans: a sentence, not a label. */}
+      <p class="mt-4 min-h-[1.5rem] text-[0.875rem] leading-relaxed text-steel" data-stats-status role="status" aria-live="polite"></p>
+
+      {/* ---- THE STREAM ------------------------------------------------ */}
+      {/* The canvas is aria-hidden: the figure's text IS the reading, and
+          every figure on it is repeated in the closed table beneath. The
+          label and the totals precede the stage in the DOM so that on a
+          phone they stack above the canvas as two lines. */}
+      <figure class="stats-strom mt-8" data-stats-strom role="group" aria-label={t('a11y.statsStrom')}>
+        <p class="stats-label type-annot">
+          {t('stats.strom.title')} · {t('stats.kpi.visitors')}: {t('stats.kpi.visitorsNote')}
+        </p>
+        <p class="stats-totals">
+          <b data-stats-kpi="views">–</b> {t('stats.kpi.views')} · <b data-stats-kpi="visitors">–</b> {t('stats.kpi.visitors')} · <b data-stats-kpi="events">–</b> {t('stats.kpi.events')}
+        </p>
+        <div class="stats-stage" data-stats-stage>
+          <canvas class="stats-canvas" data-stats-canvas aria-hidden="true"></canvas>
+          {
+            stages.map((name, i) => (
+              <div class="stats-gate" data-stats-gate={i} style={`--i:${i}`}>
+                <b class="stats-count" data-stats-count={i}>–</b>
+                <span class="stats-name" data-stats-name={i}>{name}</span>
+                <span class="stats-share" data-stats-share={i}>–</span>
+              </div>
+            ))
+          }
+          {
+            [0, 1, 2].map((i) => (
+              <p class="stats-rate" data-stats-rate={i} style={`--i:${i}`}>
+                <span data-stats-rate-val={i}></span>{' '}
+                <span class="stats-rate-loss" data-stats-rate-loss={i}></span>
+              </p>
+            ))
+          }
+        </div>
+        {/* The datum line: STAND with seconds, the poll countdown, and the
+            written contract of the object — one dot is one visitor (or n). */}
+        <figcaption class="stats-datum">
+          <span>{t('stats.head.fetched')} <span data-stats-fetched>–</span></span>
+          <span> · </span>
+          <span data-stats-next>–</span>
+          <span> · </span>
+          <span data-stats-scale>–</span>
+        </figcaption>
+      </figure>
+
+      {/* The river as a table: Stufe · Anzahl · Anteil · Zur Vorstufe —
+          every figure on the object, reachable without reading the object. */}
+      <details class="stats-details mt-4">
+        <summary class="stats-summary type-annot">{t('stats.table.funnelToggle')}</summary>
+        <div class="mt-3 min-w-0 max-w-[36rem] overflow-x-auto">
+          <table class="stats-table w-full border-collapse text-left">
+            <caption class="sr-only">{t('stats.table.funnel')}</caption>
+            <thead>
+              <tr class="border-y border-steel-soft">
+                {funnelCols.map((col, i) => (
+                  <th scope="col" class={`type-annot py-2.5 font-normal ${i > 0 ? 'pl-4 text-right' : 'pr-4'}`}>
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody data-stats-rows="funnel" data-stats-cols="4"></tbody>
+          </table>
+        </div>
+      </details>
+
+      {/* ---- Der Pegel ------------------------------------------------- */}
+      <h2 class="type-annot mt-16 text-steel">{t('stats.pegel.title')} · {t('stats.chart.title')}</h2>
+      <div class="stats-pegel mt-6" data-stats-chart>
+        {/* Built by the script at the container's measured width, so its
+            text never stretches. */}
+        <svg class="stats-pegel-svg" data-stats-svg role="group" aria-label={t('a11y.statsChart')}></svg>
+        {/* One tooltip for every day: value first, date second. */}
+        <div class="stats-tip" data-stats-tip role="tooltip" hidden>
+          <strong data-stats-tip-value></strong>
+          <span data-stats-tip-label></span>
+        </div>
+      </div>
+      <p class="mt-3 text-[0.875rem] leading-relaxed text-steel" data-stats-empty hidden>
+        {t('stats.chart.empty')}
+      </p>
+
+      {/* The series as a table: every day's numbers without hovering or
+          tabbing through ninety days. Closed by default. */}
+      <details class="stats-details mt-4">
+        <summary class="stats-summary type-annot">{t('stats.table.daysToggle')}</summary>
+        <div class="mt-3 min-w-0 max-w-[32rem] overflow-x-auto">
+          <table class="stats-table w-full border-collapse text-left">
+            <caption class="sr-only">{t('stats.table.days')}</caption>
+            <thead>
+              <tr class="border-y border-steel-soft">
+                <th scope="col" class="type-annot py-2.5 pr-4 font-normal">{t('stats.col.day')}</th>
+                <th scope="col" class="type-annot py-2.5 pl-4 text-right font-normal">{t('stats.col.views')}</th>
+                <th scope="col" class="type-annot py-2.5 pl-4 text-right font-normal">{t('stats.col.visitors')}</th>
+              </tr>
+            </thead>
+            <tbody data-stats-rows="days" data-stats-cols="3"></tbody>
+          </table>
+        </div>
+      </details>
+
+      {/* ---- Zuläufe --------------------------------------------------- */}
+      <h2 class="type-annot mt-16 text-steel">{t('stats.ledgers.title')}</h2>
+      {/* Explicit table roles: the Aktionen ledger's rows become grid items so
+          the long list flows across columns, and a table whose rows are not
+          table rows loses its semantics in Chrome without them. The heads of
+          the single-value lists are read, not seen — the title and the number
+          already say what they say. */}
+      <div class="stats-ledgers mt-6">
+        {
+          tables.map((table) => (
+            <div class:list={['stats-ledger', { 'stats-ledger-flow': table.id === 'events' }]}>
+              <table role="table">
+                <caption class="type-annot">{table.title}</caption>
+                <thead role="rowgroup">
+                  <tr role="row" class:list={{ 'stats-ledger-head-sr': table.cols.length === 2 }}>
+                    {table.cols.map((col) => (
+                      <th role="columnheader" scope="col">
+                        {table.cols.length === 2 ? <span class="sr-only">{col}</span> : col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody role="rowgroup" data-stats-rows={table.id} data-stats-cols={table.cols.length}></tbody>
+              </table>
+            </div>
+          ))
+        }
+      </div>
+
+      {/* What is counted and what is not. Sans, not mono: sentences are not
+          labels. Inside the board state because it points at the checkbox. */}
+      <p class="mt-14 max-w-[62ch] text-[0.95rem] leading-relaxed text-steel">{t('stats.note')}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/stats';
+</script>

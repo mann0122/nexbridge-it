@@ -1,0 +1,57 @@
+---
+/**
+ * Kartenverzeichnis — a drawing index for the NB-VK register, in the
+ * drawing-index grammar: annotated rows, nothing else. The cards themselves
+ * are the documents. noindex like every card route.
+ */
+import Layout from '../layouts/Layout.astro';
+import CardHeader from './CardHeader.astro';
+import CardFooter from './CardFooter.astro';
+import { CARDS } from '../config/cards';
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const path = lang === 'de' ? '/karte' : '/en/card';
+---
+
+<Layout
+  lang={lang}
+  path={path}
+  title={t('cardIndex.meta.title')}
+  description={t('cardIndex.meta.description')}
+  hasAlternate={false}
+  noindex
+>
+  <CardHeader lang={lang} />
+
+  <main id="main" class="surface-grid min-h-[70vh]">
+    <div class="mx-auto w-full max-w-[40rem] px-6 py-14">
+      <p class="type-annot text-steel">{t('cardIndex.kicker')}</p>
+      <h1 class="type-display mt-4 text-[clamp(1.9rem,5vw,2.6rem)] text-paper">
+        {t('cardIndex.title')}
+      </h1>
+
+      <div class="mt-10 border-t border-steel-soft">
+        {
+          CARDS.map((person) => (
+            <a
+              href={`${path}/${person.slug}`}
+              class="dim-row grid grid-cols-1 gap-1 border-b border-steel-soft py-5 sm:grid-cols-[7rem_1fr_auto] sm:items-baseline sm:gap-6"
+            >
+              <span class="type-annot text-steel">{person.partNo}</span>
+              <span class="type-subhead text-xl text-paper">{person.name}</span>
+              <span class="text-[0.9rem] text-steel">{t(person.roleKey)}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+
+  <CardFooter lang={lang} path={path} />
+</Layout>

@@ -1,12 +1,12 @@
 /**
- * Teaser manifest — asset identity only (D-050). Human-readable copy lives in
+ * Teaser manifest — asset identity only (D-057). Human-readable copy lives in
  * src/i18n/ui.ts like every other string; this file names files, not sentences.
  *
  * What is deliberately NOT here: the 4-digit codes, and the full films' paths.
  * The full film's URL is derived at runtime from the code the visitor types
  * (see src/scripts/teaser.ts), so it is absent from the HTML and from the JS
  * bundle until someone gets the code right. Putting either in this file would
- * ship them to every visitor and defeat the gate — D-049.
+ * ship them to every visitor and defeat the gate — D-056.
  */
 export const TEASERS = [
   { id: 'teaser-1', partNo: 'NB-T01', source: 'NBIT1' },

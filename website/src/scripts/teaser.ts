@@ -1,5 +1,5 @@
 /**
- * Teaser gate (D-049).
+ * Teaser gate (D-056).
  *
  * The full film's URL is *derived from the code*, never stored:
  *
@@ -93,7 +93,9 @@ onPage(({ lenis }) => {
     errorBox: dialog.querySelector<HTMLElement>('[data-teaser-error]'),
     player: dialog.querySelector<HTMLElement>('[data-teaser-player]'),
     film: dialog.querySelector<HTMLVideoElement>('[data-teaser-full]'),
-    submit: dialog.querySelector<HTMLButtonElement>('[data-teaser-submit]'),
+    // Cta.astro renders the submit and forwards no data attributes, so the
+    // form's own submit button is the handle.
+    submit: dialog.querySelector<HTMLButtonElement>('[data-teaser-form] button[type="submit"]'),
     submitLabel: dialog.querySelector<HTMLElement>('[data-teaser-submit-label]'),
   };
   if (
@@ -347,6 +349,10 @@ onPage(({ lenis }) => {
 
       if (src && found) {
         remember(activeId, src);
+        // The stats (D-063) see the teaser id and nothing else: not the code,
+        // not the derived URL. A wrong guess is not reported at all. Dispatched,
+        // not imported — see the note at the top of scripts/beacon.ts.
+        document.dispatchEvent(new CustomEvent('nb:track', { detail: { e: 'teaser', v: activeId } }));
         const card = cardsById.get(activeId);
         if (card) markUnlocked(card);
         mountFilm(src);

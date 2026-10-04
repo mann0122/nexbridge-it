@@ -204,7 +204,7 @@ export const ui = {
     'footer.legal.datenschutz': 'Datenschutz',
 
     /*
-     * Teaser page (D-049). The cards carry the name, the part number and the
+     * Teaser page (D-056). The cards carry the name, the part number and the
      * status — nothing about what the films show. Nobody has watched them in a
      * build session, and CLAUDE.md rule 1 forbids inventing the content; a
      * description line gets added here once the founder writes one.
@@ -213,7 +213,7 @@ export const ui = {
     'teaser.meta.description':
       'Zwei Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
     'teaser.kicker': 'Filme · Zugang mit Code',
-    'teaser.title': 'Zwei Filme, auf Anfrage.',
+    'teaser.title': 'Zwei Filme.',
     /* "Diese beiden Filme zeigen wir nicht öffentlich" was false: the page, the
        cards and the blurred loops are public — only the full films are not. */
     'teaser.intro':
@@ -243,6 +243,133 @@ export const ui = {
     'teaser.noJs': 'Die Filme brauchen JavaScript. Bitte aktivieren Sie es, um sie anzusehen.',
     'a11y.teaserDigit': 'Ziffer',
     'a11y.teaserPlayer': 'Vollständiger Film',
+
+    /*
+     * Statistik (/statistik — D-063). An internal datasheet for the two
+     * founders: the self-hosted, cookieless visit counts. Not in the nav,
+     * noindex, behind a key. German is DRAFT for the copywriter-de gate.
+     * The numbers themselves never pass through here — scripts/stats.ts
+     * formats them with Intl from the API's JSON.
+     */
+    'stats.meta.title': 'Statistik – NexBridge-IT',
+    'stats.meta.description': 'Interne Besuchsstatistik von nexbridge-it.com.',
+    'stats.kicker': 'Statistik · intern',
+    'stats.title': 'Wer war da.',
+    'stats.intro':
+      'Besuche auf nexbridge-it.com: wie viele kommen, klicken, bis zum Ende scrollen und anfragen – dazu welche Seiten, woher und womit. Ohne Cookies. IP-Adressen speichern wir nicht.',
+    'stats.noJs': 'Diese Seite braucht JavaScript. Bitte aktivieren Sie es, um die Zahlen zu sehen.',
+    'stats.key.label': 'Schlüssel',
+    'stats.key.submit': 'Zahlen anzeigen',
+    'stats.key.checking': 'Wird geprüft …',
+    'stats.key.wrong': 'Dieser Schlüssel passt nicht. Bitte prüfen Sie die Eingabe.',
+    'stats.key.forget': 'Abmelden',
+    'stats.range.label': 'Zeitraum',
+    'stats.range.7': '7 Tage',
+    'stats.range.30': '30 Tage',
+    'stats.range.90': '90 Tage',
+    'stats.refresh': 'Aktualisieren',
+    'stats.exclude': 'Eigene Besuche in diesem Browser nicht zählen',
+    'stats.head.fetched': 'Stand',
+    'stats.kpi.views': 'Aufrufe',
+    'stats.kpi.visitors': 'Besucher',
+    /* The visitor hash rotates daily, so this is a sum of daily uniques —
+       the label has to say so, or the number reads as more than it is. */
+    'stats.kpi.visitorsNote': 'je Tag eindeutig, summiert',
+    'stats.kpi.events': 'Aktionen',
+    'stats.chart.title': 'Aufrufe und Besucher je Tag',
+    'stats.chart.empty': 'Noch keine Aufrufe in diesem Zeitraum.',
+    'stats.table.pages': 'Seiten',
+    'stats.table.referrers': 'Herkunft',
+    'stats.table.countries': 'Länder',
+    'stats.table.devices': 'Geräte',
+    'stats.table.langs': 'Sprachen',
+    'stats.table.events': 'Aktionen',
+    'stats.table.days': 'Tage',
+    'stats.table.daysToggle': 'Als Tabelle',
+    'stats.table.funnelToggle': 'Stufen als Tabelle',
+    'stats.col.path': 'Pfad',
+    'stats.col.views': 'Aufrufe',
+    'stats.col.visitors': 'Besucher',
+    'stats.col.ref': 'Quelle',
+    'stats.col.country': 'Land',
+    'stats.col.device': 'Gerät',
+    'stats.col.lang': 'Sprache',
+    'stats.col.event': 'Aktion',
+    'stats.col.count': 'Anzahl',
+    'stats.col.day': 'Tag',
+    'stats.direct': 'direkt',
+    'stats.device.mobile': 'Mobilgerät',
+    'stats.device.tablet': 'Tablet',
+    'stats.device.desktop': 'Desktop',
+    'stats.device.unknown': 'unbekannt',
+    'stats.error.network': 'Die Zahlen lassen sich gerade nicht laden. Bitte versuchen Sie es noch einmal.',
+    'stats.loading': 'Wird geladen …',
+    /* Mechanism, not a Datenschutz clause. "IP-Adressen speichern wir nicht"
+       is the honest form: the Worker hashes the IP under a daily salt and
+       keeps neither (worker/stats.js), so "ohne IP-Adressen" overstated it. */
+    'stats.note':
+      'Wir zählen Seitenaufrufe, Klicks auf einzelne Schaltflächen und Links sowie das Absenden des Kontaktformulars. Außerdem erfassen wir, ob eine Seite bis zum Ende gescrollt wurde. Cookies setzen wir nicht, IP-Adressen speichern wir nicht. Besucher unterscheiden wir über eine Kennung, die täglich wechselt – wer an zwei Tagen kommt, zählt zweimal. Mit dem Häkchen oben nehmen Sie Ihre eigenen Besuche in diesem Browser aus der Zählung.',
+    'a11y.statsChart': 'Pegel: Aufrufe und Besucher je Tag im gewählten Zeitraum',
+    /* The opt-out control under Datenschutz §10 (D-064). Not legal text: a
+       button label and three status lines about this browser. */
+    'legal.optOut.disable': 'Messung in diesem Browser abschalten',
+    'legal.optOut.enable': 'Messung in diesem Browser wieder einschalten',
+    'legal.optOut.stateOn': 'Die Messung ist in diesem Browser aktiv.',
+    'legal.optOut.stateOff': 'Die Messung ist in diesem Browser abgeschaltet.',
+    'legal.optOut.stateBrowser':
+      'Die Messung ist in diesem Browser bereits durch Ihre Browser-Einstellung abgeschaltet.',
+    'a11y.statsKey': 'Schlüssel für die Statistik',
+    /*
+     * Strom (D-066): the funnel as a river of light. This block passed
+     * copywriter-de on 2026-09-16 (the stage names already had, as the
+     * Messbank's, D-065). Placeholders: {s} = seconds to the next poll,
+     * {k} = visitors per particle — scripts/stats.ts substitutes both.
+     * The scale line uses '=' — the German dot-density legend form — because
+     * '≙' is not in Fragment Mono and fell back to a foreign glyph at 11px.
+     * "Pegel" and "Zuläufe" carry no article: labels, not titles.
+     */
+    'stats.datum.next': 'nächste Aktualisierung in {s} s',
+    'stats.strom.title': 'Vom Besuch zur Anfrage',
+    'stats.strom.stage.visitors': 'Besucher',
+    'stats.strom.stage.engaged': 'Geklickt',
+    'stats.strom.stage.end': 'Bis zum Ende',
+    'stats.strom.stage.enquiries': 'Anfragen',
+    'stats.strom.arrow': '→',
+    'stats.strom.scaleOne': '1 Punkt = 1 Besucher',
+    'stats.strom.scaleMany': '1 Punkt = {k} Besucher',
+    'stats.pegel.title': 'Pegel',
+    'stats.ledgers.title': 'Zuläufe',
+    'stats.table.funnel': 'Vom Besuch zur Anfrage',
+    'stats.col.stage': 'Stufe',
+    'stats.col.share': 'Anteil',
+    'stats.col.step': 'Zur Vorstufe',
+    'stats.chart.today': 'heute',
+    /* "Besucherstrom", not "Strom": heard cold, "Strom" is electricity. */
+    'a11y.statsStrom':
+      'Besucherstrom: vier Stufen vom Besuch zur Anfrage im gewählten Zeitraum – Besucher, davon geklickt, bis zum Ende gescrollt, angefragt. Alle Zahlen stehen in der Tabelle darunter.',
+
+    /*
+     * Digital business cards (/karte/<slug> — the NB-VK register). All German
+     * card copy is DRAFT for the copywriter-de gate; names, numbers and the
+     * address come from site.ts via config/cards.ts, never from here.
+     */
+    'card.meta.description': 'Digitale Visitenkarte. Kontakt speichern, anrufen oder direkt schreiben.',
+    'card.1.role': 'Vertrieb & Partnerschaften',
+    'card.2.role': 'Technik & Umsetzung',
+    'card.row.phone': 'Telefon',
+    'card.row.email': 'E-Mail',
+    'card.row.web': 'Website',
+    'card.row.address': 'Anschrift',
+    'card.save': 'Kontakt speichern',
+    'card.call': 'Anrufen',
+    'card.mail': 'E-Mail schreiben',
+    'card.share': 'Karte teilen',
+    'card.shareCopied': 'Link kopiert',
+    'card.a11y.vcard': 'vCard herunterladen',
+    'cardIndex.meta.title': 'Kartenverzeichnis – NexBridge-IT',
+    'cardIndex.meta.description': 'Verzeichnis der digitalen Visitenkarten von NexBridge-IT.',
+    'cardIndex.kicker': 'Verzeichnis · NB-VK',
+    'cardIndex.title': 'Kartenverzeichnis',
 
     /*
      * The `en` twins of these keys are required by the type constraint but are
@@ -451,12 +578,12 @@ export const ui = {
     'footer.legal.impressum': 'Imprint',
     'footer.legal.datenschutz': 'Privacy',
 
-    /* Teaser page (D-049) — English twin. */
+    /* Teaser page (D-056) — English twin. */
     'teaser.meta.title': 'Teaser — NexBridge-IT',
     'teaser.meta.description':
       'Two films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
     'teaser.kicker': 'Films · access by code',
-    'teaser.title': 'Two films, on request.',
+    'teaser.title': 'Two films.',
     'teaser.intro':
       'We do not show the full films publicly. You get the four-digit code from us — in conversation or by email.',
     'teaser.1.name': 'Teaser 1',
@@ -477,6 +604,106 @@ export const ui = {
     'teaser.noJs': 'The films need JavaScript. Please switch it on to watch them.',
     'a11y.teaserDigit': 'Digit',
     'a11y.teaserPlayer': 'Full film',
+
+    /* Statistics page (D-063) — English twin. */
+    'stats.meta.title': 'Statistics — NexBridge-IT',
+    'stats.meta.description': 'Internal visit statistics for nexbridge-it.com.',
+    'stats.kicker': 'Statistics · internal',
+    'stats.title': 'Who was here.',
+    'stats.intro':
+      'Visits to nexbridge-it.com: how many come, click, scroll to the end and enquire — plus which pages, from where and on what. No cookies. We do not store IP addresses.',
+    'stats.noJs': 'This page needs JavaScript. Please switch it on to see the numbers.',
+    'stats.key.label': 'Key',
+    'stats.key.submit': 'Show numbers',
+    'stats.key.checking': 'Checking …',
+    'stats.key.wrong': 'This key does not match. Please check what you typed.',
+    'stats.key.forget': 'Sign out',
+    'stats.range.label': 'Range',
+    'stats.range.7': '7 days',
+    'stats.range.30': '30 days',
+    'stats.range.90': '90 days',
+    'stats.refresh': 'Refresh',
+    'stats.exclude': 'Do not count my own visits in this browser',
+    'stats.head.fetched': 'As of',
+    'stats.kpi.views': 'Views',
+    'stats.kpi.visitors': 'Visitors',
+    'stats.kpi.visitorsNote': 'unique per day, summed',
+    'stats.kpi.events': 'Actions',
+    'stats.chart.title': 'Views and visitors per day',
+    'stats.chart.empty': 'No views in this range yet.',
+    'stats.table.pages': 'Pages',
+    'stats.table.referrers': 'Sources',
+    'stats.table.countries': 'Countries',
+    'stats.table.devices': 'Devices',
+    'stats.table.langs': 'Languages',
+    'stats.table.events': 'Actions',
+    'stats.table.days': 'Days',
+    'stats.table.daysToggle': 'As a table',
+    'stats.table.funnelToggle': 'Stages as a table',
+    'stats.col.path': 'Path',
+    'stats.col.views': 'Views',
+    'stats.col.visitors': 'Visitors',
+    'stats.col.ref': 'Source',
+    'stats.col.country': 'Country',
+    'stats.col.device': 'Device',
+    'stats.col.lang': 'Language',
+    'stats.col.event': 'Action',
+    'stats.col.count': 'Count',
+    'stats.col.day': 'Day',
+    'stats.direct': 'direct',
+    'stats.device.mobile': 'Mobile device',
+    'stats.device.tablet': 'Tablet',
+    'stats.device.desktop': 'Desktop',
+    'stats.device.unknown': 'unknown',
+    'stats.error.network': 'The numbers will not load right now. Please try again.',
+    'stats.loading': 'Loading …',
+    'stats.note':
+      'We count page views, clicks on individual buttons and links, and the sending of the contact form. We also record whether a page was scrolled to its end. We set no cookies and store no IP addresses. Visitors are told apart by a token that changes daily — someone who comes on two days counts twice. Tick the box above to leave your own visits in this browser out of the count.',
+    'a11y.statsChart': 'Water level: views and visitors per day in the selected range',
+    'legal.optOut.disable': 'Switch off measurement in this browser',
+    'legal.optOut.enable': 'Switch measurement in this browser back on',
+    'legal.optOut.stateOn': 'Measurement is active in this browser.',
+    'legal.optOut.stateOff': 'Measurement is switched off in this browser.',
+    'legal.optOut.stateBrowser':
+      'Measurement is already switched off in this browser by your browser setting.',
+    'a11y.statsKey': 'Key for the statistics',
+    /* Strom (D-066) — English twin. */
+    'stats.datum.next': 'next refresh in {s} s',
+    'stats.strom.title': 'From visit to enquiry',
+    'stats.strom.stage.visitors': 'Visitors',
+    'stats.strom.stage.engaged': 'Clicked',
+    'stats.strom.stage.end': 'To the end',
+    'stats.strom.stage.enquiries': 'Enquiries',
+    'stats.strom.arrow': '→',
+    'stats.strom.scaleOne': '1 dot = 1 visitor',
+    'stats.strom.scaleMany': '1 dot = {k} visitors',
+    'stats.pegel.title': 'Water level',
+    'stats.ledgers.title': 'Inflows',
+    'stats.table.funnel': 'From visit to enquiry',
+    'stats.col.stage': 'Stage',
+    'stats.col.share': 'Share',
+    'stats.col.step': 'vs. previous stage',
+    'stats.chart.today': 'today',
+    'a11y.statsStrom':
+      'Visitor stream: four stages from visit to enquiry over the selected range — visitors, of whom clicked, scrolled to the end, enquired. All numbers are in the table below.',
+
+    'card.meta.description': 'Digital business card. Save the contact, call or write directly.',
+    'card.1.role': 'Sales & Partnerships',
+    'card.2.role': 'Engineering & Delivery',
+    'card.row.phone': 'Phone',
+    'card.row.email': 'Email',
+    'card.row.web': 'Website',
+    'card.row.address': 'Address',
+    'card.save': 'Save contact',
+    'card.call': 'Call',
+    'card.mail': 'Write an email',
+    'card.share': 'Share card',
+    'card.shareCopied': 'Link copied',
+    'card.a11y.vcard': 'download vCard',
+    'cardIndex.meta.title': 'Card index — NexBridge-IT',
+    'cardIndex.meta.description': 'Directory of NexBridge-IT’s digital business cards.',
+    'cardIndex.kicker': 'Index · NB-VK',
+    'cardIndex.title': 'Card index',
 
     'notFound.meta.title': 'Page not found — NexBridge-IT',
     'notFound.meta.description': 'This page does not exist. Head back to the home page.',
@@ -500,7 +727,7 @@ export type UiKey = keyof (typeof ui)['de'];
  * alone, so a key present in `de` and missing from `en` type-checks, builds
  * clean, and makes `t()` silently serve German on the English page. That is
  * not hypothetical: it happened while the teaser page was being built, and the
- * build stayed green (qa gate, D-049).
+ * build stayed green (qa gate, D-056).
  *
  * These two lines fail `npm run check` the moment either block gains or loses
  * a key the other does not have. They cost nothing at runtime — they are types.
@@ -515,9 +742,26 @@ export function useTranslations(lang: Lang) {
   };
 }
 
-/** Path of the same page in the other language (only `/` ↔ `/en/` for now). */
+/**
+ * Path of the same page in the other language. Mostly `/x` ↔ `/en/x`; two
+ * first segments are translated: `/karte/*` ↔ `/en/card/*` (both slugs fixed
+ * because printed QR codes point at them) and `/statistik` ↔ `/en/stats`
+ * (D-063). Only the first segment is mapped, and only as a whole word —
+ * `/stats` does not match `/statistik`.
+ */
+const SEGMENT_DE_EN = { karte: 'card', statistik: 'stats' } as const;
+const SEGMENT_EN_DE = { card: 'karte', stats: 'statistik' } as const;
+
 export function altPath(lang: Lang, path: string): string {
-  if (lang === 'de') return path === '/' ? '/en/' : `/en${path}`;
-  const stripped = path.replace(/^\/en\/?/, '/');
+  if (lang === 'de') {
+    if (path === '/') return '/en/';
+    return `/en${path.replace(
+      /^\/(karte|statistik)(?=\/|$)/,
+      (_, seg: keyof typeof SEGMENT_DE_EN) => `/${SEGMENT_DE_EN[seg]}`,
+    )}`;
+  }
+  const stripped = path
+    .replace(/^\/en\/?/, '/')
+    .replace(/^\/(card|stats)(?=\/|$)/, (_, seg: keyof typeof SEGMENT_EN_DE) => `/${SEGMENT_EN_DE[seg]}`);
   return stripped === '' ? '/' : stripped;
 }

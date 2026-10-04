@@ -1,0 +1,667 @@
+/* ---------------------------------------------------------------------
+   D-063 statistics board (/statistik, /en/stats) — rebuilt as STROM
+   (D-066): the founders' funnel as a river of light on graphite. The one
+   page exempt from the drawing-office register (DESIGN.md, "Stats board"):
+   glow, gradients and additive light are admitted here by founder decision.
+   What still binds: the tokens, the two fonts, ≥ 4.5:1 for every piece of
+   text — paper (15.6:1) or steel (5.9:1) on graphite, NEVER steel-deep
+   (3.1:1) — reduced motion, and no furniture from the factory (rulers,
+   hatching, title blocks) or the SaaS template (boxed cards, icons).
+
+   Its own sheet, imported by StatsBoard.astro alone (qa gate, D-063): in
+   global.css it was render-blocking CSS on every page for two founder-only
+   routes. Not a colocated <style> block — that is the D-043 case, which
+   splits into a second chunk and duplicates into every document.
+   Tokens come from global.css's @theme, which every page loads first.
+
+   The river itself is a canvas (scripts/strom.ts); this sheet places the
+   DOM text over it. The canvas never paints in the text bands — desktop
+   y < 170 and y > 428, phone x < 146 — so contrast is guaranteed by
+   construction, not by a text-shadow.
+   --------------------------------------------------------------------- */
+
+/* Ground ---------------------------------------------------------------- */
+/* overflow-x: clip — the canvas bleeds to 100vw (under the scrollbar on the
+   right); clip makes that unable to widen the document. Only x: the Pegel's
+   tooltip and the focus rings still need y to be visible. */
+.stats-ground {
+  background: var(--color-graphite);
+  color: var(--color-paper);
+  overflow-x: clip;
+}
+
+/* Key state ------------------------------------------------------------- */
+.stats-key-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+  margin-top: 0.75rem;
+}
+/* A single rule under paper text, no box. The rule is steel-deep, not
+   steel-soft: as the field's only boundary it has to clear SC 1.4.11's 3:1
+   for non-text UI, which steel-deep on graphite does (3.0:1) and steel-soft
+   (1.6:1) does not. It lifts to steel on hover; the focus ring is global. */
+.stats-key-input {
+  flex: 0 1 22rem; /* a key is short; the field does not stretch to the grid */
+  min-width: 0;
+  padding: 0.625rem 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-steel-deep);
+  border-radius: 0;
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  transition: border-color 200ms ease;
+}
+.stats-key-input:hover,
+.stats-key-input:focus {
+  border-bottom-color: var(--color-steel);
+}
+/* Paper ink behind a 1px hairline — never signal: the submit CTA beside it
+   is this viewport's one signal element (the TeaserGrid lesson, D-061).
+   role="alert" and focus back in the field make the failure unmissable
+   without colour. */
+.stats-key-error {
+  margin-top: 1.25rem;
+  max-width: 46ch;
+  padding: 0.5rem 0.875rem;
+  border-left: 1px solid var(--color-steel-soft);
+  color: var(--color-paper);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* Controls: one quiet line ---------------------------------------------- */
+.stats-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem 1.75rem;
+}
+/* A fieldset ignores flex on its legend unless the legend is floated out of
+   the "rendered legend" slot — the teaser-digits trick, used inline here. */
+.stats-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.stats-range legend {
+  float: left;
+  padding: 0;
+}
+/* The three ranges are radio labels in the annotation grade: steel at rest,
+   paper when checked, and one 1px paper underline that slides between them
+   (scripts/stats.ts moves .stats-range-ink with gsap). Radios stay real
+   inputs — visually hidden, never display:none, so they keep focus and
+   arrow-key behaviour; the focus ring is drawn on the visible span. */
+.stats-toggles {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 1.25rem;
+  padding-bottom: 0.4rem;
+}
+.stats-toggle {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+}
+.stats-toggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.stats-toggle span,
+.stats-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: 0;
+  color: var(--color-steel);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+.stats-toggle:hover span,
+.stats-btn:hover {
+  color: var(--color-paper);
+}
+.stats-toggle input:checked + span {
+  color: var(--color-paper);
+}
+/* The site's focus convention (DESIGN.md), drawn on the visible span. */
+.stats-toggle input:focus-visible + span {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 4px;
+}
+.stats-range-ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-paper);
+  pointer-events: none;
+}
+/* The checkbox: paper accent, not signal — the river owns the signal. */
+.stats-exclude {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--color-steel);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.stats-exclude input {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  accent-color: var(--color-paper);
+}
+
+/* The stream ------------------------------------------------------------ */
+/* The very first load dims the placeholders; polls and refetches leave the
+   previous render untouched — numbers roll, nothing blinks. */
+.stats-board {
+  transition: opacity 200ms ease;
+}
+.stats-board[data-stats-busy] {
+  opacity: 0.5;
+}
+
+/* The figure is the positioning context for the label and the totals so
+   that on a phone they can drop back into the flow ABOVE the canvas (they
+   precede the stage in the DOM for exactly that). */
+.stats-strom {
+  position: relative;
+  margin: 0;
+}
+/* The stage is the 1200 grid's content box, 480px tall across, 600px tall
+   as a fall on a phone. Everything inside is positioned against it. */
+.stats-stage {
+  position: relative;
+  height: 480px;
+}
+/* The canvas bleeds to the viewport edges: 100vw wide, centred on the
+   stage. The river enters from beyond the left edge and leaves beyond the
+   right — the flow-line's "one signal line leaves". */
+.stats-canvas {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+/* The object's label: the annotation grade, top-left, baseline y≈30. */
+.stats-label {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  margin: 0;
+  color: var(--color-steel);
+}
+/* The totals as one sentence, top-right: numbers paper, words steel. */
+.stats-totals {
+  position: absolute;
+  right: 0;
+  top: 16px;
+  margin: 0;
+  color: var(--color-steel);
+  font-size: 0.8125rem;
+  font-variation-settings:
+    'wdth' 100,
+    'wght' 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.stats-totals b {
+  font-weight: inherit;
+  color: var(--color-paper);
+  font-variant-numeric: tabular-nums;
+}
+/* The four readings above the gates, centred on the same columns the
+   canvas uses: 12.5 / 37.5 / 62.5 / 87.5 % of the stage (--i = 0..3).
+   Count → name → share, all inside the top text band (y < 170). */
+.stats-gate {
+  position: absolute;
+  top: 40px;
+  left: calc(12.5% + 25% * var(--i));
+  transform: translateX(-50%);
+  text-align: center;
+  white-space: nowrap;
+}
+.stats-count {
+  display: block;
+  font-family: var(--font-sans);
+  font-variation-settings:
+    'wdth' 125,
+    'wght' 700;
+  font-size: clamp(28px, 5.5vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-paper);
+  font-variant-numeric: tabular-nums; /* a rolling digit never jitters */
+}
+/* THE signal number: Anfragen. The thread under it is the other signal. */
+.stats-gate[data-stats-gate='3'] .stats-count {
+  color: var(--color-signal);
+}
+.stats-name {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-variation-settings:
+    'wdth' 112,
+    'wght' 600;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-steel);
+}
+.stats-share {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--color-steel);
+  font-variant-numeric: tabular-nums;
+}
+/* The three rates at the forks, in the bottom band (y > 428): left-aligned
+   24px past the gate they lead into, clamped inside the stage on narrow
+   tablets. `→ 35,4 %  −170`: the rate to the previous stage, then the
+   absolute change with a true minus. Growth reads in paper. */
+.stats-rate {
+  position: absolute;
+  top: 445px;
+  left: min(calc(37.5% + 25% * var(--i) + 24px), calc(100% - 9.5em));
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--color-steel);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.stats-rate.is-growth {
+  color: var(--color-paper);
+}
+.stats-rate-loss {
+  margin-left: 0.8em;
+}
+/* The datum line under the object: STAND · next refresh · 1 Punkt = n. */
+.stats-datum {
+  margin-top: 0.75rem;
+  color: var(--color-steel);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Below lg the label and the totals no longer share one row over the
+   canvas — they would collide — and stack above it as two lines; the rates
+   go two-line (rate over change) so three of them fit between the gates. */
+@media (max-width: 1023.98px) {
+  .stats-label,
+  .stats-totals {
+    position: static;
+    white-space: normal;
+  }
+  .stats-totals {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .stats-rate {
+    left: min(calc(37.5% + 25% * var(--i) + 24px), calc(100% - 6em));
+    line-height: 1.4;
+  }
+  .stats-rate-loss {
+    display: block;
+    margin-left: 0;
+  }
+}
+
+/* Phone: the river turns a quarter and becomes a fall. The numbers form a
+   left column the canvas never paints (x < 146); the gates sit at y = 90,
+   240, 390, 540; the rates between them as two mono lines. */
+@media (max-width: 639.98px) {
+  .stats-stage {
+    height: 600px;
+  }
+  .stats-gate {
+    left: 0;
+    top: calc(90px + 150px * var(--i));
+    width: 140px;
+    transform: translateY(-50%);
+    text-align: left;
+    white-space: normal;
+  }
+  .stats-count {
+    font-size: 40px;
+  }
+  .stats-name {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .stats-share {
+    margin-top: 6px;
+  }
+  .stats-rate {
+    left: 0;
+    top: calc(165px + 150px * var(--i));
+    width: 140px;
+    transform: translateY(-50%);
+    white-space: normal;
+    line-height: 1.5;
+  }
+}
+
+/* Disclosures --------------------------------------------------------- */
+/* A mono label with a drawn "+" / "–" in place of the browser's triangle —
+   nothing on this site wears a default marker. */
+.stats-summary {
+  cursor: pointer;
+  list-style: none;
+  width: fit-content;
+  color: var(--color-steel);
+  transition: color 200ms ease;
+}
+.stats-summary::-webkit-details-marker {
+  display: none;
+}
+.stats-summary::before {
+  content: '+';
+  display: inline-block;
+  width: 1.25em;
+}
+.stats-details[open] > .stats-summary::before {
+  content: '–';
+}
+.stats-summary:hover {
+  color: var(--color-paper);
+}
+/* The tables behind the disclosures: paper figures, steel heads, hairline
+   rows in steel-soft — the reading copy of the object. */
+.stats-table th {
+  color: var(--color-steel);
+}
+.stats-td {
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--color-steel-soft);
+  vertical-align: baseline;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-paper);
+}
+.stats-td-id {
+  padding-right: 1rem;
+  overflow-wrap: anywhere;
+}
+.stats-td-num {
+  padding-left: 1rem;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Der Pegel -------------------------------------------------------------- */
+/* The daily series as a water level: no axes, no grid, no legend. Views
+   as a straight paper polyline with a fill fading from steel 18 % to
+   nothing, visitors as a steel polyline inside it, a blurred duplicate of
+   the views path at 40 % behind it as the only glow. Linear segments only —
+   a smoothed curve would invent days. */
+.stats-pegel {
+  position: relative;
+}
+.stats-pegel-svg {
+  display: block;
+  width: 100%;
+  height: 160px;
+  overflow: visible;
+}
+@media (max-width: 639.98px) {
+  .stats-pegel-svg {
+    height: 120px;
+  }
+}
+.stats-pegel-line {
+  fill: none;
+  stroke-width: 1;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+}
+.stats-pegel-views {
+  stroke: var(--color-paper);
+}
+.stats-pegel-visitors {
+  stroke: var(--color-steel);
+}
+.stats-pegel-glow {
+  stroke: var(--color-paper);
+  stroke-width: 2;
+  opacity: 0.4;
+  filter: blur(3px);
+}
+.stats-pegel-dot {
+  fill: var(--color-paper);
+}
+/* Direct labels and the two dates: the annotation grade, steel; the views
+   label wears its series' paper. */
+.stats-pegel-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  fill: var(--color-steel);
+  font-variant-numeric: tabular-nums;
+}
+.stats-pegel-text.is-paper {
+  fill: var(--color-paper);
+}
+/* Per-day hit targets: the whole slot, plot-height tall — bigger than the
+   mark. A hovered or focused day shows a 1px paper cursor line; the focus
+   ring is the site's signal outline on the rect. */
+.stats-bar {
+  cursor: default;
+  outline: none;
+}
+.stats-bar-hit {
+  fill: transparent;
+}
+.stats-bar-cursor {
+  stroke: var(--color-paper);
+  stroke-width: 1;
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+}
+.stats-bar:hover .stats-bar-cursor,
+.stats-bar:focus-visible .stats-bar-cursor {
+  opacity: 0.6;
+}
+.stats-bar:focus-visible .stats-bar-hit {
+  stroke: var(--color-signal);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+/* Tooltip: value first, date second. A raised graphite plate with a
+   hairline, paper and steel inks — the verified on-graphite pairs. */
+.stats-tip {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -100%);
+  padding: 0.375rem 0.625rem;
+  background: var(--color-graphite-2);
+  border: 1px solid var(--color-steel-soft);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.stats-tip-pinned {
+  transform: translate(-50%, 0);
+}
+.stats-tip strong {
+  display: block;
+  font-weight: 400; /* Fragment Mono has one weight; the hierarchy is ink */
+  font-variant-numeric: tabular-nums;
+}
+.stats-tip span {
+  display: block;
+  color: var(--color-steel);
+}
+
+/* Zuläufe ------------------------------------------------------------- */
+/* Six ranked lists in three columns from lg, two at md, one on a phone.
+   No boxes, no borders around groups: a hairline under the title, rows,
+   and under each row a 2px light trace whose length is the row's share of
+   the list's top value — paper at 70 % for the leader, steel for the rest,
+   fading to nothing at its right end. The trace is a background on the
+   row, sized by --share, which scripts/stats.ts sets per row. */
+.stats-ledgers {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem 3rem;
+}
+@media (min-width: 768px) {
+  .stats-ledgers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .stats-ledgers {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.stats-ledger {
+  min-width: 0;
+}
+.stats-ledger table {
+  width: 100%;
+  table-layout: fixed; /* lets a long path truncate instead of widening the page */
+  border-collapse: collapse;
+  text-align: left;
+}
+.stats-ledger caption {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-steel-soft);
+  text-align: left;
+  color: var(--color-steel);
+}
+.stats-ledger th {
+  padding: 0.5rem 0 0.125rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* the annotation floor, 11px */
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-steel);
+}
+.stats-ledger th + th {
+  padding-left: 1rem;
+  text-align: right;
+  width: 6.5em; /* "BESUCHER" at the head grade, plus air */
+}
+/* A single-value list's head row is for screen readers only: its cells keep
+   the column widths and no height. */
+.stats-ledger-head-sr th {
+  padding: 0;
+  height: 0;
+  line-height: 0;
+}
+/* The Aktionen ledger: the long list spans the row and flows its rows
+   top→bottom across grid columns — two from md, three from lg — with the
+   per-column row count set by scripts/stats.ts. Each row becomes its own
+   fixed table so the count keeps its column; the light trace is a row
+   background and survives unchanged. No box, no "show all", same rows. */
+.stats-ledger-flow {
+  grid-column: 1 / -1;
+}
+.stats-ledger-flow tbody {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(var(--rows-1, 1), auto);
+  grid-auto-columns: minmax(0, 1fr);
+  column-gap: 3rem;
+}
+.stats-ledger-flow tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.stats-ledger-flow tbody td:last-child {
+  width: 6.5em;
+}
+@media (min-width: 768px) {
+  .stats-ledger-flow tbody {
+    grid-template-rows: repeat(var(--rows-2, 1), auto);
+  }
+}
+@media (min-width: 1024px) {
+  .stats-ledger-flow tbody {
+    grid-template-rows: repeat(var(--rows-3, 1), auto);
+  }
+}
+.stats-ledger .stats-td {
+  padding: 0.5rem 0 0.625rem;
+  border-bottom: 0;
+}
+.stats-ledger .stats-td-id {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+.stats-ledger .stats-td-num {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-steel);
+}
+.stats-row {
+  --trace: var(--color-steel);
+  background-image: linear-gradient(to right, var(--trace), transparent);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: calc(var(--share, 0) * 100%) 2px;
+}
+.stats-row.is-lead {
+  --trace: color-mix(in srgb, var(--color-paper) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stats-key-input,
+  .stats-toggle span,
+  .stats-btn,
+  .stats-summary,
+  .stats-board {
+    transition: none;
+  }
+}

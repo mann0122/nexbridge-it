@@ -14,11 +14,12 @@ orchestrator dispatch fixes.
 
 Gate checklist (website):
 - `astro build` clean, no console errors/warnings on preview.
-- Lighthouse perf/a11y/SEO ≥95 (run against preview; report numbers).
+- Lighthouse a11y/SEO/desktop perf ≥95, mobile perf ≥94 (D-043; run against preview; report numbers).
 - 360px mobile pass, links unbroken, images have dimensions + lazy loading.
 - Meta title/description per page, OG image, sitemap.xml, robots.txt, `lang="de"`.
 - Legal: /impressum and /datenschutz exist and are footer-linked on every page; contact form has
-  consent checkbox; no third-party requests beyond Plausible + form provider (check network tab).
+  consent checkbox; no third-party requests beyond the form provider — the stats beacon is
+  same-origin and off by default (D-063; check network tab).
 - No `TBD:` markers or lorem ipsum in anything about to ship.
 
 Gate checklist (client work): acceptance criteria from Angebot mapped to evidence; secrets not in

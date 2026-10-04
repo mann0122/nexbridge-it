@@ -1,8 +1,19 @@
 #!/usr/bin/env node
 /**
- * Builds the teaser assets from the two source films (D-056).
+ * Builds the teaser assets from the source films (D-056, third film D-067).
  *
- * Run: TEASER_1_CODE=1234 TEASER_2_CODE=5678 npm run teaser:assets
+ * Run: TEASER_3_CODE=<4 digits> npm run teaser:assets      (one film)
+ *      TEASER_1_CODE=<…> TEASER_2_CODE=<…> TEASER_3_CODE=<…> npm run teaser:assets   (all)
+ *
+ * Deliberately no example digits here: the placeholder 1234 in a set of
+ * instructions was once copied into a real build and opened Teaser 3 (D-067).
+ *
+ * Only the teasers whose code is set are built (D-067). Adding one film is
+ * therefore: drop its source in, set its one code, run — the films already in
+ * public/teaser/ are not re-encoded and nobody has to remember their codes.
+ * A run with EVERY code set is a full rebuild and also sweeps files no current
+ * code names (see the sweep at the end); a partial run never sweeps, because
+ * without the other codes it cannot tell their films from stale ones.
  *
  * Reads ops/teaser-src/ (gitignored — the originals never enter the repo) and
  * writes into website/public/teaser/:
@@ -61,6 +72,7 @@ const FIT_WIDTH = 1280;
 const TEASERS = [
   { id: 'teaser-1', source: 'NBIT1', codeEnv: 'TEASER_1_CODE' },
   { id: 'teaser-2', source: 'NBG1', codeEnv: 'TEASER_2_CODE' },
+  { id: 'teaser-3', source: 'NB3', codeEnv: 'TEASER_3_CODE' },
 ];
 
 const VIDEO_EXT = ['.mp4', '.mov', '.m4v', '.webm', '.mkv', '.avi'];
@@ -180,27 +192,48 @@ function findSource(base) {
 
 const ffmpeg = ffmpegBin();
 
-/* Codes first: forgetting one is the commonest mistake by far, and checking
-   the directory ahead of it answered "ops/teaser-src/ does not exist" to a
-   founder whose real problem was an unset variable. */
-for (const teaser of TEASERS) {
-  const code = (process.env[teaser.codeEnv] ?? '').trim();
-  if (!code) fail(`${teaser.codeEnv} is not set. Every teaser needs its own 4-digit code.`);
-  if (!/^\d{4}$/.test(code)) fail(`${teaser.codeEnv} must be exactly 4 digits — got "${code}".`);
+/* Which teasers this run builds: the ones whose code is set (D-067). Codes are
+   checked before the directory: a wrong code is the commonest mistake by far,
+   and checking the directory first answered "ops/teaser-src/ does not exist"
+   to a founder whose real problem was a variable. */
+const selected = TEASERS.filter((t) => (process.env[t.codeEnv] ?? '').trim() !== '');
+if (selected.length === 0) {
+  fail(
+    'No code is set, so there is nothing to build. Set the code of each film you want built:\n' +
+      TEASERS.map((t) => `    ${t.codeEnv}   ${t.id}  ←  ${t.source}`).join('\n') +
+      '\n  Adding one film needs only that film\'s code — the others are left as they are.',
+  );
 }
+/* The first codes anyone tries. The gate is only a courtesy (D-056), but a
+   code from this list is no gate at all — and one of them, 1234, reached a
+   real build once as a copied placeholder (D-067). */
+function guessable(code) {
+  if (/^(\d)\1{3}$/.test(code)) return true; // 0000, 1111, …
+  const d = [...code].map(Number);
+  const step = d[1] - d[0];
+  return (step === 1 || step === -1) && d.every((x, i) => i === 0 || x - d[i - 1] === step); // 1234, 9876, …
+}
+for (const teaser of selected) {
+  const code = process.env[teaser.codeEnv].trim();
+  if (!/^\d{4}$/.test(code)) fail(`${teaser.codeEnv} must be exactly 4 digits — got "${code}".`);
+  if (guessable(code)) {
+    fail(`${teaser.codeEnv} is "${code}" — one of the first codes anyone would try. Pick another.`);
+  }
+}
+const fullRun = selected.length === TEASERS.length;
 
 if (!fs.existsSync(SRC_DIR)) {
   fail(
     `${rel(SRC_DIR)}/ does not exist.\n` +
-      `  Create it and drop the two source films in as NBIT1 and NBG1 ` +
-      `(any of ${VIDEO_EXT.join(', ')}).`,
+      `  Create it and drop the source film${selected.length === 1 ? '' : 's'} in as ` +
+      `${selected.map((t) => t.source).join(', ')} (any of ${VIDEO_EXT.join(', ')}).`,
   );
 }
 
 // Validate everything before writing anything: a half-built teaser directory
 // with one film renamed and the other not is worse than a clean refusal.
-const jobs = TEASERS.map((teaser) => {
-  const code = (process.env[teaser.codeEnv] ?? '').trim();
+const jobs = selected.map((teaser) => {
+  const code = process.env[teaser.codeEnv].trim();
   const source = findSource(teaser.source);
   if (!source) {
     fail(
@@ -211,8 +244,8 @@ const jobs = TEASERS.map((teaser) => {
   return { ...teaser, code, source, film: filmName(code, teaser.id) };
 });
 
-/* The teaser id salts the hash, so reusing one code across both teasers still
-   produces two distinct names — that is a legitimate choice, not an error.
+/* The teaser id salts the hash, so reusing one code across teasers still
+   produces distinct names — that is a legitimate choice, not an error.
    This only trips on a genuine SHA-256 collision, and exists so that if the
    impossible happens we refuse rather than silently overwrite one film. */
 if (new Set(jobs.map((j) => j.film)).size !== jobs.length) {
@@ -221,7 +254,9 @@ if (new Set(jobs.map((j) => j.film)).size !== jobs.length) {
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
-console.log(`Building teaser assets into ${rel(OUT_DIR)}/\n`);
+console.log(
+  `Building ${fullRun ? 'all teasers' : selected.map((t) => t.id).join(', ')} into ${rel(OUT_DIR)}/\n`,
+);
 
 for (const job of jobs) {
   console.log(`${job.id}  ←  ${rel(job.source)}`);
@@ -291,18 +326,45 @@ for (const job of jobs) {
 
 /* Rotating a code changes the film's name. Without this sweep the file under
    the OLD name would stay in public/ and stay reachable by anyone who had the
-   old code — the gate would silently keep honouring a retired code. */
-const keep = new Set([
-  ...jobs.map((j) => j.film),
-  ...jobs.map((j) => `${j.id}-preview.mp4`),
-  ...jobs.map((j) => `${j.id}-poster.webp`),
-]);
-/* Dotfiles are exempt: public/teaser/ cannot exist in git while empty, so a
-   .gitkeep is the natural way to carry it — and the sweep used to eat it. */
-const stale = fs.readdirSync(OUT_DIR).filter((f) => !f.startsWith('.') && !keep.has(f));
-for (const f of stale) {
-  fs.unlinkSync(path.join(OUT_DIR, f));
-  console.log(`removed stale ${f}`);
+   old code — the gate would silently keep honouring a retired code.
+
+   Full runs only (D-067). The film files are named by a hash of their code, so
+   a file cannot be traced back to its teaser without that code: a partial run
+   that swept would delete the other teasers' films as "stale". */
+if (fullRun) {
+  const keep = new Set([
+    ...jobs.map((j) => j.film),
+    ...jobs.map((j) => `${j.id}-preview.mp4`),
+    ...jobs.map((j) => `${j.id}-poster.webp`),
+  ]);
+  /* Dotfiles are exempt: public/teaser/ cannot exist in git while empty, so a
+     .gitkeep is the natural way to carry it — and the sweep used to eat it. */
+  const stale = fs.readdirSync(OUT_DIR).filter((f) => !f.startsWith('.') && !keep.has(f));
+  for (const f of stale) {
+    fs.unlinkSync(path.join(OUT_DIR, f));
+    console.log(`removed stale ${f}`);
+  }
+} else {
+  const others = TEASERS.filter((t) => !selected.includes(t)).map((t) => t.id);
+  console.log(
+    `Partial run: ${others.join(', ')} left untouched, nothing swept.\n` +
+      `  If this run gave a teaser a NEW code, its film under the OLD code is still in\n` +
+      `  ${rel(OUT_DIR)}/ and the old code still opens it. To retire an old code, run\n` +
+      `  once with every code set — that is the only run that sweeps.\n`,
+  );
+}
+
+/* More film files than teasers means some teaser's film is ALSO reachable
+   under an older code — exactly how the 1234 copy of Teaser 3 got committed
+   (D-067). A partial run cannot tell which file is the stale one without the
+   codes, but it can count. */
+const films = fs.readdirSync(OUT_DIR).filter((f) => /^[0-9a-f]{16}\.mp4$/.test(f));
+if (films.length > TEASERS.length) {
+  console.log(
+    `⚠ ${films.length} films for ${TEASERS.length} teasers in ${rel(OUT_DIR)}/ — at least one\n` +
+      `  film is still reachable under an OLD code. Run once with every code set to sweep it,\n` +
+      `  or delete the stale file by hand before you commit.\n`,
+  );
 }
 
 console.log(

@@ -382,7 +382,7 @@ section[id] {
   transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Lock (NB-T01/T02 status): the shackle lifts out of the body. The body never
+/* Lock (NB-T01–T03 status): the shackle lifts out of the body. The body never
    moves, so the drawing stays readable mid-transition. 3 units of travel, not
    1.5 — at a 16px render 1.5 units is 1.0 CSS px, which does not read as a
    lock opening. A card whose film is already unlocked rests lifted: the mark
@@ -484,7 +484,7 @@ section[id] {
    graphite, not a scrim over the film — a translucent band would put its
    labels on whatever frame happened to be showing, and contrast would be
    whatever the film felt like that second.
-   Furniture is steel throughout: two cards share a viewport and the signal
+   Furniture is steel throughout: up to three cards share a viewport and the signal
    ration counts elements. The focus ring is the one exception.
    --------------------------------------------------------------------- */
 
@@ -592,11 +592,16 @@ section[id] {
 .teaser-head-name {
   display: block;
 }
+/* The two fields stack as rows at every width (D-067). Side by side, they
+   wrapped by text length, so in a row of three cards one status word longer
+   than its neighbours ("freigegeben", "Film folgt", "Film to follow") made
+   that title block a line taller than the others between ~1024 and ~1180px.
+   A title block is a fixed-format table; its rows must line up. */
 .teaser-head-fields {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1.25rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.375rem;
   margin-top: 0.5rem;
 }
 .teaser-head-hint {

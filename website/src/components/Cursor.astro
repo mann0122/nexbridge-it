@@ -74,7 +74,9 @@
      (per-element listeners would die with every swapped page); only the
      magnetic bindings are per-page, because their targets are. */
   const el = document.getElementById('cursor');
-  const INTERACTIVE = 'a, button, [role="button"]';
+  // Disabled buttons are not targets: a teaser card with no film yet (D-067)
+  // and the submit buttons while a request runs must not open the ring.
+  const INTERACTIVE = 'a, button:not(:disabled), [role="button"]';
 
   if (el && fine && !motionOff) {
     const xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'expo.out' });

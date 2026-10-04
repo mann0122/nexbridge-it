@@ -11,6 +11,7 @@
 export const TEASERS = [
   { id: 'teaser-1', partNo: 'NB-T01', source: 'NBIT1' },
   { id: 'teaser-2', partNo: 'NB-T02', source: 'NBG1' },
+  { id: 'teaser-3', partNo: 'NB-T03', source: 'NB3' },
 ] as const;
 
 export type Teaser = (typeof TEASERS)[number];

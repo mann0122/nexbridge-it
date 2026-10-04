@@ -2,7 +2,11 @@
 /**
  * Builds the teaser assets from the source films (D-056, third film D-067).
  *
- * Run: TEASER_1_CODE=1234 TEASER_2_CODE=5678 TEASER_3_CODE=9012 npm run teaser:assets
+ * Run: TEASER_3_CODE=<4 digits> npm run teaser:assets      (one film)
+ *      TEASER_1_CODE=<…> TEASER_2_CODE=<…> TEASER_3_CODE=<…> npm run teaser:assets   (all)
+ *
+ * Deliberately no example digits here: the placeholder 1234 in a set of
+ * instructions was once copied into a real build and opened Teaser 3 (D-067).
  *
  * Only the teasers whose code is set are built (D-067). Adding one film is
  * therefore: drop its source in, set its one code, run — the films already in
@@ -200,9 +204,21 @@ if (selected.length === 0) {
       '\n  Adding one film needs only that film\'s code — the others are left as they are.',
   );
 }
+/* The first codes anyone tries. The gate is only a courtesy (D-056), but a
+   code from this list is no gate at all — and one of them, 1234, reached a
+   real build once as a copied placeholder (D-067). */
+function guessable(code) {
+  if (/^(\d)\1{3}$/.test(code)) return true; // 0000, 1111, …
+  const d = [...code].map(Number);
+  const step = d[1] - d[0];
+  return (step === 1 || step === -1) && d.every((x, i) => i === 0 || x - d[i - 1] === step); // 1234, 9876, …
+}
 for (const teaser of selected) {
   const code = process.env[teaser.codeEnv].trim();
   if (!/^\d{4}$/.test(code)) fail(`${teaser.codeEnv} must be exactly 4 digits — got "${code}".`);
+  if (guessable(code)) {
+    fail(`${teaser.codeEnv} is "${code}" — one of the first codes anyone would try. Pick another.`);
+  }
 }
 const fullRun = selected.length === TEASERS.length;
 
@@ -335,6 +351,19 @@ if (fullRun) {
       `  If this run gave a teaser a NEW code, its film under the OLD code is still in\n` +
       `  ${rel(OUT_DIR)}/ and the old code still opens it. To retire an old code, run\n` +
       `  once with every code set — that is the only run that sweeps.\n`,
+  );
+}
+
+/* More film files than teasers means some teaser's film is ALSO reachable
+   under an older code — exactly how the 1234 copy of Teaser 3 got committed
+   (D-067). A partial run cannot tell which file is the stale one without the
+   codes, but it can count. */
+const films = fs.readdirSync(OUT_DIR).filter((f) => /^[0-9a-f]{16}\.mp4$/.test(f));
+if (films.length > TEASERS.length) {
+  console.log(
+    `⚠ ${films.length} films for ${TEASERS.length} teasers in ${rel(OUT_DIR)}/ — at least one\n` +
+      `  film is still reachable under an OLD code. Run once with every code set to sweep it,\n` +
+      `  or delete the stale file by hand before you commit.\n`,
   );
 }
 

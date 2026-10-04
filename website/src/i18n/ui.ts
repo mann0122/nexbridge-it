@@ -211,9 +211,12 @@ export const ui = {
      */
     'teaser.meta.title': 'Teaser – NexBridge-IT',
     'teaser.meta.description':
-      'Drei Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
+      'Filme von NexBridge-IT. Den vollständigen Film sehen Sie mit einem vierstelligen Code, den Sie von uns bekommen.',
     'teaser.kicker': 'Filme · Zugang mit Code',
-    'teaser.title': 'Drei Filme.',
+    /* Count-free on purpose (copywriter-de, D-067): the number of films lives
+       in config/teasers.ts, and a headline that repeats it goes wrong the
+       moment a film is added or dropped. */
+    'teaser.title': 'Unsere Filme.',
     /* "Diese beiden Filme zeigen wir nicht öffentlich" was false: the page, the
        cards and the blurred loops are public — only the full films are not. */
     'teaser.intro':
@@ -582,9 +585,9 @@ export const ui = {
     /* Teaser page (D-056) — English twin. */
     'teaser.meta.title': 'Teaser — NexBridge-IT',
     'teaser.meta.description':
-      'Three films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
+      'Films from NexBridge-IT. The full film plays with a four-digit code you get from us.',
     'teaser.kicker': 'Films · access by code',
-    'teaser.title': 'Three films.',
+    'teaser.title': 'Our films.',
     'teaser.intro':
       'We do not show the full films publicly. You get the four-digit code from us — in conversation or by email.',
     'teaser.1.name': 'Teaser 1',

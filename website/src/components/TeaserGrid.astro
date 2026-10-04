@@ -113,7 +113,7 @@ const cards = TEASERS.map((teaser, i) => ({
             data-teaser-name={card.name}
             data-teaser-part={`${t('teaser.field.part')} ${card.partNo}`}
             data-label-hint-unlocked={t('teaser.hintUnlocked')}
-            data-icon-hover
+            data-icon-hover={card.ready || undefined}
             disabled={!card.ready}
             aria-haspopup={card.ready ? 'dialog' : undefined}
           >

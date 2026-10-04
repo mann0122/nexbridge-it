@@ -1619,8 +1619,9 @@ be revisited when the first thousand-visitor month arrives. Owner: partner-b.
 
 ## D-067 | 2026-10-04 | A third teaser film; the build adds one film without touching the others | DECIDED
 The founder asked for one more video on `/teaser`. Shipped as **Teaser 3** (`NB-T03`): an
-entry in `config/teasers.ts`, `teaser.3.name` in both `ui.ts` blocks, and the headline counts
-three — "Drei Filme." / "Three films." Its own code, `TEASER_3_CODE`, per D-056's separate code
+entry in `config/teasers.ts` and `teaser.3.name` in both `ui.ts` blocks. The headline stops
+counting — "Unsere Filme." / "Our films.", on `copywriter-de`'s advice: the number lives in the
+manifest, and a headline repeating it goes wrong the moment a film is added or dropped. Its own code, `TEASER_3_CODE`, per D-056's separate code
 per film. Its source is expected as `ops/teaser-src/NB3.*`; nobody named the file, so the name
 was chosen here, and what the film shows is not described (CLAUDE.md rule 1), same as the
 other two. The grid is three across from `lg`, two up at `md` with the third card alone on
@@ -1637,7 +1638,9 @@ with every code set is a full rebuild and sweeps as before; a **partial run neve
 because a film named by a hash of its code cannot be traced back to its teaser without that
 code — sweeping would delete the other films as "stale". The price: a partial run that gives
 a teaser a NEW code leaves its old film reachable under the old code. The script says so on
-every partial run and names the full run as the only way to retire a code.
+every partial run and names the full run as the only automatic way to retire a code. This
+narrows D-056's promise that rotating a code retires the old file: it now holds for full runs
+only.
 `ops/teaser-assets.bat` asks for each code with Enter-to-skip and checks only the films being
 built.
 
@@ -1647,10 +1650,29 @@ left both real films, posters and preview loops byte-identical by sha256. A full
 three retired films and left exactly three films and six assets. In the browser: three cards;
 teaser 3's code opens only its own film and does not open teaser 1 (the id salts the hash);
 focus lands on the film; no overflow or clipped title block at 360, 768, 900, 1024 and 1280px;
-zero video bytes on load; no signal colour on any card. With NB-T03's assets absent — the
-state the live site is in until the founders build the film — its card reads "Film folgt", is
-not a control, and the page logs no console error and no 4xx. Owner: partner-b; the film and
-its code: founders.
+zero video bytes on load; no signal colour on any card. With NB-T03's assets absent, its card
+reads "Film folgt", is not a control, and the page logs no console error and no 4xx.
+
+**The founder's first build ran twice** — once with `1234`, the placeholder from the
+instructions, once with the real code — and committed the same film under both names, so
+`1234`, the first code anyone tries, opened Teaser 3. Found in review; the `1234` copy was
+removed on the founder's instruction (9053941); it stays in git history. Two guards followed:
+the script **refuses guessable codes** (four equal digits, or a run of four consecutive digits
+up or down — none of the three live codes is one, checked without learning them), its header
+no longer shows example digits to copy, and every run **warns when there are more film files
+than teasers**, which is exactly the state the duplicate left behind.
+
+**Gates** (CLAUDE.md step 5): `copywriter-de` passed the copy and recommended the count-free
+headline, taken. `design-critic` passed the layout, including the lone third card at `md`, and
+blocked two misleading signals on a card with no film — the padlock still lifted on hover and
+the custom cursor opened its ring over a disabled button; `data-icon-hover` is now set only on
+cards with a film, and `Cursor.astro` skips `button:disabled`. It also found that side-by-side
+title-block fields wrapped by text length, so a longer status word made one card's title block
+a line taller than its neighbours between ~1024 and ~1180px; the two fields now stack as rows
+at every width. `kb-curator` and `qa-reviewer` passed the docs, code, assets and partial/full
+build logic, and both flagged that the GitHub repo is **public** — the committed films can be
+downloaded there without a code. That predates this entry (D-059) and is a founder call: STATE
+open item 12. Owner: partner-b; the film and its code: founders.
 
 ## Template
 ```

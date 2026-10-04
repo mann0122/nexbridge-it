@@ -198,7 +198,8 @@ the flow-line is the brand's *behaviour*, and neither replaces the other.
   over the film — a translucent band would hand its contrast to whatever frame was showing.
   All furniture is steel: up to three cards share a viewport, so none may spend the signal. The
   set runs three across from `lg`, two up at `md` with the third card alone on the second row —
-  never stretched, since a wider sheet reads as the important one (D-067). The
+  never stretched, since a wider sheet reads as the important one (D-067). The two title-block
+  fields stack as rows at every width, so a longer status word cannot make one card taller. The
   card is a `<button>`; the unlock `<dialog>` is shared by all of them, and its submit CTA is that
   viewport's one signal element — so the error line is **steel**, not signal and not a signal
   rule. A 1px signal rule was tried and failed the gate: the ban on coloured left-borders

@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-10-16 · 16 nodes · 68 decisions
+Content as of 2026-10-16 · 16 nodes · 69 decisions
 
 ## Map
 
@@ -178,6 +178,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-066 | 2026-09-16 | The founders' dashboard leaves the drawing-office register: Strom, a river of light | DECIDED | `website-spec`, `state` |
 | D-067 | 2026-10-04 | A third teaser film; the build adds one film without touching the others | DECIDED | `website-spec`, `state` |
 | D-068 | 2026-10-16 | Founder names shortened to initial + surname; the street address leaves every surface | DECIDED | `state` |
+| D-069 | 2026-10-16 | Impressum locality moves to a small, light footnote | DECIDED | `state` |
 
 ### ⏳ Pending — work that depends on these is blocked
 

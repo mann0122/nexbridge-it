@@ -1702,6 +1702,16 @@ legal pages as well. It joins STATE open item 1 as a `TBD:` for the lawyer's rea
 business or virtual-office address in the Impressum, which would re-add `street`/`zip` here. Owner:
 founders.
 
+## D-069 | 2026-10-16 | Impressum locality moves to a small, light footnote | DECIDED
+On the founder's direction (Partner B, 2026-10-16), the Impressum's provider block shows the name only
+(`P Knopp`). The locality from D-068 ("Walldorf, Deutschland" / "Walldorf, Germany") moves to a
+footnote at the foot of the page body, set at 0.7 rem in `text-steel` (#8B959E on paper, about 2.9:1).
+This is a knowing override of the site's 4.5:1 contrast law, scoped to that one line, like D-054 on
+the card plate. The CSS comment in `ImpressumBody.astro` says the same. The Datenschutz controller
+block is unchanged. The founder was told that § 5 DDG asks for Impressum data to be *leicht erkennbar*
+(easy to recognise) and chose this anyway. It joins STATE open item 1 for the lawyer's read. Owner:
+founders.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

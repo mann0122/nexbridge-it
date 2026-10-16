@@ -41,9 +41,7 @@ const t = doc.impressum;
       <section class="grid grid-cols-1 gap-1 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6">
         <h2 class="type-annot text-steel-deep">{t.headings.provider}</h2>
         <address class="not-italic text-[0.95rem] leading-relaxed text-graphite">
-          {SITE.legalName}<br />
-          {SITE.city}<br />
-          {lang === 'de' ? SITE.country : SITE.countryEn}
+          {SITE.legalName}
         </address>
       </section>
 
@@ -79,5 +77,13 @@ const t = doc.impressum;
         <p class="text-[0.95rem] leading-relaxed text-graphite">{t.liability}</p>
       </section>
     </div>
+
+    {/* Founder override, D-069: the locality sits here as a small, light
+        footnote instead of in the provider block, and is exempt from the
+        4.5:1 contrast law on purpose. Do not "fix" it back without a new
+        D-entry. TBD: legal review (§ 5 DDG "leicht erkennbar"). */}
+    <p class="mt-24 text-[0.7rem] text-steel">
+      {SITE.city}, {lang === 'de' ? SITE.country : SITE.countryEn}
+    </p>
   </div>
 </main>

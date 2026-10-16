@@ -81,7 +81,7 @@ const rows = [
   {
     href: `${base}/impressum`,
     label: t('card.row.address'),
-    value: `${SITE.street}, ${SITE.zip} ${SITE.city}`,
+    value: `${SITE.city}, ${lang === 'de' ? SITE.country : SITE.countryEn}`,
     Icon: MapPinIcon,
     track: undefined, // an internal page view, counted as one
   },

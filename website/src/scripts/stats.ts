@@ -514,7 +514,7 @@ function fixture(days: number, mode: 'seed' | 'empty'): unknown {
     range: { from: series[0].day, to: '2026-09-16', days },
     totals: { views, visitors, events: empty ? 0 : 89 },
     series,
-    pages: empty ? [] : [{ path: '/', views: 141, visitors: 98 }, { path: '/teaser', views: 42, visitors: 30 }, { path: '/en/', views: 19, visitors: 15 }, { path: '/karte/manush-vaghani', views: 12, visitors: 9 }, { path: '/en/card/peter-knopp/eine-sehr-lange-adresse-die-nicht-die-seite-verbreitern-darf', views: 1, visitors: 1 }],
+    pages: empty ? [] : [{ path: '/', views: 141, visitors: 98 }, { path: '/teaser', views: 42, visitors: 30 }, { path: '/en/', views: 19, visitors: 15 }, { path: '/karte/m-vaghani', views: 12, visitors: 9 }, { path: '/en/card/p-knopp/eine-sehr-lange-adresse-die-nicht-die-seite-verbreitern-darf', views: 1, visitors: 1 }],
     referrers: empty ? [] : [{ ref: '', views: 120 }, { ref: 'www.linkedin.com', views: 44 }, { ref: 'www.google.com', views: 31 }],
     countries: empty ? [] : [{ country: 'DE', visitors: 130 }, { country: 'AT', visitors: 9 }, { country: 'CH', visitors: 6 }],
     devices: empty ? [] : [{ device: 'desktop', visitors: 90 }, { device: 'mobile', visitors: 51 }, { device: 'tablet', visitors: 4 }],

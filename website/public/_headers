@@ -6,8 +6,8 @@
 # one per card (the slugs are fixed: printed NFC/QR cards point at them;
 # see src/config/cards.ts).
 
-/karte/peter-knopp.vcf
+/karte/p-knopp.vcf
   Content-Type: text/vcard; charset=utf-8
 
-/karte/manush-vaghani.vcf
+/karte/m-vaghani.vcf
   Content-Type: text/vcard; charset=utf-8

@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-10-04
+updated: 2026-10-16
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065, D-066, D-067]
+decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065, D-066, D-067, D-068]
 cites_history: [D-007]
 ---
 
@@ -16,7 +16,7 @@ cites_history: [D-007]
 need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
 Everything here is traceable to a file or a D-entry; nothing is inferred.
 
-Last reviewed: **2026-10-04**
+Last reviewed: **2026-10-16**
 
 ## The venture in five lines
 
@@ -53,7 +53,7 @@ drafting-sheet transition veil (D-039); the motion system is documented in `DESI
 `/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`), the gated teaser page
 (`/teaser`, `/en/teaser` — D-056), the founders' stats dashboard (`/statistik`, `/en/stats` —
 D-063; noindex, sitemap-excluded, in no nav, key-gated), plus the NB-VK digital business cards
-(D-049) — `/karte`, `/karte/peter-knopp`, `/karte/manush-vaghani`, their EN mirrors under
+(D-049) — `/karte`, `/karte/p-knopp`, `/karte/m-vaghani`, their EN mirrors under
 `/en/card/`, and static `/karte/<slug>.vcf` endpoints. Card routes are noindex and
 sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage
 anchors, not pages — temporary, "until dedicated subpages exist"
@@ -152,6 +152,10 @@ Ranked. Owner in brackets.
    TDDDG question; and D1 Time Travel backups mean "deleted" is true of the live database
    only — the text is worded to that. The English versions are convenience translations and
    are unreviewed.
+   **New with D-068:** on the founder's direction the Impressum and the Datenschutz controller
+   block give "P Knopp / M Vaghani, Walldorf" only, with no full names, street or postcode.
+   § 5 DDG and Art. 13 GDPR ask for a full name and a serviceable address. `TBD:` the lawyer's
+   read, most likely ending in a business address for the Impressum.
 2. **Stats live, kit line stale** [partner-b] — the go-live sequence of D-063 is complete
    (D-064): key set by the founder, §10 rewritten, flag on, deployed. Left over: the brand
    kit's "no analytics by default" floor (`docs/07-brand-kit.md` §11) is now false in letter
@@ -223,6 +227,10 @@ Full constitution in `CLAUDE.md`. The four that catch people out:
    append-only — supersede, never edit history.
 
 ## In flight
+
+**Names and address** (D-068) on `claude/address-names-walldorf`: "P Knopp / M Vaghani,
+Walldorf" everywhere, the card slugs shortened, QR codes regenerated. After the deploy,
+`/karte/peter-knopp` and `/karte/manush-vaghani` must answer `404`.
 
 **Teaser 3** (D-067) on `claude/tender-goldberg-qnn87f`, PR #1 — the third card, the film,
 the partial-build script and the docs; built and reviewed, waiting on merge and deploy. After

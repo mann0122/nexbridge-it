@@ -1674,6 +1674,34 @@ build logic, and both flagged that the GitHub repo is **public** — the committ
 downloaded there without a code. That predates this entry (D-059) and is a founder call: STATE
 open item 12. Owner: partner-b; the film and its code: founders.
 
+## D-068 | 2026-10-16 | Founder names shortened to initial + surname; the street address leaves every surface | DECIDED
+On the founder's direction (Partner B, 2026-10-16) the founders appear as **P Knopp** and **M Vaghani** and the
+address is the locality alone, **Walldorf, Deutschland / Germany**. The street and postcode in Reilingen
+(Partner A's private address, D-036) are removed from the website and the printed and email collateral. In
+`website/src/config/site.ts`, `street` and `zip` are deleted, `city` becomes `Walldorf`, and `countryEn`
+carries the English country name. This supersedes D-036 on these three fields only. The rest of D-036 stands.
+
+**Where it shows.** The Impressum and Datenschutz controller block now give the name, locality and country.
+The JSON-LD `PostalAddress` keeps only `addressLocality`, `addressRegion` and `addressCountry`. The card
+pages' address row reads "Walldorf, Deutschland" (EN "Walldorf, Germany"). The vCard `ADR` holds the
+locality and country only. Both print masters (CR80 per D-055, and the paper card per D-053) and both
+email signatures carry the same.
+
+**Card slugs renamed, once.** `peter-knopp` → `p-knopp`, `manush-vaghani` → `m-vaghani`. Their full names
+were in the URL. This overrides D-049/D-054's "slugs are fixed". That rule exists to protect printed cards
+in the field, and none exist yet, because printing is gated on the DPMA check (STATE open item 5). The four
+inline QR codes in the print masters were regenerated (error level Q, 33 × 33, same as before), and each
+one was decoded back to its new URL. The old slugs answer `404` after the next deploy. No redirect was
+added, so the full names stay off the site. The email signature files were renamed to match.
+From here on, the slugs are fixed again.
+
+**Legal risk, accepted by the founder.** § 5 DDG asks the Impressum for the provider's full name and a
+serviceable (*ladungsfähige*) postal address. Art. 13 GDPR asks the same of the controller block. The
+pages no longer carry either. The founder was told this before the change and chose to apply it to the
+legal pages as well. It joins STATE open item 1 as a `TBD:` for the lawyer's read. The usual fix is a
+business or virtual-office address in the Impressum, which would re-add `street`/`zip` here. Owner:
+founders.
+
 ## Template
 ```
 ## D-0XX | YYYY-MM-DD | <decision> | DECIDED/PENDING/SUPERSEDED by D-0YY

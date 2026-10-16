@@ -42,9 +42,8 @@ const t = doc.impressum;
         <h2 class="type-annot text-steel-deep">{t.headings.provider}</h2>
         <address class="not-italic text-[0.95rem] leading-relaxed text-graphite">
           {SITE.legalName}<br />
-          {SITE.street}<br />
-          {SITE.zip}&nbsp;{SITE.city}<br />
-          {SITE.country}
+          {SITE.city}<br />
+          {lang === 'de' ? SITE.country : SITE.countryEn}
         </address>
       </section>
 

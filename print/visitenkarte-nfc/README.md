@@ -12,9 +12,9 @@ maker before export — some NFC blanks run 86 × 54.
 
 | Page | Side | Content |
 |---|---|---|
-| 1 | Vorderseite (Kontakt) | Zeichnungskopf — Peter Knopp (`NB-VK-01`), QR → `/karte/peter-knopp`, antenna drawing |
+| 1 | Vorderseite (Kontakt) | Zeichnungskopf — P Knopp (`NB-VK-01`), QR → `/karte/p-knopp`, antenna drawing |
 | 2 | Rückseite | Design D — glider + orange wordmark on metallic ground (identical for both) |
-| 3 | Vorderseite (Kontakt) | Manush Vaghani (`NB-VK-02`), QR → `/karte/manush-vaghani` |
+| 3 | Vorderseite (Kontakt) | M Vaghani (`NB-VK-02`), QR → `/karte/m-vaghani` |
 | 4 | Rückseite | identical to page 2 |
 
 "Vorderseite" here = the contact side (the side people read); tell the shop explicitly which
@@ -45,7 +45,7 @@ graphics **on**. 4-page vector PDF, fonts embedded.
 
 See `../visitenkarte/README.md`, section "NFC — how the chip is meant to work" (researched
 2026-08-23). Short version: one NDEF **URL** record per card
-(`https://nexbridge-it.com/karte/peter-knopp` / `.../manush-vaghani`), never a vCard record;
+(`https://nexbridge-it.com/karte/p-knopp` / `.../m-vaghani`), never a vCard record;
 write with "NFC Tools", test one card on iPhone **and** Android, then lock — locking is
 irreversible.
 

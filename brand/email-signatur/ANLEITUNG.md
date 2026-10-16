@@ -2,8 +2,8 @@
 
 Zwei Dateien, eine pro Person:
 
-- `signatur-peter-knopp.html`
-- `signatur-manush-vaghani.html`
+- `signatur-p-knopp.html`
+- `signatur-m-vaghani.html`
 
 Das animierte Logo liegt auf unserer eigenen Domain:
 `https://nexbridge-it.com/brand/nb-signature.gif` (70 KB).

@@ -13,23 +13,25 @@ export const SITE = {
   email: 'nexbridge-it@mailbox.org',
 
   /* ---------------------------------------------------------------------
-   * Legal identity — D-036. Verbatim from the founder's Impressum document
-   * (2026-08-03). This block is the single source for the Impressum page,
-   * the JSON-LD PostalAddress, and anywhere else the entity is named.
+   * Legal identity — D-036, reduced on the founders' direction by D-068:
+   * initial + surname, and the locality only — no street, no postcode.
+   * This block is the single source for the Impressum page, the JSON-LD
+   * PostalAddress, and anywhere else the entity is named.
+   * TBD: legal review — § 5 DDG asks for the full name and a serviceable
+   * (ladungsfähige) postal address; this block no longer carries either.
    * Do not edit these to "fix" them: § 5 DDG data is the founder's and
    * their adviser's to change, not ours.
    * ------------------------------------------------------------------- */
   /** § 5 DDG Diensteanbieter. */
-  legalName: 'Peter Knopp',
-  street: 'Gartenstr. 22',
-  zip: '68799',
-  city: 'Reilingen',
+  legalName: 'P Knopp',
+  city: 'Walldorf',
   country: 'Deutschland',
+  countryEn: 'Germany',
   countryCode: 'DE',
   /** As printed in the Impressum. `phoneE164` is what a tel: href needs. */
   phone: '01739044077',
   phoneE164: '+491739044077',
-  representatives: ['Peter Knopp', 'Manush Vaghani'],
+  representatives: ['P Knopp', 'M Vaghani'],
   /** "Stand" date carried by the legal pages. Bump when either text changes. */
   legalRevision: '09/2026',
   /**

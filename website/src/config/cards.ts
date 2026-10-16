@@ -2,6 +2,7 @@
  * The two digital business cards — the NB-VK register (part-number prefix
  * per docs/02-brand.md). Slugs are FIXED: printed NFC/QR cards point at
  * /karte/<slug>, so renaming one breaks physical cards in the field.
+ * (Renamed once, before any card was printed, to drop the full names — D-068.)
  *
  * Contact values live in site.ts (the single source, D-010); this module
  * only maps the representatives listed there onto card documents. Role
@@ -40,7 +41,7 @@ export const CARD_REGISTER = 'NB-VK';
  */
 export const CARD_REVISION = '09/2026';
 
-/** "Peter Knopp" → given/family for the vCard N field. */
+/** "P Knopp" → given/family for the vCard N field. */
 function splitName(full: string): { givenName: string; familyName: string } {
   const i = full.lastIndexOf(' ');
   return { givenName: full.slice(0, i), familyName: full.slice(i + 1) };
@@ -50,7 +51,7 @@ const [partnerA, partnerB] = SITE.representatives;
 
 export const CARDS: readonly CardPerson[] = [
   {
-    slug: 'peter-knopp',
+    slug: 'p-knopp',
     name: partnerA,
     ...splitName(partnerA),
     roleKey: 'card.1.role',
@@ -58,7 +59,7 @@ export const CARDS: readonly CardPerson[] = [
     phoneE164: SITE.phoneE164, // venture line (Impressum) — no personal number on file
   },
   {
-    slug: 'manush-vaghani',
+    slug: 'm-vaghani',
     name: partnerB,
     ...splitName(partnerB),
     roleKey: 'card.2.role',

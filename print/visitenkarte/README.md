@@ -10,14 +10,14 @@ print it to get the production PDF.
 | Page | Side | Content |
 |---|---|---|
 | 1 | Front | Wordmark + company mark (the folded glider, D-050; on print in full brand colors per D-053 — identical for both founders) |
-| 2 | Back | Zeichnungskopf — Peter Knopp (`NB-VK-01`), QR → `/karte/peter-knopp` |
+| 2 | Back | Zeichnungskopf — P Knopp (`NB-VK-01`), QR → `/karte/p-knopp` |
 | 3 | Front | identical to page 1 |
-| 4 | Back | Zeichnungskopf — Manush Vaghani (`NB-VK-02`), QR → `/karte/manush-vaghani` |
+| 4 | Back | Zeichnungskopf — M Vaghani (`NB-VK-02`), QR → `/karte/m-vaghani` |
 
 All contact data mirrors `website/src/config/site.ts` (D-036 Impressum data, venture address and
 mailbox) — **except the phone number, which is per person** and mirrors
-`website/src/config/cards.ts` `phoneE164` (D-054): Peter Knopp carries the venture line
-`+49 173 9044077`, Manush Vaghani his own `+49 176 85919025`. If a value changes in either
+`website/src/config/cards.ts` `phoneE164` (D-054): P Knopp carries the venture line
+`+49 173 9044077`, M Vaghani his own `+49 176 85919025`. If a value changes in either
 config, change it here by editing the HTML directly — the file is the master; there is no
 generator to re-run in the repo.
 
@@ -47,7 +47,7 @@ The dashed line visible in the browser is a screen-only trim preview; it does no
 Researched and source-checked 2026-08-23 against Apple/Google developer documentation.
 
 - **What goes on the chip: the card URL, nothing else.** One NDEF **URL** record —
-  `https://nexbridge-it.com/karte/peter-knopp` or `.../manush-vaghani`. Under 50 bytes, so
+  `https://nexbridge-it.com/karte/p-knopp` or `.../m-vaghani`. Under 50 bytes, so
   **NTAG213** (144 bytes usable) is plenty; NTAG216 buys nothing here.
 - **Never write a vCard record to the chip.** iPhone background tag reading supports only
   URL, `mailto:`, `sms:`, `tel:`, FaceTime, Maps and HomeKit records — a vCard record is

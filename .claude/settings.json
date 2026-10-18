@@ -1,6 +1,30 @@
 {
-  "description": "Impeccable design detector: immediate-tier checks after Edit/Write/MultiEdit on UI files, full-rule deep pass on Stop.",
+  "description": "Hooks: the knowledge-graph commit gate (PreToolUse on Bash, D-070) and the Impeccable design detector (immediate-tier checks after Edit/Write/MultiEdit on UI files, full-rule deep pass on Stop). Permissions: the repo's own read-only or idempotent build commands run without a prompt; commits, pushes and deploys still ask.",
+  "permissions": {
+    "allow": [
+      "Bash(npm run kb)",
+      "Bash(npm run logo)",
+      "Bash(npm --prefix website run build)",
+      "Bash(npm --prefix website run check)",
+      "Bash(node ops/scripts/build-kb-graph.mjs)",
+      "Bash(node ops/scripts/check-logo.mjs)"
+    ]
+  },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/ops/scripts/commit-gate.mjs\"",
+            "timeout": 30,
+            "onFailure": "block",
+            "statusMessage": "Checking the knowledge graph before commit"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",

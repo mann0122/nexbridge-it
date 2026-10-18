@@ -4,28 +4,26 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-10-16
+updated: 2026-10-18
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-008, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-036, D-037, D-038, D-039, D-040, D-041, D-042, D-043, D-044, D-045, D-046, D-047, D-049, D-050, D-051, D-052, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-060, D-061, D-062, D-063, D-064, D-065, D-066, D-067, D-068, D-069]
+decisions: [D-008, D-009, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-031, D-036, D-039, D-043, D-046, D-048, D-049, D-050, D-051, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-062, D-063, D-064, D-065, D-066, D-067, D-068, D-069, D-070]
 cites_history: [D-007]
 ---
 
 # Where things stand
 
-**This is the session bootstrap.** It holds current state only — no history, no rationale. If you
-need *why*, read [[decisions]]. If you need *which document*, read [INDEX.md](INDEX.md).
-Everything here is traceable to a file or a D-entry; nothing is inferred.
+**This is the session bootstrap.** It loads into every session next to `CLAUDE.md`, so it holds
+current state only: what is live and where to read about it. *Why* is in [[decisions]], *which
+document* is in [INDEX.md](INDEX.md). `npm run kb` fails when it outgrows its line budget (D-070).
+Last reviewed: **2026-10-18**.
 
-Last reviewed: **2026-10-16**
-
-## The venture in five lines
+## The venture
 
 **NexBridge-IT** builds software that runs business processes by itself for the German
-Mittelstand: Automatisierung, KI-Agenten, Dashboards, Individualsoftware. Positioning: *built in
-Germany, GDPR-first, engineering-grade*. Two founders — **Partner A** (German: sales, network,
-client relationships, legal/admin) and **Partner B** (technical: solution design, delivery, this
-repo). Currently in the **freelance phase**: no employees, no outsourcing, no clients yet.
-Details → [[vision]].
+Mittelstand (Automatisierung, KI-Agenten, Dashboards, Individualsoftware); *built in Germany,
+GDPR-first, engineering-grade*. **Partner A** (German): sales, network, clients, legal/admin.
+**Partner B** (technical): delivery, this repo. Freelance phase: no employees, no outsourcing,
+no clients yet. Details → [[vision]].
 
 ## Commercial state
 
@@ -38,219 +36,109 @@ Details → [[vision]].
 | Internal floor prices | **Not agreed.** `TBD:` in [[offer]] — blocks consistent quoting. |
 
 All prices netto zzgl. USt. The client always gets a fixed-price Angebot before build starts.
-Any audit price other than 295 € is superseded — D-007's figures are history. Details → [[offer]].
+Any audit price other than 295 € is superseded — D-007's figures are history (D-018). Details → [[offer]].
 
 ## Website state
 
-Live on **nexbridge-it.com** — domain registered to us, confirmed by the founder (D-025).
-Deployed as a Cloudflare static-asset Worker (D-022) with one script, `website/worker/index.js`,
-that serves the teaser videos as `206` slices, which Safari needs (D-062), and — since D-063 —
-the two stats routes under `/api/` (`worker/stats.js`). Astro 7 + Tailwind 4 (D-023).
-Bilingual from day one: German at `/`, English at `/en/`. Navigation is client-side behind a
-drafting-sheet transition veil (D-039); the motion system is documented in `DESIGN.md`.
+Live on **nexbridge-it.com** (D-025): Astro 7 + Tailwind 4 (D-023) as a Cloudflare static-asset
+Worker (D-022) — `website/worker/index.js` serves the teaser films as `206` slices (D-062) and
+`worker/stats.js` the two `/api/` stats routes (D-063). German at `/`, English at `/en/`;
+client-side navigation behind the drafting-sheet veil (D-039); motion system in `DESIGN.md`.
+Deploys are manual: `npx wrangler deploy` from `website/` (D-022).
 
-**Sixteen pages plus two vCard endpoints exist**: the six original routes (`/`, `/en/`,
-`/impressum`, `/datenschutz`, `/en/impressum`, `/en/datenschutz`), the gated teaser page
-(`/teaser`, `/en/teaser` — D-056), the founders' stats dashboard (`/statistik`, `/en/stats` —
-D-063; noindex, sitemap-excluded, in no nav, key-gated), plus the NB-VK digital business cards
-(D-049) — `/karte`, `/karte/p-knopp`, `/karte/m-vaghani`, their EN mirrors under
-`/en/card/`, and static `/karte/<slug>.vcf` endpoints. Card routes are noindex and
-sitemap-excluded: handouts, not landing pages. The nav links `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are homepage
-anchors, not pages — temporary, "until dedicated subpages exist"
-(`website/src/components/Header.astro:19`). The spec sitemap lists them as planned pages.
-`Teaser` is the exception: a real page, and the first one in the nav (D-057).
+**Routes.** Sixteen pages plus two vCard endpoints: `/`, `/impressum`, `/datenschutz` and their
+EN mirrors; the gated teaser page `/teaser`, `/en/teaser` (D-056; the only nav entry that is a
+page rather than an anchor, D-057); the key-gated founders' dashboard `/statistik`, `/en/stats`
+(D-063; noindex, sitemap-excluded, in no nav); the NB-VK cards `/karte`, `/karte/p-knopp`,
+`/karte/m-vaghani`, their EN mirrors under `/en/card/` and static `/karte/<slug>.vcf` (D-049,
+D-068; noindex, sitemap-excluded). `#leistungen`, `#vorgehen`, `#ueber-uns`, `#kontakt` are
+homepage anchors, not pages.
 
-`/teaser` holds three advertisement films (D-067), each behind its own 4-digit courtesy gate
-(D-056) — a blurred silent loop on hover, the full film after a code. **All three films are in
-the repo** (D-059, D-067): `website/public/teaser/` carries their code-named films, posters and
-preview loops, built by `ops/teaser-assets.bat` / `npm run teaser:assets` from the founder's
-source films in the gitignored `ops/teaser-src/`. Teaser 1 is the Rathaus film (NBIT1, 2:10,
-fitted to 720p for the 25 MiB cap), Teaser 2 the general film (NBG1, 1:20, 1080p), Teaser 3
-the third film (NB3, 1:52, 1080p, 16.3 MiB, no fitting needed). The codes are in no file; the
-founders hold them, and none is one of the guessable codes the script now refuses (D-067). A
-run builds only the films whose code is set, so adding a film needs only its own code; only a
-run with every code set sweeps automatically (D-067).
-The *page* is public: nav-linked, `Allow: /` in `robots.txt`, and emitted into
-`sitemap-index.xml` like every other route — D-056's "not indexed" is about the film URLs,
-which appear nowhere **on the site** until a correct code derives them, not about `/teaser`
-itself. **But the GitHub repo is public** (verified 2026-10-04), and the films are committed
-to it — anyone who finds the repo can download every full film without a code. Open item 12.
+**Teaser.** Three films, each behind its own 4-digit code (D-056, D-067), all committed in
+`website/public/teaser/` as code-named films, posters and preview loops (D-059; Teaser 1 fitted
+to 720p for the 25 MiB cap, the other two 1080p), built by `npm run teaser:assets` (Windows:
+`ops/teaser-assets.bat`) from the gitignored `ops/teaser-src/`; a run builds only the films whose
+code is set and sweeps only when every code is set (D-067). The codes are in no file. The page is
+indexable (robots `Allow: /`, in the sitemap); the film URLs appear nowhere on the site until a
+code derives them. The repo is public, so the films are too — open item 12.
 
-**Website stats are live** (D-063, switched on by D-064 on 2026-09-16). A cookieless
-first-party beacon (`src/scripts/beacon.ts`) reports page views and named clicks to
-`/api/hit` — page views, named clicks and, since D-065, whether a page was scrolled to its end;
-rows live in the D1 store `nexbridge-stats` (region WEUR). `/statistik` leads with **Strom**
-(D-066, which superseded the D-065 bench the founder rejected as "industrial"): the funnel
-visitors → clicked → reached the end → enquiries as a river of light in which every particle is
-a counted visitor, live (60-s poll), then the daily water level, ranked ledgers of pages,
-referrers, countries, devices, languages and events, and one sentence of totals — behind the
-`STATS_KEY` the founders hold. The page is exempt from the drawing-office register (D-066);
-tokens, fonts, contrast and reduced-motion still bind. `statsEnabled` in
-`site.ts` is `true` and is **coupled to Datenschutz §10** — the one cannot change without the
-other. A daily cron on the Worker deletes past salts and rows older than 24 months; the
-Datenschutz page carries a per-browser opt-out control under §10. The two off-the-shelf slots
-(`plausibleDomain`, `cfAnalyticsToken`) stay as fallbacks and are empty.
+**Stats** are live (D-063, on since D-064): a cookieless first-party beacon
+(`src/scripts/beacon.ts`) posts page views, named clicks and end-of-page reach (D-065) to
+`/api/hit`; rows live in the D1 store `nexbridge-stats` (WEUR). `/statistik` leads with Strom
+(D-066; exempt from the drawing-office register — tokens, contrast and reduced-motion still
+bind), behind `STATS_KEY`. `statsEnabled` in `site.ts` is `true` and is coupled to Datenschutz
+§10, which carries a per-browser opt-out; a daily Worker cron deletes old salts and rows > 24 months.
 
-The card routes are also the **NFC destination**: tags carry `nexbridge-it.com/karte/<slug>`,
-the same URL the printed QR codes encode, and never a vCard record (D-054). The **physical
-carrier is final** (D-055): the CR80 NFC card, master `print/visitenkarte-nfc/nfc-cr80.html`
-(NB-VK-01/02) — founder-picked design D on the back (glider 34 mm + signal wordmark with paper
-period on the dark metallic ground) and the Zeichnungskopf contact side on a light pastel-peach
-metallic ramp, with no revision date on the plate. The 85 × 55 paper master
-(`print/visitenkarte/`, D-053) is retained but superseded as the active physical carrier. The
-digital plate carries the company mark (D-050) engraved in one ink in the `.card-mark` slot
-(D-051); card revision is unified at 09/2026 (`cards.ts` `CARD_REVISION`). Printing is gated
-on the DPMA trademark check — open item 5 — plus the mandatory both-sides machine proof (D-055).
+**Cards.** The physical carrier is final: the CR80 NFC card, master
+`print/visitenkarte-nfc/nfc-cr80.html` (D-055; design D back on full-range metallic — on that
+surface only, the house texture and contrast laws are suspended, D-054). The paper master
+`print/visitenkarte/` (D-053) is retained, superseded. NFC tags and QR codes carry
+`nexbridge-it.com/karte/<slug>`, never a vCard (D-054). Card revision 09/2026 (`cards.ts`); phone
+numbers are per card (`phoneE164`; P Knopp's is the venture line, D-054). Printing waits on the
+DPMA check (item 5) and the machine proof (D-055).
 
-The plate's material is a founder override (D-054): full-range metallic, a live 26s drift that
-rests under `prefers-reduced-motion`, and the house texture laws (light-only pools, crush and
-opacity ceilings, AA discipline for small ink) suspended **on that surface only** — small ink on
-the plate can fall below 4.5:1 in the darkest pools. A knowing, logged trade; the site's contrast
-law stands everywhere else. Each card carries its own phone number (`cards.ts` `phoneE164`).
+**Brand marks.** The logo mark is the folded glider (D-050): favicon, `apple-touch-icon`,
+`og.png`, header lockup from `sm` up; canonical geometry in `website/public/logo-mark.svg`,
+`website/public/favicon.svg` and `website/src/components/Mark.astro`, guarded by `npm run logo`.
+The flow-line stays the motion signature; the wordmark sting (D-046) predates the mark (item 8).
+Single sources, stack and the quality bar: `CLAUDE.md`. Spec → [[website-spec]].
 
-Four single sources you must not work around:
+## Open items — ranked, owner in brackets
 
-- Brand name and URLs → `website/src/config/site.ts`
-- Design tokens → `website/src/styles/global.css` `@theme`
-- Every user-visible string → `website/src/i18n/ui.ts`. EN cannot drift from DE — but only
-  because of the `AssertKeys` guard at the foot of that file, and only when someone runs
-  `npm --prefix website run check`. The `satisfies` line alone never enforced it (D-058).
-- Teaser asset identity → `website/src/config/teasers.ts` (D-057; file identity only, no
-  strings, no codes)
-
-Details → [[website-spec]], visual world → `DESIGN.md`.
-
-The brand has a **logo mark** since D-050: the folded glider. It **ships** in the favicon, the
-`apple-touch-icon`, the `og.png` social card and the header lockup (from `sm` up — phones keep the
-wordmark alone), and is live on nexbridge-it.com. Canonical geometry sits in `website/public/logo-mark.svg`,
-`website/public/favicon.svg` and `website/src/components/Mark.astro`; they must not drift.
-The flow-line was *not* retired — it stays the motion signature (hero schematic, flowrail, seams).
-
-An official **animated wordmark sting** exists since D-046 — Higgsfield-generated (16:9, plus 1:1
-and 9:16 cuts), resolving onto the wordmark lockup, which ends in the CTA-grammar arrowhead.
-Off-site collateral only (video intros, social). It predates the mark, so it does not show the
-glider yet; the mark's own animation is drafted but **not chosen** (three takes exist).
-
-## Open items
-
-Ranked. Owner in brackets.
-
-1. **Legal pages need a lawyer's read** [founders] — both are filled with the founder's own
-   documents (D-036) and no longer block traffic. Four points were left for a professional
-   rather than guessed at: the Drittland section now that Cloudflare is named, whether the
-   Cloudflare AVV is actually accepted in the account, the Impressum naming two
-   Geschäftsführer alongside "Einzelunternehmer", and — new with D-056 — whether §8
-   *"Cookies und ähnliche Technologien"* (`website/src/i18n/legal.ts:144`) has to name the
-   teaser's `sessionStorage` entry. Its text currently denies cookies only, which stays
-   literally true; the heading covers similar technologies, and § 25 TDDDG is a lawyer's
-   call, not ours. And — since D-064 — §10 *"Webanalyse und Reichweitenmessung"* was
-   **rewritten in this repo on the founder's direction** (a logged override of rule 4): a
-   factual description of the D-063 stats plus the generator's own legal-basis sentences.
-   It is checked against the code (three claims failed that check and were fixed, D-064),
-   not by a lawyer — `TBD:` legal review of §10; the dashboard's `sessionStorage` key, the
-   beacon's `localStorage` opt-out read and its `navigator` signal checks join the §8 / § 25
-   TDDDG question; and D1 Time Travel backups mean "deleted" is true of the live database
-   only — the text is worded to that. The English versions are convenience translations and
-   are unreviewed.
-   **New with D-068:** on the founder's direction the Impressum and the Datenschutz controller
-   block give "P Knopp / M Vaghani, Walldorf" only, with no full names, street or postcode.
-   § 5 DDG and Art. 13 GDPR ask for a full name and a serviceable address. `TBD:` the lawyer's
-   read, most likely ending in a business address for the Impressum.
-   **D-069:** the Impressum's locality is now a small, light footnote below the page body, a
-   logged exemption from the contrast law; `TBD:` the same lawyer's read ("leicht erkennbar").
-2. **Stats live, kit line stale** [partner-b] — the go-live sequence of D-063 is complete
-   (D-064): key set by the founder, §10 rewritten, flag on, deployed. Left over: the brand
-   kit's "no analytics by default" floor (`docs/07-brand-kit.md` §11) is now false in letter
-   and must be regenerated, never hand-edited (D-048), at the next kit regeneration. The
-   first rows are the founders' own — tick "Eigene Besuche in diesem Browser nicht zählen"
-   on `/statistik` in each browser you use.
-3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty, so the form falls back
-   to the visitor's mail client. Enquiries arrive but are unmeasurable.
+1. **Legal pages need a lawyer's read** [founders] — filled from the founder's documents (D-036);
+   open: the Drittland section (Cloudflare), whether the Cloudflare AVV is accepted, two
+   Geschäftsführer beside "Einzelunternehmer", whether §8 must name the site's storage keys
+   (§ 25 TDDDG), the in-house §10 rewrite (D-064), the locality-only address (D-068; § 5 DDG,
+   Art. 13 GDPR) and the low-contrast footnote (D-069). EN versions are unreviewed translations.
+2. **Kit line stale** [partner-b] — `docs/07-brand-kit.md` §11 still says "no analytics by
+   default"; regenerate, never hand-edit (D-048). Opt out of your own visits on `/statistik`.
+3. **Contact form has no endpoint** [founders] — `formEndpoint` is empty; the form falls back to mail (D-013).
 4. **Internal P2/P3 floor prices not agreed** [founders] — see the table above.
-5. **DPMA trademark check** [partner-a] — must precede any printing or first public post.
-   Should include the generated-mark provenance question in one pass (origin recorded in D-050,
-   consequence logged in D-051).
-6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt` instead.
-7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it as the stronger
-   choice for Mittelstand buyers. Not blocking; log a D-entry if it gets registered.
-8. **Mark animation not chosen** [founders] — the glider has no animated sting yet; three takes
-   exist and none is picked, and D-046's animated wordmark predates the mark, so it shows the
-   flow-line lockup rather than the glider and needs a refresh once one is chosen.
-9. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor CLAUDE.md and D-043
-   set. Measured across four consecutive runs during the D-050 gate; **pre-existing and unrelated
-   to the mark** (font loading). Ranked here, not higher, only because no traffic reaches the site
-   yet — it moves up the moment it does.
-10. **On-light cut of the mark undecided** [partner-b] — the underside facet is `paper`, so the
-   mark needs a graphite chip on light material until a light-ground variant exists. Does not
-   gate the CR80 card (D-055), whose mark sits on the dark back only; gates any future
-   light-ground application.
-11. **The card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo`
-   checks the three canonical vector sources only; the card plate and both print masters
-   (paper, and CR80 per D-055) carry their own 0-origin copy, and the plate's copy still has
-   one sub-resolvable path the canonical mark does not. `TBD:` guard them or replace them —
-   see D-051, before the next card change.
-12. **The repo is public, so the films are too** [founders] — `mann0122/nexbridge-it` is
-   public on GitHub and `website/public/teaser/` holds all three full films, so the 4-digit
-   gate (D-056) protects the website only: an unauthenticated range request to
-   `raw.githubusercontent.com` returned film bytes (2026-10-04). Contradicts D-056's "not
-   casually shareable" while it lasts. `TBD:` founders — either make the repo private
-   (Settings → General → Danger Zone → Change visibility; deploys are manual from a local
-   checkout and nothing here depends on it being public), or log a D-entry accepting it.
-   Making it private also closes git history, which still holds the removed `1234` copy of
-   Teaser 3 (D-067).
+5. **DPMA trademark check** [partner-a] — precedes any printing or first public post; include the
+   generated-mark provenance question in the same pass (D-050, D-051).
+6. **`bookingUrl` unset** [founders] — CTAs point at `#kontakt`.
+7. **`nexbridge-it.de` status unrecorded** [founders] — D-016 recommended it; log a D-entry if registered.
+8. **Mark animation not chosen** [founders] — three takes exist; D-046's sting needs a refresh after.
+9. **Mobile Lighthouse performance 89–90** [partner-b] — below the 94 floor (D-043); font
+   loading, pre-existing (D-050 gate). Moves up the moment traffic arrives.
+10. **On-light cut of the mark undecided** [partner-b] — graphite chip on light material until a
+    light-ground variant exists; does not gate the CR80 card.
+11. **Card copies of the mark sit outside the drift guard** [partner-b] — `npm run logo` checks
+    the three canonical sources only; the plate copy carries one extra path (D-051). Guard or
+    replace the copies before the next card change.
+12. **The repo is public, so the films are too** [founders] — a range request to
+    `raw.githubusercontent.com` returned film bytes (2026-10-04); nothing in the deploy depends
+    on the repo being public. `TBD:` make it private, or log a D-entry accepting it. Private also
+    closes the history that holds the removed `1234` copy of Teaser 3 (D-067).
+13. **Workflow-skill allowlist** [founders] — `using-superpowers` and `brainstorming` claim every
+    turn, against the Direct tier (D-070). `TBD:` allowlist them as D-031 did for design skills
+    (narrows D-009), or keep D-009 as is.
 
 ### Known defects (technical, none blocking)
 
-- The 404 is German-only and cannot be otherwise under the current Cloudflare config (D-024);
-  an English visitor at `/en/tippfehler` gets the German page.
-- Below the `md` breakpoint the homepage h1 renders as „Prozesse, dievon selbst laufen." —
-  `Hero.astro` writes `Prozesse, die<br class="hidden md:block">von selbst laufen.`, so when the
-  break is hidden the two words collide. Pre-existing on `main`, found during the D-050 gate; the
-  fix is one space before the `<br>`, and it touches customer-facing German, so it goes through
-  `copywriter-de` on its own branch.
-- `npm --prefix website run check` reports four `'heroArrow' is possibly null` errors in
-  `website/src/scripts/flowrail.ts` (D-044). Pre-existing, not runtime bugs — but they are why
-  `check` is not yet wired into `build` (D-058). Clear them, then gate the build on it.
+- The 404 is German-only under the current Cloudflare config (D-024).
+- Below `md` the homepage h1 collides („dievon") — one space before the `<br>` in `Hero.astro`;
+  customer-facing German, so it goes through `copywriter-de`.
+- `npm --prefix website run check` fails on four pre-existing `'heroArrow' is possibly null`
+  errors in `website/src/scripts/flowrail.ts`; clear them, then wire `check` into `build` (D-058).
 
 ## Blocked / pending
 
-**D-005 — legal vehicle** is the only `PENDING` decision. **Do not raise it** — see D-008.
-No current work depends on it.
-
-## Working rules that bite most often
-
-Full constitution in `CLAUDE.md`. The four that catch people out:
-
-1. **Never invent** prices, legal text, client names, testimonials, or statistics. Unknowns are
-   marked `TBD:` and left alone.
-2. **German customer-facing copy goes through `copywriter-de`.** Sie-Form, no Title Case.
-3. **UI changes go through `design-critic`** before commit.
-4. **Lasting decisions get appended to [[decisions]] in the same commit.** The log is
-   append-only — supersede, never edit history.
+**D-005 — legal vehicle** is the only `PENDING` decision. **Do not raise it** (D-008). Nothing depends on it.
 
 ## In flight
 
-**Impressum footnote** (D-069) on `claude/impressum-address-footnote`: the locality moves out of
-the provider block into a small, light line below the page body. The D-068 names-and-address
-change is merged and deployed (2026-10-16).
+**Working principles** (D-070) on `claude/working-principles-research`: bootstrap line budgets,
+the commit gate hook, the memory section, the research record — built, awaiting review and merge.
 
-**Teaser 3** (D-067) on `claude/tender-goldberg-qnn87f`, PR #1 — the third card, the film,
-the partial-build script and the docs; built and reviewed, waiting on merge and deploy. After
-the deploy, `https://nexbridge-it.com/teaser/d98c34cf53051ce8.mp4` (the retired `1234` copy)
-must answer `404`.
-Everything else is merged into `main`, the only long-lived branch: the stats dashboard
-(D-063, live since D-064), the logo mark (D-050),
-the animated wordmark sting (D-046), the wordmark drop (D-047), the complete NB-VK card system
-(D-049, D-051…D-055) and the gated teaser page with both films (D-056…D-062). The teaser was
-built in the cloud against an older `main` and numbered D-049…D-051 there; those entries were
-renumbered to D-056…D-058 when `main` was merged in. **Deployed**: nexbridge-it.com serves the
-teaser page and both films since 2026-09-15 and the live stats — beacon, `/api/` routes,
-`/statistik` — since 2026-09-16 (deploys are manual — `npx wrangler deploy` from
-`website/`, D-022). Not yet
-seen on a real Safari — the first founder with an iPhone should open `/teaser`, enter a code
-and confirm the film plays (D-062).
+Everything else is merged into `main`, the only long-lived branch: Teaser 3 (D-067, 2026-10-04),
+the founder names and Walldorf address (D-068) and the Impressum footnote (D-069, 2026-10-16).
+D-068 is deployed (2026-10-16) and, since its commit descends from the Teaser 3 cleanup
+(9053941), so is that — `/teaser/d98c34cf53051ce8.mp4` (the retired `1234` copy, D-067) should
+answer `404`; confirm once. Whether D-069 is deployed is unverified from this session: after the
+next deploy the Impressum must show the footnote. Not yet seen on a real Safari: the first
+founder with an iPhone should open `/teaser`, enter a code and confirm it plays (D-062).
 
 ## Next
 
-The open items above, in order. The founder has signalled that a libraries-and-design-
-principles brief is coming, which will land in `DESIGN.md`.
+The open items above, in order. A libraries-and-design-principles brief from the founder is due in `DESIGN.md`.

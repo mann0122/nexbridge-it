@@ -19,8 +19,14 @@ Gate checklist (website):
 - Meta title/description per page, OG image, sitemap.xml, robots.txt, `lang="de"`.
 - Legal: /impressum and /datenschutz exist and are footer-linked on every page; contact form has
   consent checkbox; no third-party requests beyond the form provider — the stats beacon is
-  same-origin and off by default (D-063; check network tab).
+  same-origin and on (`statsEnabled: true` since D-064; the network tab must show nothing
+  off-origin).
 - No `TBD:` markers or lorem ipsum in anything about to ship.
+
+Gate checklist (every diff, website or not):
+- Diff hygiene: no file changed outside the lane boundary; no dead code or unused key left behind;
+  no abstraction with one caller; every assumption the brief did not settle is listed as an open
+  question in your report, not resolved silently.
 
 Gate checklist (client work): acceptance criteria from Angebot mapped to evidence; secrets not in
 repo; README + handover doc present; staging tested.

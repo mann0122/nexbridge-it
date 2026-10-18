@@ -52,6 +52,33 @@ const ROUTING = [
   ['state', '**Where do things stand right now?**'],
 ];
 
+/**
+ * Line budgets for the two files that load into every session (D-070), counted
+ * as lines of text — the same as `wc -l` when the file ends in a newline.
+ * CLAUDE.md imports docs/STATE.md, and an import does not
+ * reduce context cost, so the two are one budget in practice. Anthropic's
+ * guidance for the always-loaded instruction file is under 200 lines; 110 + 150
+ * is the trade accepted today, with the target below that as STATE.md's
+ * how-and-why keeps moving into the governing docs. STATE.md's own header said
+ * "current state only — no history, no rationale", and it still grew to 256
+ * lines. A budget that nothing enforces is a wish.
+ */
+const LINE_BUDGETS = [
+  { file: 'CLAUDE.md', max: 110 },
+  { file: 'docs/STATE.md', max: 150 },
+];
+
+/**
+ * Files and directories outside the graph that cite decisions in prose. A gate
+ * that rests on a retired fact fails correct work or waves the wrong thing
+ * through — qa-reviewer called the stats beacon "off by default" a month after
+ * D-064 switched it on, and the build stayed green because agent files were
+ * never checked. A cited D-number must exist; citing a superseded one warns,
+ * because history is sometimes the point. Keep in step with WATCHED in
+ * ops/scripts/commit-gate.mjs and with CLAUDE.md rule 7.
+ */
+const PROSE_CITERS = ['.claude/agents', '.claude/commands', 'CLAUDE.md', 'website/CLAUDE.md'];
+
 const VALID_TYPES = new Set([
   'knowledge', 'spec', 'playbook', 'decision-log', 'research', 'client', 'constitution', 'artifact', 'state',
 ]);
@@ -208,6 +235,37 @@ for (const line of logRaw.split('\n')) {
       `${log.file}: decision header contains inline code, which the index strips — `
       + `the title would lose words. Write it plain: ${line.trim()}`,
     );
+  }
+}
+
+// ─── bootstrap budgets and prose citations (D-070) ──────────────────────────
+for (const { file, max } of LINE_BUDGETS) {
+  const abs = path.join(ROOT, file);
+  if (!fs.existsSync(abs)) continue; // a missing file is reported by the node checks above
+  const raw = fs.readFileSync(abs, 'utf8');
+  const count = raw.split('\n').length - (raw.endsWith('\n') ? 1 : 0); // lines of text; an unterminated last line counts
+  if (count > max) {
+    errors.push(
+      `${file}: ${count} lines, budget ${max}. It loads into every session — move how and why `
+      + 'into the governing doc or a D-entry and leave a pointer (D-070).',
+    );
+  }
+}
+
+for (const entry of PROSE_CITERS) {
+  const abs = path.join(ROOT, entry);
+  if (!fs.existsSync(abs)) continue;
+  for (const file of fs.statSync(abs).isDirectory() ? walk(abs) : [abs]) {
+    // Links are not citations: a D-number inside a URL is somebody else's.
+    const prose = stripCode(fs.readFileSync(file, 'utf8')).replace(/https?:\/\/\S+/g, '');
+    const cited = new Set([...prose.matchAll(/\bD-\d{3}\b/g)].map((m) => m[0]));
+    for (const id of cited) {
+      const found = decisions.get(id);
+      if (!found) errors.push(`${rel(file)}: cites ${id} — no such entry in the decision log`);
+      else if (found.status === 'superseded') {
+        warnings.push(`${rel(file)}: cites ${id}, which is SUPERSEDED (${found.statusRaw}) — check the sentence still holds`);
+      }
+    }
   }
 }
 

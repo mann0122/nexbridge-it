@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-10-16 · 16 nodes · 69 decisions
+Content as of 2026-10-18 · 17 nodes · 70 decisions
 
 ## Map
 
@@ -27,6 +27,7 @@ graph LR
   state["state"]
   clients["clients"]
   research_skills["research-skills"]
+  research_cognitive_system["research-cognitive-system"]
   research_domains["research-domains"]
   claude_md["claude-md"]
   design["design"]
@@ -45,12 +46,17 @@ graph LR
   decisions -.-> state
   decisions -.-> brand
   decisions -.-> decisions
+  decisions -.-> research_cognitive_system
   vision --> agent_system
   agent_system -.-> decisions
+  agent_system -.-> research_cognitive_system
+  agent_system -.-> delivery
   brand --> brand_kit
   website_spec --> brand_kit
   delivery --> clients
   clients -.-> state
+  research_cognitive_system -.-> agent_system
+  research_cognitive_system -.-> state
   research_domains -.-> state
   vision --> state
   offer --> state
@@ -90,18 +96,19 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `offer` | Offer & packages | knowledge | active | founders | 2026-07-31 | [docs/01-offer.md](01-offer.md) | `website-spec`, `delivery`, `state`, `product` |
 | `brand` | Brand | knowledge | active | partner-b | 2026-08-23 | [docs/02-brand.md](02-brand.md) | `website-spec`, `brand-kit`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-10-04 | [docs/03-website-spec.md](03-website-spec.md) | `brand-kit`, `state` |
-| `delivery` | Delivery playbook | playbook | active | founders | 2026-07-26 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-10-04 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
-| `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-08-01 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
+| `delivery` | Delivery playbook | playbook | active | founders | 2026-10-18 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-10-18 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
+| `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-10-18 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `brand-kit` | Brand kit (portable, single file) | knowledge | active | partner-b | 2026-08-23 | [docs/07-brand-kit.md](07-brand-kit.md) | — |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
+| `research-cognitive-system` | Research — the "Karpathy + Obsidian + Opus 5.5 + Jev" post | research | active | partner-b | 2026-10-18 | [docs/research/cognitive-system-post.md](research/cognitive-system-post.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
-| `state` | Where things stand | state | active | partner-b | 2026-10-16 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
+| `state` | Where things stand | state | active | partner-b | 2026-10-18 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
-**knowledge**: `agent-system`, `brand`, `brand-kit`, `offer`, `vision` · **spec**: `website-spec` · **playbook**: `delivery` · **research**: `research-domains`, `research-skills` · **client**: `clients`
+**knowledge**: `agent-system`, `brand`, `brand-kit`, `offer`, `vision` · **spec**: `website-spec` · **playbook**: `delivery` · **research**: `research-cognitive-system`, `research-domains`, `research-skills` · **client**: `clients`
 
 ## Decisions
 
@@ -118,7 +125,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | ~~D-006~~ | 2026-07-26 | Domain: klarfluss.eu | SUPERSEDED by D-016 | — |
 | ~~D-007~~ | 2026-07-26 | v1 package prices | SUPERSEDED by D-018 | — |
 | D-008 | 2026-07-26 | Legal/admin items: covered by founders | DECIDED | `vision`, `state` |
-| D-009 | 2026-07-26 | Skill arsenal: maximal | DECIDED | `research-skills` |
+| D-009 | 2026-07-26 | Skill arsenal: maximal | DECIDED | `state`, `research-skills` |
 | D-010 | 2026-07-26 | Bilingual DE/EN from v1; name provisional until demo review | DECIDED | `website-spec` |
 | D-011 | 2026-07-26 | Premium motion layer on the landing page | DECIDED | — |
 | D-012 | 2026-07-26 | No FAQ — objections answered inside a narrative | DECIDED | — |
@@ -140,28 +147,28 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-028 | 2026-08-02 | Wandlung: the particle field gets its own pinned stage | DECIDED | — |
 | D-029 | 2026-08-02 | Official venture email: nexbridge-it@mailbox.org | DECIDED | — |
 | D-030 | 2026-08-02 | GSAP is the only animation engine | DECIDED | `brand-kit` |
-| D-031 | 2026-08-02 | Design skills are allowlisted, not accumulated | DECIDED | — |
+| D-031 | 2026-08-02 | Design skills are allowlisted, not accumulated | DECIDED | `state` |
 | ~~D-032~~ | 2026-08-02 | The site has no icon vocabulary | SUPERSEDED by D-043 | — |
 | D-033 | 2026-08-02 | Wandlung re-themed to the AI stack; solid pyramid mark | DECIDED | — |
 | D-034 | 2026-08-02 | Wandlung: volumetric fill, a brain, 9000 particles | DECIDED | — |
 | D-035 | 2026-08-02 | Particle field removed from the site entirely | DECIDED | — |
 | D-036 | 2026-08-03 | Legal pages filled from the founder's documents | DECIDED | `state` |
-| D-037 | 2026-08-06 | Ribbons cursor trail; a second generative canvas is allowed | DECIDED | `state` |
-| D-038 | 2026-08-06 | Motion lifecycle: one frame clock, one overlay mount, page-scoped inits | DECIDED | `state` |
+| D-037 | 2026-08-06 | Ribbons cursor trail; a second generative canvas is allowed | DECIDED | — |
+| D-038 | 2026-08-06 | Motion lifecycle: one frame clock, one overlay mount, page-scoped inits | DECIDED | — |
 | D-039 | 2026-08-06 | ClientRouter + the drafting-sheet veil; navigation is a drawing change | DECIDED | `state` |
-| D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | `state` |
-| D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | `state` |
-| D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | `state` |
+| D-040 | 2026-08-06 | The particles return, confined: FlowField dispersion + route-exit blast | DECIDED | — |
+| D-041 | 2026-08-06 | Section seams: eight boundaries, three motifs, still no pinning | DECIDED | — |
+| D-042 | 2026-08-06 | Motion upgrade measured; the 95 floor held; dissolve stays a lab | DECIDED | — |
 | D-043 | 2026-08-07 | Icon vocabulary admitted under drawing rules | DECIDED — supersedes D-032 | `website-spec`, `brand-kit`, `state` |
-| D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | `state` |
-| D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | `state` |
+| D-044 | 2026-08-07 | Flowrail: the exit arrow travels the document and bursts on route exit | DECIDED | — |
+| D-045 | 2026-08-07 | The WebGL hero dissolve is killed; the flowrail is confirmed | DECIDED | — |
 | D-046 | 2026-08-16 | Official animated logo: the Higgsfield-generated sting | DECIDED | `brand`, `state` |
-| D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit`, `state` |
-| D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | — |
+| D-047 | 2026-08-16 | Wordmark drop: the period walks the name and becomes the pulse | DECIDED | `brand-kit` |
+| D-048 | 2026-08-23 | Portable brand kit: docs/07-brand-kit.md, regenerate-never-edit | DECIDED | `state` |
 | D-049 | 2026-08-23 | NB-VK digital cards ship as the signal-plate object; drawing-of-itself retires on card routes | DECIDED | `state` |
 | D-050 | 2026-08-23 | Official logo mark: the folded glider | DECIDED | `brand`, `brand-kit`, `state` |
 | D-051 | 2026-08-23 | The mark engraved on the NB-VK card plate: one-ink cut, 0-origin coordinates, grain ceiling | DECIDED | `brand`, `state` |
-| D-052 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED | `state` |
+| D-052 | 2026-08-23 | Card plate recomposed: sandblasted signal-orange anodized; light-only pools law; glitter ceiling | DECIDED | — |
 | D-053 | 2026-08-23 | Company mark extends to the print fronts; the process schematic retires from print | DECIDED | `brand`, `state` |
 | D-054 | 2026-08-23 | Card plate goes full metallic on founder override; house texture laws suspended on this surface | DECIDED | `state` |
 | D-055 | 2026-09-06 | The CR80 NFC card is final: design D back, pastel metallic front | DECIDED | `state` |
@@ -169,8 +176,8 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-057 | 2026-09-15 | config/teasers.ts as asset manifest; /teaser is the first real nav route | DECIDED | `website-spec`, `state` |
 | D-058 | 2026-09-15 | npm run check + a real i18n parity guard in ui.ts | DECIDED | `state` |
 | D-059 | 2026-09-15 | The two teaser films are in the repo; the build fits the 25 MiB cap itself | DECIDED | `state` |
-| D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED | `state` |
-| D-061 | 2026-09-15 | Teaser scrim 0.62 → 0.74, tuned against the real posters | DECIDED | `state` |
+| D-060 | 2026-09-15 | Header at md: short language toggle, nothing wraps | DECIDED | — |
+| D-061 | 2026-09-15 | Teaser scrim 0.62 → 0.74, tuned against the real posters | DECIDED | — |
 | D-062 | 2026-09-15 | The teaser videos are served by a Worker script as 206 — Safari needs Range | DECIDED | `website-spec`, `state` |
 | D-063 | 2026-09-16 | Website stats are self-hosted: own beacon, Worker route, D1, key-gated dashboard — shipped dark | DECIDED | `website-spec`, `state` |
 | D-064 | 2026-09-16 | Stats switched on; Datenschutz §10 rewritten in-house on the founder's direction | DECIDED | `website-spec`, `state` |
@@ -179,6 +186,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-067 | 2026-10-04 | A third teaser film; the build adds one film without touching the others | DECIDED | `website-spec`, `state` |
 | D-068 | 2026-10-16 | Founder names shortened to initial + surname; the street address leaves every surface | DECIDED | `state` |
 | D-069 | 2026-10-16 | Impressum locality moves to a small, light footnote | DECIDED | `state` |
+| D-070 | 2026-10-18 | Working principles tightened against the verified sources: bootstrap line budgets, a commit gate, file-back and measurement rules | DECIDED | `delivery`, `agent-system`, `state`, `research-cognitive-system` |
 
 ### ⏳ Pending — work that depends on these is blocked
 
@@ -186,4 +194,4 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 
 ---
 
-_16 nodes, 30 edges, 0 broken. Rebuild: `npm run kb`._
+_17 nodes, 35 edges, 0 broken. Rebuild: `npm run kb`._

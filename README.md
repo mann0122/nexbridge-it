@@ -52,15 +52,22 @@ decision's content supports the claim citing it. That gap is how `D-015` — an 
 `pages.dev` preview — ended up cited as the authority for moving to a Worker. Reading is still
 your job.
 
-If you edit anything under `docs/`, run `npm run kb` before committing.
+If you edit anything the graph covers — `docs/`, `CLAUDE.md`, `website/CLAUDE.md`, this file,
+`DESIGN.md`, `PRODUCT.md`, `.claude/agents/`, `.claude/commands/` or the graph script — run
+`npm run kb` before committing. Since D-070 a Claude Code hook
+(`ops/scripts/commit-gate.mjs`) refuses a `git commit` made from a session while a graph-covered
+file differs from HEAD and the build is red or `docs/INDEX.md` is stale; a commit from a terminal
+is not gated. The build also fails when `CLAUDE.md` or `docs/STATE.md` outgrows its line budget —
+those two load into every session.
 
 ## How the agent system works
 
-`CLAUDE.md` loads every session and classifies incoming work. Trivial and read-only tasks go
-direct. Anything touching UI, customer-facing German, `docs/`, or multiple files runs the full
-loop: intake with checkable acceptance criteria → parallel lanes → integrate → gates
-(`design-critic`, `copywriter-de`, `kb-curator`, `qa-reviewer`) → verdict, re-dispatching only the
-failing findings, capped at three iterations before a human decides.
+`CLAUDE.md` loads every session and classifies incoming work by a tier table. Trivial and
+read-only tasks go direct — since D-070 so do a dated research note and a one-line STATE.md fact
+fix. Anything else touching UI, customer-facing German, `docs/`, or multiple files runs the loop
+in `docs/06-agent-system.md`: intake with checkable acceptance criteria → parallel lanes →
+integrate → gates → verdict, re-dispatching only the failing findings, capped at three
+iterations before a human decides.
 
 The orchestrator is the main session, not a subagent — it already holds the context a spawned
 supervisor would have to re-derive. Full protocol: [`docs/06-agent-system.md`](docs/06-agent-system.md).

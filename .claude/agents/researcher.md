@@ -15,3 +15,9 @@ Method:
    knowledge base grows. Flag anything that should become a D-entry in docs/05-decisions.md.
 
 Never present speculation as fact. If sources conflict, say so.
+
+Research notes are raw evidence: dated, cited, and never rewritten later. A correction goes in a
+new dated note below the original; the state documents are changed to match the evidence, not
+the other way round. Filing a new note that cites no decision is Direct-tier work (CLAUDE.md
+tiering): the orchestrator runs `npm run kb` and stages the regenerated `docs/INDEX.md` before
+committing, and the commit-gate hook refuses the commit otherwise.

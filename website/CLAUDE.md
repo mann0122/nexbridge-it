@@ -1,17 +1,14 @@
 # website/ — NexBridge-IT marketing site
 
-The repo constitution is `../CLAUDE.md` and the knowledge map is `../docs/INDEX.md`. Read
-`../docs/STATE.md` for what is live and what is still open. This file covers only what is specific
-to the Astro app.
+The repo constitution is `../CLAUDE.md` and the knowledge map is `../docs/INDEX.md`;
+`../docs/STATE.md` is already loaded through the constitution's import. This file covers only
+what is specific to the Astro app.
 
-## Four single sources — never work around them
+## The four single sources — Astro-side detail
 
-| What | Where |
-|---|---|
-| Brand name, URLs, email, analytics + form config | `src/config/site.ts` |
-| Design tokens (colours, type scale) | `src/styles/global.css` `@theme` |
-| Every user-visible string, DE and EN | `src/i18n/ui.ts` |
-| Teaser asset identity — file ids only, no strings, no codes, no film paths | `src/config/teasers.ts` (D-057) |
+The list is in `../CLAUDE.md` §Stack. What the Astro side adds: `src/config/site.ts` also carries
+the email, analytics and form config; `src/i18n/ui.ts` holds both the DE and the EN block; and
+the parity guard below is the only thing that keeps the two blocks aligned.
 
 The English block cannot silently drift from the German one — but NOT because of the
 `satisfies Record<Lang, Record<string, string>>`, which only requires string keys and let exactly

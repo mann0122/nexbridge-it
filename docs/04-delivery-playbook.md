@@ -4,9 +4,9 @@ title: Delivery playbook
 type: playbook
 status: active
 owner: founders
-updated: 2026-07-26
+updated: 2026-10-18
 depends_on: [offer]
-decisions: []
+decisions: [D-070]
 ---
 
 # 04 — Delivery Playbook
@@ -29,8 +29,9 @@ decisions: []
 - Definition of done: acceptance criteria from the Angebot checked off in writing by the client.
 
 ## Weekly rhythm (founders)
-30 min: pipeline review (Partner A) + delivery status (Partner B) + one improvement to this repo.
-Decisions land in docs/05-decisions.md.
+30 min: pipeline review (Partner A) + delivery status (Partner B) + one improvement to this repo,
+starting from the `/kb` drift report — the lint pass of D-070 runs on this cadence, not only when
+a gate trips over a stale claim. Decisions land in docs/05-decisions.md.
 
 ## Case engine
 After every project: write `docs/clients/<name>/case-draft.md` — problem, solution, numbers,

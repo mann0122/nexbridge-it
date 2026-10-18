@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-10-04
+updated: 2026-10-18
 depends_on: []
 decisions: []
 ---
@@ -1711,6 +1711,61 @@ the card plate. The CSS comment in `ImpressumBody.astro` says the same. The Date
 block is unchanged. The founder was told that § 5 DDG asks for Impressum data to be *leicht erkennbar*
 (easy to recognise) and chose this anyway. It joins STATE open item 1 for the lawyer's read. Owner:
 founders.
+
+## D-070 | 2026-10-18 | Working principles tightened against the verified sources: bootstrap line budgets, a commit gate, file-back and measurement rules | DECIDED
+The founder brought a viral one-pager ("Karpathy + Obsidian + Opus 5.5 + Jev — 10× chat speed,
+80 % less time") and asked for its principles in our working principles. Researched by six
+agents, each result tried by two skeptics, then the repo audited against what survived
+([[research-cognitive-system]]). Verdict: real parts, invented whole. Karpathy's real artefact is
+the **LLM Wiki** gist (2026-04-04): immutable raw sources, an LLM-maintained markdown wiki, a
+schema file such as CLAUDE.md, and ingest / query-and-file-back / lint. Opus 5.5 is a real model;
+Jev is a typed-decision classifier, not an orchestrator; the "framework", the paper and both
+numbers have no source. This repo already implemented the wiki discipline more rigorously than
+the gist (declared edges that fail the build, `cites_history:`, graders without write tools), so
+**nothing from the post is adopted as such** — rule 1 forbids the numbers, and no principle
+contradicted the repo in substance. The speed losses the audit found were mechanical, and those
+are what this entry fixes.
+
+**Adopted.** (1) `CLAUDE.md` and `docs/STATE.md` load into every session and had grown to ~354
+lines together; STATE.md explained *how* against its own header. Both get a line budget (110 and
+150 lines of text) that `npm run kb` enforces; STATE.md is trimmed to state and pointers, the
+loop text lives in full in `06-agent-system.md` only and is summarised in `CLAUDE.md` and the
+README, and Intake no longer re-reads the imported STATE.md. (2) Rule 7 was prose; a
+`PreToolUse` hook (`ops/scripts/commit-gate.mjs`) now refuses a commit made from a Claude Code
+session while a graph-covered file differs from HEAD and the build is red or `INDEX.md` is
+stale — a commit from a terminal is not gated and still needs the run by hand — and the build
+also checks D-numbers cited in prose by `CLAUDE.md`, `website/CLAUDE.md`, `.claude/agents/` and
+`.claude/commands/` for entries that do not exist or are superseded, which is what a build can
+see. The stale beacon fact in `qa-reviewer` ("off by default" a month after D-064, with a live
+D-063 cited) is the kind of drift only the `/kb` read catches; it is fixed under (7) and is why
+the drift report joins the weekly rhythm under (4). (3) Chat is not storage: an answer that took
+more than one file goes into `docs/research/`, dated, or a D-entry; a correction given twice
+goes into the governing file; a dated research note and a one-line STATE.md fix that the code
+or `git log` contradicts are Direct-tier, which narrows D-021's `docs/` trigger (the tier
+tables' "anything in `docs/`") by exactly those two cases. (4) Memory is written down as three
+layers and three operations in
+`06-agent-system.md`, with the raw-evidence rule in `kb-curator` and `researcher` and the `/kb`
+drift report on the weekly rhythm. (5) A claim that a workflow change made us faster needs a
+before/after number; `/ship` reports iterations and findings per iteration so one can exist.
+(6) The repo's own build and check commands are allowlisted in `.claude/settings.json` as
+exact-match rules (a compound command is approved only when every part matches); commits,
+pushes and deploys still ask. (7) Small corrections: the stale beacon fact and a diff-hygiene
+check in `qa-reviewer`, the dead D-003 branch in `/brand-check`, `ui.ts` lane collisions named,
+an unrunnable "lints clean" replaced by the check that exists, and the copies of the four single
+sources in `website/CLAUDE.md` and `frontend-dev` reduced to a pointer at `CLAUDE.md` §Stack
+plus the Astro-side detail.
+
+**Not adopted, deliberately.** Obsidian, Jev, a "cognitive core", the 10×/80 % figures,
+autoresearch's NEVER-STOP loop (the Blocked tier and the 3-iteration cap stand), auto-commits at
+session end, unattended scheduled runs, model downgrades on the brand gates (the masterpiece
+mandate of D-009), and agent-written `memory:` directories — an unreviewed second source of
+truth is the drift D-020 exists to catch. Allowlisting the two always-on workflow skills narrows
+D-009 and is left to the founders as STATE open item 13. **Expectation, not promise:** the
+measured evidence — secondhand for the METR, Google and Microsoft trials, and from completion
+tools rather than agents except one observational CLI study — puts gains at tens of percent on
+well-scoped, verifiable work, found none on a novel-library task and a slowdown on familiar
+repos; judgment-heavy work is unmeasured. Whether these changes helped is a hypothesis until
+`/ship` runs supply numbers. Owner: partner-b.
 
 ## Template
 ```

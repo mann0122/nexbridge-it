@@ -3,24 +3,27 @@
 `NexBridge-IT_Briefbogen.docx` is the company letterhead as a Word file (D-071). Everything is
 designed except the letter's text: open it, replace the highlighted placeholders, write the body.
 
-The design is **A · Graphitband**, picked by the founder from three directions. It is a
+The design is **D · Schwung**. The founder asked for a design that was more elegant and beautiful, so six directions were drawn in parallel and this one was picked. It is a
 marketing surface, so it leaves the drawing-office register of the website on the founder's
 direction (D-071): no mono labels, no title block. The brand's colours and type still bind.
 
-- **Top band:** graphite, full width. The glider in its native colours next to the wordmark,
-  and on the same line, right-aligned, the site's tagline "Prozesse, die von selbst laufen."
-  Below them the brand's flow-line: two fine steel lines run in from the left edge and merge
-  into an orange strip that leaves at the right edge. The four offers sit above the strip.
+- **Top right:** nine fine, exactly parallel curves sweep in from beyond the corner and leave
+  the right edge running level. One of them is orange; the grey ones darken toward it and rise
+  out of the paper.
+- **Top left:** the glider in its graphite chip next to the wordmark with its orange period.
+  Below them, the site's tagline "Prozesse, die von selbst laufen." in Archivo Light, then the
+  four offers in small tracked capitals.
 - **Address field** for a left-window envelope, with the small return line above it, and the
   **information block** on the right: Telefon, E-Mail, Web, Datum.
-- **Footer band:** graphite, with the contact line and an orange strip on its left edge, which
-  answers the header strip on the right.
-- **Page 2 onward:** a slimmer band with a smaller lockup, the same flow-line and "Seite x von y".
+- **Bottom left:** a smaller echo of the curves, turned round, so the page reads corner to
+  corner. **Bottom right:** the contact details in two columns, starting on the information
+  block's line.
+- **Page 2 onward:** a smaller sweep, a smaller lockup and "Seite x von y" on its baseline.
 - **Fold and hole marks** on the left edge.
 
-Two more directions are built by the same generator and can replace A with one argument:
-**B · Signallinie** (light page, the brand's flow-line beside the lockup, nothing bleeds) and
-**C · Seitenleiste** (graphite strip down the left edge). See "Other variants" below.
+The earlier directions are still built by the same generator and can replace D with one
+argument: **A · Graphitband** (graphite band across the top), **B · Signallinie** and
+**C · Seitenleiste**. See "Other variants" below.
 
 The fonts (Archivo regular and semibold, Archivo SemiExpanded for the subject line) are
 **embedded**, so the letter prints in the house type on a PC that has never had Archivo
@@ -52,14 +55,14 @@ document loses them.
 
 ## Printing
 
-- **The bands run to the paper edge.** An office printer cannot print the outer 3–5 mm, so it
-  leaves a thin white margin around the bands. For letters that look premium, have the
-  letterhead printed by a print shop and print each letter onto that paper — or send the letter
-  as a PDF (Word: *Datei → Exportieren → PDF*), which keeps the bands to the edge.
+- **D prints on an office printer.** Only the ends of the curves run off the paper, and they
+  leave the page anyway, so the 3–5 mm an office printer cannot print costs nothing. The
+  palest grey curves can drop out on a cheap laser; a print shop or a PDF (Word: *Datei →
+  Exportieren → PDF*) shows them as drawn.
+- **A's bands run to the paper edge**, so an office printer leaves a white margin around them:
+  print shop or PDF.
 - Print at **100 % / actual size**, never "fit to page": the address field and the marks are
   measured from the paper edge.
-- B · Signallinie is the variant an office printer reproduces completely, because nothing in it
-  bleeds.
 
 ## Before the first letter goes out
 
@@ -87,7 +90,9 @@ npm run brief
 
 - `fonts/` — static instances of the Archivo variable font (wdth 100 · wght 400, its linked
   bold at wght 600, and wdth 112 · wght 600), subset to Latin. SIL OFL 1.1, no Reserved Font
-  Name; the licence is next to them.
+  Name; the licence is next to them. D's artwork also uses Archivo Light, Book, Medium and a
+  wide Medium; those are set as outlines only, never embedded, and are built into the gitignored
+  `.cache/` from the same variable font.
 - `assets/<variant>-seite1.svg`, `-folgeseite.svg` — everything that never changes per letter:
   bands, strips, lockup, offer line, footer contact line, marks. The glider comes from
   `website/public/logo-mark.svg` (dark ground) or `website/public/favicon.svg` (the chip, light
@@ -101,6 +106,7 @@ embedding flag, settings order, page-number fields, the bold face); the comment 
 ## Other variants
 
 ```
+node print/brief/build-brief.mjs graphitband  print/brief/NexBridge-IT_Briefbogen.docx
 node print/brief/build-brief.mjs signallinie  print/brief/NexBridge-IT_Briefbogen.docx
 node print/brief/build-brief.mjs seitenleiste print/brief/NexBridge-IT_Briefbogen.docx
 ```
@@ -111,6 +117,8 @@ To make one of them the default, change `DEFAULT_VARIANT` in `build-brief.mjs` a
 
 | Element | Position |
 |---|---|
+| Sweep (D) | top-right corner, inside y 0–45 (follow pages: 0.55 scale, inside 0–40) |
+| Lockup · tagline · offers (D) | chip from y 14.5 · baseline 32.6 · baseline 37.6, all from x 25 |
 | Top band (A) | 0–38 graphite, signal strip 36.2–38 from x 128; follow pages 0–22, strip 20.6–22 |
 | Address field | x 20–105, y 45–90; text from x 25 |
 | — return line | last of five 3.54 mm lines, ending at y 62.7 |
@@ -119,4 +127,5 @@ To make one of them the default, change `DEFAULT_VARIANT` in `build-brief.mjs` a
 | Betreff | from about y 98.5 |
 | Writing area | x 25–190, body ends at y 275 |
 | Fold marks · hole mark | y 105 and 210 · y 148.5 |
+| Footer (D) | contacts from x 125, baselines 283.4 / 287 / 290.6; echo bottom-left from y 277 |
 | Footer band (A) | 282–297 graphite, signal strip 282–283.8 from x 0 to 82, contact line at y 291.2 |

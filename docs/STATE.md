@@ -77,9 +77,10 @@ surface only, the house texture and contrast laws are suspended, D-054). The pap
 numbers are per card (`phoneE164`; P Knopp's is the venture line, D-054). Printing waits on the
 DPMA check (item 5) and the machine proof (D-055).
 
-**Letterhead.** `print/brief/NexBridge-IT_Briefbogen.docx` (D-071): DIN 5008 Form B, design A
-(graphite band; B and C are alternatives), fonts embedded, body left to the writer. Posting waits on the DPMA check (item 5); a letter to a named
-person needs a lawyer's notice under Art. 14 and 21 GDPR (D-071).
+**Letterhead.** `print/brief/NexBridge-IT_Briefbogen.docx` (D-071): DIN 5008 Form B, design D
+(Schwung: sweeping curves top-right; A, B, C are alternatives), fonts embedded, body left to the
+writer. Posting waits on the DPMA check (item 5); a letter to a named person needs a lawyer's
+notice under Art. 14 and 21 GDPR (D-071).
 
 **Brand marks.** The logo mark is the folded glider (D-050): favicon, `apple-touch-icon`,
 `og.png`, header lockup from `sm` up; canonical geometry in `website/public/logo-mark.svg`,

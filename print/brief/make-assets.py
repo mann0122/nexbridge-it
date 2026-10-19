@@ -24,6 +24,7 @@ in its graphite chip) on a light one, as docs/02-brand.md requires.
 The variants leave the drawing-office register on the founder's direction (D-071, like D-066):
 no mono labels, no title block, no datasheet hairlines. Brand tokens and fonts still bind.
 """
+import math
 import re
 import sys
 import urllib.request
@@ -113,6 +114,13 @@ def build_fonts():
         font.save(FONTS / fname)
         made[key] = FONTS / fname
         print(f'  font  {(FONTS / fname).relative_to(ROOT)}  {(FONTS / fname).stat().st_size // 1024} KB')
+    # Artwork-only cuts: they are set as outlines into the SVGs and never embedded, so they stay
+    # in the gitignored cache.
+    for key, loc in (('light', {'wght': 300, 'wdth': 100}), ('book', {'wght': 350, 'wdth': 100}),
+                     ('medium', {'wght': 500, 'wdth': 100}), ('capsx', {'wght': 500, 'wdth': 116})):
+        made[key] = CACHE / f'Archivo-{key}.ttf'
+        if not made[key].exists():
+            instancer.instantiateVariableFont(TTFont(vf), loc).save(made[key])
     return made
 
 
@@ -324,7 +332,149 @@ def seitenleiste(f):
     return page(p1), page(p2)
 
 
-VARIANTS = {'graphitband': graphitband, 'signallinie': signallinie, 'seitenleiste': seitenleiste}
+# ─── D · Schwung ─────────────────────────────────────────────────────────────────────────
+# A family of fine, exactly parallel curves sweeps in from beyond the top-right corner and leaves
+# the page at the right edge running level — the flow-line's direction, in left, out right. One
+# curve is signal; the steel ones darken toward it and rise out of the paper. A smaller echo of
+# the same family, turned through 180°, enters at the bottom-left, so the page reads corner to
+# corner. The base curve is a quarter ellipse; every other curve is an exact offset of it (point
+# plus d · unit normal), so the spacing never changes and no curve can cusp.
+
+class Sweep:
+    """Quarter ellipse around (cx, cy), semi-axes a (across) and b (down), facing the page:
+    P(t) = (cx - a cos t, cy + b sin t). Curve k is the outward offset by k * step."""
+
+    def __init__(self, cx, cy, a, b, step):
+        self.cx, self.cy, self.a, self.b, self.step = cx, cy, a, b, step
+
+    def point(self, t, d):
+        c, s = math.cos(t), math.sin(t)
+        nx, ny = -c / self.a, s / self.b
+        n = math.hypot(nx, ny)
+        return self.cx - self.a * c + d * nx / n, self.cy + self.b * s + d * ny / n
+
+
+def _u(v):
+    return f'{round(v * MM, 1):g}'
+
+
+def bezier_chain(fn, t0, t1, segs):
+    """Cubic Bézier chain through fn(t) on [t0, t1], Hermite tangents by central difference."""
+    h = 1e-5
+    ts = [t0 + (t1 - t0) * i / segs for i in range(segs + 1)]
+    pts = [fn(t) for t in ts]
+    der = []
+    for t in ts:
+        (x1, y1), (x2, y2) = fn(t - h), fn(t + h)
+        der.append(((x2 - x1) / (2 * h), (y2 - y1) / (2 * h)))
+    dt = (t1 - t0) / segs
+    d = [f'M{_u(pts[0][0])} {_u(pts[0][1])}']
+    for i in range(segs):
+        (ax, ay), (bx, by) = pts[i], pts[i + 1]
+        (dax, day), (dbx, dby) = der[i], der[i + 1]
+        d.append(f'C{_u(ax + dax * dt / 3)} {_u(ay + day * dt / 3)} {_u(bx - dbx * dt / 3)} {_u(by - dby * dt / 3)} '
+                 f'{_u(bx)} {_u(by)}')
+    return ' '.join(d)
+
+
+def visible_range(fn, box, lo=-1.2, hi=math.pi / 2 + 1.2, n=6000):
+    """Longest contiguous t-run whose points lie inside box (x0, y0, x1, y1)."""
+    x0, y0, x1, y1 = box
+    best, cur = None, None
+    for i in range(n + 1):
+        t = lo + (hi - lo) * i / n
+        x, y = fn(t)
+        if x0 <= x <= x1 and y0 <= y <= y1:
+            cur = (cur[0], t) if cur else (t, t)
+        elif cur:
+            if not best or cur[1] - cur[0] > best[1] - best[0]:
+                best = cur
+            cur = None
+    if cur and (not best or cur[1] - cur[0] > best[1] - best[0]):
+        best = cur
+    return best
+
+
+def sweep_family(sw, styles, transform, box, gid, fade=(0.25, 1.0), segs=18):
+    """styles: (stroke, width_mm, opacity) per curve, index 0 nearest the corner. Steel curves
+    fade from fade[0] where they enter to fade[1] where they leave; the signal curve stays whole."""
+    out, defs = [], []
+    for k, (stroke, width, opacity) in enumerate(styles):
+        fn = lambda t, d=k * sw.step: transform(sw.point(t, d))
+        t0, t1 = visible_range(fn, box)
+        if stroke != SIGNAL:
+            (x0, y0), (x1, y1) = fn(t0), fn(t1)
+            defs.append(f'<linearGradient id="{gid}{k}" gradientUnits="userSpaceOnUse" x1="{_u(x0)}" y1="{_u(y0)}" '
+                        f'x2="{_u(x1)}" y2="{_u(y1)}"><stop offset="0" stop-color="{stroke}" stop-opacity="{opacity * fade[0]:.2f}"/>'
+                        f'<stop offset="1" stop-color="{stroke}" stop-opacity="{opacity * fade[1]:.2f}"/></linearGradient>')
+            paint = f'url(#{gid}{k})'
+        else:
+            paint = stroke
+        out.append(f'<path d="{bezier_chain(fn, t0, t1, segs)}" fill="none" stroke="{paint}" '
+                   f'stroke-width="{width * MM:.2f}"/>')
+    return ([f'<defs>{"".join(defs)}</defs>'] if defs else []) + out
+
+
+def sweep_styles(n, signal_at, w_steel, w_signal, op_hi=0.9, op_lo=0.3, w_taper=0.06):
+    """One curve in signal; steel-deep elsewhere, darkest beside the signal, paling away from it."""
+    span = max(signal_at, n - 1 - signal_at) or 1
+    out = []
+    for k in range(n):
+        if k == signal_at:
+            out.append((SIGNAL, w_signal, 1.0))
+            continue
+        f = (abs(k - signal_at) - 1) / max(span - 1, 1)
+        out.append((STEEL_DEEP, w_steel - w_taper * f, op_hi + (op_lo - op_hi) * f))
+    return out
+
+
+SWEEP = Sweep(cx=226.0, cy=-22.0, a=125.0, b=42.0, step=2.3)
+SWEEP_N, SWEEP_SIGNAL_AT = 9, 6
+INFO_X = 125.0   # DIN 5008 information block; the footer hangs from the same axis
+
+
+def sweep_top(k=1.0, gid='t', limit=45):
+    corner = lambda p: (W - k * (W - p[0]), k * p[1])                    # scale about the corner
+    return sweep_family(SWEEP, sweep_styles(SWEEP_N, SWEEP_SIGNAL_AT, 0.24, 0.32), corner,
+                        (-1.5, -1.5, W + 1.5, limit), gid)
+
+
+def sweep_echo(k=0.42, gid='e'):
+    turned = lambda p: (k * (W - p[0]), H - k * p[1])                    # corner (W, 0) → (0, H)
+    return sweep_family(SWEEP, sweep_styles(SWEEP_N, SWEEP_SIGNAL_AT, 0.21, 0.28), turned,
+                        (-1.5, 277, W, H + 1.5), gid)
+
+
+def sweep_footer(f, size=2.2, lead=3.6, base=283.4):
+    """Who and where at the information block's axis; how to reach us ending on the right margin."""
+    who = [('medium', NAME, GRAPHITE), ('book', PEOPLE, STEEL_DEEP), ('book', f'{CITY}, {REGION}', STEEL_DEEP)]
+    reach = [('book', PHONE, STEEL_DEEP), ('book', EMAIL, STEEL_DEEP), ('book', WEB, STEEL_DEEP)]
+    x2 = RIGHT - max(text(f[key], s, size, 0, 0, c)[1] for key, s, c in reach)
+    out = []
+    for x, col in ((INFO_X, who), (x2, reach)):
+        for i, (key, s, c) in enumerate(col):
+            out += text(f[key], s, size, x, base + i * lead, c)[0]
+    return out
+
+
+def schwung(f):
+    """D — a light page: the lockup in its chip, the site's tagline and the offers under it, the
+    sweep in the top-right corner and its echo bottom-left, the contacts in two columns. Only line
+    ends bleed, so an office printer loses nothing that matters."""
+    p1 = sweep_top() + sweep_echo()
+    art, _, _, _ = lockup(f, LEFT, 14.5, 5.2, on_dark=False)
+    p1 += art
+    p1 += text(f['light'], TAGLINE, 3.3, LEFT, 32.6, STEEL_SOFT, tracking_em=-0.005)[0]
+    p1 += text(f['capsx'], '  ·  '.join(OFFER).upper(), 1.62, LEFT, 37.6, STEEL_DEEP, tracking_em=0.14)[0]
+    p1 += sweep_footer(f) + fold_marks(STEEL)
+
+    p2 = sweep_top(0.55, gid='f', limit=40) + sweep_echo()
+    art, _, _, _ = lockup(f, LEFT, 21.0, 4.0, on_dark=False)            # baseline 26.2: build-brief's page number
+    p2 += art + sweep_footer(f)
+    return page(p1), page(p2)
+
+
+VARIANTS = {'schwung': schwung, 'graphitband': graphitband, 'signallinie': signallinie, 'seitenleiste': seitenleiste}
 
 if __name__ == '__main__':
     try:

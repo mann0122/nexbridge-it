@@ -53,3 +53,7 @@ desktop.ini
 # Teaser source films (D-056). The originals stay on the founder's machine;
 # only the generated, code-named outputs in website/public/teaser/ are committed.
 ops/teaser-src/
+
+# Letter build (D-071): download cache for the variable source font. The derived
+# static instances in print/brief/fonts/ are committed; the cache is not.
+print/brief/.cache/

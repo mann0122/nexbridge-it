@@ -4,7 +4,7 @@ title: Decision log
 type: decision-log
 status: active
 owner: founders
-updated: 2026-10-18
+updated: 2026-10-19
 depends_on: []
 decisions: []
 ---
@@ -1766,6 +1766,83 @@ tools rather than agents except one observational CLI study — puts gains at te
 well-scoped, verifiable work, found none on a novel-library task and a slowdown on familiar
 repos; judgment-heavy work is unmeasured. Whether these changes helped is a hypothesis until
 `/ship` runs supply numbers. Owner: partner-b.
+
+## D-071 | 2026-10-19 | Company letterhead: a DIN 5008 Form B Word template, out of the drawing-office register | DECIDED
+The founder (Partner B) asked for a Word letter page with the logo, colours and name, to post
+introductions to prospective clients. Two narrowings followed. The founders write the body
+themselves, so everything else is designed. And the first draft, in the website's
+drawing-office register, was "industrial" — the founder asked for a marketing look: more
+colour, strips, premium. Three directions were built and **A · Graphitband** was finished first.
+Then the founder asked for "more elegant and beautiful": six directions were drawn in parallel
+and **D · Schwung** was recommended: a light page with a family of fine, exactly parallel curves
+sweeping in from the top-right corner, one of them signal, and a smaller echo bottom-left. The
+founder picked **E · Nocturne** instead, which is the default: a slim graphite band lit very
+slightly from above, three steel hairlines that fade in, converge and hand over to a thin signal
+line running off the right edge with the offers on it, and a light footer. **D**, **A**,
+**B · Signallinie** and **C · Seitenleiste** are kept in the generator as one-word alternatives;
+the other four drafts were not kept. The deliverable is `print/brief/NexBridge-IT_Briefbogen.docx`, built by
+`npm run brief` from `print/brief/build-brief.mjs`. Artwork and fonts come from
+`print/brief/make-assets.py`, whose outputs are committed. Research and sources:
+[[research-letterhead]].
+
+**Register override, like D-066.** The letterhead leaves the drawing-office register: no mono
+labels, no Zeichnungskopf, no datasheet hairlines. Tokens, Archivo, contrast and the logo rules
+still bind. E carries more than one signal element on page 1 — the wordmark's period, the signal
+line, the footer tick — as do A and D: a deliberate exemption from the signal ration on this
+surface only, as D-054 is for the card plate. E's band and D's curves both draw the flow-line
+idea (in left, out right) with SVG gradients; E's hairlines are filled paths, not strokes,
+because LibreOffice drops a gradient on a zero-height stroke. D and E also use artwork-only
+Archivo cuts (Light, Book, Medium, two wider Mediums) set as outlines. The
+tagline is the site's hero line, "Prozesse, die von selbst laufen."; the offers sit under it.
+The founder asked to stop the review gates on this surface and ship the design, so A, D and E went
+out without a design-critic or copywriter-de pass; the tagline and the offers are approved
+website copy. On the graphite band the glider sits in its native colours
+(`website/public/logo-mark.svg`). B and C use the light-ground chip
+(`website/public/favicon.svg`), as docs/02-brand.md requires. Both are read at build time and
+never redrawn, so open item 10 (the on-light cut) does not gate the letterhead. The
+mark-to-wordmark ratio follows the site header: mark 1.35 × the cap height. The gap is
+0.5 × the mark on dark (D-050) and 0.4 × the chip on light, because on a solid chip 0.5 read as
+two objects. B's flow-line keeps the device's grammar — muted lines converge into the signal
+line and filled arrowhead, 1.5 : 2.5 strokes, butt caps — at a flat proportion that fits beside
+the lockup.
+
+**Layout.** DIN 5008 Form B on A4: letterhead zone 0–45 mm, address field at x 20 / y 45 (85 × 45 mm,
+return line in the 17.7 mm zone, six address lines in the 27.3 mm zone, text on the 25 mm line),
+information block from x 125 / y 50, Betreff at about 98.5 mm, fold marks at 105 / 210 mm and hole
+mark at 148.5 mm, writing area 25–190 mm. Page numbers ("Seite x von y") start on page 2. It fits
+DL and C6/5 left-window envelopes. The fold-mark positions are derived, not read in the norm, and
+the norm text was not bought. E's and A's bands bleed, so the README recommends print-shop
+paper or PDF for them; D bleeds only line ends that leave the page anyway.
+
+**Type and Word behaviour.** The fonts are embedded: Archivo Regular with a linked bold face that
+is really weight 600, so Ctrl+B gives the house semibold; Archivo SemiExpanded SemiBold for the
+Betreff, headings and the caption labels. They are static instances of the OFL variable font
+(no Reserved Font Name), subset to Latin. The template ships Word styles for the writer:
+Betreff, Zwischenüberschrift, Aufzählung (en dash) and Hervorhebung. Placeholders are bracketed
+and highlighted yellow. docx-js 9.7.1 got six things wrong. The worst: lowercase font-key
+GUIDs made LibreOffice fall back to a substitute face (Inter, a banned face) until fixed.
+`repair()` corrects them after packing, and the docx skill's schema validator passes. Page 1's
+artwork is anchored in the body behind the text, not in the header: Word and Apple's preview draw
+header content dimmed while the body is edited, which washed the band out on screen (the founder
+saw it on an iPhone). Follow pages keep theirs in the header, the only part that repeats. New
+pinned devDependencies: `docx` 9.7.1 and `jszip` 3.10.2.
+
+**Facts on the page.** Name, `P Knopp · M Vaghani` without titles (as in the e-mail signatures),
+Walldorf / Baden-Württemberg, `+49 173 9044077` (site.ts `phoneE164`, DIN 5008 international form),
+the venture mailbox (D-029), nexbridge-it.com. They are defined twice — live text in the
+generator, outlines in the footer artwork — and change together. The return line reads
+`NexBridge-IT · Walldorf`, because D-068 removed the street from printed collateral. Deutsche
+Post cannot return an undeliverable letter to a town alone. That is a founder call, the same gap
+as STATE open item 1.
+
+**Gates on use, not on the file.** Posting a letter is printing and a first public use of the
+brand, so the DPMA check (STATE open item 5) comes first. A letter addressed to a *named person* is
+direct marketing under the GDPR. It needs the Art. 14 information (incl. where the address came
+from) and an explicit, separate Art. 21(4) objection notice in or with the first letter. That is
+legal text, so it comes from a lawyer or a generator (rules 1 and 4) and is not in the template.
+Letters to a GmbH's "Geschäftsführung" without a name are arguably outside it, but not for sole
+traders. Taking names from a company's Impressum for advertising is generally unlawful per the
+supervisory authorities. Owner: partner-b; the notice and the return address: founders.
 
 ## Template
 ```

@@ -10,7 +10,7 @@ Edges are declared, not inferred: each doc's frontmatter names what it `depends_
 `npm run kb` refuses to build when an edge points at nothing. Prose cross-references rot
 silently; this does not.
 
-Content as of 2026-10-18 · 17 nodes · 70 decisions
+Content as of 2026-10-19 · 18 nodes · 71 decisions
 
 ## Map
 
@@ -29,6 +29,7 @@ graph LR
   research_skills["research-skills"]
   research_cognitive_system["research-cognitive-system"]
   research_domains["research-domains"]
+  research_letterhead["research-letterhead"]
   claude_md["claude-md"]
   design["design"]
   product["product"]
@@ -47,6 +48,7 @@ graph LR
   decisions -.-> brand
   decisions -.-> decisions
   decisions -.-> research_cognitive_system
+  decisions -.-> research_letterhead
   vision --> agent_system
   agent_system -.-> decisions
   agent_system -.-> research_cognitive_system
@@ -97,18 +99,19 @@ Solid arrow = declared dependency (`depends_on`). Dotted = a body reference (`[[
 | `brand` | Brand | knowledge | active | partner-b | 2026-08-23 | [docs/02-brand.md](02-brand.md) | `website-spec`, `brand-kit`, `state`, `design`, `product` |
 | `website-spec` | Website spec | spec | active | partner-b | 2026-10-04 | [docs/03-website-spec.md](03-website-spec.md) | `brand-kit`, `state` |
 | `delivery` | Delivery playbook | playbook | active | founders | 2026-10-18 | [docs/04-delivery-playbook.md](04-delivery-playbook.md) | `clients` |
-| `decisions` | Decision log | decision-log | active | founders | 2026-10-18 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
+| `decisions` | Decision log | decision-log | active | founders | 2026-10-19 | [docs/05-decisions.md](05-decisions.md) | `state`, `product` |
 | `agent-system` | Agent system & orchestration loop | knowledge | active | partner-b | 2026-10-18 | [docs/06-agent-system.md](06-agent-system.md) | `state`, `claude-md` |
 | `brand-kit` | Brand kit (portable, single file) | knowledge | active | partner-b | 2026-08-23 | [docs/07-brand-kit.md](07-brand-kit.md) | — |
 | `clients` | Client workspaces | client | active | founders | 2026-08-01 | [docs/clients/README.md](clients/README.md) | — |
 | `research-skills` | Research — Claude Code skills | research | active | partner-b | 2026-07-27 | [docs/research/claude-skills.md](research/claude-skills.md) | — |
 | `research-cognitive-system` | Research — the "Karpathy + Obsidian + Opus 5.5 + Jev" post | research | active | partner-b | 2026-10-18 | [docs/research/cognitive-system-post.md](research/cognitive-system-post.md) | — |
 | `research-domains` | Research — domain availability | research | active | partner-b | 2026-08-01 | [docs/research/domain-availability.md](research/domain-availability.md) | — |
-| `state` | Where things stand | state | active | partner-b | 2026-10-18 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
+| `research-letterhead` | Research — DIN 5008 letterhead and postal direct mail | research | active | partner-b | 2026-10-19 | [docs/research/letterhead-din5008.md](research/letterhead-din5008.md) | — |
+| `state` | Where things stand | state | active | partner-b | 2026-10-19 | [docs/STATE.md](STATE.md) | `claude-md`, `readme` |
 | `product` | PRODUCT.md (product schema) | artifact | active | partner-b | — | [PRODUCT.md](../PRODUCT.md) | — |
 | `readme` | README.md (repo map) | artifact | active | partner-b | — | [README.md](../README.md) | — |
 
-**knowledge**: `agent-system`, `brand`, `brand-kit`, `offer`, `vision` · **spec**: `website-spec` · **playbook**: `delivery` · **research**: `research-cognitive-system`, `research-domains`, `research-skills` · **client**: `clients`
+**knowledge**: `agent-system`, `brand`, `brand-kit`, `offer`, `vision` · **spec**: `website-spec` · **playbook**: `delivery` · **research**: `research-cognitive-system`, `research-domains`, `research-letterhead`, `research-skills` · **client**: `clients`
 
 ## Decisions
 
@@ -187,6 +190,7 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 | D-068 | 2026-10-16 | Founder names shortened to initial + surname; the street address leaves every surface | DECIDED | `state` |
 | D-069 | 2026-10-16 | Impressum locality moves to a small, light footnote | DECIDED | `state` |
 | D-070 | 2026-10-18 | Working principles tightened against the verified sources: bootstrap line budgets, a commit gate, file-back and measurement rules | DECIDED | `delivery`, `agent-system`, `state`, `research-cognitive-system` |
+| D-071 | 2026-10-19 | Company letterhead: a DIN 5008 Form B Word template, out of the drawing-office register | DECIDED | `state`, `research-letterhead` |
 
 ### ⏳ Pending — work that depends on these is blocked
 
@@ -194,4 +198,4 @@ A doc may only cite a live decision; citing a superseded one fails the build.
 
 ---
 
-_17 nodes, 35 edges, 0 broken. Rebuild: `npm run kb`._
+_18 nodes, 36 edges, 0 broken. Rebuild: `npm run kb`._

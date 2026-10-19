@@ -4,9 +4,9 @@ title: Where things stand
 type: state
 status: active
 owner: partner-b
-updated: 2026-10-18
+updated: 2026-10-19
 depends_on: [vision, offer, brand, website-spec, decisions, agent-system]
-decisions: [D-008, D-009, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-031, D-036, D-039, D-043, D-046, D-048, D-049, D-050, D-051, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-062, D-063, D-064, D-065, D-066, D-067, D-068, D-069, D-070]
+decisions: [D-008, D-009, D-013, D-016, D-018, D-022, D-023, D-024, D-025, D-031, D-036, D-039, D-043, D-046, D-048, D-049, D-050, D-051, D-053, D-054, D-055, D-056, D-057, D-058, D-059, D-062, D-063, D-064, D-065, D-066, D-067, D-068, D-069, D-070, D-071]
 cites_history: [D-007]
 ---
 
@@ -15,7 +15,7 @@ cites_history: [D-007]
 **This is the session bootstrap.** It loads into every session next to `CLAUDE.md`, so it holds
 current state only: what is live and where to read about it. *Why* is in [[decisions]], *which
 document* is in [INDEX.md](INDEX.md). `npm run kb` fails when it outgrows its line budget (D-070).
-Last reviewed: **2026-10-18**.
+Last reviewed: **2026-10-19**.
 
 ## The venture
 
@@ -77,6 +77,10 @@ surface only, the house texture and contrast laws are suspended, D-054). The pap
 numbers are per card (`phoneE164`; P Knopp's is the venture line, D-054). Printing waits on the
 DPMA check (item 5) and the machine proof (D-055).
 
+**Letterhead.** `print/brief/NexBridge-IT_Briefbogen.docx` (D-071): DIN 5008 Form B, design A
+(graphite band; B and C are alternatives), fonts embedded, body left to the writer. Posting waits on the DPMA check (item 5); a letter to a named
+person needs a lawyer's notice under Art. 14 and 21 GDPR (D-071).
+
 **Brand marks.** The logo mark is the folded glider (D-050): favicon, `apple-touch-icon`,
 `og.png`, header lockup from `sm` up; canonical geometry in `website/public/logo-mark.svg`,
 `website/public/favicon.svg` and `website/src/components/Mark.astro`, guarded by `npm run logo`.
@@ -128,8 +132,8 @@ Single sources, stack and the quality bar: `CLAUDE.md`. Spec → [[website-spec]
 
 ## In flight
 
-**Working principles** (D-070) on `claude/working-principles-research`: bootstrap line budgets,
-the commit gate hook, the memory section, the research record — built, awaiting review and merge.
+**Working principles** (D-070) on `claude/working-principles-research`, PR #4, and the
+**letterhead** (D-071) on `claude/intro-letter`, stacked on it — built, awaiting review and merge.
 
 Everything else is merged into `main`, the only long-lived branch: Teaser 3 (D-067, 2026-10-04),
 the founder names and Walldorf address (D-068) and the Impressum footnote (D-069, 2026-10-16).

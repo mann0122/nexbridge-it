@@ -1819,9 +1819,12 @@ is really weight 600, so Ctrl+B gives the house semibold; Archivo SemiExpanded S
 Betreff, headings and the caption labels. They are static instances of the OFL variable font
 (no Reserved Font Name), subset to Latin. The template ships Word styles for the writer:
 Betreff, Zwischenüberschrift, Aufzählung (en dash) and Hervorhebung. Placeholders are bracketed
-and highlighted yellow. docx-js 9.7.1 got five things wrong. The worst: lowercase font-key
+and highlighted yellow. docx-js 9.7.1 got six things wrong. The worst: lowercase font-key
 GUIDs made LibreOffice fall back to a substitute face (Inter, a banned face) until fixed.
-`repair()` corrects them after packing, and the docx skill's schema validator passes. New
+`repair()` corrects them after packing, and the docx skill's schema validator passes. Page 1's
+artwork is anchored in the body behind the text, not in the header: Word and Apple's preview draw
+header content dimmed while the body is edited, which washed the band out on screen (the founder
+saw it on an iPhone). Follow pages keep theirs in the header, the only part that repeats. New
 pinned devDependencies: `docx` 9.7.1 and `jszip` 3.10.2.
 
 **Facts on the page.** Name, `P Knopp · M Vaghani` without titles (as in the e-mail signatures),

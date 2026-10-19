@@ -50,6 +50,10 @@ skill).
 5. Fold at the two short marks on the left (105 mm, 210 mm). The address then shows in a
    **DL** or **C6/5** window envelope (window on the left). The middle mark is for the hole punch.
 
+**On a phone,** the preview in Files or Mail is Apple's viewer, not Word: it ignores the
+embedded fonts, the highlighting and parts of the layout, so the letter looks broken there. Tap
+**Word** to open it in the Word app, or look at the PDF instead.
+
 Word keeps the fonts embedded when you save (the file is set to do so). Text copied into another
 document loses them.
 
@@ -100,8 +104,8 @@ npm run brief
   ground), read at build time and never redrawn. Text is stored as outlines, so it looks
   identical everywhere. Each SVG has a 300 dpi PNG twin, the raster fallback Word needs.
 
-`build-brief.mjs` also repairs five defects of docx-js 9.7.1 after packing (font keys,
-embedding flag, settings order, page-number fields, the bold face); the comment above
+`build-brief.mjs` also repairs six defects of docx-js 9.7.1 after packing (font keys,
+embedding flag, settings order, page-number fields, the bold face, font substitution hints); the comment above
 `repair()` says why each one matters.
 
 ## Other variants

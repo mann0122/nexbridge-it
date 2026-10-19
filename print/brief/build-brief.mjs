@@ -17,7 +17,10 @@
  * writing line), information block from x 125 / y 50, Betreff at about y 98.5, fold marks at
  * 105/210 mm, hole mark at 148.5 mm, writing area 25–190 mm. Everything that never changes per
  * letter — bands, strips, lockup, offer line, footer contact line, marks — is one page-sized SVG
- * in the header, so it sits exactly in every renderer. Everything a writer edits is live text.
+ * placed relative to the page, so it sits exactly in every renderer. On page 1 it is anchored in
+ * the body, not the header: Word (and Apple's preview) draws header content dimmed while you
+ * type in the body, so the letterhead would look washed out on screen. Follow pages carry theirs
+ * in the header, the only place that repeats. Everything a writer edits is live text.
  *
  * Brand: the tokens and fonts of docs/07-brand-kit.md. The drawing-office register is left on the
  * founder's direction (D-071): no mono labels, no title block. Fonts are embedded, so the letter
@@ -111,29 +114,30 @@ function cell(widthMm, children, extra = {}) {
   });
 }
 
-function pageArt(file, description, extraRuns = []) {
-  return new Paragraph({
-    spacing: exact(10),
-    tabStops: [{ type: TabStopType.RIGHT, position: mm(165) }],
-    children: [new ImageRun({
-      type: 'svg',
-      data: fs.readFileSync(path.join(ART, `${file}.svg`)),
-      fallback: { type: 'png', data: fs.readFileSync(path.join(ART, `${file}.png`)) },
-      transformation: { width: px(210), height: px(297) },
-      altText: { title: 'NexBridge-IT', description, name: file },
-      floating: {
-        horizontalPosition: { relative: HorizontalPositionRelativeFrom.PAGE, offset: 0 },
-        verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
-        wrap: { type: TextWrappingType.NONE },
-        behindDocument: true,
-        allowOverlap: true,
-        lockAnchor: true,
-      },
-    }), ...extraRuns],
+function artRun(file, description) {
+  return new ImageRun({
+    type: 'svg',
+    data: fs.readFileSync(path.join(ART, `${file}.svg`)),
+    fallback: { type: 'png', data: fs.readFileSync(path.join(ART, `${file}.png`)) },
+    transformation: { width: px(210), height: px(297) },
+    altText: { title: 'NexBridge-IT', description, name: file },
+    floating: {
+      horizontalPosition: { relative: HorizontalPositionRelativeFrom.PAGE, offset: 0 },
+      verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
+      wrap: { type: TextWrappingType.NONE },
+      behindDocument: true,
+      allowOverlap: true,
+      lockAnchor: true,
+    },
   });
 }
+// Holds page 1's artwork at the top of the body: one exact 1 pt line, paid for by a top margin
+// 1 pt short of 45 mm, so the address field still starts at 45 mm.
+const ANCHOR_PT = 1;
 
 // ─── address field and information block (one exact-height table row, 45 → 90 mm) ────
+// Two columns, the information block pushed to x 125 by its cell's left margin rather than an
+// empty spacer column — simple viewers (Apple's preview) collapse empty columns.
 const ADDR_INSET = 5;
 const ZONE1 = { lines: 5, pitch: 17.7 / 5 };
 const ZONE2 = { lines: 6, pitch: 27.3 / 6 };
@@ -159,35 +163,30 @@ function addressAndInfo() {
     layout: TableLayoutType.FIXED,
     indent: { size: -mm(ADDR_INSET), type: WidthType.DXA },
     width: { size: mm(170), type: WidthType.DXA },
-    columnWidths: [mm(85), mm(20), mm(65)],
+    columnWidths: [mm(85), mm(85)],
     borders: noBorders,
     rows: [new TableRow({
       height: { value: mm(45), rule: HeightRule.EXACT },
       cantSplit: true,
       children: [
         cell(85, [zone1, ...zone2], { margins: { top: 0, bottom: 0, left: mm(ADDR_INSET), right: 0 } }),
-        cell(20, [new Paragraph({ children: [] })]),
-        cell(65, infoBlock),
+        cell(85, infoBlock, { margins: { top: 0, bottom: 0, left: mm(20), right: 0 } }),
       ],
     })],
   });
 }
 
 // ─── closing: Grußformel, room to sign, the two names (no titles, as in the e-mail signatures)
+// The second name sits on a tab stop, not in a table column, so no viewer can run them together.
 function signatures() {
-  const sig = (name) => cell(82.5, [
-    ...Array.from({ length: 3 }, () => new Paragraph({ spacing: exact(LEAD_PT), children: [] })),
-    new Paragraph({ spacing: exact(LEAD_PT), children: [new TextRun({ text: name })] }),
-  ]);
+  const line = (children = [], before = 0) => new Paragraph({
+    spacing: exact(LEAD_PT, before, 0), keepNext: true, keepLines: true,
+    tabStops: [{ type: TabStopType.LEFT, position: mm(82.5) }], children,
+  });
   return [
-    new Paragraph({ spacing: exact(LEAD_PT, LEAD_PT, 0), keepNext: true, children: [new TextRun('Mit freundlichen Grüßen')] }),
-    new Table({
-      layout: TableLayoutType.FIXED,
-      width: { size: mm(165), type: WidthType.DXA },
-      columnWidths: [mm(82.5), mm(82.5)],
-      borders: noBorders,
-      rows: [new TableRow({ cantSplit: true, children: SITE.people.map(sig) })],
-    }),
+    line([new TextRun('Mit freundlichen Grüßen')], LEAD_PT),
+    line(), line(), line(),
+    line([new TextRun({ children: [SITE.people[0], '\t', SITE.people[1]] })]),
   ];
 }
 
@@ -245,19 +244,27 @@ const doc = new Document({
       titlePage: true,
       page: {
         size: { width: mm(210), height: mm(297) },
-        margin: { top: mm(45), bottom: mm(22), left: mm(25), right: mm(20), header: mm(V.pageNo.headerMm), footer: mm(8) },
+        margin: { top: mm(45) - pt(ANCHOR_PT), bottom: mm(22), left: mm(25), right: mm(20), header: mm(V.pageNo.headerMm), footer: mm(8) },
       },
     },
     headers: {
-      first: new Header({ children: [pageArt(`${variant}-seite1`, 'Briefkopf und Fußzeile NexBridge-IT mit Falz- und Lochmarken')] }),
+      first: new Header({ children: [new Paragraph({ children: [] })] }),
       // DIN 5008 numbers pages from page 2 on — so only the follow-page header carries it.
-      default: new Header({ children: [pageArt(`${variant}-folgeseite`, 'Kopf und Fußzeile der Folgeseiten NexBridge-IT', [pageNumber])] }),
+      default: new Header({ children: [new Paragraph({
+        spacing: exact(10),
+        tabStops: [{ type: TabStopType.RIGHT, position: mm(165) }],
+        children: [artRun(`${variant}-folgeseite`, 'Kopf und Fußzeile der Folgeseiten NexBridge-IT'), pageNumber],
+      })] }),
     },
     footers: {
       first: new Footer({ children: [new Paragraph({ children: [] })] }),
       default: new Footer({ children: [new Paragraph({ children: [] })] }),
     },
     children: [
+      new Paragraph({
+        spacing: exact(ANCHOR_PT),
+        children: [artRun(`${variant}-seite1`, 'Briefkopf und Fußzeile NexBridge-IT mit Falz- und Lochmarken')],
+      }),
       addressAndInfo(),
       new Paragraph({ style: 'Betreff', children: runs('[Betreff]') }),
       new Paragraph({ children: runs('[Sehr geehrte Damen und Herren,]') }),
@@ -293,6 +300,8 @@ function obfuscate(ttf, guid) {
  *     writes fields: one element per run, each with the run's formatting, result 1.
  *  5. Archivo's bold face (wght 600, see make-assets.py) added as w:embedBold, so Ctrl+B and the
  *     Hervorhebung style give the house semibold, not a synthesised bold.
+ *  6. w:family "auto" in the font table — a viewer that cannot use embedded fonts (Apple's
+ *     preview, some mobile apps) then falls back to a serif; "swiss" steers it to a sans.
  */
 async function repair(buf) {
   const zip = await JSZip.loadAsync(buf);
@@ -304,9 +313,11 @@ async function repair(buf) {
     '<Relationship Id="rIdArchivoBold" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/font" Target="fonts/font-archivo-bold.odttf"/></Relationships>'));
   const fontTable = (await zip.file('word/fontTable.xml').async('string'))
     .replace(/w:fontKey="\{([0-9a-f-]+)\}"/gi, (_, g) => `w:fontKey="{${g.toUpperCase()}}"`)
+    .replaceAll('<w:family w:val="auto"/>', '<w:family w:val="swiss"/>')
     .replace(/(<w:font w:name="Archivo">(?:(?!<\/w:font>).)*?<w:embedRegular[^>]*\/>)/,
       `$1<w:embedBold r:id="rIdArchivoBold" w:fontKey="${boldKey}"/>`);
   if (!fontTable.includes('rIdArchivoBold')) throw new Error('repair: could not attach the Archivo bold face');
+  if ((fontTable.match(/w:val="swiss"/g) ?? []).length !== fonts.length) throw new Error('repair: could not set the font family hints');
   zip.file('word/fontTable.xml', fontTable);
 
   let settings = await zip.file('word/settings.xml').async('string');

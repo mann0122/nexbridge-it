@@ -51,11 +51,15 @@ const VARIANTS = {
 const DEFAULT_VARIANT = 'graphitband';
 const variant = process.argv[2] ?? DEFAULT_VARIANT;
 const out = process.argv[3] ?? path.join(HERE, 'NexBridge-IT_Briefbogen.docx');
+// A design draft from outside the repo: BRIEF_VARIANT_JSON names a JSON file shaped like a
+// VARIANTS entry, plus `assetsDir` (where <variant>-seite1.svg etc. live) and optional colours.
+if (process.env.BRIEF_VARIANT_JSON) VARIANTS[variant] = JSON.parse(fs.readFileSync(process.env.BRIEF_VARIANT_JSON, 'utf8'));
 if (!VARIANTS[variant]) {
   console.error(`unknown variant "${variant}" — one of: ${Object.keys(VARIANTS).join(', ')}`);
   process.exit(1);
 }
 const V = VARIANTS[variant];
+const ART = V.assetsDir ?? path.join(HERE, 'assets');
 
 // ─── units ─────────────────────────────────────────────────────────────────────────────
 const mm = (v) => Math.round(v * 56.6929);          // millimetres → twips
@@ -88,7 +92,7 @@ function runs(text, opts = {}) {
 }
 /** Small uppercase label with open tracking — the premium caption grade. */
 const label = (text, sizePt = 5.8) => new TextRun({
-  text, font: F.heading, size: half(sizePt), color: C.steelDeep, allCaps: true, characterSpacing: Math.round(0.12 * sizePt * 20),
+  text, font: F.heading, size: half(sizePt), color: V.labelColor ?? C.steelDeep, allCaps: true, characterSpacing: Math.round(0.12 * sizePt * 20),
 });
 const exact = (linePt, before = 0, after = 0) => ({
   line: pt(linePt), lineRule: LineRuleType.EXACT, before: pt(before), after: pt(after),
@@ -111,8 +115,8 @@ function pageArt(file, description, extraRuns = []) {
     tabStops: [{ type: TabStopType.RIGHT, position: mm(165) }],
     children: [new ImageRun({
       type: 'svg',
-      data: read(`assets/${file}.svg`),
-      fallback: { type: 'png', data: read(`assets/${file}.png`) },
+      data: fs.readFileSync(path.join(ART, `${file}.svg`)),
+      fallback: { type: 'png', data: fs.readFileSync(path.join(ART, `${file}.png`)) },
       transformation: { width: px(210), height: px(297) },
       altText: { title: 'NexBridge-IT', description, name: file },
       floating: {
@@ -136,7 +140,7 @@ function addressAndInfo() {
   const recipient = ['[Firma]', '[Frau Vorname Nachname]', '[Straße Hausnummer]', '[PLZ Ort]'];
   const zone1 = new Paragraph({
     spacing: { line: mm(ZONE1.pitch), lineRule: LineRuleType.EXACT, before: mm(ZONE1.pitch * (ZONE1.lines - 1)), after: 0 },
-    children: [new TextRun({ text: `${SITE.name} · ${SITE.city}`, size: half(6.5), color: C.steelDeep })],
+    children: [new TextRun({ text: `${SITE.name} · ${SITE.city}`, size: half(6.5), color: V.returnColor ?? C.steelDeep })],
   });
   const zone2 = Array.from({ length: ZONE2.lines }, (_, i) => new Paragraph({
     spacing: { line: mm(ZONE2.pitch), lineRule: LineRuleType.EXACT, before: 0, after: 0 },

@@ -117,7 +117,8 @@ def build_fonts():
     # Artwork-only cuts: they are set as outlines into the SVGs and never embedded, so they stay
     # in the gitignored cache.
     for key, loc in (('light', {'wght': 300, 'wdth': 100}), ('book', {'wght': 350, 'wdth': 100}),
-                     ('medium', {'wght': 500, 'wdth': 100}), ('capsx', {'wght': 500, 'wdth': 116})):
+                     ('medium', {'wght': 500, 'wdth': 100}), ('capsx', {'wght': 500, 'wdth': 116}),
+                     ('caps', {'wght': 500, 'wdth': 112})):
         made[key] = CACHE / f'Archivo-{key}.ttf'
         if not made[key].exists():
             instancer.instantiateVariableFont(TTFont(vf), loc).save(made[key])
@@ -474,7 +475,100 @@ def schwung(f):
     return page(p1), page(p2)
 
 
-VARIANTS = {'schwung': schwung, 'graphitband': graphitband, 'signallinie': signallinie, 'seitenleiste': seitenleiste}
+# ─── E · Nocturne ────────────────────────────────────────────────────────────────────────
+# A slim graphite band lit very slightly from above, in two rows: the glider in its native colours
+# with the wordmark and, on the wordmark baseline at the right margin, the tagline in Archivo Light;
+# below, three steel hairlines fade in from the left edge, converge and hand over to one fine
+# signal line that grows from nothing and leaves at the right edge, with the offers riding it. A
+# light footer: a hairline, a signal tick, the contact line.
+#
+# Renderer note: LibreOffice steps a gradient fill by the filled shape's bounding box and drops it
+# on a lone 0.2 mm line, so the hairlines are one filled path (no strokes) and the signal taper
+# carries an invisible 0.01 mm sliver at its transparent start that only makes its box taller.
+
+def _n(v):
+    return f'{v * MM:.1f}'.rstrip('0').rstrip('.')
+
+
+def noct_band(pid, h):
+    """Graphite band, full bleed, graphite-2 at the top easing into graphite."""
+    return [f'<defs><linearGradient id="{pid}-band" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{GRAPHITE_2}"/><stop offset="1" stop-color="{GRAPHITE}"/>'
+            f'</linearGradient></defs>',
+            f'<rect x="0" y="0" width="{_n(W)}" height="{_n(h)}" fill="url(#{pid}-band)"/>']
+
+
+def noct_ribbon(y, ys, w, x_bend, x_merge, x_end):
+    """A hairline as a filled ribbon: runs at y from the left edge, bends at x_bend, arrives on ys
+    at x_merge with a horizontal tangent, ends at x_end."""
+    h = w / 2
+    if y == ys:   # tapered inside the transparent fade-in, so no renderer mistakes it for a rect
+        return f'M0 {_n(y - h / 2)}L{_n(x_bend)} {_n(y - h)}H{_n(x_end)}V{_n(y + h)}H{_n(x_bend)}L0 {_n(y + h / 2)}Z'
+    k = (x_merge - x_bend) * 0.55
+    return (f'M0 {_n(y - h)}H{_n(x_bend)}C{_n(x_bend + k)} {_n(y - h)} {_n(x_merge - k)} {_n(ys - h)} {_n(x_merge)} {_n(ys - h)}'
+            f'H{_n(x_end)}V{_n(ys + h)}H{_n(x_merge)}C{_n(x_merge - k)} {_n(ys + h)} {_n(x_bend + k)} {_n(y + h)} {_n(x_bend)} {_n(y + h)}'
+            f'H0Z')
+
+
+def noct_flow(pid, ys, spread, x_bend, x_merge, fade_in, fade_out, signal_full, hair_w, sig_h, hair=STEEL, hair_op=.7):
+    """Three hairlines fade in and converge on ys; from the merge point steel fades out while the
+    signal grows — from transparent and from a point to full height — and runs off the right edge."""
+    x_end = x_merge + fade_out
+    out = [f'<defs>'
+           f'<linearGradient id="{pid}-hair" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{_n(x_end)}" y2="0">'
+           f'<stop offset="0" stop-color="{hair}" stop-opacity="0"/>'
+           f'<stop offset="{fade_in / x_end:.3f}" stop-color="{hair}" stop-opacity="{hair_op}"/>'
+           f'<stop offset="{x_merge / x_end:.3f}" stop-color="{hair}" stop-opacity="{hair_op}"/>'
+           f'<stop offset="1" stop-color="{hair}" stop-opacity="0"/></linearGradient>'
+           f'<linearGradient id="{pid}-sig" gradientUnits="userSpaceOnUse" x1="{_n(x_merge)}" y1="0" x2="{_n(signal_full)}" y2="0">'
+           f'<stop offset="0" stop-color="{SIGNAL}" stop-opacity="0"/>'
+           f'<stop offset=".5" stop-color="{SIGNAL}" stop-opacity=".7"/>'
+           f'<stop offset="1" stop-color="{SIGNAL}"/></linearGradient></defs>']
+    # one path for all three: a single fill unions them where they meet, with no brighter seam
+    d = ''.join(noct_ribbon(ys + o, ys, hair_w, x_bend, x_merge, x_merge + 0.1) for o in (-spread, spread))
+    out.append(f'<path fill="url(#{pid}-hair)" d="{d}{noct_ribbon(ys, ys, hair_w, x_bend, x_merge, x_end)}"/>')
+    half = sig_h / 2
+    out.append(f'<path fill="url(#{pid}-sig)" d="M{_n(x_merge)} {_n(ys)}L{_n(signal_full)} {_n(ys - half)}H{_n(W)}'
+               f'V{_n(ys + half)}H{_n(signal_full)}Z'
+               f'M{_n(x_merge)} {_n(ys - 2.5)}h.1V{_n(ys + 2.5)}h-.1Z"/>')
+    return out
+
+
+def noct_footer(f, y_rule=281.0, y_text=286.6, tick=4.0, size=2.3):
+    """A hairline across the writing width with a signal tick where it starts; the contact line in
+    steel-deep with its separators in the lighter steel."""
+    out = [f'<rect x="{_n(LEFT)}" y="{_n(y_rule - 0.075)}" width="{_n(RIGHT - LEFT)}" height="1.5" fill="{LINE}"/>',
+           f'<rect x="{_n(LEFT)}" y="{_n(y_rule - 0.225)}" width="{_n(tick)}" height="4.5" fill="{SIGNAL}"/>']
+    dots = lambda s: {i: STEEL for i, c in enumerate(s) if c == '·'}
+    left = f'{NAME}  ·  {PEOPLE}  ·  {CITY}, {REGION}'
+    right = f'{PHONE}  ·  {EMAIL}  ·  {WEB}'
+    out += text(f['text'], left, size, LEFT, y_text, STEEL_DEEP, tracking_em=0.01, colors=dots(left))[0]
+    out += text(f['text'], right, size, RIGHT, y_text, STEEL_DEEP, tracking_em=0.01, anchor='end', colors=dots(right))[0]
+    return out
+
+
+def nocturne(f):
+    """E — the graphite band refined: 32.5 mm, the tagline on the wordmark baseline, the flow-line
+    handing over to the signal line with the offers on it, and a light footer so the page breathes.
+    The band bleeds: best from a print shop or as PDF."""
+    p1 = noct_band('n1', 32.5)
+    art, _, base, _ = lockup(f, LEFT, 8.2, 6.2, on_dark=True)
+    tag, _ = text(f['light'], TAGLINE, 3.15, RIGHT, base, PAPER, anchor='end')
+    offers, _ = text(f['caps'], '  ·  '.join(o.upper() for o in OFFER), 1.75, RIGHT, 24.2 - 2.75, STEEL,
+                     tracking_em=0.14, anchor='end')
+    p1 += noct_flow('n1', ys=24.2, spread=2.0, x_bend=42, x_merge=84, fade_in=32, fade_out=30, signal_full=148,
+                    hair_w=0.2, sig_h=0.85)
+    p1 += art + tag + offers + noct_footer(f) + fold_marks(STEEL)
+
+    p2 = noct_band('n2', 22)
+    art, _, _, _ = lockup(f, LEFT, 6.0, 4.6, on_dark=True)          # baseline: build-brief's page number
+    p2 += noct_flow('n2', ys=16.6, spread=1.6, x_bend=44, x_merge=84, fade_in=30, fade_out=26, signal_full=140,
+                    hair_w=0.18, sig_h=0.7)
+    p2 += art + noct_footer(f)
+    return page(p1), page(p2)
+
+
+VARIANTS = {'nocturne': nocturne, 'schwung': schwung, 'graphitband': graphitband, 'signallinie': signallinie, 'seitenleiste': seitenleiste}
 
 if __name__ == '__main__':
     try:

@@ -1774,23 +1774,27 @@ themselves, so everything else is designed. And the first draft, in the website'
 drawing-office register, was "industrial" — the founder asked for a marketing look: more
 colour, strips, premium. Three directions were built and **A · Graphitband** was finished first.
 Then the founder asked for "more elegant and beautiful": six directions were drawn in parallel
-and **D · Schwung** became the default. It is a light page with a family of fine, exactly
-parallel curves sweeping in from the top-right corner, one of them signal, and a smaller echo
-bottom-left. **A**, **B · Signallinie** and **C · Seitenleiste** are kept in the generator as
-one-word alternatives; the other five drafts were not kept. The deliverable is `print/brief/NexBridge-IT_Briefbogen.docx`, built by
+and **D · Schwung** was recommended: a light page with a family of fine, exactly parallel curves
+sweeping in from the top-right corner, one of them signal, and a smaller echo bottom-left. The
+founder picked **E · Nocturne** instead, which is the default: a slim graphite band lit very
+slightly from above, three steel hairlines that fade in, converge and hand over to a thin signal
+line running off the right edge with the offers on it, and a light footer. **D**, **A**,
+**B · Signallinie** and **C · Seitenleiste** are kept in the generator as one-word alternatives;
+the other four drafts were not kept. The deliverable is `print/brief/NexBridge-IT_Briefbogen.docx`, built by
 `npm run brief` from `print/brief/build-brief.mjs`. Artwork and fonts come from
 `print/brief/make-assets.py`, whose outputs are committed. Research and sources:
 [[research-letterhead]].
 
 **Register override, like D-066.** The letterhead leaves the drawing-office register: no mono
 labels, no Zeichnungskopf, no datasheet hairlines. Tokens, Archivo, contrast and the logo rules
-still bind. D carries more than one signal element on page 1 — the wordmark's period, the signal
-curve, its echo bottom-left — and A the period and two strips: a deliberate exemption from the
-signal ration on this surface only, as D-054 is for the card plate. D's curves are the flow-line
-idea drawn as one gesture (in left, out right); its steel curves fade in with SVG gradients, and
-D also uses artwork-only Archivo cuts (Light, Book, Medium, a wide Medium) set as outlines. The
+still bind. E carries more than one signal element on page 1 — the wordmark's period, the signal
+line, the footer tick — as do A and D: a deliberate exemption from the signal ration on this
+surface only, as D-054 is for the card plate. E's band and D's curves both draw the flow-line
+idea (in left, out right) with SVG gradients; E's hairlines are filled paths, not strokes,
+because LibreOffice drops a gradient on a zero-height stroke. D and E also use artwork-only
+Archivo cuts (Light, Book, Medium, two wider Mediums) set as outlines. The
 tagline is the site's hero line, "Prozesse, die von selbst laufen."; the offers sit under it.
-The founder asked to stop the review gates on this surface and ship the design, so A and D went
+The founder asked to stop the review gates on this surface and ship the design, so A, D and E went
 out without a design-critic or copywriter-de pass; the tagline and the offers are approved
 website copy. On the graphite band the glider sits in its native colours
 (`website/public/logo-mark.svg`). B and C use the light-ground chip
@@ -1807,8 +1811,8 @@ return line in the 17.7 mm zone, six address lines in the 27.3 mm zone, text on 
 information block from x 125 / y 50, Betreff at about 98.5 mm, fold marks at 105 / 210 mm and hole
 mark at 148.5 mm, writing area 25–190 mm. Page numbers ("Seite x von y") start on page 2. It fits
 DL and C6/5 left-window envelopes. The fold-mark positions are derived, not read in the norm, and
-the norm text was not bought. D bleeds only line ends that leave the page anyway, so an office
-printer loses nothing; A's bands bleed, so for A the README recommends print-shop paper or PDF.
+the norm text was not bought. E's and A's bands bleed, so the README recommends print-shop
+paper or PDF for them; D bleeds only line ends that leave the page anyway.
 
 **Type and Word behaviour.** The fonts are embedded: Archivo Regular with a linked bold face that
 is really weight 600, so Ctrl+B gives the house semibold; Archivo SemiExpanded SemiBold for the

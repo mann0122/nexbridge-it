@@ -3,27 +3,27 @@
 `NexBridge-IT_Briefbogen.docx` is the company letterhead as a Word file (D-071). Everything is
 designed except the letter's text: open it, replace the highlighted placeholders, write the body.
 
-The design is **D · Schwung**. The founder asked for a design that was more elegant and beautiful, so six directions were drawn in parallel and this one was picked. It is a
+The design is **E · Nocturne**. The founder asked for a design that was more elegant and beautiful, so six directions were drawn in parallel; the founder picked this one. It is a
 marketing surface, so it leaves the drawing-office register of the website on the founder's
 direction (D-071): no mono labels, no title block. The brand's colours and type still bind.
 
-- **Top right:** nine fine, exactly parallel curves sweep in from beyond the corner and leave
-  the right edge running level. One of them is orange; the grey ones darken toward it and rise
-  out of the paper.
-- **Top left:** the glider in its graphite chip next to the wordmark with its orange period.
-  Below them, the site's tagline "Prozesse, die von selbst laufen." in Archivo Light, then the
-  four offers in small tracked capitals.
+- **Top band:** slim graphite (32.5 mm), lit very slightly from above. The glider in its native
+  colours next to the wordmark with its orange period; on the same baseline, right-aligned, the
+  site's tagline "Prozesse, die von selbst laufen." in Archivo Light.
+- **The flow-line:** three fine steel lines fade in from the left edge, converge, and hand over
+  to one thin orange line that grows out of nothing and runs off the right edge. The four
+  offers ride on it in small tracked capitals.
 - **Address field** for a left-window envelope, with the small return line above it, and the
   **information block** on the right: Telefon, E-Mail, Web, Datum.
-- **Bottom left:** a smaller echo of the curves, turned round, so the page reads corner to
-  corner. **Bottom right:** the contact details in two columns, starting on the information
-  block's line.
-- **Page 2 onward:** a smaller sweep, a smaller lockup and "Seite x von y" on its baseline.
+- **Footer:** light, so the page breathes — a fine rule with a short orange tick where it
+  starts, and the contact line under it.
+- **Page 2 onward:** a 22 mm band with a smaller lockup, the same flow-line and "Seite x von y"
+  on the lockup's baseline.
 - **Fold and hole marks** on the left edge.
 
-The earlier directions are still built by the same generator and can replace D with one
-argument: **A · Graphitband** (graphite band across the top), **B · Signallinie** and
-**C · Seitenleiste**. See "Other variants" below.
+The other directions are still built by the same generator and can replace E with one argument:
+**D · Schwung** (sweeping curves in the top-right corner, a white page), **A · Graphitband**,
+**B · Signallinie** and **C · Seitenleiste**. See "Other variants" below.
 
 The fonts (Archivo regular and semibold, Archivo SemiExpanded for the subject line) are
 **embedded**, so the letter prints in the house type on a PC that has never had Archivo
@@ -55,12 +55,13 @@ document loses them.
 
 ## Printing
 
-- **D prints on an office printer.** Only the ends of the curves run off the paper, and they
-  leave the page anyway, so the 3–5 mm an office printer cannot print costs nothing. The
-  palest grey curves can drop out on a cheap laser; a print shop or a PDF (Word: *Datei →
-  Exportieren → PDF*) shows them as drawn.
-- **A's bands run to the paper edge**, so an office printer leaves a white margin around them:
-  print shop or PDF.
+- **The band runs to the paper edge.** An office printer cannot print the outer 3–5 mm, so it
+  leaves a thin white margin around the band. For letters that look premium, have the
+  letterhead printed by a print shop and print each letter onto that paper — or send the letter
+  as a PDF (Word: *Datei → Exportieren → PDF*), which keeps the band to the edge. The fine
+  steel lines in the band are 0.2 mm; a cheap laser may print them faint.
+- **D · Schwung** is the variant for an office printer: only line ends that leave the page
+  anyway run off the paper.
 - Print at **100 % / actual size**, never "fit to page": the address field and the marks are
   measured from the paper edge.
 
@@ -90,8 +91,8 @@ npm run brief
 
 - `fonts/` — static instances of the Archivo variable font (wdth 100 · wght 400, its linked
   bold at wght 600, and wdth 112 · wght 600), subset to Latin. SIL OFL 1.1, no Reserved Font
-  Name; the licence is next to them. D's artwork also uses Archivo Light, Book, Medium and a
-  wide Medium; those are set as outlines only, never embedded, and are built into the gitignored
+  Name; the licence is next to them. The artwork of D and E also uses Archivo Light, Book,
+  Medium and two wider Mediums; those are set as outlines only, never embedded, and are built into the gitignored
   `.cache/` from the same variable font.
 - `assets/<variant>-seite1.svg`, `-folgeseite.svg` — everything that never changes per letter:
   bands, strips, lockup, offer line, footer contact line, marks. The glider comes from
@@ -106,6 +107,7 @@ embedding flag, settings order, page-number fields, the bold face); the comment 
 ## Other variants
 
 ```
+node print/brief/build-brief.mjs schwung      print/brief/NexBridge-IT_Briefbogen.docx
 node print/brief/build-brief.mjs graphitband  print/brief/NexBridge-IT_Briefbogen.docx
 node print/brief/build-brief.mjs signallinie  print/brief/NexBridge-IT_Briefbogen.docx
 node print/brief/build-brief.mjs seitenleiste print/brief/NexBridge-IT_Briefbogen.docx
@@ -117,6 +119,8 @@ To make one of them the default, change `DEFAULT_VARIANT` in `build-brief.mjs` a
 
 | Element | Position |
 |---|---|
+| Top band (E) | 0–32.5 graphite; lockup from y 8.2, tagline on its baseline; signal line at y 24.2 from x 84, full from x 148; follow pages 0–22, line at y 16.6 |
+| Footer (E) | rule at y 281 from x 25 to 190 with a 4 mm signal tick, contact line at y 286.6 |
 | Sweep (D) | top-right corner, inside y 0–45 (follow pages: 0.55 scale, inside 0–40) |
 | Lockup · tagline · offers (D) | chip from y 14.5 · baseline 32.6 · baseline 37.6, all from x 25 |
 | Top band (A) | 0–38 graphite, signal strip 36.2–38 from x 128; follow pages 0–22, strip 20.6–22 |

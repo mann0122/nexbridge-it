@@ -44,12 +44,13 @@ const read = (p) => fs.readFileSync(path.join(HERE, p));
 // ─── variants — artwork from make-assets.py; the page number sits in the follow-page header
 // at the height of that page's lockup baseline, in a colour that reads on its ground. ───────
 const VARIANTS = {
+  nocturne: { label: 'E · Nocturne', pageNo: { color: '8B959E', headerMm: 7.25 } },    // steel on graphite, on the lockup baseline
   schwung: { label: 'D · Schwung', pageNo: { color: '5B6770', headerMm: 23.5 } },       // steel-deep on paper, on the lockup baseline
   graphitband: { label: 'A · Graphitband', pageNo: { color: '8B959E', headerMm: 9.0 } },     // steel on graphite
   signallinie: { label: 'B · Signallinie', pageNo: { color: '5B6770', headerMm: 14.2 } },    // steel-deep on paper
   seitenleiste: { label: 'C · Seitenleiste', pageNo: { color: '5B6770', headerMm: 14.2 } },
 };
-const DEFAULT_VARIANT = 'schwung';
+const DEFAULT_VARIANT = 'nocturne';
 const variant = process.argv[2] ?? DEFAULT_VARIANT;
 const out = process.argv[3] ?? path.join(HERE, 'NexBridge-IT_Briefbogen.docx');
 // A design draft from outside the repo: BRIEF_VARIANT_JSON names a JSON file shaped like a
